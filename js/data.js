@@ -1,16 +1,18 @@
+// Stock PM al 07/04/2026 19:00 - Odfjell Terminals Tagsa SA - Campana
 const stockInicial = [
     {
         tanque: "005", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "DI26IC06000417Z", stock: 10 },
-            { despacho: "DI26IC06000418R", stock: 26658 },
-            { despacho: "DI26IC06000419S", stock: 26658 },
+            { despacho: "DI26IC06000418R", stock: -4 },
+            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 1194 },
+            { despacho: "DI25IC04008428A", stock: 95085 },
+            { despacho: "DI25IC04009472A", stock: 199789 },
         ]
     },
     {
         tanque: "007", producto: "SEBO (GRASA ANIMAL)", cliente: "COTO C.I.C.S.A",
         despachos: [
-            { despacho: "PARTICULAR0437", stock: 912540 },
+            { despacho: "PARTICULAR0437", stock: 1054320 },
             { despacho: "PARTICULAR2392", stock: 9076 },
             { despacho: "PARTICULAR0912", stock: 220 },
         ]
@@ -19,25 +21,25 @@ const stockInicial = [
         tanque: "008", producto: "ACIDO ACETICO", cliente: "ATANOR S.C.A INV: X",
         despachos: [
             { despacho: "DI26IC04002280Y", stock: 251304 },
-            { despacho: "DI26IC04001291P", stock: 411959 },
+            { despacho: "DI26IC04001291P", stock: 307939 },
         ]
     },
     {
         tanque: "010", producto: "UNITOL L-70", cliente: "UNILEVER DE ARGENTIN",
         despachos: [
-            { despacho: "DI26IC04002170M", stock: 60469 },
+            { despacho: "DI26IC04002170M", stock: 30849 },
         ]
     },
     {
         tanque: "014", producto: "UNITOL L-70", cliente: "UNILEVER DE ARGENTIN",
         despachos: [
-            { despacho: "DI26IC04002168T", stock: 576974 },
+            { despacho: "DI26IC04002168T", stock: 431734 },
         ]
     },
     {
         tanque: "017", producto: "DIPROPILENGLICOL", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "DI26IC04002174Z", stock: 358029 },
+            { despacho: "DI26IC04002174Z", stock: 323029 },
         ]
     },
     {
@@ -56,34 +58,34 @@ const stockInicial = [
     {
         tanque: "022", producto: "BUTIL CELLOSOLVE", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "BCETK22000001", stock: 77880 },
+            { despacho: "BCETK22000001", stock: 49860 },
         ]
     },
     {
         tanque: "023", producto: "EXXSOL D-60", cliente: "BRENNTAG ARG.S.A.",
         despachos: [
-            { despacho: "DI26IC04002559A", stock: 178908 },
+            { despacho: "DI26IC04002559A", stock: 103888 },
+            { despacho: "FISCAL-008BR568600794", stock: 28140 },
         ]
     },
     {
         tanque: "024", producto: "BUTIL ACRILATO MONOMERO", cliente: "DALGAR S.A.",
         despachos: [
-            { despacho: "FISCAL-CRILEN", stock: 111846 },
-            { despacho: "FISCAL-DIRANSA", stock: 131364 },
+            { despacho: "DI26IC04002561Z", stock: 83846 },
+            { despacho: "FISCAL-USHOUOTUS-33-B", stock: 131364 },
         ]
     },
     {
         tanque: "025", producto: "ACETATO DE VINILO", cliente: "DALGAR S.A.",
         despachos: [
             { despacho: "FISCAL-USTXTOTUS-18-A", stock: 49488 },
-            { despacho: "DI26IC06000479B", stock: -16 },
             { despacho: "FISCAL-USTXTOTUS-18-C", stock: 24744 },
         ]
     },
     {
         tanque: "026", producto: "ISOPAR E", cliente: "BRENNTAG ARG.S.A.",
         despachos: [
-            { despacho: "DI23IC04009487E", stock: 144647 },
+            { despacho: "DI23IC04009487E", stock: 127627 },
             { despacho: "DI21IPE00000093", stock: 10207 },
         ]
     },
@@ -102,19 +104,13 @@ const stockInicial = [
     {
         tanque: "029", producto: "VORANOL 3011", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "DI26IC04002235Y", stock: 288400 },
+            { despacho: "DI26IC04002235Y", stock: 286160 },
         ]
     },
     {
         tanque: "030", producto: "ACETATO DE VINILO", cliente: "INMOBAL NUTRER S.A.",
         despachos: [
             { despacho: "DI26IC04000202G", stock: 21585 },
-        ]
-    },
-    {
-        tanque: "031", producto: "VORANOL 3011", cliente: "PBBPOLISUR S.R.L.",
-        despachos: [
-            { despacho: "DI26IC04002235Y", stock: 229549 },
         ]
     },
     {
@@ -127,7 +123,7 @@ const stockInicial = [
     {
         tanque: "034", producto: "BUTIL ACRILATO MONOMERO", cliente: "DALGAR S.A.",
         despachos: [
-            { despacho: "DI25IC06001144N", stock: 41708 },
+            { despacho: "DI25IC06001144N", stock: 16828 },
             { despacho: "FISCAL-USHOUOTUS-09-B", stock: 256 },
             { despacho: "FISCAL-USHOUOTUS-09-C", stock: 25895 },
             { despacho: "FISCAL-USHOUOTUS-09-D", stock: 175847 },
@@ -138,9 +134,9 @@ const stockInicial = [
         tanque: "036", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
             { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 18553 },
-            { despacho: "DI26IC04001041X", stock: 109457 },
-            { despacho: "FISCAL-ZZZZZOTUS22AA", stock: 26963 },
-            { despacho: "DI26IC06000407P", stock: 10158 },
+            { despacho: "DI26IC04001041X", stock: 82937 },
+            { despacho: "DI26TRM6000107V", stock: 26963 },
+            { despacho: "DI26IC06000407P", stock: 438 },
             { despacho: "FISCAL-ZZZZZOTUS22Y", stock: 26963 },
             { despacho: "FISCAL-ZZZZZOTUS22Z", stock: 26963 },
         ]
@@ -163,8 +159,7 @@ const stockInicial = [
     {
         tanque: "041", producto: "ACIDO PROPIONICO", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "DI26IC06000148R", stock: 4580 },
-            { despacho: "FISCAL-USTXTOTUS-13B", stock: 207371 },
+            { despacho: "DI26IC04002546T", stock: 186951 },
         ]
     },
     {
@@ -180,50 +175,36 @@ const stockInicial = [
         ]
     },
     {
-        tanque: "050", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
-        despachos: [
-            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 1194 },
-            { despacho: "DI25IC04009472A", stock: 199789 },
-        ]
-    },
-    {
         tanque: "052", producto: "ACETATO DE ETILO", cliente: "HENRY HIRSCHEN & CIA",
         despachos: [
-            { despacho: "DI26IC06000402K", stock: 86615 },
+            { despacho: "DI26IC06000402K", stock: 66615 },
         ]
     },
     {
         tanque: "054", producto: "2 ETIL HEXANOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "FISCAL-USHOUOTUS29E", stock: 238717 },
-            { despacho: "FISCAL-USHOUOTUS29F", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29G", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29H", stock: 26365 },
+            { despacho: "DI26IC04002644S", stock: 210717 },
+            { despacho: "DI26IC04002657W", stock: -15 },
+            { despacho: "DI26IC04002656V", stock: 5 },
+            { despacho: "DI26IC04002654T", stock: 26365 },
             { despacho: "FISCAL-USHOUOTUS29I", stock: 26365 },
             { despacho: "FISCAL-USHOUOTUS29J", stock: 26365 },
             { despacho: "FISCAL-USHOUOTUS29K", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29L", stock: 5484 },
-            { despacho: "FISCAL-USHOUOTUS29C", stock: 127046 },
-        ]
-    },
-    {
-        tanque: "055", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
-        despachos: [
-            { despacho: "DI25IC04008384B", stock: 67930 },
-            { despacho: "DI25IC04008428A", stock: 135175 },
+            { despacho: "DI26IC04002597C", stock: 5484 },
+            { despacho: "DI26IC04002594W", stock: 43306 },
         ]
     },
     {
         tanque: "057", producto: "GASOLINA DE AVIACION", cliente: "YPF S.A XAB052",
         despachos: [
-            { despacho: "26IC65000013N", stock: 378491 },
+            { despacho: "26IC65000013N", stock: 251711 },
         ]
     },
     {
         tanque: "058", producto: "2 ETIL HEXANOL", cliente: "ATANOR S.C.A INV: X / MILBERG",
         despachos: [
-            { despacho: "DI26IC04002552Z", stock: 110302 },
-            { despacho: "FISCAL-USHOUOTUS29C", stock: 1012 },
+            { despacho: "DI26IC04002552Z", stock: 53402 },
+            { despacho: "DI26IC04002594W", stock: 1012 },
         ]
     },
     {
@@ -249,34 +230,31 @@ const stockInicial = [
             { despacho: "FISCAL-USHOUOTUS29P", stock: 26365 },
             { despacho: "FISCAL-USHOUOTUS29Q", stock: 26365 },
             { despacho: "FISCAL-USHOUOTUS29R", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29M", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29L", stock: 20881 },
+            { despacho: "DI26IC04002597C", stock: 20881 },
         ]
     },
     {
         tanque: "067", producto: "BUTIL ACRILATO MONOMERO", cliente: "DALGAR S.A.",
         despachos: [
             { despacho: "FISCAL-USHOUOTUS-09-B", stock: 111294 },
-            { despacho: "DI26IC06000436R", stock: -20 },
-            { despacho: "DI26IC06000439U", stock: 21289 },
-            { despacho: "DI25IDA4002307X", stock: 94126 },
+            { despacho: "DI26IC06000439U", stock: 9 },
+            { despacho: "DI25IDA4002307X", stock: 13126 },
+            { despacho: "DI26TR06002038U", stock: -20 },
             { despacho: "FISCAL-USHOUOTUS-33-B", stock: 4692 },
             { despacho: "FISCAL-USHOUOTUS-33-D", stock: 228700 },
-            { despacho: "FISCAL-USHOUOTUS-33-C", stock: 27962 },
         ]
     },
     {
         tanque: "069", producto: "ARCOL F3040 (POLYOL)", cliente: "ALKANOS S.A.",
         despachos: [
-            { despacho: "DI26IC06000348T", stock: 71856 },
+            { despacho: "DI26IC06000348T", stock: 11876 },
             { despacho: "DI26IC06000484U", stock: 56000 },
-            { despacho: "DI26TRM6000097G", stock: 28000 },
         ]
     },
     {
         tanque: "071", producto: "BENZOL", cliente: "TERNIUM ARGENTINA S.",
         despachos: [
-            { despacho: "FISCAL", stock: 273159 },
+            { despacho: "FISCAL", stock: 363419 },
         ]
     },
     {
@@ -288,13 +266,13 @@ const stockInicial = [
     {
         tanque: "074", producto: "ALKONAT L10 CL", cliente: "UNILEVER DE ARGENTIN",
         despachos: [
-            { despacho: "DI26IC04002172Y", stock: 242139 },
+            { despacho: "DI26IC04002172Y", stock: 60139 },
         ]
     },
     {
         tanque: "076", producto: "DIFENILMETANO DIISOCIANATO", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "FISCAL-USXASOTUS-11-B", stock: 399734 },
+            { despacho: "DI26IC04002547U", stock: 359974 },
         ]
     },
     {
@@ -316,13 +294,13 @@ const stockInicial = [
     {
         tanque: "082", producto: "ALKONAT L10 CL", cliente: "UNILEVER DE ARGENTIN",
         despachos: [
-            { despacho: "DI26IC04002167S", stock: 234749 },
+            { despacho: "DI26IC04002167S", stock: 208749 },
         ]
     },
     {
         tanque: "083", producto: "VORANOL 3945", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
-            { despacho: "DI25ID17112025L", stock: 629620 },
+            { despacho: "DI25ID17112025L", stock: 559680 },
         ]
     },
     {
@@ -334,7 +312,7 @@ const stockInicial = [
     {
         tanque: "085", producto: "FENOL", cliente: "ATANOR S.C.A INV: X",
         despachos: [
-            { despacho: "DI26IC04002553R", stock: 1040004 },
+            { despacho: "DI26IC04002553R", stock: 901004 },
         ]
     },
     {
@@ -342,21 +320,20 @@ const stockInicial = [
         despachos: [
             { despacho: "DI26IC04002173P", stock: 411835 },
             { despacho: "DI26IDA4000458Y", stock: 78561 },
-            { despacho: "DI26TRM6000096F", stock: 28000 },
             { despacho: "DI25IDA4000161E", stock: 28000 },
-            { despacho: "DI25IC06001290P", stock: 259179 },
+            { despacho: "DI25IC06001290P", stock: 156179 },
         ]
     },
     {
         tanque: "091", producto: "ACETATO DE ETILO", cliente: "QUIMICA CALLEGARI S.",
         despachos: [
-            { despacho: "DI26IC65000628T", stock: 169651 },
+            { despacho: "DI26IC65000628T", stock: 14531 },
         ]
     },
     {
         tanque: "092", producto: "N-PROPANOL", cliente: "QUIMICA CALLEGARI S.",
         despachos: [
-            { despacho: "26IC65000014Y", stock: 315591 },
+            { despacho: "26IC65000014Y", stock: 286391 },
         ]
     },
     {
@@ -368,14 +345,13 @@ const stockInicial = [
     {
         tanque: "094", producto: "ACETONA", cliente: "QUIMICA CALLEGARI S.",
         despachos: [
-            { despacho: "26IC65000015P", stock: 270022 },
+            { despacho: "26IC65000015P", stock: 212142 },
         ]
     },
     {
         tanque: "096", producto: "BUTIL CELLOSOLVE", cliente: "PBBPOLISUR S.R.L.",
         despachos: [
             { despacho: "DI26IC04000802M", stock: 103612 },
-            { despacho: "DI26IC04001018M", stock: 9 },
         ]
     },
 ];

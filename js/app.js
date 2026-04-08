@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let stock = JSON.parse(localStorage.getItem("stockTanquesV2")) || JSON.parse(JSON.stringify(stockInicial));
-    let historial = JSON.parse(localStorage.getItem("historialSalidasV2")) || [];
+    let stock = JSON.parse(localStorage.getItem("stockTanquesV3")) || JSON.parse(JSON.stringify(stockInicial));
+    let historial = JSON.parse(localStorage.getItem("historialSalidasV3")) || [];
 
     // Estado actual del formulario
     let tanqueActual = null;
@@ -181,8 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Guardar
         historial.unshift(salida);
-        localStorage.setItem("stockTanquesV2", JSON.stringify(stock));
-        localStorage.setItem("historialSalidasV2", JSON.stringify(historial));
+        localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+        localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
 
         modal.classList.add("hidden");
         limpiarFormulario();
@@ -338,8 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         historial = historial.filter(s => s.id !== id);
-        localStorage.setItem("stockTanquesV2", JSON.stringify(stock));
-        localStorage.setItem("historialSalidasV2", JSON.stringify(historial));
+        localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+        localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
 
         renderStock();
         renderHistorial();

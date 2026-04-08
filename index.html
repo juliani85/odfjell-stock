@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Stock - Odfjell Terminals Tagsa SA</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Odfjell Terminals Tagsa SA - Campana</h1>
+            <p class="subtitle">Control de Salidas | Stock PM al 31/03/2026</p>
+        </div>
+    </header>
+
+    <main>
+        <nav class="tabs">
+            <button class="tab active" data-tab="salida">Registrar Salida</button>
+            <button class="tab" data-tab="stock">Stock por Tanque</button>
+            <button class="tab" data-tab="historial">Historial de Salidas</button>
+        </nav>
+
+        <!-- REGISTRAR SALIDA -->
+        <section id="salida" class="tab-content active">
+            <div class="form-card">
+                <h2>Registrar Salida con Remito</h2>
+
+                <!-- REMITO Y FECHA (siempre visible arriba) -->
+                <div class="remito-bar">
+                    <div class="form-group">
+                        <label for="nroRemito">N° de Remito</label>
+                        <input type="text" id="nroRemito" placeholder="Ej: R-2026-00123">
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaSalida">Fecha</label>
+                        <input type="date" id="fechaSalida">
+                    </div>
+                    <div class="form-group">
+                        <label for="transportista">Transportista</label>
+                        <input type="text" id="transportista" placeholder="Nombre (opcional)">
+                    </div>
+                </div>
+
+                <!-- PASO 1: TANQUE -->
+                <div class="paso" id="paso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Ingresá el número de tanque</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="inputTanque" placeholder="Ej: 005" maxlength="3" autofocus>
+                            <button class="btn btn-primary" id="btnBuscarTanque">Buscar</button>
+                        </div>
+                        <div id="infoTanque" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: DESPACHO -->
+                <div class="paso disabled" id="paso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Seleccioná el despacho</span>
+                    </div>
+                    <div class="paso-body">
+                        <select id="selectDespacho">
+                            <option value="">-- Primero ingresá un tanque --</option>
+                        </select>
+                        <div id="infoDespacho" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <!-- PASO 3: KILOS -->
+                <div class="paso disabled" id="paso3">
+                    <div class="paso-header">
+                        <span class="paso-num">3</span>
+                        <span class="paso-titulo">Cantidad de kilos</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="kilosSalida">Kilos a retirar</label>
+                            <input type="number" id="kilosSalida" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+
+                        <div id="alertaStock" class="alerta hidden"></div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnRegistrar" disabled>Registrar Salida</button>
+                            <button class="btn btn-secondary" id="btnLimpiar">Limpiar Todo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STOCK POR TANQUE -->
+        <section id="stock" class="tab-content">
+            <div class="stock-header">
+                <h2>Stock por Tanque y Despacho</h2>
+                <input type="text" id="filtroStock" placeholder="Buscar tanque, producto o cliente...">
+            </div>
+            <div class="resumen-cards">
+                <div class="resumen-card">
+                    <span class="resumen-numero" id="totalTanques">0</span>
+                    <span class="resumen-label">Tanques con producto</span>
+                </div>
+                <div class="resumen-card ocupados">
+                    <span class="resumen-numero" id="totalDespachos">0</span>
+                    <span class="resumen-label">Despachos activos</span>
+                </div>
+                <div class="resumen-card kilos">
+                    <span class="resumen-numero" id="totalKilos">0</span>
+                    <span class="resumen-label">Total Kg</span>
+                </div>
+            </div>
+            <div id="stockCards"></div>
+        </section>
+
+        <!-- HISTORIAL -->
+        <section id="historial" class="tab-content">
+            <div class="stock-header">
+                <h2>Historial de Salidas</h2>
+                <div class="filtros">
+                    <input type="text" id="filtroHistorial" placeholder="Buscar...">
+                    <button class="btn btn-secondary" id="btnExportar">Exportar CSV</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="tablaHistorial">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Remito</th>
+                            <th>Tanque</th>
+                            <th>Producto</th>
+                            <th>Despacho</th>
+                            <th>Kilos</th>
+                            <th>Transportista</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal confirmación -->
+    <div id="modalConfirm" class="modal hidden">
+        <div class="modal-content">
+            <h3>Confirmar Salida</h3>
+            <div id="modalBody"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnConfirmar">Confirmar</button>
+                <button class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

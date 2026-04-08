@@ -7,18 +7,45 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- LOGIN -->
+    <div id="loginScreen" class="login-overlay">
+        <div class="login-box">
+            <h2>Odfjell Terminals Tagsa SA</h2>
+            <p class="login-subtitle">Control de Stock - Campana</p>
+            <div class="form-group">
+                <label for="loginUser">Usuario</label>
+                <input type="text" id="loginUser" placeholder="Ingresá tu usuario" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="loginPass">Contraseña</label>
+                <input type="password" id="loginPass" placeholder="Contraseña">
+            </div>
+            <div id="loginError" class="login-error hidden">Usuario o contraseña incorrectos</div>
+            <button class="btn btn-primary btn-lg" id="btnLogin" style="width:100%;margin-top:1rem">Ingresar</button>
+        </div>
+    </div>
+
     <header>
         <div class="header-content">
-            <h1>Odfjell Terminals Tagsa SA - Campana</h1>
-            <p class="subtitle">Control de Salidas | Stock PM al 07/04/2026</p>
+            <div class="header-top">
+                <div>
+                    <h1>Odfjell Terminals Tagsa SA - Campana</h1>
+                    <p class="subtitle">Control de Salidas | Stock PM al 07/04/2026</p>
+                </div>
+                <div class="header-user">
+                    <span id="usuarioLogueado"></span>
+                    <button class="btn btn-secondary btn-sm" id="btnLogout">Salir</button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main>
+    <main class="hidden" id="mainApp">
         <nav class="tabs">
             <button class="tab active" data-tab="salida">Registrar Salida</button>
             <button class="tab" data-tab="stock">Stock por Tanque</button>
             <button class="tab" data-tab="historial">Historial de Salidas</button>
+            <button class="tab" data-tab="reporteDiario">Reporte del Día</button>
         </nav>
 
         <!-- REGISTRAR SALIDA -->
@@ -27,18 +54,14 @@
                 <h2>Registrar Salida con Remito</h2>
 
                 <!-- REMITO Y FECHA (siempre visible arriba) -->
-                <div class="remito-bar">
-                    <div class="form-group">
-                        <label for="nroRemito">N° de Remito</label>
-                        <input type="text" id="nroRemito" placeholder="Ej: R-2026-00123">
-                    </div>
+                <div class="remito-bar remito-bar-2col">
                     <div class="form-group">
                         <label for="fechaSalida">Fecha</label>
                         <input type="date" id="fechaSalida">
                     </div>
                     <div class="form-group">
-                        <label for="transportista">Transportista</label>
-                        <input type="text" id="transportista" placeholder="Nombre (opcional)">
+                        <label for="nroRemito">N° de Remito (últimos 4 dígitos)</label>
+                        <input type="text" id="nroRemito" placeholder="Ej: 0123" maxlength="4">
                     </div>
                 </div>
 
@@ -137,7 +160,7 @@
                             <th>Producto</th>
                             <th>Despacho</th>
                             <th>Kilos</th>
-                            <th>Transportista</th>
+                            <th>Usuario</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -145,6 +168,34 @@
                         <tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>
                     </tbody>
                 </table>
+            </div>
+        </section>
+        <!-- REPORTE DIARIO -->
+        <section id="reporteDiario" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Reporte de Salidas del Día</h2>
+                    <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+                </div>
+                <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
+                <div class="table-container">
+                    <table id="tablaReporte">
+                        <thead>
+                            <tr>
+                                <th>Remito</th>
+                                <th>Tanque</th>
+                                <th>Producto</th>
+                                <th>Despacho</th>
+                                <th>Kilos</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="6">No hay salidas hoy</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="reporte-total" id="reporteTotal"></div>
             </div>
         </section>
     </main>

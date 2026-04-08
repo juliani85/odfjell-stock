@@ -498,6 +498,73 @@ tbody tr:hover { background: var(--gray-50); }
 .modal-content strong { color: var(--gray-700); }
 .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
 
+/* Login */
+.login-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, #1e3a5f, #1a56db);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.login-box {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 360px;
+    max-width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-box h2 { font-size: 1.3rem; color: var(--gray-900); margin-bottom: 0.25rem; }
+.login-subtitle { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 1.5rem; }
+
+.login-error {
+    background: #fef2f2;
+    color: var(--danger);
+    padding: 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+/* Header user */
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+
+/* Remito bar 2 col */
+.remito-bar-2col {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Reporte total */
+.reporte-total {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #eff6ff;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: right;
+    color: var(--primary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }

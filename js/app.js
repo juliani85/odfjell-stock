@@ -1,12 +1,73 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Usuarios válidos
+const USUARIOS = {
+    cesar: "admin",
+    julian: "admin",
+    claudia: "admin"
+};
+
+let usuarioActual = null;
+
+// --- LOGIN ---
+function initLogin() {
+    const loginScreen = document.getElementById("loginScreen");
+    const mainApp = document.getElementById("mainApp");
+    const btnLogin = document.getElementById("btnLogin");
+    const loginError = document.getElementById("loginError");
+    const loginUser = document.getElementById("loginUser");
+    const loginPass = document.getElementById("loginPass");
+
+    // Verificar sesión guardada
+    const sesion = sessionStorage.getItem("usuarioStock");
+    if (sesion && USUARIOS[sesion]) {
+        usuarioActual = sesion;
+        loginScreen.classList.add("hidden");
+        mainApp.classList.remove("hidden");
+        document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
+        initApp();
+        return;
+    }
+
+    function intentarLogin() {
+        const user = loginUser.value.trim().toLowerCase();
+        const pass = loginPass.value;
+
+        if (USUARIOS[user] && USUARIOS[user] === pass) {
+            usuarioActual = user;
+            sessionStorage.setItem("usuarioStock", user);
+            loginScreen.classList.add("hidden");
+            mainApp.classList.remove("hidden");
+            document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
+            initApp();
+        } else {
+            loginError.classList.remove("hidden");
+            loginPass.value = "";
+            loginPass.focus();
+        }
+    }
+
+    btnLogin.addEventListener("click", intentarLogin);
+    loginPass.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") intentarLogin();
+    });
+    loginUser.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") loginPass.focus();
+    });
+
+    // Logout
+    document.getElementById("btnLogout").addEventListener("click", () => {
+        sessionStorage.removeItem("usuarioStock");
+        location.reload();
+    });
+}
+
+// --- APP PRINCIPAL ---
+function initApp() {
     let stock = JSON.parse(localStorage.getItem("stockTanquesV3")) || JSON.parse(JSON.stringify(stockInicial));
     let historial = JSON.parse(localStorage.getItem("historialSalidasV3")) || [];
 
-    // Estado actual del formulario
     let tanqueActual = null;
     let despachoActual = null;
 
-    // DOM
     const inputTanque = document.getElementById("inputTanque");
     const btnBuscar = document.getElementById("btnBuscarTanque");
     const infoTanque = document.getElementById("infoTanque");
@@ -15,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const kilosInput = document.getElementById("kilosSalida");
     const remitoInput = document.getElementById("nroRemito");
     const fechaInput = document.getElementById("fechaSalida");
-    const transportistaInput = document.getElementById("transportista");
     const alerta = document.getElementById("alertaStock");
     const btnRegistrar = document.getElementById("btnRegistrar");
     const btnLimpiar = document.getElementById("btnLimpiar");
@@ -35,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
             tab.classList.add("active");
             document.getElementById(tab.dataset.tab).classList.add("active");
+            if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
         });
     });
 
@@ -47,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!tanque) {
             infoTanque.className = "info-box not-found";
-            infoTanque.innerHTML = `<strong>Tanque ${num} no encontrado o est\u00e1 vac\u00edo.</strong>`;
+            infoTanque.innerHTML = `<strong>Tanque ${num} no encontrado o está vacío.</strong>`;
             infoTanque.classList.remove("hidden");
             desactivarPaso(2);
             desactivarPaso(3);
@@ -68,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         infoTanque.classList.remove("hidden");
         tanqueActual = tanque;
 
-        // Activar paso 2
         paso1.className = "paso done";
         activarPaso(2);
         poblarDespachos(tanque);
@@ -81,12 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- PASO 2: SELECCIONAR DESPACHO ---
     function poblarDespachos(tanque) {
-        selectDespacho.innerHTML = '<option value="">-- Seleccion\u00e1 un despacho --</option>';
+        selectDespacho.innerHTML = '<option value="">-- Seleccioná un despacho --</option>';
         tanque.despachos.forEach((d, i) => {
             if (d.stock <= 0) return;
             const opt = document.createElement("option");
             opt.value = i;
-            opt.textContent = `${d.despacho}  \u2014  ${formatKg(d.stock)} kg`;
+            opt.textContent = `${d.despacho}  —  ${formatKg(d.stock)} kg`;
             selectDespacho.appendChild(opt);
         });
     }
@@ -112,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         infoDespacho.classList.remove("hidden");
 
-        // Activar paso 3
         paso2.className = "paso done";
         activarPaso(3);
         kilosInput.focus();
@@ -142,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const kilos = parseInt(kilosInput.value) || 0;
         const remito = remitoInput.value.trim();
 
-        if (kilos <= 0) { mostrarAlerta("Ingres\u00e1 una cantidad v\u00e1lida.", "error"); return; }
+        if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
         const restante = despachoActual.stock - kilos;
@@ -152,9 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>Producto:</strong> ${tanqueActual.producto}</p>
             <p><strong>Cliente:</strong> ${tanqueActual.cliente}</p>
             <p><strong>Despacho:</strong> <code>${despachoActual.despacho}</code></p>
-            <p><strong>Remito:</strong> ${remito}</p>
+            <p><strong>Remito:</strong> ${remito || "Sin remito"}</p>
             <p><strong>Kilos a retirar:</strong> ${formatKg(kilos)} kg</p>
             <p><strong>Stock restante despacho:</strong> ${formatKg(restante)} kg</p>
+            <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
         `;
         modal.classList.remove("hidden");
     });
@@ -172,14 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
             cliente: tanqueActual.cliente,
             despacho: despachoActual.despacho,
             kilos: kilos,
-            transportista: transportistaInput.value.trim(),
+            usuario: usuarioActual,
         };
 
-        // Descontar
         despachoActual.stock -= kilos;
         const restante = despachoActual.stock;
 
-        // Guardar
         historial.unshift(salida);
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
@@ -189,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderStock();
         renderHistorial();
 
-        mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante en despacho: ${formatKg(restante)} kg`, "success");
+        mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante)} kg`, "success");
         paso1.className = "paso active";
     });
 
@@ -205,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
         despachoActual = null;
         inputTanque.value = "";
         infoTanque.classList.add("hidden");
-        selectDespacho.innerHTML = '<option value="">-- Primero ingres\u00e1 un tanque --</option>';
+        selectDespacho.innerHTML = '<option value="">-- Primero ingresá un tanque --</option>';
         infoDespacho.classList.add("hidden");
         kilosInput.value = "";
         ocultarAlerta();
@@ -222,9 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const paso = document.getElementById("paso" + n);
         paso.classList.remove("disabled");
         paso.classList.add("active");
-        if (n === 3) {
-            kilosInput.disabled = false;
-        }
+        if (n === 3) kilosInput.disabled = false;
     }
 
     function desactivarPaso(n) {
@@ -298,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const datos = historial.filter(s => {
             if (!filtro) return true;
-            return s.remito.toLowerCase().includes(filtroLower) ||
+            return (s.remito || "").toLowerCase().includes(filtroLower) ||
                    s.producto.toLowerCase().includes(filtroLower) ||
                    s.tanque.includes(filtroLower) ||
                    s.despacho.toLowerCase().includes(filtroLower);
@@ -311,12 +367,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tbody.innerHTML = datos.map(s => `<tr>
             <td>${s.fecha}</td>
-            <td><strong>${s.remito}</strong></td>
+            <td><strong>${s.remito || "-"}</strong></td>
             <td><strong>TK ${s.tanque}</strong></td>
             <td>${s.producto}</td>
             <td><code>${s.despacho}</code></td>
             <td><strong>${formatKg(s.kilos)} kg</strong></td>
-            <td>${s.transportista || '-'}</td>
+            <td>${(s.usuario || "-").toUpperCase()}</td>
             <td><button class="btn btn-danger" onclick="anularSalida(${s.id})">Anular</button></td>
         </tr>`).join("");
     }
@@ -329,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.anularSalida = function(id) {
         const salida = historial.find(s => s.id === id);
         if (!salida) return;
-        if (!confirm(`Anular remito ${salida.remito}?\nSe devuelven ${formatKg(salida.kilos)} kg al despacho ${salida.despacho} del TK ${salida.tanque}.`)) return;
+        if (!confirm(`Anular remito ${salida.remito || "sin remito"}?\nSe devuelven ${formatKg(salida.kilos)} kg al despacho ${salida.despacho} del TK ${salida.tanque}.`)) return;
 
         const tanque = stock.find(t => t.tanque === salida.tanque);
         if (tanque) {
@@ -345,11 +401,87 @@ document.addEventListener("DOMContentLoaded", () => {
         renderHistorial();
     };
 
+    // --- REPORTE DIARIO ---
+    function renderReporteDiario() {
+        const hoy = new Date().toISOString().slice(0, 10);
+        const salidasHoy = historial.filter(s => s.fecha === hoy);
+
+        document.getElementById("reporteFecha").textContent = `Fecha: ${hoy.split("-").reverse().join("/")}`;
+
+        const tbody = document.querySelector("#tablaReporte tbody");
+
+        if (salidasHoy.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay salidas hoy</td></tr>';
+            document.getElementById("reporteTotal").textContent = "";
+            return;
+        }
+
+        let totalKilos = 0;
+        tbody.innerHTML = salidasHoy.map(s => {
+            totalKilos += s.kilos;
+            return `<tr>
+                <td><strong>${s.remito || "-"}</strong></td>
+                <td><strong>TK ${s.tanque}</strong></td>
+                <td>${s.producto}</td>
+                <td><code>${s.despacho}</code></td>
+                <td><strong>${formatKg(s.kilos)} kg</strong></td>
+                <td>${(s.usuario || "-").toUpperCase()}</td>
+            </tr>`;
+        }).join("");
+
+        document.getElementById("reporteTotal").textContent = `Total del día: ${formatKg(totalKilos)} kg  |  ${salidasHoy.length} salida(s)`;
+    }
+
+    // --- IMPRIMIR REPORTE ---
+    document.getElementById("btnImprimirReporte").addEventListener("click", () => {
+        const hoy = new Date().toISOString().slice(0, 10);
+        const salidasHoy = historial.filter(s => s.fecha === hoy);
+
+        if (salidasHoy.length === 0) { alert("No hay salidas hoy para imprimir."); return; }
+
+        let totalKilos = 0;
+        let filas = salidasHoy.map(s => {
+            totalKilos += s.kilos;
+            return `<tr>
+                <td>${s.remito || "-"}</td>
+                <td>TK ${s.tanque}</td>
+                <td>${s.producto}</td>
+                <td>${s.despacho}</td>
+                <td style="text-align:right">${formatKg(s.kilos)} kg</td>
+                <td>${(s.usuario || "-").toUpperCase()}</td>
+            </tr>`;
+        }).join("");
+
+        const html = `<!DOCTYPE html><html><head><title>Reporte Diario</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 2rem; }
+            h2 { margin-bottom: 0.25rem; }
+            p { color: #666; margin-bottom: 1rem; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; font-size: 0.9rem; }
+            th { background: #f0f0f0; text-align: left; }
+            .total { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; text-align: right; }
+        </style></head><body>
+        <h2>Odfjell Terminals Tagsa SA - Campana</h2>
+        <p>Reporte de Salidas del ${hoy.split("-").reverse().join("/")}</p>
+        <table>
+            <thead><tr><th>Remito</th><th>Tanque</th><th>Producto</th><th>Despacho</th><th>Kilos</th><th>Usuario</th></tr></thead>
+            <tbody>${filas}</tbody>
+        </table>
+        <div class="total">Total: ${formatKg(totalKilos)} kg — ${salidasHoy.length} salida(s)</div>
+        </body></html>`;
+
+        const win = window.open("", "_blank");
+        win.document.write(html);
+        win.document.close();
+        win.print();
+    });
+
     // --- EXPORTAR CSV ---
     document.getElementById("btnExportar").addEventListener("click", () => {
         if (historial.length === 0) { alert("No hay datos."); return; }
-        const headers = ["Fecha", "Remito", "Tanque", "Producto", "Despacho", "Kilos", "Transportista"];
-        const rows = historial.map(s => [s.fecha, s.remito, `TK ${s.tanque}`, s.producto, s.despacho, s.kilos, s.transportista]);
+        const headers = ["Fecha", "Remito", "Tanque", "Producto", "Despacho", "Kilos", "Usuario"];
+        const rows = historial.map(s => [s.fecha, s.remito, `TK ${s.tanque}`, s.producto, s.despacho, s.kilos, s.usuario]);
         let csv = headers.join(";") + "\n";
         rows.forEach(r => { csv += r.map(v => `"${v || ''}"`).join(";") + "\n"; });
         const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
@@ -369,4 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderStock();
     renderHistorial();
     inputTanque.focus();
-});
+}
+
+// Arrancar login al cargar
+document.addEventListener("DOMContentLoaded", initLogin);

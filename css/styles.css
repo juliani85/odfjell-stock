@@ -429,6 +429,11 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
 
 .stock-card.open .stock-card-despachos { display: block; }
 
+.hist-tanque-card { cursor: pointer; transition: transform 0.1s ease; }
+.hist-tanque-card:hover { transform: translateX(2px); }
+.hist-tanque-card .stock-card-total { color: var(--primary); font-size: 0.95rem; }
+#histTanqueDetalleView .stock-header { gap: 1rem; }
+
 .despacho-row {
     display: flex;
     justify-content: space-between;

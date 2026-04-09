@@ -216,6 +216,10 @@ async function initApp() {
             document.getElementById(tab.dataset.tab).classList.add("active");
             if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
             if (tab.dataset.tab === "salidasViewer") renderViewer();
+            if (tab.dataset.tab === "historialTanque") {
+                volverListaHistTanque();
+                renderHistTanqueLista();
+            }
         });
     });
 
@@ -283,10 +287,12 @@ async function initApp() {
         const desp = tanqueActual.despachos[parseInt(idx)];
         despachoActual = desp;
 
+        const clienteDesp = desp.cliente || tanqueActual.cliente;
         infoDespacho.className = "info-box found";
         infoDespacho.innerHTML = `
             <div class="info-grid">
                 <div><span class="info-label">Despacho</span><br><span class="info-value" style="font-family:monospace">${desp.despacho}</span></div>
+                <div><span class="info-label">Cliente</span><br><span class="info-value">${clienteDesp}</span></div>
                 <div><span class="info-label">Stock Disponible</span><br><span class="info-value" style="font-size:1.3rem;color:var(--primary)">${formatKg(desp.stock)} kg</span></div>
             </div>
         `;
@@ -326,11 +332,12 @@ async function initApp() {
 
         const restante = despachoActual.stock - kilos;
 
+        const clienteSalida = despachoActual.cliente || tanqueActual.cliente;
         document.getElementById("modalTitulo").textContent = "Confirmar Salida";
         modalBody.innerHTML = `
             <p><strong>Tanque:</strong> TK ${tanqueActual.tanque}</p>
             <p><strong>Producto:</strong> ${tanqueActual.producto}</p>
-            <p><strong>Cliente:</strong> ${tanqueActual.cliente}</p>
+            <p><strong>Cliente:</strong> ${clienteSalida}</p>
             <p><strong>Despacho:</strong> <code>${despachoActual.despacho}</code></p>
             <p><strong>Remito:</strong> ${remito || "Sin remito"}</p>
             <p><strong>Kilos a retirar:</strong> ${formatKg(kilos)} kg</p>
@@ -347,7 +354,7 @@ async function initApp() {
                 remito: remitoInput.value.trim(),
                 tanque: tanqueActual.tanque,
                 producto: tanqueActual.producto,
-                cliente: tanqueActual.cliente,
+                cliente: clienteSalida,
                 despacho: despachoActual.despacho,
                 kilos: kilos,
                 usuario: usuarioActual,
@@ -1182,6 +1189,115 @@ async function initApp() {
             }
         }, 30000);
     }
+
+    // --- HISTORIAL POR TANQUE ---
+    function renderHistTanqueLista(filtro = "") {
+        const container = document.getElementById("histTanqueCards");
+        const filtroLower = filtro.toLowerCase();
+
+        // Unir tanques del stock + tanques que aparecen sólo en historial
+        const mapa = new Map();
+        stock.forEach(t => {
+            mapa.set(t.tanque, {
+                tanque: t.tanque,
+                producto: t.producto,
+                cliente: t.cliente,
+                stockTotal: t.despachos.reduce((s, d) => s + d.stock, 0),
+            });
+        });
+        historial.forEach(h => {
+            if (!mapa.has(h.tanque)) {
+                mapa.set(h.tanque, {
+                    tanque: h.tanque,
+                    producto: h.producto || "—",
+                    cliente: h.cliente || "—",
+                    stockTotal: 0,
+                });
+            }
+        });
+
+        const lista = Array.from(mapa.values())
+            .filter(t => {
+                if (!filtro) return true;
+                return t.tanque.includes(filtroLower) ||
+                       (t.producto || "").toLowerCase().includes(filtroLower) ||
+                       (t.cliente || "").toLowerCase().includes(filtroLower);
+            })
+            .sort((a, b) => a.tanque.localeCompare(b.tanque));
+
+        if (lista.length === 0) {
+            container.innerHTML = '<p style="padding:1rem;color:var(--gray-500)">No hay tanques para mostrar.</p>';
+            return;
+        }
+
+        container.innerHTML = lista.map(t => {
+            const movs = historial.filter(h => h.tanque === t.tanque).length;
+            return `<div class="stock-card hist-tanque-card" data-tanque="${t.tanque}">
+                <div class="stock-card-header">
+                    <div class="stock-card-left">
+                        <span class="stock-card-tanque">TK ${t.tanque}</span>
+                        <div>
+                            <div class="stock-card-producto">${t.producto}</div>
+                            <div class="stock-card-cliente">${t.cliente}</div>
+                        </div>
+                    </div>
+                    <span class="stock-card-total">${movs} mov.</span>
+                </div>
+            </div>`;
+        }).join("");
+
+        container.querySelectorAll(".hist-tanque-card").forEach(card => {
+            card.addEventListener("click", () => {
+                renderHistTanqueDetalle(card.dataset.tanque);
+            });
+        });
+    }
+
+    function renderHistTanqueDetalle(numTanque) {
+        const movs = historial
+            .filter(h => h.tanque === numTanque)
+            .slice()
+            .sort((a, b) => {
+                const fa = `${a.fecha} ${a.hora || ""}`;
+                const fb = `${b.fecha} ${b.hora || ""}`;
+                return fb.localeCompare(fa);
+            });
+
+        document.getElementById("histTanqueListaView").classList.add("hidden");
+        document.getElementById("histTanqueDetalleView").classList.remove("hidden");
+        document.getElementById("histTanqueDetalleTitulo").textContent = `Movimientos del TK ${numTanque}`;
+
+        const tbody = document.querySelector("#tablaHistTanque tbody");
+        if (movs.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No hay movimientos para este tanque.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = movs.map(s => {
+            const tipo = s.tipo || "SALIDA";
+            const tipoClass = tipo === "INGRESO" ? "tipo-ingreso" : tipo === "TRANSFERENCIA" ? "tipo-transferencia" : "tipo-salida";
+            return `<tr>
+                <td>${s.fecha}</td>
+                <td>${s.hora || "-"}</td>
+                <td><span class="tipo-badge ${tipoClass}">${tipo}</span></td>
+                <td><strong>${s.remito || "-"}</strong></td>
+                <td>${s.producto || "-"}</td>
+                <td><code>${s.despacho || "-"}</code></td>
+                <td><strong>${formatKg(s.kilos)} kg</strong></td>
+                <td>${(s.usuario || "-").toUpperCase()}</td>
+            </tr>`;
+        }).join("");
+    }
+
+    function volverListaHistTanque() {
+        document.getElementById("histTanqueDetalleView").classList.add("hidden");
+        document.getElementById("histTanqueListaView").classList.remove("hidden");
+    }
+
+    document.getElementById("btnVolverHistTanque").addEventListener("click", volverListaHistTanque);
+    document.getElementById("filtroHistTanque").addEventListener("input", (e) => {
+        renderHistTanqueLista(e.target.value);
+    });
 
     // --- HELPERS ---
     function formatKg(n) { return n.toLocaleString("es-AR"); }

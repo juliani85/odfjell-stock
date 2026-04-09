@@ -50,6 +50,7 @@
             <button class="tab" data-tab="transferencia" data-rol="admin">Transferencia</button>
             <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
+            <button class="tab" data-tab="historialTanque" data-rol="admin">Historial por Tanque</button>
             <button class="tab" data-tab="reporteDiario" data-rol="admin">Reporte del Día</button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
@@ -303,6 +304,40 @@
                 </table>
             </div>
         </section>
+        <!-- HISTORIAL POR TANQUE -->
+        <section id="historialTanque" class="tab-content">
+            <div id="histTanqueListaView">
+                <div class="stock-header">
+                    <h2>Historial por Tanque</h2>
+                    <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
+                </div>
+                <div id="histTanqueCards"></div>
+            </div>
+            <div id="histTanqueDetalleView" class="hidden">
+                <div class="stock-header">
+                    <button class="btn btn-secondary" id="btnVolverHistTanque">← Volver</button>
+                    <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                </div>
+                <div class="table-container">
+                    <table id="tablaHistTanque">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Tipo</th>
+                                <th>Remito</th>
+                                <th>Producto</th>
+                                <th>Despacho</th>
+                                <th>Kilos</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <!-- REPORTE DIARIO -->
         <section id="reporteDiario" class="tab-content">
             <div class="form-card">

@@ -3,10 +3,10 @@ const stockInicial = [
     {
         tanque: "005", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "DI26IC06000418R", stock: -4 },
-            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 1194 },
-            { despacho: "DI25IC04008428A", stock: 95085 },
-            { despacho: "DI25IC04009472A", stock: 199789 },
+            { despacho: "DI26IC06000418R", stock: -4, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 1194, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "DI25IC04008428A", stock: 95085, cliente: "FAST-CHEMICAL S.R.L" },
+            { despacho: "DI25IC04009472A", stock: 199789, cliente: "FAST-CHEMICAL S.R.L" },
         ]
     },
     {
@@ -71,8 +71,8 @@ const stockInicial = [
     {
         tanque: "024", producto: "BUTIL ACRILATO MONOMERO", cliente: "DALGAR S.A.",
         despachos: [
-            { despacho: "DI26IC04002561Z", stock: 83846 },
-            { despacho: "FISCAL-USHOUOTUS-33-B", stock: 131364 },
+            { despacho: "DI26IC04002561Z", stock: 83846, cliente: "CRILEN S.A" },
+            { despacho: "FISCAL-USHOUOTUS-33-B", stock: 131364, cliente: "DIRANSA SRL" },
         ]
     },
     {
@@ -133,12 +133,12 @@ const stockInicial = [
     {
         tanque: "036", producto: "MONOETILENGLICOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 18553 },
-            { despacho: "DI26IC04001041X", stock: 82937 },
-            { despacho: "DI26TRM6000107V", stock: 26963 },
-            { despacho: "DI26IC06000407P", stock: 438 },
-            { despacho: "FISCAL-ZZZZZOTUS22Y", stock: 26963 },
-            { despacho: "FISCAL-ZZZZZOTUS22Z", stock: 26963 },
+            { despacho: "FISCAL-ZZZZZOTUS36Y", stock: 18553, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "DI26IC04001041X", stock: 82937, cliente: "TOTAL ESPECIALIDADES" },
+            { despacho: "DI26TRM6000107V", stock: 26963, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "DI26IC06000407P", stock: 438, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-ZZZZZOTUS22Y", stock: 26963, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-ZZZZZOTUS22Z", stock: 26963, cliente: "MILBERG Y ASOCIADOS" },
         ]
     },
     {
@@ -183,15 +183,15 @@ const stockInicial = [
     {
         tanque: "054", producto: "2 ETIL HEXANOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "DI26IC04002644S", stock: 210717 },
-            { despacho: "DI26IC04002657W", stock: -15 },
-            { despacho: "DI26IC04002656V", stock: 5 },
-            { despacho: "DI26IC04002654T", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29I", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29J", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29K", stock: 26365 },
-            { despacho: "DI26IC04002597C", stock: 5484 },
-            { despacho: "DI26IC04002594W", stock: 43306 },
+            { despacho: "DI26IC04002644S", stock: 210717, cliente: "CHEMOTECNICA S.A." },
+            { despacho: "DI26IC04002657W", stock: -15, cliente: "SIGMA AGRO S.A." },
+            { despacho: "DI26IC04002656V", stock: 5, cliente: "SIGMA AGRO S.A." },
+            { despacho: "DI26IC04002654T", stock: 26365, cliente: "SIGMA AGRO S.A." },
+            { despacho: "FISCAL-USHOUOTUS29I", stock: 26365, cliente: "SINER SA" },
+            { despacho: "FISCAL-USHOUOTUS29J", stock: 26365, cliente: "SINER SA" },
+            { despacho: "FISCAL-USHOUOTUS29K", stock: 26365, cliente: "SINER SA" },
+            { despacho: "DI26IC04002597C", stock: 5484, cliente: "TRAPALCO S.A." },
+            { despacho: "DI26IC04002594W", stock: 43306, cliente: "VARTECO QUIMICA PUNT" },
         ]
     },
     {
@@ -203,8 +203,8 @@ const stockInicial = [
     {
         tanque: "058", producto: "2 ETIL HEXANOL", cliente: "ATANOR S.C.A INV: X / MILBERG",
         despachos: [
-            { despacho: "DI26IC04002552Z", stock: 53402 },
-            { despacho: "DI26IC04002594W", stock: 1012 },
+            { despacho: "DI26IC04002552Z", stock: 53402, cliente: "ATANOR S.C.A INV: X" },
+            { despacho: "DI26IC04002594W", stock: 1012, cliente: "VARTECO QUIMICA PUNT" },
         ]
     },
     {
@@ -217,31 +217,31 @@ const stockInicial = [
     {
         tanque: "063", producto: "2 ETIL HEXANOL", cliente: "MILBERG Y ASOCIADOS",
         despachos: [
-            { despacho: "FISCAL-USHOUOTUS43S-1", stock: 26621 },
-            { despacho: "FISCAL-USHOUOTUS43S-2", stock: 26621 },
-            { despacho: "FISCAL-USHOUOTUS43S-3", stock: 26621 },
-            { despacho: "DI25IC04008358C", stock: 712 },
-            { despacho: "FISCAL-USHOUOTUS29S", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29T", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29U", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29V", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29N", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29O", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29P", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29Q", stock: 26365 },
-            { despacho: "FISCAL-USHOUOTUS29R", stock: 26365 },
-            { despacho: "DI26IC04002597C", stock: 20881 },
+            { despacho: "FISCAL-USHOUOTUS43S-1", stock: 26621, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-USHOUOTUS43S-2", stock: 26621, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-USHOUOTUS43S-3", stock: 26621, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "DI25IC04008358C", stock: 712, cliente: "MILBERG Y ASOCIADOS" },
+            { despacho: "FISCAL-USHOUOTUS29S", stock: 26365, cliente: "AGROFACIL S.A." },
+            { despacho: "FISCAL-USHOUOTUS29T", stock: 26365, cliente: "AGROFACIL S.A." },
+            { despacho: "FISCAL-USHOUOTUS29U", stock: 26365, cliente: "AGROFACIL S.A." },
+            { despacho: "FISCAL-USHOUOTUS29V", stock: 26365, cliente: "AGROFACIL S.A." },
+            { despacho: "FISCAL-USHOUOTUS29N", stock: 26365, cliente: "MINERA EXAR S.A." },
+            { despacho: "FISCAL-USHOUOTUS29O", stock: 26365, cliente: "MINERA EXAR S.A." },
+            { despacho: "FISCAL-USHOUOTUS29P", stock: 26365, cliente: "MINERA EXAR S.A." },
+            { despacho: "FISCAL-USHOUOTUS29Q", stock: 26365, cliente: "MINERA EXAR S.A." },
+            { despacho: "FISCAL-USHOUOTUS29R", stock: 26365, cliente: "MINERA EXAR S.A." },
+            { despacho: "DI26IC04002597C", stock: 20881, cliente: "TRAPALCO S.A." },
         ]
     },
     {
         tanque: "067", producto: "BUTIL ACRILATO MONOMERO", cliente: "DALGAR S.A.",
         despachos: [
-            { despacho: "FISCAL-USHOUOTUS-09-B", stock: 111294 },
-            { despacho: "DI26IC06000439U", stock: 9 },
-            { despacho: "DI25IDA4002307X", stock: 13126 },
-            { despacho: "DI26TR06002038U", stock: -20 },
-            { despacho: "FISCAL-USHOUOTUS-33-B", stock: 4692 },
-            { despacho: "FISCAL-USHOUOTUS-33-D", stock: 228700 },
+            { despacho: "FISCAL-USHOUOTUS-09-B", stock: 111294, cliente: "DIRANSA SRL" },
+            { despacho: "DI26IC06000439U", stock: 9, cliente: "DIRANSA SRL" },
+            { despacho: "DI25IDA4002307X", stock: 13126, cliente: "DALGAR S.A." },
+            { despacho: "DI26TR06002038U", stock: -20, cliente: "DALGAR S.A." },
+            { despacho: "FISCAL-USHOUOTUS-33-B", stock: 4692, cliente: "DIRANSA SRL" },
+            { despacho: "FISCAL-USHOUOTUS-33-D", stock: 228700, cliente: "DALGAR S.A." },
         ]
     },
     {

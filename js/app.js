@@ -311,6 +311,14 @@ async function initApp() {
         kilosInput.focus();
     });
 
+    // Enter en kilos = registrar salida (abre modal)
+    kilosInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !btnRegistrar.disabled) {
+            e.preventDefault();
+            btnRegistrar.click();
+        }
+    });
+
     // --- PASO 3: VALIDAR KILOS ---
     kilosInput.addEventListener("input", () => {
         if (!despachoActual) return;
@@ -403,6 +411,7 @@ async function initApp() {
         };
 
         modal.classList.remove("hidden");
+        setTimeout(() => document.getElementById("btnConfirmar").focus(), 0);
     });
 
     document.getElementById("btnCancelar").addEventListener("click", () => {

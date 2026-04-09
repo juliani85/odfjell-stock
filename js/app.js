@@ -968,8 +968,10 @@ function initApp() {
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
     function ocultarAlerta() { alerta.className = "alerta hidden"; }
 
-    // --- BACKUP DIARIO POR EMAIL ---
+    // --- BACKUP DIARIO (solo usuario julian) ---
     function backupDiario() {
+        if (usuarioActual !== "julian") return;
+
         const hoy = new Date().toISOString().slice(0, 10);
         const ultimoBackup = localStorage.getItem("ultimoBackup");
         if (ultimoBackup === hoy) return;
@@ -981,16 +983,23 @@ function initApp() {
             historial: historial
         };
 
+        const json = JSON.stringify(datos, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `stock-backup-${hoy}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+
+        // Notificación por email
         emailjs.init("pd0hJmvlHZwTKNJ-5");
         emailjs.send("service_00pgeet", "template_6jetpji", {
             to_email: "cam.el.juli@gmail.com",
             fecha: hoy,
-            backup_data: JSON.stringify(datos)
-        })
-        .then(() => {
-            localStorage.setItem("ultimoBackup", hoy);
-        })
-        .catch(() => {});
+            backup_data: "Backup descargado correctamente. Archivo: stock-backup-" + hoy + ".json"
+        }).catch(() => {});
+
+        localStorage.setItem("ultimoBackup", hoy);
     }
 
     backupDiario();

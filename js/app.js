@@ -22,9 +22,13 @@ const GH = {
     get token() { return atob(this._p.join("")); },
     repo: "juliani85/odfjell-stock",
     file: "datos.json",
+    fileVistas: "vistas.json",
     sha: null,
+    shaVistas: null,
     _timer: null,
     _pendiente: null,
+    _timerVistas: null,
+    _pendienteVistas: null,
 
     async cargar() {
         try {
@@ -86,6 +90,69 @@ const GH = {
             if (res.ok) {
                 const data = await res.json();
                 this.sha = data.content.sha;
+            }
+        } catch (e) {}
+    },
+
+    async cargarVistas() {
+        try {
+            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
+                headers: { Authorization: `token ${this.token}` }
+            });
+            if (!res.ok) return null;
+            const data = await res.json();
+            this.shaVistas = data.sha;
+            const contenido = JSON.parse(atob(data.content));
+            return contenido.vistas || [];
+        } catch (e) {
+            return null;
+        }
+    },
+
+    guardarVistas(vistas) {
+        this._pendienteVistas = vistas;
+        if (this._timerVistas) clearTimeout(this._timerVistas);
+        this._timerVistas = setTimeout(() => this._enviarVistas(), 1500);
+    },
+
+    async _enviarVistas() {
+        if (!this._pendienteVistas) return;
+        const vistas = this._pendienteVistas;
+        this._pendienteVistas = null;
+
+        // Refrescar sha
+        try {
+            const r = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
+                headers: { Authorization: `token ${this.token}` }
+            });
+            if (r.ok) {
+                const d = await r.json();
+                this.shaVistas = d.sha;
+            } else if (r.status === 404) {
+                this.shaVistas = null;
+            }
+        } catch (e) {}
+
+        const datos = { vistas, actualizado: new Date().toISOString() };
+        const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
+        try {
+            const body = {
+                message: `Actualizar vistas ${new Date().toISOString().slice(0, 16)}`,
+                content: contenido
+            };
+            if (this.shaVistas) body.sha = this.shaVistas;
+
+            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `token ${this.token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                this.shaVistas = data.content.sha;
             }
         } catch (e) {}
     }
@@ -1206,15 +1273,22 @@ async function initApp() {
     });
 
     // --- VISTA UMA ---
+    let vistasCache = JSON.parse(localStorage.getItem("vistasUma") || "[]");
+
     function getVistas() {
-        return JSON.parse(localStorage.getItem("vistasUma") || "[]");
+        return vistasCache;
+    }
+
+    function setVistas(arr) {
+        vistasCache = arr;
+        localStorage.setItem("vistasUma", JSON.stringify(arr));
     }
 
     function marcarVista(id) {
-        const vistas = getVistas();
-        if (!vistas.includes(id)) {
-            vistas.push(id);
-            localStorage.setItem("vistasUma", JSON.stringify(vistas));
+        if (!vistasCache.includes(id)) {
+            vistasCache.push(id);
+            setVistas(vistasCache);
+            GH.guardarVistas(vistasCache);
         }
         actualizarBadgeNuevas();
     }
@@ -1286,19 +1360,30 @@ async function initApp() {
         filtroViewer.addEventListener("input", (e) => renderViewer(e.target.value));
     }
 
-    // Si es viewer, render inicial y polling cada 30s para detectar nuevas salidas
+    // Mergear vistas locales con las de GitHub (unión)
+    async function sincronizarVistasDesdeGH() {
+        const remotas = await GH.cargarVistas();
+        if (!remotas) return;
+        const merged = Array.from(new Set([...vistasCache, ...remotas]));
+        setVistas(merged);
+    }
+
+    // Si es viewer, sincronizar vistas, render inicial y polling cada 30s
     if (rolActual === "viewer") {
-        renderViewer();
-        actualizarBadgeNuevas();
+        sincronizarVistasDesdeGH().then(() => {
+            renderViewer();
+            actualizarBadgeNuevas();
+        });
         setInterval(async () => {
             const ghData = await GH.cargar();
             if (ghData && ghData.historial) {
                 historial = ghData.historial;
-                renderViewer(document.getElementById("filtroViewer").value || "");
-                actualizarBadgeNuevas();
-                if (document.getElementById("reporteDiario").classList.contains("active")) {
-                    renderReporteDiario();
-                }
+            }
+            await sincronizarVistasDesdeGH();
+            renderViewer(document.getElementById("filtroViewer").value || "");
+            actualizarBadgeNuevas();
+            if (document.getElementById("reporteDiario").classList.contains("active")) {
+                renderReporteDiario();
             }
         }, 30000);
     }

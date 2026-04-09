@@ -14,6 +14,8 @@ const GH = {
     repo: "juliani85/odfjell-stock",
     file: "datos.json",
     sha: null,
+    _timer: null,
+    _pendiente: null,
 
     async cargar() {
         try {
@@ -30,7 +32,31 @@ const GH = {
         }
     },
 
-    async guardar(stock, historial) {
+    async refrescarSha() {
+        try {
+            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
+                headers: { Authorization: `token ${this.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                this.sha = data.sha;
+            }
+        } catch (e) {}
+    },
+
+    guardar(stock, historial) {
+        this._pendiente = { stock, historial };
+        if (this._timer) clearTimeout(this._timer);
+        this._timer = setTimeout(() => this._enviar(), 2000);
+    },
+
+    async _enviar() {
+        if (!this._pendiente) return;
+        const { stock, historial } = this._pendiente;
+        this._pendiente = null;
+
+        await this.refrescarSha();
+
         const datos = { stock, historial, actualizado: new Date().toISOString() };
         const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
         try {
@@ -57,7 +83,7 @@ const GH = {
 };
 
 // --- LOGIN ---
-function initLogin() {
+async function initLogin() {
     const loginScreen = document.getElementById("loginScreen");
     const mainApp = document.getElementById("mainApp");
     const btnLogin = document.getElementById("btnLogin");
@@ -69,24 +95,27 @@ function initLogin() {
     const sesion = sessionStorage.getItem("usuarioStock");
     if (sesion && USUARIOS[sesion]) {
         usuarioActual = sesion;
+        loginScreen.querySelector(".login-box").innerHTML = '<h2>Cargando datos...</h2><p class="login-subtitle">Conectando con el servidor</p>';
+        document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
+        await initApp();
         loginScreen.classList.add("hidden");
         mainApp.classList.remove("hidden");
-        document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
-        initApp();
         return;
     }
 
-    function intentarLogin() {
+    async function intentarLogin() {
         const user = loginUser.value.trim().toLowerCase();
         const pass = loginPass.value;
 
         if (USUARIOS[user] && USUARIOS[user] === pass) {
             usuarioActual = user;
             sessionStorage.setItem("usuarioStock", user);
+            btnLogin.textContent = "Cargando datos...";
+            btnLogin.disabled = true;
+            document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
+            await initApp();
             loginScreen.classList.add("hidden");
             mainApp.classList.remove("hidden");
-            document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
-            initApp();
         } else {
             loginError.classList.remove("hidden");
             loginPass.value = "";
@@ -1029,33 +1058,6 @@ async function initApp() {
     function formatKg(n) { return n.toLocaleString("es-AR"); }
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
     function ocultarAlerta() { alerta.className = "alerta hidden"; }
-
-    // --- BACKUP DIARIO POR EMAIL ---
-    function backupDiario() {
-        const hoy = new Date().toISOString().slice(0, 10);
-        const ultimoBackup = localStorage.getItem("ultimoBackup");
-        if (ultimoBackup === hoy) return;
-
-        const datos = {
-            fecha: hoy,
-            guardado: new Date().toISOString(),
-            stock: stock,
-            historial: historial
-        };
-
-        emailjs.init("pd0hJmvlHZwTKNJ-5");
-        emailjs.send("service_00pgeet", "template_6jetpji", {
-            to_email: "cam.el.juli@gmail.com",
-            fecha: hoy,
-            backup_data: JSON.stringify(datos)
-        })
-        .then(() => {
-            localStorage.setItem("ultimoBackup", hoy);
-        })
-        .catch(() => {});
-    }
-
-    backupDiario();
 
     // --- INIT ---
     paso1.classList.add("active");

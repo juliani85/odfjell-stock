@@ -67,7 +67,6 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
 /* Barra remito */
 .remito-bar {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
@@ -220,7 +219,8 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
 }
 
 /* Select despacho */
-#selectDespacho {
+#selectDespacho,
+#trfSelectDespacho {
     width: 100%;
     padding: 0.7rem;
     border: 2px solid var(--gray-300);
@@ -229,7 +229,8 @@ main { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
     background: white;
 }
 
-#selectDespacho:focus {
+#selectDespacho:focus,
+#trfSelectDespacho:focus {
     outline: none;
     border-color: var(--primary);
 }
@@ -601,13 +602,20 @@ tbody tr:hover { background: var(--gray-50); }
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }
+    .header-top { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+    .header-left { gap: 0.75rem; }
+    .header-content h1 { font-size: 1.1rem; }
+    .logo-arca { height: 30px; }
+    .remito-bar, .remito-bar-2col { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
     .resumen-cards { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .tabs { overflow-x: auto; }
-    .tab { white-space: nowrap; padding: 0.6rem 1rem; font-size: 0.85rem; }
+    .tab { white-space: nowrap; padding: 0.6rem 0.8rem; font-size: 0.8rem; }
     .stock-header { flex-direction: column; align-items: flex-start; }
     .stock-header input, .filtros input { width: 100%; }
     .stock-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     .despacho-row { padding-left: 1.2rem; }
+    .form-actions { flex-direction: column; }
+    .form-actions .btn { width: 100%; text-align: center; }
 }

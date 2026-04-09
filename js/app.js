@@ -968,6 +968,26 @@ function initApp() {
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
     function ocultarAlerta() { alerta.className = "alerta hidden"; }
 
+    // --- BACKUP DIARIO AUTOMATICO ---
+    function backupDiario() {
+        const hoy = new Date().toISOString().slice(0, 10);
+        const ultimoBackup = localStorage.getItem("ultimoBackup");
+        if (ultimoBackup === hoy) return;
+
+        fetch("/api/backup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stock, historial, fecha: hoy })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) localStorage.setItem("ultimoBackup", hoy);
+        })
+        .catch(() => {});
+    }
+
+    backupDiario();
+
     // --- INIT ---
     paso1.classList.add("active");
     renderStock();

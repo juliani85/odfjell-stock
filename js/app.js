@@ -103,21 +103,21 @@ const GH = {
             const data = await res.json();
             this.shaVistas = data.sha;
             const contenido = JSON.parse(atob(data.content));
-            return contenido.vistas || [];
+            return { vistas: contenido.vistas || [], sim: contenido.sim || {} };
         } catch (e) {
             return null;
         }
     },
 
-    guardarVistas(vistas) {
-        this._pendienteVistas = vistas;
+    guardarVistas(vistas, sim) {
+        this._pendienteVistas = { vistas, sim };
         if (this._timerVistas) clearTimeout(this._timerVistas);
         this._timerVistas = setTimeout(() => this._enviarVistas(), 1500);
     },
 
     async _enviarVistas() {
         if (!this._pendienteVistas) return;
-        const vistas = this._pendienteVistas;
+        const { vistas, sim } = this._pendienteVistas;
         this._pendienteVistas = null;
 
         // Refrescar sha
@@ -133,7 +133,7 @@ const GH = {
             }
         } catch (e) {}
 
-        const datos = { vistas, actualizado: new Date().toISOString() };
+        const datos = { vistas, sim, actualizado: new Date().toISOString() };
         const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
         try {
             const body = {
@@ -1274,9 +1274,14 @@ async function initApp() {
 
     // --- VISTA UMA ---
     let vistasCache = JSON.parse(localStorage.getItem("vistasUma") || "[]");
+    let simCache = JSON.parse(localStorage.getItem("simUma") || "{}");
 
     function getVistas() {
         return vistasCache;
+    }
+
+    function getSim() {
+        return simCache;
     }
 
     function setVistas(arr) {
@@ -1284,12 +1289,28 @@ async function initApp() {
         localStorage.setItem("vistasUma", JSON.stringify(arr));
     }
 
+    function setSim(obj) {
+        simCache = obj;
+        localStorage.setItem("simUma", JSON.stringify(obj));
+    }
+
     function marcarVista(id) {
         if (!vistasCache.includes(id)) {
             vistasCache.push(id);
             setVistas(vistasCache);
-            GH.guardarVistas(vistasCache);
+            GH.guardarVistas(vistasCache, simCache);
         }
+        actualizarBadgeNuevas();
+    }
+
+    function guardarSimSalida(id, numeroSim) {
+        simCache[id] = numeroSim;
+        setSim(simCache);
+        if (!vistasCache.includes(id)) {
+            vistasCache.push(id);
+            setVistas(vistasCache);
+        }
+        GH.guardarVistas(vistasCache, simCache);
         actualizarBadgeNuevas();
     }
 
@@ -1314,6 +1335,7 @@ async function initApp() {
         if (!tbody) return;
         const filtroLower = filtro.toLowerCase();
         const vistas = getVistas();
+        const sims = getSim();
 
         const salidas = historial
             .filter(s => (s.tipo || "SALIDA") === "SALIDA")
@@ -1327,12 +1349,13 @@ async function initApp() {
             });
 
         if (salidas.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay salidas registradas</td></tr>';
             return;
         }
 
         tbody.innerHTML = salidas.map(s => {
             const esNueva = !vistas.includes(s.id);
+            const sim = sims[s.id] || "";
             return `<tr class="${esNueva ? 'fila-nueva' : ''}" data-id="${s.id}">
                 <td>${esNueva ? '<span class="circulo-nuevo"></span>' : ''}</td>
                 <td>${s.fecha}</td>
@@ -1342,17 +1365,49 @@ async function initApp() {
                 <td>${s.producto}</td>
                 <td><code>${s.despacho}</code></td>
                 <td><strong>${formatKg(s.kilos)} kg</strong></td>
+                <td>${sim ? `<strong>${sim}</strong>` : '-'}</td>
             </tr>`;
         }).join("");
 
-        // Listener para marcar como vista al clickear
+        // Listener para marcar como vista / cargar SIM
         tbody.querySelectorAll("tr[data-id]").forEach(tr => {
             tr.addEventListener("click", () => {
                 const id = parseInt(tr.dataset.id);
-                marcarVista(id);
-                renderViewer(document.getElementById("filtroViewer").value || "");
+                if (tr.classList.contains("fila-nueva")) {
+                    pedirSimSalida(id);
+                }
             });
         });
+    }
+
+    function pedirSimSalida(id) {
+        abrirModal(
+            "Cargar Salida SIM",
+            `<p>Ingresá el número de salida SIM:</p>
+             <input type="text" id="inputSimSalida" style="width:100%;padding:0.6rem;font-size:1.1rem;border:1px solid var(--gray-300);border-radius:6px;margin-top:0.5rem" autocomplete="off">`,
+            () => {
+                const input = document.getElementById("inputSimSalida");
+                const valor = (input?.value || "").trim();
+                if (!valor) return;
+                guardarSimSalida(id, valor);
+                modal.classList.add("hidden");
+                document.getElementById("btnConfirmar").textContent = "Confirmar";
+                renderViewer(document.getElementById("filtroViewer").value || "");
+            },
+            "Guardar"
+        );
+        setTimeout(() => {
+            const input = document.getElementById("inputSimSalida");
+            if (input) {
+                input.focus();
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        document.getElementById("btnConfirmar").click();
+                    }
+                });
+            }
+        }, 50);
     }
 
     const filtroViewer = document.getElementById("filtroViewer");
@@ -1360,12 +1415,15 @@ async function initApp() {
         filtroViewer.addEventListener("input", (e) => renderViewer(e.target.value));
     }
 
-    // Mergear vistas locales con las de GitHub (unión)
+    // Mergear vistas y SIM locales con las de GitHub (unión)
     async function sincronizarVistasDesdeGH() {
-        const remotas = await GH.cargarVistas();
-        if (!remotas) return;
-        const merged = Array.from(new Set([...vistasCache, ...remotas]));
-        setVistas(merged);
+        const remoto = await GH.cargarVistas();
+        if (!remoto) return;
+        const mergedVistas = Array.from(new Set([...vistasCache, ...(remoto.vistas || [])]));
+        setVistas(mergedVistas);
+        // Para sim, lo local pisa lo remoto solo si tiene valor (lo más nuevo gana via polling)
+        const mergedSim = { ...(remoto.sim || {}), ...simCache };
+        setSim(mergedSim);
     }
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s

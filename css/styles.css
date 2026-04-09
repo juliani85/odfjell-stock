@@ -544,6 +544,18 @@ tbody tr:hover { background: var(--gray-50); }
     align-items: center;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.logo-arca {
+    height: 40px;
+    width: auto;
+    opacity: 0.9;
+}
+
 .header-user {
     display: flex;
     align-items: center;

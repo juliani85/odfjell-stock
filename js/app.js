@@ -263,6 +263,14 @@ async function initApp() {
         if (e.key === "Enter") { e.preventDefault(); buscarTanque(); }
     });
 
+    // Auto-saltar al tanque cuando se completan los 4 dígitos del remito
+    remitoInput.addEventListener("input", () => {
+        if (remitoInput.value.trim().length === 4) {
+            inputTanque.focus();
+            inputTanque.select();
+        }
+    });
+
     // --- PASO 2: SELECCIONAR DESPACHO ---
     function poblarDespachos(tanque) {
         selectDespacho.innerHTML = '<option value="">-- Seleccioná un despacho --</option>';
@@ -388,6 +396,10 @@ async function initApp() {
 
             mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg`, "success");
             paso1.className = "paso active";
+
+            // Listo para cargar el siguiente remito
+            remitoInput.value = "";
+            remitoInput.focus();
         };
 
         modal.classList.remove("hidden");

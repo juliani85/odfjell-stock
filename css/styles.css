@@ -599,6 +599,38 @@ tbody tr:hover { background: var(--gray-50); }
 .tipo-ingreso { background: #f0fdf4; color: #16a34a; }
 .tipo-transferencia { background: #eff6ff; color: #1a56db; }
 
+/* Círculo nuevo (UMA) */
+.circulo-nuevo {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px rgba(22, 163, 74, 0.6);
+    animation: pulso 1.5s ease-in-out infinite;
+}
+
+@keyframes pulso {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.fila-nueva { background: #f0fdf4 !important; cursor: pointer; }
+.fila-nueva:hover { background: #dcfce7 !important; }
+
+.badge-nuevas {
+    display: inline-block;
+    background: var(--success);
+    color: white;
+    border-radius: 10px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 0.4rem;
+    min-width: 20px;
+    text-align: center;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }

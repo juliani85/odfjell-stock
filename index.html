@@ -45,12 +45,13 @@
 
     <main class="hidden" id="mainApp">
         <nav class="tabs">
-            <button class="tab active" data-tab="salida">Registrar Salida</button>
-            <button class="tab" data-tab="ingreso">Ingreso a Depósito</button>
-            <button class="tab" data-tab="transferencia">Transferencia</button>
-            <button class="tab" data-tab="stock">Stock por Tanque</button>
-            <button class="tab" data-tab="historial">Historial</button>
-            <button class="tab" data-tab="reporteDiario">Reporte del Día</button>
+            <button class="tab active" data-tab="salida" data-rol="admin">Registrar Salida</button>
+            <button class="tab" data-tab="ingreso" data-rol="admin">Ingreso a Depósito</button>
+            <button class="tab" data-tab="transferencia" data-rol="admin">Transferencia</button>
+            <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
+            <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
+            <button class="tab" data-tab="reporteDiario" data-rol="admin">Reporte del Día</button>
+            <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
         <!-- REGISTRAR SALIDA -->
@@ -327,6 +328,33 @@
                     </table>
                 </div>
                 <div class="reporte-total" id="reporteTotal"></div>
+            </div>
+        </section>
+        <!-- VISTA UMA: SALIDAS -->
+        <section id="salidasViewer" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Salidas Registradas</h2>
+                    <input type="text" id="filtroViewer" placeholder="Buscar...">
+                </div>
+                <div class="table-container">
+                    <table id="tablaViewer">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Fecha</th>
+                                <th>Remito</th>
+                                <th>Tanque</th>
+                                <th>Producto</th>
+                                <th>Despacho</th>
+                                <th>Kilos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="7">No hay salidas registradas</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>

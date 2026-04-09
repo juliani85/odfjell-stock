@@ -2,7 +2,16 @@
 const USUARIOS = {
     cesar: "admin",
     julian: "admin",
-    claudia: "admin"
+    claudia: "admin",
+    uma: "user"
+};
+
+// Rol: admin (operadores) o viewer (solo ve salidas)
+const ROLES = {
+    cesar: "admin",
+    julian: "admin",
+    claudia: "admin",
+    uma: "viewer"
 };
 
 let usuarioActual = null;
@@ -183,6 +192,21 @@ async function initApp() {
 
     fechaInput.valueAsDate = new Date();
 
+    // --- ROL Y VISIBILIDAD DE PESTAÑAS ---
+    const rolActual = ROLES[usuarioActual] || "admin";
+    document.querySelectorAll(".tab").forEach(tab => {
+        const rolReq = tab.dataset.rol;
+        if (rolReq === "admin" && rolActual !== "admin") {
+            tab.classList.add("hidden");
+            tab.classList.remove("active");
+        } else if (rolReq === "viewer" && rolActual === "viewer") {
+            tab.classList.remove("hidden");
+            tab.classList.add("active");
+            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
+            document.getElementById("salidasViewer").classList.add("active");
+        }
+    });
+
     // --- TABS ---
     document.querySelectorAll(".tab").forEach(tab => {
         tab.addEventListener("click", () => {
@@ -191,6 +215,7 @@ async function initApp() {
             tab.classList.add("active");
             document.getElementById(tab.dataset.tab).classList.add("active");
             if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
+            if (tab.dataset.tab === "salidasViewer") renderViewer();
         });
     });
 
@@ -1053,6 +1078,97 @@ async function initApp() {
         a.download = `salidas_${new Date().toISOString().slice(0, 10)}.csv`;
         a.click();
     });
+
+    // --- VISTA UMA ---
+    function getVistas() {
+        return JSON.parse(localStorage.getItem("vistasUma") || "[]");
+    }
+
+    function marcarVista(id) {
+        const vistas = getVistas();
+        if (!vistas.includes(id)) {
+            vistas.push(id);
+            localStorage.setItem("vistasUma", JSON.stringify(vistas));
+        }
+        actualizarBadgeNuevas();
+    }
+
+    function actualizarBadgeNuevas() {
+        const badge = document.getElementById("badgeNuevas");
+        if (!badge) return;
+        const salidas = historial.filter(s => (s.tipo || "SALIDA") === "SALIDA");
+        const vistas = getVistas();
+        const nuevas = salidas.filter(s => !vistas.includes(s.id)).length;
+        if (nuevas > 0) {
+            badge.textContent = nuevas;
+            badge.classList.remove("hidden");
+        } else {
+            badge.classList.add("hidden");
+        }
+    }
+
+    function renderViewer(filtro = "") {
+        const tbody = document.querySelector("#tablaViewer tbody");
+        if (!tbody) return;
+        const filtroLower = filtro.toLowerCase();
+        const vistas = getVistas();
+
+        const salidas = historial
+            .filter(s => (s.tipo || "SALIDA") === "SALIDA")
+            .filter(s => {
+                if (!filtro) return true;
+                return (s.remito || "").toLowerCase().includes(filtroLower) ||
+                       s.producto.toLowerCase().includes(filtroLower) ||
+                       s.tanque.includes(filtroLower) ||
+                       s.despacho.toLowerCase().includes(filtroLower);
+            });
+
+        if (salidas.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay salidas registradas</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = salidas.map(s => {
+            const esNueva = !vistas.includes(s.id);
+            return `<tr class="${esNueva ? 'fila-nueva' : ''}" data-id="${s.id}">
+                <td>${esNueva ? '<span class="circulo-nuevo"></span>' : ''}</td>
+                <td>${s.fecha}</td>
+                <td><strong>${s.remito || "-"}</strong></td>
+                <td><strong>TK ${s.tanque}</strong></td>
+                <td>${s.producto}</td>
+                <td><code>${s.despacho}</code></td>
+                <td><strong>${formatKg(s.kilos)} kg</strong></td>
+            </tr>`;
+        }).join("");
+
+        // Listener para marcar como vista al clickear
+        tbody.querySelectorAll("tr[data-id]").forEach(tr => {
+            tr.addEventListener("click", () => {
+                const id = parseInt(tr.dataset.id);
+                marcarVista(id);
+                renderViewer(document.getElementById("filtroViewer").value || "");
+            });
+        });
+    }
+
+    const filtroViewer = document.getElementById("filtroViewer");
+    if (filtroViewer) {
+        filtroViewer.addEventListener("input", (e) => renderViewer(e.target.value));
+    }
+
+    // Si es viewer, render inicial y polling cada 30s para detectar nuevas salidas
+    if (rolActual === "viewer") {
+        renderViewer();
+        actualizarBadgeNuevas();
+        setInterval(async () => {
+            const ghData = await GH.cargar();
+            if (ghData && ghData.historial) {
+                historial = ghData.historial;
+                renderViewer(document.getElementById("filtroViewer").value || "");
+                actualizarBadgeNuevas();
+            }
+        }, 30000);
+    }
 
     // --- HELPERS ---
     function formatKg(n) { return n.toLocaleString("es-AR"); }

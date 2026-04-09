@@ -330,6 +330,21 @@ async function initApp() {
         if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
+        // Validar remito duplicado en la misma fecha
+        if (remito) {
+            const duplicados = historial.filter(s => {
+                const tipo = s.tipo || "SALIDA";
+                return tipo === "SALIDA" &&
+                       s.fecha === fechaInput.value &&
+                       (s.remito || "").trim() === remito;
+            });
+            if (duplicados.length > 0) {
+                const detalle = duplicados.map(d => `• TK ${d.tanque} - ${formatKg(d.kilos)} kg (${d.hora || "-"})`).join("\n");
+                const seguir = confirm(`El remito ${remito} ya fue cargado hoy:\n\n${detalle}\n\n¿Querés continuar de todos modos?`);
+                if (!seguir) return;
+            }
+        }
+
         const restante = despachoActual.stock - kilos;
 
         const clienteSalida = despachoActual.cliente || tanqueActual.cliente;

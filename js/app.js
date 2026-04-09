@@ -206,6 +206,7 @@ function initApp() {
 
         const restante = despachoActual.stock - kilos;
 
+        document.getElementById("modalTitulo").textContent = "Confirmar Salida";
         modalBody.innerHTML = `
             <p><strong>Tanque:</strong> TK ${tanqueActual.tanque}</p>
             <p><strong>Producto:</strong> ${tanqueActual.producto}</p>
@@ -216,39 +217,37 @@ function initApp() {
             <p><strong>Stock restante despacho:</strong> ${formatKg(restante)} kg</p>
             <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
         `;
-        modal.classList.remove("hidden");
-    });
 
-    // --- CONFIRMAR ---
-    document.getElementById("btnConfirmar").addEventListener("click", () => {
-        const kilos = parseInt(kilosInput.value) || 0;
+        window._confirmarAccion = () => {
+            const salida = {
+                id: Date.now(),
+                fecha: fechaInput.value,
+                remito: remitoInput.value.trim(),
+                tanque: tanqueActual.tanque,
+                producto: tanqueActual.producto,
+                cliente: tanqueActual.cliente,
+                despacho: despachoActual.despacho,
+                kilos: kilos,
+                usuario: usuarioActual,
+            };
 
-        const salida = {
-            id: Date.now(),
-            fecha: fechaInput.value,
-            remito: remitoInput.value.trim(),
-            tanque: tanqueActual.tanque,
-            producto: tanqueActual.producto,
-            cliente: tanqueActual.cliente,
-            despacho: despachoActual.despacho,
-            kilos: kilos,
-            usuario: usuarioActual,
+            despachoActual.stock -= kilos;
+            const restante2 = despachoActual.stock;
+
+            historial.unshift(salida);
+            localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+            localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+
+            modal.classList.add("hidden");
+            limpiarFormulario();
+            renderStock();
+            renderHistorial();
+
+            mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg`, "success");
+            paso1.className = "paso active";
         };
 
-        despachoActual.stock -= kilos;
-        const restante = despachoActual.stock;
-
-        historial.unshift(salida);
-        localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
-        localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
-
-        modal.classList.add("hidden");
-        limpiarFormulario();
-        renderStock();
-        renderHistorial();
-
-        mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante)} kg`, "success");
-        paso1.className = "paso active";
+        modal.classList.remove("hidden");
     });
 
     document.getElementById("btnCancelar").addEventListener("click", () => {
@@ -361,12 +360,16 @@ function initApp() {
         });
 
         if (datos.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay movimientos registrados</td></tr>';
             return;
         }
 
-        tbody.innerHTML = datos.map(s => `<tr>
+        tbody.innerHTML = datos.map(s => {
+            const tipo = s.tipo || "SALIDA";
+            const tipoClass = tipo === "INGRESO" ? "tipo-ingreso" : tipo === "TRANSFERENCIA" ? "tipo-transferencia" : "tipo-salida";
+            return `<tr>
             <td>${s.fecha}</td>
+            <td><span class="tipo-badge ${tipoClass}">${tipo}</span></td>
             <td><strong>${s.remito || "-"}</strong></td>
             <td><strong>TK ${s.tanque}</strong></td>
             <td>${s.producto}</td>
@@ -374,7 +377,8 @@ function initApp() {
             <td><strong>${formatKg(s.kilos)} kg</strong></td>
             <td>${(s.usuario || "-").toUpperCase()}</td>
             <td><button class="btn btn-danger" onclick="anularSalida(${s.id})">Anular</button></td>
-        </tr>`).join("");
+        </tr>`;
+        }).join("");
     }
 
     document.getElementById("filtroHistorial").addEventListener("input", (e) => {
@@ -475,6 +479,476 @@ function initApp() {
         win.document.write(html);
         win.document.close();
         win.print();
+    });
+
+    // =============================================
+    // INGRESO A DEPOSITO
+    // =============================================
+    let ingTanqueActual = null;
+    let ingEsVacio = false;
+
+    const ingInputTanque = document.getElementById("ingInputTanque");
+    const ingInfoTanque = document.getElementById("ingInfoTanque");
+    const ingProductoNuevo = document.getElementById("ingProductoNuevo");
+    const ingSelectProducto = document.getElementById("ingSelectProducto");
+    const ingClienteNuevo = document.getElementById("ingClienteNuevo");
+    const ingProductoOtro = document.getElementById("ingProductoOtro");
+    const ingNuevoProducto = document.getElementById("ingNuevoProducto");
+    const ingDespacho = document.getElementById("ingDespacho");
+    const ingKilos = document.getElementById("ingKilos");
+    const ingAlerta = document.getElementById("ingAlerta");
+    const ingPaso1 = document.getElementById("ingPaso1");
+    const ingPaso2 = document.getElementById("ingPaso2");
+
+    function getProductosUnicos() {
+        const set = new Set();
+        stock.forEach(t => set.add(t.producto));
+        return [...set].sort();
+    }
+
+    function poblarProductos() {
+        ingSelectProducto.innerHTML = '<option value="">-- Seleccioná un producto --</option>';
+        getProductosUnicos().forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            ingSelectProducto.appendChild(opt);
+        });
+        const optNuevo = document.createElement("option");
+        optNuevo.value = "__NUEVO__";
+        optNuevo.textContent = "+ Agregar producto nuevo";
+        ingSelectProducto.appendChild(optNuevo);
+    }
+
+    ingSelectProducto.addEventListener("change", () => {
+        if (ingSelectProducto.value === "__NUEVO__") {
+            ingProductoOtro.classList.remove("hidden");
+            ingNuevoProducto.focus();
+        } else {
+            ingProductoOtro.classList.add("hidden");
+        }
+    });
+
+    function ingBuscarTanque() {
+        const num = ingInputTanque.value.trim().padStart(3, "0");
+        ingInputTanque.value = num;
+
+        const tanque = stock.find(t => t.tanque === num);
+        const totalStock = tanque ? tanque.despachos.reduce((s, d) => s + d.stock, 0) : 0;
+
+        if (tanque && totalStock > 0) {
+            ingEsVacio = false;
+            ingTanqueActual = tanque;
+            ingInfoTanque.className = "info-box found";
+            ingInfoTanque.innerHTML = `
+                <div class="info-grid">
+                    <div><span class="info-label">Producto</span><br><span class="info-value">${tanque.producto}</span></div>
+                    <div><span class="info-label">Cliente</span><br><span class="info-value">${tanque.cliente}</span></div>
+                    <div><span class="info-label">Stock Actual</span><br><span class="info-value">${formatKg(totalStock)} kg</span></div>
+                </div>
+            `;
+            ingInfoTanque.classList.remove("hidden");
+            ingProductoNuevo.classList.add("hidden");
+            ingPaso1.className = "paso done";
+            ingPaso2.classList.remove("disabled");
+            ingPaso2.classList.add("active");
+            ingKilos.disabled = false;
+            ingDespacho.focus();
+        } else {
+            ingEsVacio = true;
+            ingTanqueActual = tanque || { tanque: num, producto: "", cliente: "", despachos: [] };
+            ingInfoTanque.className = "info-box warning-box";
+            ingInfoTanque.innerHTML = `<strong>Tanque ${num} vacío.</strong> Seleccioná el producto a ingresar.`;
+            ingInfoTanque.classList.remove("hidden");
+            poblarProductos();
+            ingProductoNuevo.classList.remove("hidden");
+            ingPaso1.className = "paso active";
+            ingPaso2.classList.add("disabled");
+            ingPaso2.classList.remove("active");
+            ingKilos.disabled = true;
+        }
+    }
+
+    document.getElementById("btnIngBuscar").addEventListener("click", ingBuscarTanque);
+    ingInputTanque.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); ingBuscarTanque(); }
+    });
+
+    // Cuando elige producto en tanque vacío, habilitar paso 2
+    ingSelectProducto.addEventListener("change", function() {
+        if (this.value && this.value !== "__NUEVO__" && ingClienteNuevo.value.trim()) {
+            habilitarIngPaso2();
+        } else if (this.value === "__NUEVO__") {
+            ingProductoOtro.classList.remove("hidden");
+        }
+    });
+
+    ingClienteNuevo.addEventListener("input", () => {
+        const prodOk = ingSelectProducto.value && (ingSelectProducto.value !== "__NUEVO__" || ingNuevoProducto.value.trim());
+        if (prodOk && ingClienteNuevo.value.trim()) habilitarIngPaso2();
+    });
+
+    ingNuevoProducto.addEventListener("input", () => {
+        if (ingNuevoProducto.value.trim() && ingClienteNuevo.value.trim()) habilitarIngPaso2();
+    });
+
+    function habilitarIngPaso2() {
+        ingPaso1.className = "paso done";
+        ingPaso2.classList.remove("disabled");
+        ingPaso2.classList.add("active");
+        ingKilos.disabled = false;
+        ingDespacho.focus();
+    }
+
+    // Validar ingreso
+    ingDespacho.addEventListener("input", validarIngreso);
+    ingKilos.addEventListener("input", validarIngreso);
+
+    function validarIngreso() {
+        const desp = ingDespacho.value.trim();
+        const kilos = parseInt(ingKilos.value) || 0;
+        document.getElementById("btnIngRegistrar").disabled = !(desp && kilos > 0);
+    }
+
+    // Registrar ingreso
+    document.getElementById("btnIngRegistrar").addEventListener("click", () => {
+        const desp = ingDespacho.value.trim();
+        const kilos = parseInt(ingKilos.value) || 0;
+        if (!desp || kilos <= 0) return;
+
+        let producto = ingTanqueActual.producto;
+        let cliente = ingTanqueActual.cliente;
+
+        if (ingEsVacio) {
+            producto = ingSelectProducto.value === "__NUEVO__" ? ingNuevoProducto.value.trim().toUpperCase() : ingSelectProducto.value;
+            cliente = ingClienteNuevo.value.trim().toUpperCase();
+            if (!producto || !cliente) {
+                ingAlerta.textContent = "Completá producto y cliente.";
+                ingAlerta.className = "alerta error";
+                return;
+            }
+        }
+
+        document.getElementById("modalTitulo").textContent = "Confirmar Ingreso";
+        modalBody.innerHTML = `
+            <p><strong>Tanque:</strong> TK ${ingTanqueActual.tanque}</p>
+            <p><strong>Producto:</strong> ${producto}</p>
+            <p><strong>Cliente:</strong> ${cliente}</p>
+            <p><strong>Despacho:</strong> <code>${desp}</code></p>
+            <p><strong>Kilos a ingresar:</strong> ${formatKg(kilos)} kg</p>
+            <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
+        `;
+
+        // Guardar callback de confirmación
+        window._confirmarAccion = () => {
+            let tanque = stock.find(t => t.tanque === ingTanqueActual.tanque);
+            if (!tanque) {
+                tanque = { tanque: ingTanqueActual.tanque, producto: producto, cliente: cliente, despachos: [] };
+                stock.push(tanque);
+            }
+            if (ingEsVacio) {
+                tanque.producto = producto;
+                tanque.cliente = cliente;
+            }
+
+            const despExistente = tanque.despachos.find(d => d.despacho === desp);
+            if (despExistente) {
+                despExistente.stock += kilos;
+            } else {
+                tanque.despachos.push({ despacho: desp, stock: kilos });
+            }
+
+            historial.unshift({
+                id: Date.now(),
+                fecha: new Date().toISOString().slice(0, 10),
+                tipo: "INGRESO",
+                tanque: tanque.tanque,
+                producto: producto,
+                cliente: cliente,
+                despacho: desp,
+                kilos: kilos,
+                usuario: usuarioActual,
+            });
+
+            localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+            localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+
+            modal.classList.add("hidden");
+            ingLimpiar();
+            renderStock();
+            renderHistorial();
+            ingAlerta.textContent = `Ingreso registrado: ${formatKg(kilos)} kg al TK ${tanque.tanque} - Despacho ${desp}`;
+            ingAlerta.className = "alerta success";
+        };
+
+        modal.classList.remove("hidden");
+    });
+
+    document.getElementById("btnIngLimpiar").addEventListener("click", ingLimpiar);
+
+    function ingLimpiar() {
+        ingTanqueActual = null;
+        ingEsVacio = false;
+        ingInputTanque.value = "";
+        ingInfoTanque.classList.add("hidden");
+        ingProductoNuevo.classList.add("hidden");
+        ingProductoOtro.classList.add("hidden");
+        ingDespacho.value = "";
+        ingKilos.value = "";
+        ingKilos.disabled = true;
+        ingAlerta.className = "alerta hidden";
+        document.getElementById("btnIngRegistrar").disabled = true;
+        ingPaso1.className = "paso active";
+        ingPaso2.className = "paso disabled";
+        ingInputTanque.focus();
+    }
+
+    // =============================================
+    // TRANSFERENCIA DE TANQUE
+    // =============================================
+    let trfOrigenTanque = null;
+    let trfOrigenDespacho = null;
+
+    const trfInputOrigen = document.getElementById("trfInputOrigen");
+    const trfInfoOrigen = document.getElementById("trfInfoOrigen");
+    const trfSelectDespacho = document.getElementById("trfSelectDespacho");
+    const trfInfoDespacho = document.getElementById("trfInfoDespacho");
+    const trfInputDestino = document.getElementById("trfInputDestino");
+    const trfInfoDestino = document.getElementById("trfInfoDestino");
+    const trfKilos = document.getElementById("trfKilos");
+    const trfAlerta = document.getElementById("trfAlerta");
+    const trfPaso1 = document.getElementById("trfPaso1");
+    const trfPaso2 = document.getElementById("trfPaso2");
+    const trfPaso3 = document.getElementById("trfPaso3");
+
+    function trfBuscarOrigen() {
+        const num = trfInputOrigen.value.trim().padStart(3, "0");
+        trfInputOrigen.value = num;
+
+        const tanque = stock.find(t => t.tanque === num);
+        const totalStock = tanque ? tanque.despachos.reduce((s, d) => s + d.stock, 0) : 0;
+
+        if (!tanque || totalStock <= 0) {
+            trfInfoOrigen.className = "info-box not-found";
+            trfInfoOrigen.innerHTML = `<strong>Tanque ${num} no encontrado o vacío.</strong>`;
+            trfInfoOrigen.classList.remove("hidden");
+            trfOrigenTanque = null;
+            trfPaso2.className = "paso disabled";
+            trfPaso3.className = "paso disabled";
+            return;
+        }
+
+        trfOrigenTanque = tanque;
+        trfInfoOrigen.className = "info-box found";
+        trfInfoOrigen.innerHTML = `
+            <div class="info-grid">
+                <div><span class="info-label">Producto</span><br><span class="info-value">${tanque.producto}</span></div>
+                <div><span class="info-label">Cliente</span><br><span class="info-value">${tanque.cliente}</span></div>
+                <div><span class="info-label">Stock Total</span><br><span class="info-value">${formatKg(totalStock)} kg</span></div>
+            </div>
+        `;
+        trfInfoOrigen.classList.remove("hidden");
+        trfPaso1.className = "paso done";
+        trfPaso2.classList.remove("disabled");
+        trfPaso2.classList.add("active");
+
+        // Poblar despachos origen
+        trfSelectDespacho.innerHTML = '<option value="">-- Seleccioná un despacho --</option>';
+        tanque.despachos.forEach((d, i) => {
+            if (d.stock <= 0) return;
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = `${d.despacho}  —  ${formatKg(d.stock)} kg`;
+            trfSelectDespacho.appendChild(opt);
+        });
+    }
+
+    document.getElementById("btnTrfBuscarOrigen").addEventListener("click", trfBuscarOrigen);
+    trfInputOrigen.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); trfBuscarOrigen(); }
+    });
+
+    trfSelectDespacho.addEventListener("change", () => {
+        const idx = trfSelectDespacho.value;
+        if (idx === "" || !trfOrigenTanque) {
+            trfInfoDespacho.classList.add("hidden");
+            trfPaso3.className = "paso disabled";
+            trfOrigenDespacho = null;
+            return;
+        }
+
+        trfOrigenDespacho = trfOrigenTanque.despachos[parseInt(idx)];
+        trfInfoDespacho.className = "info-box found";
+        trfInfoDespacho.innerHTML = `
+            <div class="info-grid">
+                <div><span class="info-label">Despacho</span><br><span class="info-value" style="font-family:monospace">${trfOrigenDespacho.despacho}</span></div>
+                <div><span class="info-label">Stock Disponible</span><br><span class="info-value" style="font-size:1.3rem;color:var(--primary)">${formatKg(trfOrigenDespacho.stock)} kg</span></div>
+            </div>
+        `;
+        trfInfoDespacho.classList.remove("hidden");
+        trfPaso2.className = "paso done";
+        trfPaso3.classList.remove("disabled");
+        trfPaso3.classList.add("active");
+        trfInputDestino.disabled = false;
+        document.getElementById("btnTrfBuscarDestino").disabled = false;
+        trfKilos.disabled = false;
+        trfInputDestino.focus();
+    });
+
+    let trfDestinoTanque = null;
+
+    function trfBuscarDestino() {
+        const num = trfInputDestino.value.trim().padStart(3, "0");
+        trfInputDestino.value = num;
+
+        if (num === trfOrigenTanque.tanque) {
+            trfInfoDestino.className = "info-box not-found";
+            trfInfoDestino.innerHTML = `<strong>El destino no puede ser igual al origen.</strong>`;
+            trfInfoDestino.classList.remove("hidden");
+            trfDestinoTanque = null;
+            return;
+        }
+
+        const tanque = stock.find(t => t.tanque === num);
+        const totalStock = tanque ? tanque.despachos.reduce((s, d) => s + d.stock, 0) : 0;
+
+        if (tanque && totalStock > 0 && tanque.producto !== trfOrigenTanque.producto) {
+            trfInfoDestino.className = "info-box not-found";
+            trfInfoDestino.innerHTML = `<strong>El tanque ${num} contiene ${tanque.producto}. No se puede mezclar con ${trfOrigenTanque.producto}.</strong>`;
+            trfInfoDestino.classList.remove("hidden");
+            trfDestinoTanque = null;
+            return;
+        }
+
+        trfDestinoTanque = tanque || { tanque: num, producto: trfOrigenTanque.producto, cliente: trfOrigenTanque.cliente, despachos: [] };
+
+        if (tanque && totalStock > 0) {
+            trfInfoDestino.className = "info-box found";
+            trfInfoDestino.innerHTML = `
+                <div class="info-grid">
+                    <div><span class="info-label">Producto</span><br><span class="info-value">${tanque.producto}</span></div>
+                    <div><span class="info-label">Stock Actual</span><br><span class="info-value">${formatKg(totalStock)} kg</span></div>
+                </div>
+            `;
+        } else {
+            trfInfoDestino.className = "info-box warning-box";
+            trfInfoDestino.innerHTML = `<strong>Tanque ${num} vacío.</strong> Recibirá ${trfOrigenTanque.producto}.`;
+        }
+        trfInfoDestino.classList.remove("hidden");
+    }
+
+    document.getElementById("btnTrfBuscarDestino").addEventListener("click", trfBuscarDestino);
+    trfInputDestino.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); trfBuscarDestino(); }
+    });
+
+    trfKilos.addEventListener("input", () => {
+        if (!trfOrigenDespacho) return;
+        const kilos = parseInt(trfKilos.value) || 0;
+        if (kilos > trfOrigenDespacho.stock) {
+            trfAlerta.textContent = `Stock insuficiente. Disponible: ${formatKg(trfOrigenDespacho.stock)} kg.`;
+            trfAlerta.className = "alerta error";
+            document.getElementById("btnTrfRegistrar").disabled = true;
+        } else if (kilos > 0 && trfDestinoTanque) {
+            trfAlerta.className = "alerta hidden";
+            document.getElementById("btnTrfRegistrar").disabled = false;
+        } else {
+            trfAlerta.className = "alerta hidden";
+            document.getElementById("btnTrfRegistrar").disabled = true;
+        }
+    });
+
+    document.getElementById("btnTrfRegistrar").addEventListener("click", () => {
+        if (!trfOrigenTanque || !trfOrigenDespacho || !trfDestinoTanque) return;
+        const kilos = parseInt(trfKilos.value) || 0;
+        if (kilos <= 0 || kilos > trfOrigenDespacho.stock) return;
+
+        document.getElementById("modalTitulo").textContent = "Confirmar Transferencia";
+        modalBody.innerHTML = `
+            <p><strong>Origen:</strong> TK ${trfOrigenTanque.tanque} (${trfOrigenTanque.producto})</p>
+            <p><strong>Despacho:</strong> <code>${trfOrigenDespacho.despacho}</code></p>
+            <p><strong>Destino:</strong> TK ${trfDestinoTanque.tanque}</p>
+            <p><strong>Kilos a transferir:</strong> ${formatKg(kilos)} kg</p>
+            <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
+        `;
+
+        window._confirmarAccion = () => {
+            // Descontar origen
+            trfOrigenDespacho.stock -= kilos;
+
+            // Agregar a destino
+            let destino = stock.find(t => t.tanque === trfDestinoTanque.tanque);
+            if (!destino) {
+                destino = { tanque: trfDestinoTanque.tanque, producto: trfOrigenTanque.producto, cliente: trfOrigenTanque.cliente, despachos: [] };
+                stock.push(destino);
+            }
+
+            const despDestino = destino.despachos.find(d => d.despacho === trfOrigenDespacho.despacho);
+            if (despDestino) {
+                despDestino.stock += kilos;
+            } else {
+                destino.despachos.push({ despacho: trfOrigenDespacho.despacho, stock: kilos });
+            }
+
+            historial.unshift({
+                id: Date.now(),
+                fecha: new Date().toISOString().slice(0, 10),
+                tipo: "TRANSFERENCIA",
+                tanque: `${trfOrigenTanque.tanque}→${trfDestinoTanque.tanque}`,
+                producto: trfOrigenTanque.producto,
+                cliente: trfOrigenTanque.cliente,
+                despacho: trfOrigenDespacho.despacho,
+                kilos: kilos,
+                usuario: usuarioActual,
+            });
+
+            localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+            localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+
+            modal.classList.add("hidden");
+            trfLimpiar();
+            renderStock();
+            renderHistorial();
+            trfAlerta.textContent = `Transferencia registrada: ${formatKg(kilos)} kg de TK ${trfOrigenTanque.tanque} a TK ${trfDestinoTanque.tanque}`;
+            trfAlerta.className = "alerta success";
+        };
+
+        modal.classList.remove("hidden");
+    });
+
+    document.getElementById("btnTrfLimpiar").addEventListener("click", trfLimpiar);
+
+    function trfLimpiar() {
+        trfOrigenTanque = null;
+        trfOrigenDespacho = null;
+        trfDestinoTanque = null;
+        trfInputOrigen.value = "";
+        trfInfoOrigen.classList.add("hidden");
+        trfSelectDespacho.innerHTML = '<option value="">-- Seleccioná un despacho --</option>';
+        trfInfoDespacho.classList.add("hidden");
+        trfInputDestino.value = "";
+        trfInputDestino.disabled = true;
+        document.getElementById("btnTrfBuscarDestino").disabled = true;
+        trfInfoDestino.classList.add("hidden");
+        trfKilos.value = "";
+        trfKilos.disabled = true;
+        trfAlerta.className = "alerta hidden";
+        document.getElementById("btnTrfRegistrar").disabled = true;
+        trfPaso1.className = "paso active";
+        trfPaso2.className = "paso disabled";
+        trfPaso3.className = "paso disabled";
+        trfInputOrigen.focus();
+    }
+
+    // =============================================
+    // MODAL GENERICO (reutilizado por salida, ingreso, transferencia)
+    // =============================================
+    // Sobreescribir confirmar para soportar acciones dinámicas
+    document.getElementById("btnConfirmar").addEventListener("click", () => {
+        if (window._confirmarAccion) {
+            window._confirmarAccion();
+            window._confirmarAccion = null;
+        }
     });
 
     // --- EXPORTAR CSV ---

@@ -43,8 +43,10 @@
     <main class="hidden" id="mainApp">
         <nav class="tabs">
             <button class="tab active" data-tab="salida">Registrar Salida</button>
+            <button class="tab" data-tab="ingreso">Ingreso a Depósito</button>
+            <button class="tab" data-tab="transferencia">Transferencia</button>
             <button class="tab" data-tab="stock">Stock por Tanque</button>
-            <button class="tab" data-tab="historial">Historial de Salidas</button>
+            <button class="tab" data-tab="historial">Historial</button>
             <button class="tab" data-tab="reporteDiario">Reporte del Día</button>
         </nav>
 
@@ -118,6 +120,131 @@
             </div>
         </section>
 
+        <!-- INGRESO A DEPOSITO -->
+        <section id="ingreso" class="tab-content">
+            <div class="form-card">
+                <h2>Ingreso a Depósito</h2>
+
+                <div class="paso" id="ingPaso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Número de tanque destino</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="ingInputTanque" placeholder="Ej: 005" maxlength="3">
+                            <button class="btn btn-primary" id="btnIngBuscar">Buscar</button>
+                        </div>
+                        <div id="ingInfoTanque" class="info-box hidden"></div>
+                        <!-- Producto para tanque vacío -->
+                        <div id="ingProductoNuevo" class="hidden" style="margin-top:1rem">
+                            <div class="form-group">
+                                <label>Producto</label>
+                                <select id="ingSelectProducto">
+                                    <option value="">-- Seleccioná un producto --</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-top:0.5rem">
+                                <label>Cliente / SubCliente</label>
+                                <input type="text" id="ingClienteNuevo" placeholder="Nombre del cliente">
+                            </div>
+                            <div id="ingProductoOtro" class="hidden" style="margin-top:0.5rem">
+                                <div class="form-group">
+                                    <label>Nombre del producto nuevo</label>
+                                    <input type="text" id="ingNuevoProducto" placeholder="Ej: TOLUENO">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="ingPaso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Despacho y cantidad</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="ingDespacho">Número de Despacho</label>
+                            <input type="text" id="ingDespacho" placeholder="Ej: DI26IC04002280Y">
+                        </div>
+                        <div class="form-group" style="margin-top:0.75rem">
+                            <label for="ingKilos">Kilos a ingresar</label>
+                            <input type="number" id="ingKilos" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+                        <div id="ingAlerta" class="alerta hidden"></div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnIngRegistrar" disabled>Registrar Ingreso</button>
+                            <button class="btn btn-secondary" id="btnIngLimpiar">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRANSFERENCIA DE TANQUE -->
+        <section id="transferencia" class="tab-content">
+            <div class="form-card">
+                <h2>Transferencia entre Tanques</h2>
+
+                <div class="paso" id="trfPaso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Tanque de origen</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="trfInputOrigen" placeholder="Ej: 005" maxlength="3">
+                            <button class="btn btn-primary" id="btnTrfBuscarOrigen">Buscar</button>
+                        </div>
+                        <div id="trfInfoOrigen" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="trfPaso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Despacho de origen</span>
+                    </div>
+                    <div class="paso-body">
+                        <select id="trfSelectDespacho">
+                            <option value="">-- Seleccioná un despacho --</option>
+                        </select>
+                        <div id="trfInfoDespacho" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="trfPaso3">
+                    <div class="paso-header">
+                        <span class="paso-num">3</span>
+                        <span class="paso-titulo">Tanque destino y cantidad</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="trfInputDestino">Tanque destino</label>
+                            <div class="input-tanque-row">
+                                <span class="prefix">TK</span>
+                                <input type="text" id="trfInputDestino" placeholder="Ej: 010" maxlength="3" disabled>
+                                <button class="btn btn-primary" id="btnTrfBuscarDestino" disabled>Buscar</button>
+                            </div>
+                        </div>
+                        <div id="trfInfoDestino" class="info-box hidden"></div>
+                        <div class="form-group" style="margin-top:0.75rem">
+                            <label for="trfKilos">Kilos a transferir</label>
+                            <input type="number" id="trfKilos" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+                        <div id="trfAlerta" class="alerta hidden"></div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnTrfRegistrar" disabled>Registrar Transferencia</button>
+                            <button class="btn btn-secondary" id="btnTrfLimpiar">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- STOCK POR TANQUE -->
         <section id="stock" class="tab-content">
             <div class="stock-header">
@@ -155,6 +282,7 @@
                     <thead>
                         <tr>
                             <th>Fecha</th>
+                            <th>Tipo</th>
                             <th>Remito</th>
                             <th>Tanque</th>
                             <th>Producto</th>
@@ -165,7 +293,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>
+                        <tr class="empty-row"><td colspan="9">No hay movimientos registrados</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -203,7 +331,7 @@
     <!-- Modal confirmación -->
     <div id="modalConfirm" class="modal hidden">
         <div class="modal-content">
-            <h3>Confirmar Salida</h3>
+            <h3 id="modalTitulo">Confirmar Salida</h3>
             <div id="modalBody"></div>
             <div class="modal-actions">
                 <button class="btn btn-primary" id="btnConfirmar">Confirmar</button>

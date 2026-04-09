@@ -339,9 +339,11 @@ async function initApp() {
         `;
 
         window._confirmarAccion = () => {
+            const ahora = new Date();
             const salida = {
                 id: Date.now(),
                 fecha: fechaInput.value,
+                hora: ahora.toTimeString().slice(0, 5),
                 remito: remitoInput.value.trim(),
                 tanque: tanqueActual.tanque,
                 producto: tanqueActual.producto,
@@ -480,7 +482,7 @@ async function initApp() {
         });
 
         if (datos.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay movimientos registrados</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>';
             return;
         }
 
@@ -489,6 +491,7 @@ async function initApp() {
             const tipoClass = tipo === "INGRESO" ? "tipo-ingreso" : tipo === "TRANSFERENCIA" ? "tipo-transferencia" : "tipo-salida";
             return `<tr>
             <td>${s.fecha}</td>
+            <td>${s.hora || "-"}</td>
             <td><span class="tipo-badge ${tipoClass}">${tipo}</span></td>
             <td><strong>${s.remito || "-"}</strong></td>
             <td><strong>TK ${s.tanque}</strong></td>
@@ -543,7 +546,7 @@ async function initApp() {
         const tbody = document.querySelector("#tablaReporte tbody");
 
         if (salidasHoy.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay salidas hoy</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay salidas hoy</td></tr>';
             document.getElementById("reporteTotal").textContent = "";
             return;
         }
@@ -553,6 +556,7 @@ async function initApp() {
             totalKilos += s.kilos;
             const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
+                <td>${s.hora || "-"}</td>
                 <td><strong>${s.remito || "-"}</strong></td>
                 <td><code>${s.despacho}</code></td>
                 <td>${s.producto}</td>
@@ -577,6 +581,7 @@ async function initApp() {
             totalKilos += s.kilos;
             const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
+                <td>${s.hora || "-"}</td>
                 <td>${s.remito || "-"}</td>
                 <td>${s.despacho}</td>
                 <td>${s.producto}</td>
@@ -599,7 +604,7 @@ async function initApp() {
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
         <p>Reporte de Salidas del ${hoy.split("-").reverse().join("/")}</p>
         <table>
-            <thead><tr><th>Remito</th><th>Despacho</th><th>Producto</th><th>Kilos</th><th>Saldo Despacho</th><th>Usuario</th></tr></thead>
+            <thead><tr><th>Hora</th><th>Remito</th><th>Despacho</th><th>Producto</th><th>Kilos</th><th>Saldo Despacho</th><th>Usuario</th></tr></thead>
             <tbody>${filas}</tbody>
         </table>
         <div class="total">Total: ${formatKg(totalKilos)} kg — ${salidasHoy.length} salida(s)</div>
@@ -776,9 +781,11 @@ async function initApp() {
                 tanque.despachos.push({ despacho: desp, stock: kilos });
             }
 
+            const ahora = new Date();
             historial.unshift({
                 id: Date.now(),
-                fecha: new Date().toISOString().slice(0, 10),
+                fecha: ahora.toISOString().slice(0, 10),
+                hora: ahora.toTimeString().slice(0, 5),
                 tipo: "INGRESO",
                 tanque: tanque.tanque,
                 producto: producto,
@@ -1005,9 +1012,11 @@ async function initApp() {
                 destino.despachos.push({ despacho: trfOrigenDespacho.despacho, stock: kilos });
             }
 
+            const ahoraTrf = new Date();
             historial.unshift({
                 id: Date.now(),
-                fecha: new Date().toISOString().slice(0, 10),
+                fecha: ahoraTrf.toISOString().slice(0, 10),
+                hora: ahoraTrf.toTimeString().slice(0, 5),
                 tipo: "TRANSFERENCIA",
                 tanque: `${trfOrigenTanque.tanque}→${trfDestinoTanque.tanque}`,
                 producto: trfOrigenTanque.producto,
@@ -1124,7 +1133,7 @@ async function initApp() {
             });
 
         if (salidas.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay salidas registradas</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No hay salidas registradas</td></tr>';
             return;
         }
 
@@ -1133,6 +1142,7 @@ async function initApp() {
             return `<tr class="${esNueva ? 'fila-nueva' : ''}" data-id="${s.id}">
                 <td>${esNueva ? '<span class="circulo-nuevo"></span>' : ''}</td>
                 <td>${s.fecha}</td>
+                <td>${s.hora || "-"}</td>
                 <td><strong>${s.remito || "-"}</strong></td>
                 <td><strong>TK ${s.tanque}</strong></td>
                 <td>${s.producto}</td>

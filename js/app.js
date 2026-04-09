@@ -264,13 +264,43 @@ async function initApp() {
         if (e.key === "Enter") { e.preventDefault(); buscarTanque(); }
     });
 
+    // Buscar duplicados de remito (solo SALIDAS del mismo día)
+    function buscarRemitoDuplicado(remito, fecha) {
+        if (!remito) return [];
+        return historial.filter(s => {
+            const tipo = s.tipo || "SALIDA";
+            return tipo === "SALIDA" &&
+                   s.fecha === fecha &&
+                   (s.remito || "").trim() === remito;
+        });
+    }
+
+    function verificarRemitoEnVivo() {
+        const alertaDup = document.getElementById("alertaRemitoDup");
+        const remito = remitoInput.value.trim();
+        if (remito.length !== 4) {
+            alertaDup.classList.add("hidden");
+            return;
+        }
+        const dups = buscarRemitoDuplicado(remito, fechaInput.value);
+        if (dups.length === 0) {
+            alertaDup.classList.add("hidden");
+            return;
+        }
+        const detalle = dups.map(d => `TK ${d.tanque} - ${formatKg(d.kilos)} kg (${d.hora || "-"})`).join(" · ");
+        alertaDup.className = "alerta warning";
+        alertaDup.innerHTML = `<strong>⚠ Remito ${remito} ya cargado hoy:</strong> ${detalle}`;
+    }
+
     // Auto-saltar al tanque cuando se completan los 4 dígitos del remito
     remitoInput.addEventListener("input", () => {
+        verificarRemitoEnVivo();
         if (remitoInput.value.trim().length === 4) {
             inputTanque.focus();
             inputTanque.select();
         }
     });
+    fechaInput.addEventListener("change", verificarRemitoEnVivo);
 
     // --- PASO 2: SELECCIONAR DESPACHO ---
     function poblarDespachos(tanque) {
@@ -344,6 +374,16 @@ async function initApp() {
         }
     });
 
+    // Modal genérico (reusa #modalConfirm)
+    function abrirModal(titulo, html, onConfirmar, btnConfirmarTexto = "Confirmar") {
+        document.getElementById("modalTitulo").textContent = titulo;
+        modalBody.innerHTML = html;
+        document.getElementById("btnConfirmar").textContent = btnConfirmarTexto;
+        window._confirmarAccion = onConfirmar;
+        modal.classList.remove("hidden");
+        setTimeout(() => document.getElementById("btnConfirmar").focus(), 0);
+    }
+
     // --- REGISTRAR ---
     btnRegistrar.addEventListener("click", () => {
         if (!tanqueActual || !despachoActual) return;
@@ -354,25 +394,33 @@ async function initApp() {
         if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
-        // Validar remito duplicado en la misma fecha
-        if (remito) {
-            const duplicados = historial.filter(s => {
-                const tipo = s.tipo || "SALIDA";
-                return tipo === "SALIDA" &&
-                       s.fecha === fechaInput.value &&
-                       (s.remito || "").trim() === remito;
-            });
-            if (duplicados.length > 0) {
-                const detalle = duplicados.map(d => `• TK ${d.tanque} - ${formatKg(d.kilos)} kg (${d.hora || "-"})`).join("\n");
-                const seguir = confirm(`El remito ${remito} ya fue cargado hoy:\n\n${detalle}\n\n¿Querés continuar de todos modos?`);
-                if (!seguir) return;
-            }
+        // Validar remito duplicado en la misma fecha → modal estilizado
+        const duplicados = remito ? buscarRemitoDuplicado(remito, fechaInput.value) : [];
+        if (duplicados.length > 0) {
+            const detalle = duplicados.map(d =>
+                `<li>TK ${d.tanque} — ${formatKg(d.kilos)} kg — ${d.hora || "-"} — ${(d.usuario || "-").toUpperCase()}</li>`
+            ).join("");
+            abrirModal(
+                "Remito ya cargado",
+                `<p>El remito <strong>${remito}</strong> ya fue cargado hoy:</p>
+                 <ul style="margin:0.5rem 0 1rem 1.2rem;line-height:1.6">${detalle}</ul>
+                 <p>¿Querés continuar de todos modos?</p>`,
+                () => { modal.classList.add("hidden"); abrirConfirmacionSalida(); },
+                "Continuar"
+            );
+            return;
         }
 
-        const restante = despachoActual.stock - kilos;
+        abrirConfirmacionSalida();
+    });
 
+    function abrirConfirmacionSalida() {
+        const kilos = parseInt(kilosInput.value) || 0;
+        const remito = remitoInput.value.trim();
+        const restante = despachoActual.stock - kilos;
         const clienteSalida = despachoActual.cliente || tanqueActual.cliente;
         document.getElementById("modalTitulo").textContent = "Confirmar Salida";
+        document.getElementById("btnConfirmar").textContent = "Confirmar";
         modalBody.innerHTML = `
             <p><strong>Tanque:</strong> TK ${tanqueActual.tanque}</p>
             <p><strong>Producto:</strong> ${tanqueActual.producto}</p>
@@ -415,15 +463,17 @@ async function initApp() {
 
             // Listo para cargar el siguiente remito
             remitoInput.value = "";
+            document.getElementById("alertaRemitoDup").classList.add("hidden");
             remitoInput.focus();
         };
 
         modal.classList.remove("hidden");
         setTimeout(() => document.getElementById("btnConfirmar").focus(), 0);
-    });
+    }
 
     document.getElementById("btnCancelar").addEventListener("click", () => {
         modal.classList.add("hidden");
+        document.getElementById("btnConfirmar").textContent = "Confirmar";
         window._confirmarAccion = null;
     });
 

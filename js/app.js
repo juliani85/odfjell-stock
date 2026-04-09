@@ -252,6 +252,7 @@ function initApp() {
 
     document.getElementById("btnCancelar").addEventListener("click", () => {
         modal.classList.add("hidden");
+        window._confirmarAccion = null;
     });
 
     // --- LIMPIAR ---
@@ -520,15 +521,6 @@ function initApp() {
         ingSelectProducto.appendChild(optNuevo);
     }
 
-    ingSelectProducto.addEventListener("change", () => {
-        if (ingSelectProducto.value === "__NUEVO__") {
-            ingProductoOtro.classList.remove("hidden");
-            ingNuevoProducto.focus();
-        } else {
-            ingProductoOtro.classList.add("hidden");
-        }
-    });
-
     function ingBuscarTanque() {
         const num = ingInputTanque.value.trim().padStart(3, "0");
         ingInputTanque.value = num;
@@ -550,8 +542,7 @@ function initApp() {
             ingInfoTanque.classList.remove("hidden");
             ingProductoNuevo.classList.add("hidden");
             ingPaso1.className = "paso done";
-            ingPaso2.classList.remove("disabled");
-            ingPaso2.classList.add("active");
+            ingPaso2.className = "paso active";
             ingKilos.disabled = false;
             ingDespacho.focus();
         } else {
@@ -563,8 +554,7 @@ function initApp() {
             poblarProductos();
             ingProductoNuevo.classList.remove("hidden");
             ingPaso1.className = "paso active";
-            ingPaso2.classList.add("disabled");
-            ingPaso2.classList.remove("active");
+            ingPaso2.className = "paso disabled";
             ingKilos.disabled = true;
         }
     }
@@ -594,8 +584,7 @@ function initApp() {
 
     function habilitarIngPaso2() {
         ingPaso1.className = "paso done";
-        ingPaso2.classList.remove("disabled");
-        ingPaso2.classList.add("active");
+        ingPaso2.className = "paso active";
         ingKilos.disabled = false;
         ingDespacho.focus();
     }
@@ -749,8 +738,7 @@ function initApp() {
         `;
         trfInfoOrigen.classList.remove("hidden");
         trfPaso1.className = "paso done";
-        trfPaso2.classList.remove("disabled");
-        trfPaso2.classList.add("active");
+        trfPaso2.className = "paso active";
 
         // Poblar despachos origen
         trfSelectDespacho.innerHTML = '<option value="">-- Seleccioná un despacho --</option>';
@@ -787,8 +775,7 @@ function initApp() {
         `;
         trfInfoDespacho.classList.remove("hidden");
         trfPaso2.className = "paso done";
-        trfPaso3.classList.remove("disabled");
-        trfPaso3.classList.add("active");
+        trfPaso3.className = "paso active";
         trfInputDestino.disabled = false;
         document.getElementById("btnTrfBuscarDestino").disabled = false;
         trfKilos.disabled = false;

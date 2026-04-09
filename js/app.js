@@ -256,6 +256,7 @@ async function initApp() {
         paso1.className = "paso done";
         activarPaso(2);
         poblarDespachos(tanque);
+        setTimeout(() => selectDespacho.focus(), 0);
     }
 
     btnBuscar.addEventListener("click", buscarTanque);
@@ -308,7 +309,14 @@ async function initApp() {
 
         paso2.className = "paso done";
         activarPaso(3);
-        kilosInput.focus();
+    });
+
+    // Enter en el select de despacho = pasar al campo kilos
+    selectDespacho.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && despachoActual) {
+            e.preventDefault();
+            kilosInput.focus();
+        }
     });
 
     // Enter en kilos = registrar salida (abre modal)

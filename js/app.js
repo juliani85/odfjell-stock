@@ -638,22 +638,36 @@ async function initApp() {
     }
 
     // --- REPORTE DIARIO ---
-    function renderReporteDiario() {
-        const hoy = new Date().toISOString().slice(0, 10);
-        const salidasHoy = historial.filter(s => s.fecha === hoy);
+    function getSalidasReporte(fecha) {
+        let salidas = historial.filter(s => (s.tipo || "SALIDA") === "SALIDA" && s.fecha === fecha);
+        if (rolActual === "viewer") {
+            salidas = salidas.filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")));
+        }
+        return salidas;
+    }
 
-        document.getElementById("reporteFecha").textContent = `Fecha: ${hoy.split("-").reverse().join("/")}`;
+    function getFechaReporteSeleccionada() {
+        const input = document.getElementById("reporteFechaInput");
+        if (!input.value) input.value = new Date().toISOString().slice(0, 10);
+        return input.value;
+    }
+
+    function renderReporteDiario() {
+        const fecha = getFechaReporteSeleccionada();
+        const salidas = getSalidasReporte(fecha);
+
+        document.getElementById("reporteFecha").textContent = `Fecha: ${fecha.split("-").reverse().join("/")}`;
 
         const tbody = document.querySelector("#tablaReporte tbody");
 
-        if (salidasHoy.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay salidas hoy</td></tr>';
+        if (salidas.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay salidas para esta fecha</td></tr>';
             document.getElementById("reporteTotal").textContent = "";
             return;
         }
 
         let totalKilos = 0;
-        tbody.innerHTML = salidasHoy.map(s => {
+        tbody.innerHTML = salidas.map(s => {
             totalKilos += s.kilos;
             const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
@@ -667,18 +681,20 @@ async function initApp() {
             </tr>`;
         }).join("");
 
-        document.getElementById("reporteTotal").textContent = `Total del día: ${formatKg(totalKilos)} kg  |  ${salidasHoy.length} salida(s)`;
+        document.getElementById("reporteTotal").textContent = `Total: ${formatKg(totalKilos)} kg  |  ${salidas.length} salida(s)`;
     }
+
+    document.getElementById("reporteFechaInput").addEventListener("change", renderReporteDiario);
 
     // --- IMPRIMIR REPORTE ---
     document.getElementById("btnImprimirReporte").addEventListener("click", () => {
-        const hoy = new Date().toISOString().slice(0, 10);
-        const salidasHoy = historial.filter(s => s.fecha === hoy);
+        const fecha = getFechaReporteSeleccionada();
+        const salidas = getSalidasReporte(fecha);
 
-        if (salidasHoy.length === 0) { alert("No hay salidas hoy para imprimir."); return; }
+        if (salidas.length === 0) { alert("No hay salidas para imprimir en esta fecha."); return; }
 
         let totalKilos = 0;
-        let filas = salidasHoy.map(s => {
+        let filas = salidas.map(s => {
             totalKilos += s.kilos;
             const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
@@ -692,7 +708,7 @@ async function initApp() {
             </tr>`;
         }).join("");
 
-        const html = `<!DOCTYPE html><html><head><title>Reporte Diario</title>
+        const html = `<!DOCTYPE html><html><head><title>Reporte ${fecha}</title>
         <style>
             body { font-family: Arial, sans-serif; padding: 2rem; }
             h2 { margin-bottom: 0.25rem; }
@@ -703,12 +719,12 @@ async function initApp() {
             .total { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; text-align: right; }
         </style></head><body>
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
-        <p>Reporte de Salidas del ${hoy.split("-").reverse().join("/")}</p>
+        <p>Reporte de Salidas del ${fecha.split("-").reverse().join("/")}</p>
         <table>
             <thead><tr><th>Hora</th><th>Remito</th><th>Despacho</th><th>Producto</th><th>Kilos</th><th>Saldo Despacho</th><th>Usuario</th></tr></thead>
             <tbody>${filas}</tbody>
         </table>
-        <div class="total">Total: ${formatKg(totalKilos)} kg — ${salidasHoy.length} salida(s)</div>
+        <div class="total">Total: ${formatKg(totalKilos)} kg — ${salidas.length} salida(s)</div>
         </body></html>`;
 
         const win = window.open("", "_blank");
@@ -1280,6 +1296,9 @@ async function initApp() {
                 historial = ghData.historial;
                 renderViewer(document.getElementById("filtroViewer").value || "");
                 actualizarBadgeNuevas();
+                if (document.getElementById("reporteDiario").classList.contains("active")) {
+                    renderReporteDiario();
+                }
             }
         }, 30000);
     }

@@ -51,7 +51,7 @@
             <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
             <button class="tab" data-tab="historialTanque" data-rol="admin">Historial por Tanque</button>
-            <button class="tab" data-tab="reporteDiario" data-rol="admin">Reporte del Día</button>
+            <button class="tab" data-tab="reporteDiario" data-rol="all">Reporte del Día</button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
@@ -343,8 +343,12 @@
         <section id="reporteDiario" class="tab-content">
             <div class="form-card">
                 <div class="stock-header">
-                    <h2>Reporte de Salidas del Día</h2>
-                    <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+                    <h2>Reporte de Salidas</h2>
+                    <div class="filtros">
+                        <label for="reporteFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
+                        <input type="date" id="reporteFechaInput">
+                        <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+                    </div>
                 </div>
                 <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
                 <div class="table-container">

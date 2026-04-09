@@ -406,6 +406,15 @@ function initApp() {
         renderHistorial();
     };
 
+    // --- HELPER: saldo actual de un despacho ---
+    function getSaldoDespacho(tanqueNum, despachoNombre) {
+        const tNum = tanqueNum.includes("→") ? tanqueNum.split("→")[0] : tanqueNum;
+        const tanque = stock.find(t => t.tanque === tNum);
+        if (!tanque) return null;
+        const desp = tanque.despachos.find(d => d.despacho === despachoNombre);
+        return desp ? desp.stock : null;
+    }
+
     // --- REPORTE DIARIO ---
     function renderReporteDiario() {
         const hoy = new Date().toISOString().slice(0, 10);
@@ -424,12 +433,13 @@ function initApp() {
         let totalKilos = 0;
         tbody.innerHTML = salidasHoy.map(s => {
             totalKilos += s.kilos;
+            const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
                 <td><strong>${s.remito || "-"}</strong></td>
-                <td><strong>TK ${s.tanque}</strong></td>
-                <td>${s.producto}</td>
                 <td><code>${s.despacho}</code></td>
+                <td>${s.producto}</td>
                 <td><strong>${formatKg(s.kilos)} kg</strong></td>
+                <td>${saldo !== null ? formatKg(saldo) + " kg" : "-"}</td>
                 <td>${(s.usuario || "-").toUpperCase()}</td>
             </tr>`;
         }).join("");
@@ -447,12 +457,13 @@ function initApp() {
         let totalKilos = 0;
         let filas = salidasHoy.map(s => {
             totalKilos += s.kilos;
+            const saldo = getSaldoDespacho(s.tanque, s.despacho);
             return `<tr>
                 <td>${s.remito || "-"}</td>
-                <td>TK ${s.tanque}</td>
-                <td>${s.producto}</td>
                 <td>${s.despacho}</td>
+                <td>${s.producto}</td>
                 <td style="text-align:right">${formatKg(s.kilos)} kg</td>
+                <td style="text-align:right">${saldo !== null ? formatKg(saldo) + " kg" : "-"}</td>
                 <td>${(s.usuario || "-").toUpperCase()}</td>
             </tr>`;
         }).join("");
@@ -470,7 +481,7 @@ function initApp() {
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
         <p>Reporte de Salidas del ${hoy.split("-").reverse().join("/")}</p>
         <table>
-            <thead><tr><th>Remito</th><th>Tanque</th><th>Producto</th><th>Despacho</th><th>Kilos</th><th>Usuario</th></tr></thead>
+            <thead><tr><th>Remito</th><th>Despacho</th><th>Producto</th><th>Kilos</th><th>Saldo Despacho</th><th>Usuario</th></tr></thead>
             <tbody>${filas}</tbody>
         </table>
         <div class="total">Total: ${formatKg(totalKilos)} kg — ${salidasHoy.length} salida(s)</div>

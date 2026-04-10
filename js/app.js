@@ -467,23 +467,6 @@ async function initApp() {
         if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
-        // Validar remito duplicado en la misma fecha → modal estilizado
-        const duplicados = remito ? buscarRemitoDuplicado(remito, fechaInput.value) : [];
-        if (duplicados.length > 0) {
-            const detalle = duplicados.map(d =>
-                `<li>TK ${d.tanque} — ${formatKg(d.kilos)} kg — ${d.hora || "-"} — ${(d.usuario || "-").toUpperCase()}</li>`
-            ).join("");
-            abrirModal(
-                "Remito ya cargado",
-                `<p>El remito <strong>${remito}</strong> ya fue cargado hoy:</p>
-                 <ul style="margin:0.5rem 0 1rem 1.2rem;line-height:1.6">${detalle}</ul>
-                 <p>¿Querés continuar de todos modos?</p>`,
-                () => { modal.classList.add("hidden"); abrirConfirmacionSalida(); },
-                "Continuar"
-            );
-            return;
-        }
-
         abrirConfirmacionSalida();
     });
 

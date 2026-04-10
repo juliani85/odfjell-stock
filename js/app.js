@@ -618,6 +618,23 @@ async function initApp() {
                 </div>`;
             }).join("");
 
+            // Gráfico de nivel
+            const cap = capacidadTanques[t.tanque] || 0;
+            let pct = cap > 0 ? Math.min(Math.round((totalTanque / cap) * 100), 100) : 0;
+            if (pct < 0) pct = 0;
+            const nivelColor = pct > 80 ? "#ef4444" : pct > 50 ? "#f59e0b" : "#22c55e";
+            const nivelHTML = cap > 0 ? `<div class="tanque-nivel-wrap">
+                <div class="tanque-nivel-grafico">
+                    <div class="tanque-nivel-agua" style="height:${pct}%;background:${nivelColor}"></div>
+                    <span class="tanque-nivel-pct">${pct}%</span>
+                </div>
+                <div class="tanque-nivel-info">
+                    <div><span class="info-label">Stock</span><br><strong>${formatKg(totalTanque)} kg</strong></div>
+                    <div><span class="info-label">Capacidad (98%)</span><br><strong>${formatKg(cap)} L</strong></div>
+                    <div><span class="info-label">Ocupación</span><br><strong style="color:${nivelColor}">${pct}%</strong></div>
+                </div>
+            </div>` : "";
+
             return `<div class="stock-card" onclick="this.classList.toggle('open')">
                 <div class="stock-card-header">
                     <div class="stock-card-left">
@@ -629,7 +646,7 @@ async function initApp() {
                     </div>
                     <span class="stock-card-total">${formatKg(totalTanque)} kg</span>
                 </div>
-                <div class="stock-card-despachos">${despHTML}</div>
+                <div class="stock-card-despachos">${nivelHTML}${despHTML}</div>
             </div>`;
         }).join("");
 

@@ -51,7 +51,7 @@
             <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
             <button class="tab" data-tab="historialTanque" data-rol="admin">Historial por Tanque</button>
-            <button class="tab" data-tab="reporteDiario" data-rol="all">Reporte del Día</button>
+            <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
@@ -339,37 +339,73 @@
             </div>
         </section>
 
-        <!-- REPORTE DIARIO -->
+        <!-- REPORTES -->
         <section id="reporteDiario" class="tab-content">
-            <div class="form-card">
-                <div class="stock-header">
-                    <h2>Reporte de Salidas</h2>
-                    <div class="filtros">
-                        <label for="reporteFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
-                        <input type="date" id="reporteFechaInput">
-                        <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="repDia">Reporte del Día</button>
+                <button class="sub-tab" data-subtab="repMensual">Reporte de Stock Mensual</button>
+            </nav>
+
+            <!-- SUB: REPORTE DEL DIA -->
+            <div id="repDia" class="sub-tab-content active">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte de Salidas</h2>
+                        <div class="filtros">
+                            <label for="reporteFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
+                            <input type="date" id="reporteFechaInput">
+                            <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+                        </div>
                     </div>
+                    <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
+                    <div class="table-container">
+                        <table id="tablaReporte">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Remito</th>
+                                    <th>Despacho</th>
+                                    <th>Producto</th>
+                                    <th>Kilos</th>
+                                    <th>Saldo Despacho</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="7">No hay salidas hoy</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="reporte-total" id="reporteTotal"></div>
                 </div>
-                <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
-                <div class="table-container">
-                    <table id="tablaReporte">
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Remito</th>
-                                <th>Despacho</th>
-                                <th>Producto</th>
-                                <th>Kilos</th>
-                                <th>Saldo Despacho</th>
-                                <th>Usuario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="empty-row"><td colspan="7">No hay salidas hoy</td></tr>
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- SUB: REPORTE STOCK MENSUAL -->
+            <div id="repMensual" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte de Stock Mensual</h2>
+                        <div class="filtros">
+                            <input type="text" id="filtroRepMensual" placeholder="Buscar tanque, producto o cliente...">
+                            <button class="btn btn-secondary" id="btnImprimirMensual">Imprimir</button>
+                        </div>
+                    </div>
+                    <div class="resumen-cards">
+                        <div class="resumen-card">
+                            <span class="resumen-numero" id="repMenTanques">0</span>
+                            <span class="resumen-label">Tanques con producto</span>
+                        </div>
+                        <div class="resumen-card ocupados">
+                            <span class="resumen-numero" id="repMenDespachos">0</span>
+                            <span class="resumen-label">Despachos activos</span>
+                        </div>
+                        <div class="resumen-card kilos">
+                            <span class="resumen-numero" id="repMenKilos">0</span>
+                            <span class="resumen-label">Total Kg</span>
+                        </div>
+                    </div>
+                    <div id="repMensualCards"></div>
                 </div>
-                <div class="reporte-total" id="reporteTotal"></div>
             </div>
         </section>
         <!-- VISTA UMA: SALIDAS -->

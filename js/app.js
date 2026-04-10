@@ -823,6 +823,157 @@ async function initApp() {
         win.print();
     });
 
+    // --- SUB-TABS DE REPORTES ---
+    document.querySelectorAll(".sub-tab").forEach(st => {
+        st.addEventListener("click", () => {
+            document.querySelectorAll(".sub-tab").forEach(s => s.classList.remove("active"));
+            document.querySelectorAll(".sub-tab-content").forEach(sc => sc.classList.remove("active"));
+            st.classList.add("active");
+            document.getElementById(st.dataset.subtab).classList.add("active");
+            if (st.dataset.subtab === "repMensual") renderRepMensual();
+        });
+    });
+
+    // --- REPORTE STOCK MENSUAL ---
+    function renderRepMensual(filtro = "") {
+        const container = document.getElementById("repMensualCards");
+        const filtroLower = filtro.toLowerCase();
+
+        const filtrados = stock.filter(t => {
+            const totalStock = t.despachos.reduce((s, d) => s + d.stock, 0);
+            if (totalStock <= 0) return false;
+            if (!filtro) return true;
+            return t.tanque.includes(filtroLower) ||
+                   t.producto.toLowerCase().includes(filtroLower) ||
+                   t.cliente.toLowerCase().includes(filtroLower);
+        });
+
+        let totalKg = 0;
+        let totalDesp = 0;
+
+        container.innerHTML = filtrados.map(t => {
+            const totalTanque = t.despachos.reduce((s, d) => s + d.stock, 0);
+            totalKg += totalTanque;
+            const despActivos = t.despachos.filter(d => d.stock > 0);
+            totalDesp += despActivos.length;
+
+            const despHTML = t.despachos.map(d => {
+                if (d.stock <= 0) return "";
+                const clienteDesp = d.cliente || t.cliente;
+                return `<div class="despacho-row">
+                    <span class="despacho-nombre">${d.despacho}</span>
+                    <span style="color:var(--gray-500);font-size:0.8rem">${clienteDesp}</span>
+                    <span class="despacho-kg">${formatKg(d.stock)} kg</span>
+                </div>`;
+            }).join("");
+
+            const cap = capacidadTanques[t.tanque] || 0;
+            let pct = cap > 0 ? Math.min(Math.round((totalTanque / cap) * 100), 100) : 0;
+            if (pct < 0) pct = 0;
+            const nivelColor = pct > 80 ? "#ef4444" : pct > 50 ? "#f59e0b" : "#22c55e";
+            const nivelHTML = cap > 0 ? `<div class="tanque-nivel-wrap">
+                <div class="tanque-nivel-grafico">
+                    <div class="tanque-nivel-agua" style="height:${pct}%;background:${nivelColor}"></div>
+                    <span class="tanque-nivel-pct">${pct}%</span>
+                </div>
+                <div class="tanque-nivel-info">
+                    <div><span class="info-label">Stock</span><br><strong>${formatKg(totalTanque)} kg</strong></div>
+                    <div><span class="info-label">Capacidad (98%)</span><br><strong>${formatKg(cap)} L</strong></div>
+                    <div><span class="info-label">Ocupación</span><br><strong style="color:${nivelColor}">${pct}%</strong></div>
+                </div>
+            </div>` : "";
+
+            return `<div class="stock-card rep-mensual-card" onclick="this.classList.toggle('open')">
+                <div class="stock-card-header">
+                    <div class="stock-card-left">
+                        <span class="stock-card-tanque">TK ${t.tanque}</span>
+                        <div>
+                            <div class="stock-card-producto">${t.producto}</div>
+                            <div class="stock-card-cliente">${t.cliente}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right">
+                        <span class="stock-card-total">${formatKg(totalTanque)} kg</span>
+                        ${cap > 0 ? `<div style="font-size:0.75rem;color:${nivelColor};font-weight:600">${pct}%</div>` : ""}
+                    </div>
+                </div>
+                <div class="stock-card-despachos">${nivelHTML}${despHTML}</div>
+            </div>`;
+        }).join("");
+
+        document.getElementById("repMenTanques").textContent = filtrados.length;
+        document.getElementById("repMenDespachos").textContent = totalDesp;
+        document.getElementById("repMenKilos").textContent = formatKg(totalKg);
+    }
+
+    document.getElementById("filtroRepMensual").addEventListener("input", (e) => {
+        renderRepMensual(e.target.value);
+    });
+
+    // --- IMPRIMIR STOCK MENSUAL ---
+    document.getElementById("btnImprimirMensual").addEventListener("click", () => {
+        const filtrados = stock.filter(t => t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
+        if (filtrados.length === 0) { alert("No hay stock para imprimir."); return; }
+
+        let totalKg = 0;
+        const filas = filtrados.map(t => {
+            const totalTanque = t.despachos.reduce((s, d) => s + d.stock, 0);
+            totalKg += totalTanque;
+            const cap = capacidadTanques[t.tanque] || 0;
+            let pct = cap > 0 ? Math.min(Math.round((totalTanque / cap) * 100), 100) : 0;
+            if (pct < 0) pct = 0;
+            const nivelColor = pct > 80 ? "#ef4444" : pct > 50 ? "#f59e0b" : "#22c55e";
+
+            const despRows = t.despachos.filter(d => d.stock > 0).map(d => {
+                const clienteDesp = d.cliente || t.cliente;
+                return `<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:0.8rem;color:#555">
+                    <span style="font-family:monospace">${d.despacho}</span>
+                    <span>${clienteDesp}</span>
+                    <span style="font-weight:600">${formatKg(d.stock)} kg</span>
+                </div>`;
+            }).join("");
+
+            return `<tr>
+                <td style="font-weight:700;color:#1a56db">TK ${t.tanque}</td>
+                <td>${t.producto}</td>
+                <td>${t.cliente}</td>
+                <td style="text-align:right;font-weight:600">${formatKg(totalTanque)} kg</td>
+                <td style="text-align:center">
+                    <div style="display:inline-block;width:40px;height:60px;border:2px solid #888;border-top:3px solid #555;border-radius:0 0 4px 4px;position:relative;background:white;overflow:hidden">
+                        <div style="position:absolute;bottom:0;left:0;right:0;height:${pct}%;background:${nivelColor};opacity:0.8;border-radius:0 0 2px 2px"></div>
+                        <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;z-index:1">${pct}%</span>
+                    </div>
+                </td>
+                <td style="font-size:0.8rem">${despRows}</td>
+            </tr>`;
+        }).join("");
+
+        const hoy = new Date().toISOString().slice(0, 10);
+        const html = `<!DOCTYPE html><html><head><title>Stock Mensual</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 1.5rem; }
+            h2 { margin-bottom: 0.25rem; }
+            p { color: #666; margin-bottom: 1rem; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #ccc; padding: 8px; font-size: 0.85rem; vertical-align: top; }
+            th { background: #f0f0f0; text-align: left; }
+            .total { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; text-align: right; }
+        </style></head><body>
+        <h2>Odfjell Terminals Tagsa SA - Campana</h2>
+        <p>Reporte de Stock Mensual — ${hoy.split("-").reverse().join("/")}</p>
+        <table>
+            <thead><tr><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Stock</th><th>Nivel</th><th>Despachos</th></tr></thead>
+            <tbody>${filas}</tbody>
+        </table>
+        <div class="total">Total: ${formatKg(totalKg)} kg — ${filtrados.length} tanque(s)</div>
+        </body></html>`;
+
+        const win = window.open("", "_blank");
+        win.document.write(html);
+        win.document.close();
+        win.print();
+    });
+
     // =============================================
     // INGRESO A DEPOSITO
     // =============================================

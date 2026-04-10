@@ -229,6 +229,11 @@ async function initApp() {
         historial = JSON.parse(localStorage.getItem("historialSalidasV3")) || [];
     }
 
+    // Fecha dinámica en subtítulo
+    const hoySub = new Date();
+    const subtFecha = document.getElementById("subtFecha");
+    if (subtFecha) subtFecha.textContent = `Stock al ${hoySub.toLocaleDateString("es-AR")}`;
+
     // Función para guardar en localStorage + GitHub
     function guardarDatos() {
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));

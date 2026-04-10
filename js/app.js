@@ -1336,10 +1336,17 @@ async function initApp() {
         const filtroLower = filtro.toLowerCase();
         const vistas = getVistas();
         const sims = getSim();
+        const fechaSel = document.getElementById("fechaViewer")?.value || "";
 
         const salidas = historial
             .filter(s => (s.tipo || "SALIDA") === "SALIDA")
             .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")))
+            .filter(s => {
+                if (!fechaSel) return true;
+                const [y, m, d] = fechaSel.split("-");
+                const fechaFmt = `${d}/${m}/${y}`;
+                return s.fecha === fechaFmt;
+            })
             .filter(s => {
                 if (!filtro) return true;
                 return (s.remito || "").toLowerCase().includes(filtroLower) ||
@@ -1349,7 +1356,8 @@ async function initApp() {
             });
 
         if (salidas.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay salidas registradas</td></tr>';
+            const msgFecha = fechaSel ? ` para el ${fechaSel.split("-").reverse().join("/")}` : "";
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="9">No hay salidas registradas${msgFecha}</td></tr>`;
             return;
         }
 
@@ -1408,6 +1416,13 @@ async function initApp() {
                 });
             }
         }, 50);
+    }
+
+    const fechaViewer = document.getElementById("fechaViewer");
+    if (fechaViewer) {
+        const hoy = new Date();
+        fechaViewer.value = hoy.toISOString().split("T")[0];
+        fechaViewer.addEventListener("change", () => renderViewer(document.getElementById("filtroViewer")?.value || ""));
     }
 
     const filtroViewer = document.getElementById("filtroViewer");

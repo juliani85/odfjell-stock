@@ -1343,9 +1343,7 @@ async function initApp() {
             .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")))
             .filter(s => {
                 if (!fechaSel) return true;
-                const [y, m, d] = fechaSel.split("-");
-                const fechaFmt = `${d}/${m}/${y}`;
-                return s.fecha === fechaFmt;
+                return s.fecha === fechaSel;
             })
             .filter(s => {
                 if (!filtro) return true;

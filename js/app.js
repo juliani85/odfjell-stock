@@ -167,6 +167,12 @@ async function initLogin() {
     const loginUser = document.getElementById("loginUser");
     const loginPass = document.getElementById("loginPass");
 
+    // Logout (registrar siempre, antes de cualquier return)
+    document.getElementById("btnLogout").addEventListener("click", () => {
+        sessionStorage.removeItem("usuarioStock");
+        location.reload();
+    });
+
     // Verificar sesión guardada
     const sesion = sessionStorage.getItem("usuarioStock");
     if (sesion && USUARIOS[sesion]) {
@@ -207,11 +213,6 @@ async function initLogin() {
         if (e.key === "Enter") loginPass.focus();
     });
 
-    // Logout
-    document.getElementById("btnLogout").addEventListener("click", () => {
-        sessionStorage.removeItem("usuarioStock");
-        location.reload();
-    });
 }
 
 // --- APP PRINCIPAL ---

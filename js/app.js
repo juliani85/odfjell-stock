@@ -53,8 +53,12 @@ const GH = {
             if (res.ok) {
                 const data = await res.json();
                 this.sha = data.sha;
+            } else if (res.status !== 404) {
+                console.warn('[GH refrescarSha]', res.status);
             }
-        } catch (e) {}
+        } catch (e) {
+            console.error('[GH refrescarSha]', e);
+        }
     },
 
     guardar(stock, historial) {
@@ -64,15 +68,15 @@ const GH = {
     },
 
     async _enviar() {
-        if (!this._pendiente) return;
+        if (!this._pendiente || this._enviando) return;
+        this._enviando = true;
         const { stock, historial } = this._pendiente;
-        this._pendiente = null;
 
-        await this.refrescarSha();
-
-        const datos = { stock, historial, actualizado: new Date().toISOString() };
-        const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
         try {
+            await this.refrescarSha();
+
+            const datos = { stock, historial, actualizado: new Date().toISOString() };
+            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
             const body = {
                 message: `Actualizar datos ${new Date().toISOString().slice(0, 16)}`,
                 content: contenido
@@ -87,11 +91,23 @@ const GH = {
                 },
                 body: JSON.stringify(body)
             });
-            if (res.ok) {
-                const data = await res.json();
-                this.sha = data.content.sha;
+
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
             }
-        } catch (e) {}
+            const data = await res.json();
+            this.sha = data.content.sha;
+            if (this._pendiente && this._pendiente.stock === stock && this._pendiente.historial === historial) {
+                this._pendiente = null;
+            }
+        } catch (e) {
+            console.error('[GH sync stock]', e);
+            if (this._timer) clearTimeout(this._timer);
+            this._timer = setTimeout(() => this._enviar(), 5000);
+        } finally {
+            this._enviando = false;
+        }
     },
 
     async cargarVistas() {
@@ -99,12 +115,16 @@ const GH = {
             const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
                 headers: { Authorization: `token ${this.token}` }
             });
-            if (!res.ok) return null;
+            if (!res.ok) {
+                if (res.status !== 404) console.warn('[GH cargarVistas]', res.status);
+                return null;
+            }
             const data = await res.json();
             this.shaVistas = data.sha;
             const contenido = JSON.parse(atob(data.content));
             return { vistas: contenido.vistas || [], sim: contenido.sim || {} };
         } catch (e) {
+            console.error('[GH cargarVistas]', e);
             return null;
         }
     },
@@ -116,11 +136,10 @@ const GH = {
     },
 
     async _enviarVistas() {
-        if (!this._pendienteVistas) return;
+        if (!this._pendienteVistas || this._enviandoVistas) return;
+        this._enviandoVistas = true;
         const { vistas, sim } = this._pendienteVistas;
-        this._pendienteVistas = null;
 
-        // Refrescar sha
         try {
             const r = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
                 headers: { Authorization: `token ${this.token}` }
@@ -130,12 +149,12 @@ const GH = {
                 this.shaVistas = d.sha;
             } else if (r.status === 404) {
                 this.shaVistas = null;
+            } else {
+                throw new Error(`GitHub ${r.status} al refrescar sha de vistas`);
             }
-        } catch (e) {}
 
-        const datos = { vistas, sim, actualizado: new Date().toISOString() };
-        const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
-        try {
+            const datos = { vistas, sim, actualizado: new Date().toISOString() };
+            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
             const body = {
                 message: `Actualizar vistas ${new Date().toISOString().slice(0, 16)}`,
                 content: contenido
@@ -150,11 +169,22 @@ const GH = {
                 },
                 body: JSON.stringify(body)
             });
-            if (res.ok) {
-                const data = await res.json();
-                this.shaVistas = data.content.sha;
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
             }
-        } catch (e) {}
+            const data = await res.json();
+            this.shaVistas = data.content.sha;
+            if (this._pendienteVistas && this._pendienteVistas.vistas === vistas && this._pendienteVistas.sim === sim) {
+                this._pendienteVistas = null;
+            }
+        } catch (e) {
+            console.error('[GH sync vistas]', e);
+            if (this._timerVistas) clearTimeout(this._timerVistas);
+            this._timerVistas = setTimeout(() => this._enviarVistas(), 5000);
+        } finally {
+            this._enviandoVistas = false;
+        }
     }
 };
 

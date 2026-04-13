@@ -735,11 +735,15 @@ tbody tr:hover { background: var(--gray-50); }
     .resumen-cards { grid-template-columns: 1fr; }
     .info-grid { grid-template-columns: 1fr; }
     .tabs { overflow-x: auto; }
-    .tab { white-space: nowrap; padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+    .tab { white-space: nowrap; padding: 0.9rem 1rem; font-size: 0.85rem; min-height: 44px; }
     .stock-header { flex-direction: column; align-items: flex-start; }
     .stock-header input, .filtros input { width: 100%; }
     .stock-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
     .despacho-row { padding-left: 1.2rem; }
     .form-actions { flex-direction: column; }
     .form-actions .btn { width: 100%; text-align: center; }
+    .btn { min-height: 44px; padding: 0.8rem 1.3rem; font-size: 0.95rem; }
+    .btn-sm { min-height: 40px; padding: 0.55rem 1rem; font-size: 0.85rem; }
+    .btn-danger { min-height: 40px; padding: 0.55rem 1rem; font-size: 0.85rem; }
+    input, select, textarea { min-height: 44px; font-size: 16px; }
 }

@@ -744,7 +744,7 @@ async function initApp() {
     function getSalidasReporte(fecha) {
         let salidas = historial.filter(s => (s.tipo || "SALIDA") === "SALIDA" && s.fecha === fecha);
         if (rolActual === "viewer") {
-            salidas = salidas.filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")));
+            salidas = salidas.filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06") || s.despacho.includes("IDA4")));
         }
         return salidas;
     }
@@ -1506,7 +1506,7 @@ async function initApp() {
         if (!badge) return;
         const salidas = historial
             .filter(s => (s.tipo || "SALIDA") === "SALIDA")
-            .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")));
+            .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06") || s.despacho.includes("IDA4")));
         const vistas = getVistas();
         const nuevas = salidas.filter(s => !vistas.includes(s.id)).length;
         if (nuevas > 0) {
@@ -1527,7 +1527,7 @@ async function initApp() {
 
         const salidas = historial
             .filter(s => (s.tipo || "SALIDA") === "SALIDA")
-            .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06")))
+            .filter(s => s.despacho && (s.despacho.includes("IC04") || s.despacho.includes("IC06") || s.despacho.includes("IDA4")))
             .filter(s => {
                 if (!fechaSel) return true;
                 return s.fecha === fechaSel;

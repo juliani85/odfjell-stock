@@ -29,6 +29,23 @@ const GH = {
     _pendiente: null,
     _timerVistas: null,
     _pendienteVistas: null,
+    _estado: "sincronizado",
+    _listeners: [],
+
+    onEstado(cb) {
+        this._listeners.push(cb);
+        try { cb(this._estado); } catch (_) {}
+    },
+
+    _setEstado(e) {
+        if (this._estado === e) return;
+        this._estado = e;
+        this._listeners.forEach(cb => { try { cb(e); } catch (_) {} });
+    },
+
+    get pendiente() {
+        return this._estado !== "sincronizado";
+    },
 
     async cargar() {
         try {
@@ -63,51 +80,59 @@ const GH = {
 
     guardar(stock, historial) {
         this._pendiente = { stock, historial };
-        if (this._timer) clearTimeout(this._timer);
-        this._timer = setTimeout(() => this._enviar(), 2000);
+        this._setEstado("pendiente");
+        if (this._timer) { clearTimeout(this._timer); this._timer = null; }
+        this._enviar();
     },
 
     async _enviar() {
         if (!this._pendiente || this._enviando) return;
         this._enviando = true;
-        const { stock, historial } = this._pendiente;
+        this._setEstado("enviando");
 
-        try {
-            await this.refrescarSha();
+        while (this._pendiente) {
+            const { stock, historial } = this._pendiente;
+            try {
+                await this.refrescarSha();
 
-            const datos = { stock, historial, actualizado: new Date().toISOString() };
-            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
-            const body = {
-                message: `Actualizar datos ${new Date().toISOString().slice(0, 16)}`,
-                content: contenido
-            };
-            if (this.sha) body.sha = this.sha;
+                const datos = { stock, historial, actualizado: new Date().toISOString() };
+                const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
+                const body = {
+                    message: `Actualizar datos ${new Date().toISOString().slice(0, 16)}`,
+                    content: contenido
+                };
+                if (this.sha) body.sha = this.sha;
 
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
-                method: "PUT",
-                headers: {
-                    Authorization: `token ${this.token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
+                const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `token ${this.token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
 
-            if (!res.ok) {
-                const text = await res.text().catch(() => '');
-                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
+                if (!res.ok) {
+                    const text = await res.text().catch(() => '');
+                    throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
+                }
+                const data = await res.json();
+                this.sha = data.content.sha;
+                if (this._pendiente && this._pendiente.stock === stock && this._pendiente.historial === historial) {
+                    this._pendiente = null;
+                }
+            } catch (e) {
+                console.error('[GH sync stock]', e);
+                this._enviando = false;
+                this._setEstado("error");
+                if (this._timer) clearTimeout(this._timer);
+                this._timer = setTimeout(() => this._enviar(), 5000);
+                return;
             }
-            const data = await res.json();
-            this.sha = data.content.sha;
-            if (this._pendiente && this._pendiente.stock === stock && this._pendiente.historial === historial) {
-                this._pendiente = null;
-            }
-        } catch (e) {
-            console.error('[GH sync stock]', e);
-            if (this._timer) clearTimeout(this._timer);
-            this._timer = setTimeout(() => this._enviar(), 5000);
-        } finally {
-            this._enviando = false;
         }
+
+        this._enviando = false;
+        this._setEstado("sincronizado");
     },
 
     async cargarVistas() {
@@ -271,6 +296,30 @@ async function initApp() {
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
         GH.guardar(stock, historial);
     }
+
+    // Indicador visual de sincronización
+    const syncPill = document.getElementById("syncEstado");
+    if (syncPill) {
+        const textos = {
+            sincronizado: "✓ Sincronizado",
+            pendiente: "⏳ Pendiente",
+            enviando: "⟳ Enviando…",
+            error: "✕ Error — reintentando"
+        };
+        GH.onEstado((estado) => {
+            syncPill.className = "sync-pill sync-" + estado;
+            syncPill.textContent = textos[estado] || estado;
+        });
+    }
+
+    // Aviso si se intenta cerrar la pestaña con datos sin sincronizar
+    window.addEventListener("beforeunload", (ev) => {
+        if (GH.pendiente) {
+            ev.preventDefault();
+            ev.returnValue = "Hay cambios sin sincronizar. ¿Seguro que querés cerrar?";
+            return ev.returnValue;
+        }
+    });
 
     let tanqueActual = null;
     let despachoActual = null;

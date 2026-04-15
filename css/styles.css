@@ -659,6 +659,22 @@ tbody tr:hover { background: var(--gray-50); }
 
 .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
 
+/* Sync pill */
+.sync-pill {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+.sync-sincronizado { background: #dcfce7; color: #16a34a; }
+.sync-pendiente { background: #fef3c7; color: #b45309; }
+.sync-enviando { background: #dbeafe; color: #1e40af; }
+.sync-error { background: #fee2e2; color: #b91c1c; }
+
 /* Remito bar 2 col */
 .remito-bar-2col {
     grid-template-columns: 1fr 1fr;

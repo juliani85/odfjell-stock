@@ -321,6 +321,79 @@ async function initApp() {
         }
     });
 
+    // --- RENOMBRADO DE DESPACHOS NO ESTANDAR ---
+    // Un despacho es valido para salida si su nombre contiene IC04, IC06 o TRP.
+    // Los historicos pueden venir con formatos como FISCAL-..., PARTICULAR, IDA4, etc.
+    function esDespachoValido(nombre) {
+        if (!nombre) return false;
+        const n = nombre.toUpperCase();
+        return n.includes("IC04") || n.includes("IC06") || n.includes("TRP");
+    }
+
+    function getDespachosConsultados() {
+        try {
+            return JSON.parse(localStorage.getItem("despachosConsultados")) || [];
+        } catch (_) { return []; }
+    }
+
+    function addDespachoConsultado(nombre) {
+        const lista = getDespachosConsultados();
+        if (!lista.includes(nombre)) {
+            lista.push(nombre);
+            localStorage.setItem("despachosConsultados", JSON.stringify(lista));
+        }
+    }
+
+    function renombrarDespachoEnStock(tanqueObj, despachoViejo, despachoNuevo) {
+        const desp = tanqueObj.despachos.find(d => d.despacho === despachoViejo);
+        if (desp) desp.despacho = despachoNuevo;
+        historial.forEach(h => {
+            if (h.despacho === despachoViejo && h.tanque === tanqueObj.tanque) {
+                h.despacho = despachoNuevo;
+            }
+        });
+        guardarDatos();
+    }
+
+    function lanzarRenombrarDespacho(despachoObj) {
+        const viejo = despachoObj.despacho;
+        const inputId = "inputRenombrarDesp";
+        const html = `
+            <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong> o <strong>TRP</strong>).</p>
+            <div class="form-group" style="margin-top:1rem">
+                <label for="${inputId}">Nuevo nombre del despacho</label>
+                <input type="text" id="${inputId}" value="${viejo}" style="font-family:monospace;text-transform:uppercase">
+            </div>
+            <p style="font-size:0.85rem;color:var(--gray-500);margin-top:0.5rem">El cambio también actualiza los movimientos previos de este tanque que referencian al despacho.</p>
+        `;
+        document.getElementById("modalTitulo").textContent = "Renombrar despacho";
+        document.getElementById("btnConfirmar").textContent = "Renombrar";
+        modalBody.innerHTML = html;
+        window._confirmarAccion = () => {
+            const inp = document.getElementById(inputId);
+            const nuevo = (inp.value || "").trim().toUpperCase();
+            modal.classList.add("hidden");
+            document.getElementById("btnConfirmar").textContent = "Confirmar";
+            if (!nuevo || nuevo === viejo) return;
+            renombrarDespachoEnStock(tanqueActual, viejo, nuevo);
+            addDespachoConsultado(nuevo);
+            poblarDespachos(tanqueActual);
+            const newIdx = tanqueActual.despachos.findIndex(d => d.despacho === nuevo);
+            if (newIdx >= 0) {
+                selectDespacho.value = newIdx;
+                selectDespacho.dispatchEvent(new Event("change"));
+            }
+            renderStock();
+            renderHistorial();
+            mostrarAlerta(`Despacho renombrado: "${viejo}" → "${nuevo}"`, "success");
+        };
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+            const inp = document.getElementById(inputId);
+            if (inp) { inp.focus(); inp.select(); }
+        }, 50);
+    }
+
     let tanqueActual = null;
     let despachoActual = null;
 
@@ -479,6 +552,13 @@ async function initApp() {
         despachoActual = desp;
 
         const clienteDesp = desp.cliente || tanqueActual.cliente;
+        const invalido = !esDespachoValido(desp.despacho);
+        const avisoInvalido = invalido
+            ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap">
+                    <span>⚠ Formato no estándar — se espera IC04, IC06 o TRP.</span>
+                    <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar</button>
+                </div>`
+            : "";
         infoDespacho.className = "info-box found";
         infoDespacho.innerHTML = `
             <div class="info-grid">
@@ -486,8 +566,19 @@ async function initApp() {
                 <div><span class="info-label">Cliente</span><br><span class="info-value">${clienteDesp}</span></div>
                 <div><span class="info-label">Stock Disponible</span><br><span class="info-value" style="font-size:1.3rem;color:var(--primary)">${formatKg(desp.stock)} kg</span></div>
             </div>
+            ${avisoInvalido}
         `;
         infoDespacho.classList.remove("hidden");
+
+        if (invalido) {
+            const btnRen = document.getElementById("btnRenombrarDespacho");
+            if (btnRen) btnRen.addEventListener("click", () => lanzarRenombrarDespacho(desp));
+            const yaConsultado = getDespachosConsultados().includes(desp.despacho);
+            if (!yaConsultado) {
+                addDespachoConsultado(desp.despacho);
+                setTimeout(() => lanzarRenombrarDespacho(desp), 150);
+            }
+        }
 
         paso2.className = "paso done";
         activarPaso(3);

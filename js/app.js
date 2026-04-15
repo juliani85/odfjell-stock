@@ -357,25 +357,66 @@ async function initApp() {
 
     function lanzarRenombrarDespacho(despachoObj) {
         const viejo = despachoObj.despacho;
-        const inputId = "inputRenombrarDesp";
+        const stockViejo = despachoObj.stock;
+        const inputNombreId = "inputRenombrarDesp";
+        const inputKilosId = "inputRenombrarKilos";
+        const errorId = "renombrarError";
         const html = `
             <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong> o <strong>TRP</strong>).</p>
+            <p style="font-size:0.9rem;color:var(--gray-500);margin-bottom:0.25rem">Stock disponible: <strong>${formatKg(stockViejo)} kg</strong></p>
             <div class="form-group" style="margin-top:1rem">
-                <label for="${inputId}">Nuevo nombre del despacho</label>
-                <input type="text" id="${inputId}" value="${viejo}" style="font-family:monospace;text-transform:uppercase">
+                <label for="${inputNombreId}">Nuevo nombre del despacho</label>
+                <input type="text" id="${inputNombreId}" placeholder="Ej: DI26IC04009999Z" style="font-family:monospace;text-transform:uppercase">
             </div>
-            <p style="font-size:0.85rem;color:var(--gray-500);margin-top:0.5rem">El cambio también actualiza los movimientos previos de este tanque que referencian al despacho.</p>
+            <div class="form-group" style="margin-top:0.75rem">
+                <label for="${inputKilosId}">Kilos a migrar al nuevo nombre</label>
+                <input type="number" id="${inputKilosId}" min="1" max="${stockViejo}" step="1" value="${stockViejo}" placeholder="Cantidad en kg">
+            </div>
+            <div id="${errorId}" class="alerta error hidden" style="margin-top:0.5rem"></div>
+            <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.75rem">Si migrás <strong>todos</strong> los kilos, el despacho viejo desaparece y los movimientos previos del mismo tanque quedan renombrados. Si migrás <strong>una parte</strong>, se crea un despacho nuevo con esos kilos y el viejo queda con el saldo restante (útil cuando un despacho viejo representa varios despachos chicos).</p>
         `;
         document.getElementById("modalTitulo").textContent = "Renombrar despacho";
         document.getElementById("btnConfirmar").textContent = "Renombrar";
         modalBody.innerHTML = html;
-        window._confirmarAccion = () => {
-            const inp = document.getElementById(inputId);
-            const nuevo = (inp.value || "").trim().toUpperCase();
+
+        const confirmarRenombrar = () => {
+            const inpN = document.getElementById(inputNombreId);
+            const inpK = document.getElementById(inputKilosId);
+            const errBox = document.getElementById(errorId);
+            const nuevo = (inpN.value || "").trim().toUpperCase();
+            const kilos = parseInt(inpK.value) || 0;
+
+            const mostrarError = (msg) => {
+                errBox.textContent = msg;
+                errBox.classList.remove("hidden");
+                window._confirmarAccion = confirmarRenombrar;
+            };
+
+            if (!nuevo) { mostrarError("Ingresá el nuevo nombre del despacho."); return; }
+            if (nuevo === viejo) { mostrarError("El nuevo nombre es igual al actual."); return; }
+            if (kilos <= 0) { mostrarError("Los kilos deben ser mayores a cero."); return; }
+            if (kilos > stockViejo) { mostrarError(`Los kilos no pueden superar el stock disponible (${formatKg(stockViejo)} kg).`); return; }
+            if (tanqueActual.despachos.some(d => d.despacho === nuevo)) {
+                mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque.`);
+                return;
+            }
+
+            const esSplit = kilos < stockViejo;
             modal.classList.add("hidden");
             document.getElementById("btnConfirmar").textContent = "Confirmar";
-            if (!nuevo || nuevo === viejo) return;
-            renombrarDespachoEnStock(tanqueActual, viejo, nuevo);
+
+            if (esSplit) {
+                despachoObj.stock -= kilos;
+                const nuevoDesp = { despacho: nuevo, stock: kilos };
+                if (despachoObj.cliente) nuevoDesp.cliente = despachoObj.cliente;
+                tanqueActual.despachos.push(nuevoDesp);
+                guardarDatos();
+                mostrarAlerta(`Despacho dividido: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");
+            } else {
+                renombrarDespachoEnStock(tanqueActual, viejo, nuevo);
+                mostrarAlerta(`Despacho renombrado: "${viejo}" → "${nuevo}"`, "success");
+            }
+
             addDespachoConsultado(nuevo);
             poblarDespachos(tanqueActual);
             const newIdx = tanqueActual.despachos.findIndex(d => d.despacho === nuevo);
@@ -385,12 +426,13 @@ async function initApp() {
             }
             renderStock();
             renderHistorial();
-            mostrarAlerta(`Despacho renombrado: "${viejo}" → "${nuevo}"`, "success");
         };
+
+        window._confirmarAccion = confirmarRenombrar;
         modal.classList.remove("hidden");
         setTimeout(() => {
-            const inp = document.getElementById(inputId);
-            if (inp) { inp.focus(); inp.select(); }
+            const inp = document.getElementById(inputNombreId);
+            if (inp) inp.focus();
         }, 50);
     }
 

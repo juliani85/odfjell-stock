@@ -659,21 +659,38 @@ tbody tr:hover { background: var(--gray-50); }
 
 .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
 
-/* Sync pill */
+/* Sync pill — punto de color sin texto, excepto en error */
 .sync-pill {
-    display: inline-block;
-    padding: 0.25rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
     border-radius: 999px;
     font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     white-space: nowrap;
-    transition: background 0.2s, color 0.2s;
+    color: inherit;
+    background: transparent;
+    transition: background 0.2s, color 0.2s, padding 0.2s;
 }
-.sync-sincronizado { background: #dcfce7; color: #16a34a; }
-.sync-pendiente { background: #fef3c7; color: #b45309; }
-.sync-enviando { background: #dbeafe; color: #1e40af; }
-.sync-error { background: #fee2e2; color: #b91c1c; }
+.sync-pill::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+}
+.sync-sincronizado { color: #22c55e; }
+.sync-pendiente { color: #f59e0b; }
+.sync-enviando { color: #3b82f6; }
+.sync-error {
+    color: #ef4444;
+    background: #fee2e2;
+    padding: 0.25rem 0.6rem;
+}
 
 /* Remito bar 2 col */
 .remito-bar-2col {

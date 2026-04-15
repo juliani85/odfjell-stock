@@ -297,18 +297,20 @@ async function initApp() {
         GH.guardar(stock, historial);
     }
 
-    // Indicador visual de sincronización
+    // Indicador visual de sincronización: solo punto de color,
+    // excepto en error que muestra "OFFLINE"
     const syncPill = document.getElementById("syncEstado");
     if (syncPill) {
-        const textos = {
-            sincronizado: "✓ Sincronizado",
-            pendiente: "⏳ Pendiente",
-            enviando: "⟳ Enviando…",
-            error: "✕ Error — reintentando"
+        const titulos = {
+            sincronizado: "Sincronizado con el servidor",
+            pendiente: "Cambios pendientes de enviar",
+            enviando: "Enviando cambios al servidor…",
+            error: "Sin conexión — reintentando"
         };
         GH.onEstado((estado) => {
             syncPill.className = "sync-pill sync-" + estado;
-            syncPill.textContent = textos[estado] || estado;
+            syncPill.textContent = estado === "error" ? "OFFLINE" : "";
+            syncPill.title = titulos[estado] || estado;
         });
     }
 

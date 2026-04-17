@@ -2157,7 +2157,7 @@ async function initApp() {
         if (!tbody) return;
 
         if (!plan || !plan.filas || plan.filas.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>';
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>';
             if (resumen) resumen.classList.add("hidden");
             actualizarBadgePlan();
             return;
@@ -2171,22 +2171,26 @@ async function initApp() {
         document.getElementById("planPendientes").textContent = pendientes;
         document.getElementById("planCumplidos").textContent = cumplidos;
 
-        tbody.innerHTML = plan.filas.map(f => {
+        const filasOrdenadas = [...plan.filas].sort((a, b) =>
+            (a.horaCarga || "99:99").localeCompare(b.horaCarga || "99:99")
+        );
+
+        tbody.innerHTML = filasOrdenadas.map(f => {
             const cls = f.cumplido ? "plan-cumplido" : "";
             const estadoBadge = f.cumplido
                 ? '<span class="plan-estado-badge plan-estado-cumplido">✓ OK</span>'
                 : '<span class="plan-estado-badge plan-estado-pendiente">PEND.</span>';
             const buqueViaje = [f.buque, f.viaje].filter(Boolean).join(" / ");
+            const tanqueStock = stock.find(t => t.tanque === f.tanque);
+            const productoMostrar = (tanqueStock && tanqueStock.producto) || f.producto;
             return `<tr class="${cls}" data-id="${f.id}">
                 <td>${estadoBadge}</td>
+                <td><strong>${f.horaCarga || "-"}</strong></td>
                 <td><strong>TK ${f.tanque}</strong></td>
-                <td>${f.producto}</td>
+                <td>${productoMostrar}</td>
                 <td>${f.cliente}</td>
                 <td><code>${f.despacho}</code></td>
-                <td>${f.fechaOrig || "-"}</td>
-                <td>${f.horaCarga || "-"}</td>
                 <td>${buqueViaje}</td>
-                <td>${f.observaciones || ""}</td>
             </tr>`;
         }).join("");
 
@@ -2291,6 +2295,11 @@ async function initApp() {
                 }
             });
 
+            filas.forEach(f => {
+                const tq = stock.find(t => t.tanque === f.tanque);
+                if (tq && tq.producto) f.producto = tq.producto;
+            });
+
             planes[fecha] = {
                 filas,
                 asunto,
@@ -2330,22 +2339,28 @@ async function initApp() {
             alert("No hay plan para imprimir en esta fecha.");
             return;
         }
-        const filas = plan.filas.map(f => `<tr${f.cumplido ? ' style="background:#f0fdf4;color:#15803d;text-decoration:line-through"' : ''}>
+        const filasOrden = [...plan.filas].sort((a, b) =>
+            (a.horaCarga || "99:99").localeCompare(b.horaCarga || "99:99")
+        );
+        const filas = filasOrden.map(f => {
+            const tq = stock.find(t => t.tanque === f.tanque);
+            const productoMostrar = (tq && tq.producto) || f.producto;
+            return `<tr${f.cumplido ? ' style="background:#f0fdf4;color:#15803d;text-decoration:line-through"' : ''}>
             <td>${f.cumplido ? "✓" : ""}</td>
+            <td>${f.horaCarga || "-"}</td>
             <td>TK ${f.tanque}</td>
-            <td>${f.producto}</td>
+            <td>${productoMostrar}</td>
             <td>${f.cliente}</td>
             <td>${f.despacho}</td>
-            <td>${f.fechaOrig || "-"}</td>
-            <td>${f.horaCarga || "-"}</td>
             <td>${[f.buque, f.viaje].filter(Boolean).join(" / ")}</td>
-        </tr>`).join("");
+        </tr>`;
+        }).join("");
         const html = `<!DOCTYPE html><html><head><title>Plan ${fecha}</title>
         <style>body{font-family:Arial,sans-serif;padding:2rem}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;font-size:0.85rem}th{background:#f0f0f0;text-align:left}</style>
         </head><body>
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
         <p>Plan de Cargas del ${fecha.split("-").reverse().join("/")} — ${plan.filas.length} cargas</p>
-        <table><thead><tr><th></th><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Despacho</th><th>Fecha Orig.</th><th>Hora</th><th>Buque/Viaje</th></tr></thead>
+        <table><thead><tr><th></th><th>Hora</th><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Despacho</th><th>Buque/Viaje</th></tr></thead>
         <tbody>${filas}</tbody></table>
         </body></html>`;
         const win = window.open("", "_blank");

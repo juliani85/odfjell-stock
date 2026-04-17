@@ -46,19 +46,18 @@
 
     <main class="hidden" id="mainApp">
         <nav class="tabs">
-            <button class="tab active" data-tab="salida" data-rol="admin">Registrar Salida</button>
+            <button class="tab active" data-tab="planCargas" data-rol="admin">Plan de Cargas <span id="badgePlanPendientes" class="badge-nuevas hidden">0</span></button>
+            <button class="tab" data-tab="salida" data-rol="admin">Registrar Salida</button>
             <button class="tab" data-tab="ingreso" data-rol="admin">Ingreso a Depósito</button>
             <button class="tab" data-tab="transferencia" data-rol="admin">Transferencia</button>
             <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
-            <button class="tab" data-tab="historialTanque" data-rol="admin">Historial por Tanque</button>
             <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
-            <button class="tab" data-tab="planCargas" data-rol="admin">Plan de Cargas <span id="badgePlanPendientes" class="badge-nuevas hidden">0</span></button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
         <!-- REGISTRAR SALIDA -->
-        <section id="salida" class="tab-content active">
+        <section id="salida" class="tab-content">
             <div class="form-card">
                 <h2>Registrar Salida con Remito</h2>
 
@@ -276,67 +275,111 @@
             <div id="stockCards"></div>
         </section>
 
-        <!-- HISTORIAL -->
+        <!-- HISTORIAL (contiene sub-pestañas) -->
         <section id="historial" class="tab-content">
-            <div class="stock-header">
-                <h2>Historial de Salidas</h2>
-                <div class="filtros">
-                    <input type="text" id="filtroHistorial" placeholder="Buscar...">
-                    <button class="btn btn-secondary" id="btnExportar">Exportar CSV</button>
-                </div>
-            </div>
-            <div class="table-container">
-                <table id="tablaHistorial">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Tipo</th>
-                            <th>Remito</th>
-                            <th>Tanque</th>
-                            <th>Producto</th>
-                            <th>Despacho</th>
-                            <th>Kilos</th>
-                            <th>Usuario</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <!-- HISTORIAL POR TANQUE -->
-        <section id="historialTanque" class="tab-content">
-            <div id="histTanqueListaView">
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="histSalidas">Todas las salidas</button>
+                <button class="sub-tab" data-subtab="histPorTanque">Por tanque</button>
+                <button class="sub-tab" data-subtab="histPorDespacho">Por despacho</button>
+            </nav>
+
+            <!-- SUB: HISTORIAL DE SALIDAS -->
+            <div id="histSalidas" class="sub-tab-content active">
                 <div class="stock-header">
-                    <h2>Historial por Tanque</h2>
-                    <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
-                </div>
-                <div id="histTanqueCards"></div>
-            </div>
-            <div id="histTanqueDetalleView" class="hidden">
-                <div class="stock-header">
-                    <button class="btn btn-secondary" id="btnVolverHistTanque">← Volver</button>
-                    <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                    <h2>Historial de Salidas</h2>
+                    <div class="filtros">
+                        <input type="text" id="filtroHistorial" placeholder="Buscar...">
+                        <button class="btn btn-secondary" id="btnExportar">Exportar CSV</button>
+                    </div>
                 </div>
                 <div class="table-container">
-                    <table id="tablaHistTanque">
+                    <table id="tablaHistorial">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Tipo</th>
                                 <th>Remito</th>
+                                <th>Tanque</th>
                                 <th>Producto</th>
                                 <th>Despacho</th>
                                 <th>Kilos</th>
                                 <th>Usuario</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>
+                        </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR TANQUE -->
+            <div id="histPorTanque" class="sub-tab-content">
+                <div id="histTanqueListaView">
+                    <div class="stock-header">
+                        <h2>Historial por Tanque</h2>
+                        <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
+                    </div>
+                    <div id="histTanqueCards"></div>
+                </div>
+                <div id="histTanqueDetalleView" class="hidden">
+                    <div class="stock-header">
+                        <button class="btn btn-secondary" id="btnVolverHistTanque">← Volver</button>
+                        <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                    </div>
+                    <div class="table-container">
+                        <table id="tablaHistTanque">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Remito</th>
+                                    <th>Producto</th>
+                                    <th>Despacho</th>
+                                    <th>Kilos</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR DESPACHO -->
+            <div id="histPorDespacho" class="sub-tab-content">
+                <div id="histDespachoListaView">
+                    <div class="stock-header">
+                        <h2>Historial por Despacho</h2>
+                        <input type="text" id="filtroHistDespacho" placeholder="Buscar despacho, producto o cliente...">
+                    </div>
+                    <div id="histDespachoCards"></div>
+                </div>
+                <div id="histDespachoDetalleView" class="hidden">
+                    <div class="stock-header">
+                        <button class="btn btn-secondary" id="btnVolverHistDespacho">← Volver</button>
+                        <h2 id="histDespachoDetalleTitulo">Movimientos del Despacho</h2>
+                    </div>
+                    <div class="table-container">
+                        <table id="tablaHistDespacho">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Remito</th>
+                                    <th>Tanque</th>
+                                    <th>Producto</th>
+                                    <th>Kilos</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>

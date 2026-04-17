@@ -778,9 +778,13 @@ async function initApp() {
             if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
             if (tab.dataset.tab === "salidasViewer") renderViewer();
             if (tab.dataset.tab === "planCargas") renderPlan();
-            if (tab.dataset.tab === "historialTanque") {
-                volverListaHistTanque();
-                renderHistTanqueLista();
+            if (tab.dataset.tab === "historial") {
+                // Renderizar la sub-pestaña activa de historial
+                const activa = document.querySelector("#historial .sub-tab.active");
+                const sub = activa ? activa.dataset.subtab : "histSalidas";
+                if (sub === "histPorTanque") { volverListaHistTanque(); renderHistTanqueLista(); }
+                else if (sub === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
+                else renderHistorial();
             }
         });
     });
@@ -1314,14 +1318,20 @@ async function initApp() {
         win.print();
     });
 
-    // --- SUB-TABS DE REPORTES ---
+    // --- SUB-TABS (scoped al section padre) ---
     document.querySelectorAll(".sub-tab").forEach(st => {
         st.addEventListener("click", () => {
-            document.querySelectorAll(".sub-tab").forEach(s => s.classList.remove("active"));
-            document.querySelectorAll(".sub-tab-content").forEach(sc => sc.classList.remove("active"));
+            const parent = st.closest(".tab-content");
+            if (parent) {
+                parent.querySelectorAll(".sub-tab").forEach(s => s.classList.remove("active"));
+                parent.querySelectorAll(".sub-tab-content").forEach(sc => sc.classList.remove("active"));
+            }
             st.classList.add("active");
             document.getElementById(st.dataset.subtab).classList.add("active");
             if (st.dataset.subtab === "repMensual") renderRepMensual();
+            if (st.dataset.subtab === "histSalidas") renderHistorial(document.getElementById("filtroHistorial")?.value || "");
+            if (st.dataset.subtab === "histPorTanque") { volverListaHistTanque(); renderHistTanqueLista(); }
+            if (st.dataset.subtab === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
         });
     });
 
@@ -2496,6 +2506,139 @@ async function initApp() {
     document.getElementById("btnVolverHistTanque").addEventListener("click", volverListaHistTanque);
     document.getElementById("filtroHistTanque").addEventListener("input", (e) => {
         renderHistTanqueLista(e.target.value);
+    });
+
+    // --- HISTORIAL POR DESPACHO ---
+    function renderHistDespachoLista(filtro = "") {
+        const container = document.getElementById("histDespachoCards");
+        const filtroLower = filtro.toLowerCase();
+
+        // Unir despachos en stock + los que solo aparecen en historial
+        const mapa = new Map();
+        stock.forEach(t => {
+            t.despachos.forEach(d => {
+                const key = d.despacho;
+                if (!mapa.has(key)) {
+                    mapa.set(key, {
+                        despacho: key,
+                        productos: new Set(),
+                        clientes: new Set(),
+                        tanques: new Set(),
+                        stockActual: 0,
+                    });
+                }
+                const obj = mapa.get(key);
+                obj.productos.add(t.producto);
+                if (d.cliente || t.cliente) obj.clientes.add(d.cliente || t.cliente);
+                obj.tanques.add(t.tanque);
+                obj.stockActual += d.stock;
+            });
+        });
+        historial.forEach(h => {
+            if (!h.despacho) return;
+            if (!mapa.has(h.despacho)) {
+                mapa.set(h.despacho, {
+                    despacho: h.despacho,
+                    productos: new Set(h.producto ? [h.producto] : []),
+                    clientes: new Set(h.cliente ? [h.cliente] : []),
+                    tanques: new Set(h.tanque ? [h.tanque.split("→")[0]] : []),
+                    stockActual: 0,
+                });
+            } else {
+                const obj = mapa.get(h.despacho);
+                if (h.producto) obj.productos.add(h.producto);
+                if (h.cliente) obj.clientes.add(h.cliente);
+                if (h.tanque) obj.tanques.add(h.tanque.split("→")[0]);
+            }
+        });
+
+        const lista = Array.from(mapa.values())
+            .filter(d => {
+                if (!filtro) return true;
+                return d.despacho.toLowerCase().includes(filtroLower) ||
+                       [...d.productos].some(p => (p || "").toLowerCase().includes(filtroLower)) ||
+                       [...d.clientes].some(c => (c || "").toLowerCase().includes(filtroLower));
+            })
+            .sort((a, b) => a.despacho.localeCompare(b.despacho));
+
+        if (lista.length === 0) {
+            container.innerHTML = '<p style="padding:1rem;color:var(--gray-500)">No hay despachos para mostrar.</p>';
+            return;
+        }
+
+        container.innerHTML = lista.map(d => {
+            const movs = historial.filter(h => h.despacho === d.despacho).length;
+            const tanques = [...d.tanques].map(t => "TK " + t).join(", ");
+            const productos = [...d.productos].filter(Boolean).join(", ") || "—";
+            const clientes = [...d.clientes].filter(Boolean).join(", ") || "—";
+            return `<div class="stock-card hist-despacho-card" data-despacho="${d.despacho.replace(/"/g, '&quot;')}">
+                <div class="stock-card-header">
+                    <div class="stock-card-left">
+                        <div>
+                            <div class="stock-card-producto" style="font-family:monospace"><code>${d.despacho}</code></div>
+                            <div class="stock-card-cliente">${productos} · ${clientes}</div>
+                            <div class="stock-card-cliente" style="font-size:0.75rem">${tanques || "sin tanque"}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:right">
+                        <span class="stock-card-total">${movs} mov.</span>
+                        ${d.stockActual > 0 ? `<div style="font-size:0.75rem;color:var(--gray-500)">saldo ${formatKg(d.stockActual)} kg</div>` : ""}
+                    </div>
+                </div>
+            </div>`;
+        }).join("");
+
+        container.querySelectorAll(".hist-despacho-card").forEach(card => {
+            card.addEventListener("click", () => {
+                renderHistDespachoDetalle(card.dataset.despacho);
+            });
+        });
+    }
+
+    function renderHistDespachoDetalle(despacho) {
+        const movs = historial
+            .filter(h => h.despacho === despacho)
+            .slice()
+            .sort((a, b) => {
+                const fa = `${a.fecha} ${a.hora || ""}`;
+                const fb = `${b.fecha} ${b.hora || ""}`;
+                return fb.localeCompare(fa);
+            });
+
+        document.getElementById("histDespachoListaView").classList.add("hidden");
+        document.getElementById("histDespachoDetalleView").classList.remove("hidden");
+        document.getElementById("histDespachoDetalleTitulo").innerHTML = `Movimientos del despacho <code>${despacho}</code>`;
+
+        const tbody = document.querySelector("#tablaHistDespacho tbody");
+        if (movs.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">No hay movimientos para este despacho.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = movs.map(s => {
+            const tipo = s.tipo || "SALIDA";
+            const tipoClass = tipo === "INGRESO" ? "tipo-ingreso" : tipo === "TRANSFERENCIA" ? "tipo-transferencia" : "tipo-salida";
+            return `<tr>
+                <td>${s.fecha}</td>
+                <td>${s.hora || "-"}</td>
+                <td><span class="tipo-badge ${tipoClass}">${tipo}</span></td>
+                <td><strong>${s.remito || "-"}</strong></td>
+                <td><strong>TK ${s.tanque}</strong></td>
+                <td>${s.producto || "-"}</td>
+                <td><strong>${formatKg(s.kilos)} kg</strong></td>
+                <td>${(s.usuario || "-").toUpperCase()}</td>
+            </tr>`;
+        }).join("");
+    }
+
+    function volverListaHistDespacho() {
+        document.getElementById("histDespachoDetalleView").classList.add("hidden");
+        document.getElementById("histDespachoListaView").classList.remove("hidden");
+    }
+
+    document.getElementById("btnVolverHistDespacho").addEventListener("click", volverListaHistDespacho);
+    document.getElementById("filtroHistDespacho").addEventListener("input", (e) => {
+        renderHistDespachoLista(e.target.value);
     });
 
     // --- HELPERS ---

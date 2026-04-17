@@ -98,7 +98,7 @@ function formatearHoraPlan(val) {
 }
 
 async function obtenerPlanDesdeGmail(token) {
-    const q = encodeURIComponent('subject:"plan de carga" has:attachment newer_than:7d');
+    const q = encodeURIComponent('subject:("plan de carga" OR "plan de cargas") has:attachment newer_than:7d');
     const list = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${q}&maxResults=10`, token);
     if (!list.messages || list.messages.length === 0) {
         throw new Error('No se encontraron mails recientes con asunto "plan de carga" y adjunto.');

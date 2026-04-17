@@ -62,19 +62,28 @@ async function gmailGet(url, token) {
     return res.json();
 }
 
-function buscarAdjuntoExcel(part) {
-    if (!part) return null;
-    const fn = (part.filename || "").toLowerCase();
-    if (part.body && part.body.attachmentId && (fn.endsWith(".xls") || fn.endsWith(".xlsx"))) {
-        return { id: part.body.attachmentId, filename: part.filename };
-    }
-    if (part.parts) {
-        for (const p of part.parts) {
-            const f = buscarAdjuntoExcel(p);
-            if (f) return f;
+function listarAdjuntos(part) {
+    const out = [];
+    function recorrer(p) {
+        if (!p) return;
+        if (p.body && p.body.attachmentId) {
+            out.push({
+                id: p.body.attachmentId,
+                filename: p.filename || "(sin nombre)",
+                mime: (p.mimeType || "").toLowerCase()
+            });
         }
+        if (p.parts) for (const sub of p.parts) recorrer(sub);
     }
-    return null;
+    recorrer(part);
+    return out;
+}
+
+function buscarAdjuntoExcel(part) {
+    const todos = listarAdjuntos(part);
+    const excelExt = /\.(xls|xlsx|xlsm|xlsb)$/i;
+    const excelMime = /(excel|spreadsheet|ms-excel|officedocument\.spreadsheetml)/i;
+    return todos.find(a => excelExt.test(a.filename) || excelMime.test(a.mime)) || null;
 }
 
 function parseFechaPlanExcel(val) {
@@ -119,13 +128,20 @@ async function obtenerPlanDesdeGmail(token) {
     }
 
     const asuntosVistos = [];
+    const adjuntosVistos = [];
     for (const msgRef of candidates) {
         const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}`, token);
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
         if (!/plan\s+de\s+cargas?/i.test(subject)) continue;
         asuntosVistos.push(subject);
         const att = buscarAdjuntoExcel(msg.payload);
-        if (!att) continue;
+        if (!att) {
+            const todos = listarAdjuntos(msg.payload);
+            if (todos.length > 0) {
+                adjuntosVistos.push(...todos.map(a => `${a.filename} [${a.mime || "?"}]`));
+            }
+            continue;
+        }
         const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
         const bytes = base64UrlToUint8Array(attData.data);
         const wb = XLSX.read(bytes, { type: "array", cellDates: true });
@@ -177,10 +193,13 @@ async function obtenerPlanDesdeGmail(token) {
         if (filas.length === 0) continue;
         return { filas, asunto: subject, filename: att.filename };
     }
-    const detalle = asuntosVistos.length > 0
-        ? ` Asuntos vistos: ${asuntosVistos.slice(0, 3).join(" / ")}`
+    const detAsuntos = asuntosVistos.length > 0
+        ? ` Asuntos: ${asuntosVistos.slice(0, 3).join(" / ")}.`
         : "";
-    throw new Error(`Cuenta ${profileEmail}: no encontré ningún mail con asunto "plan de carga(s)" + Excel adjunto válido.${detalle}`);
+    const detAdj = adjuntosVistos.length > 0
+        ? ` Adjuntos encontrados: ${adjuntosVistos.slice(0, 5).join(" · ")}`
+        : " (ningún adjunto detectado en esos mails)";
+    throw new Error(`Cuenta ${profileEmail}: no encontré ningún Excel válido.${detAsuntos}${detAdj}`);
 }
 
 // --- GITHUB STORAGE ---

@@ -20,7 +20,7 @@ let usuarioActual = null;
 const GMAIL_CLIENT_ID = "933883889395-ofaj2ikjfgk227so46qm06o65htra0hm.apps.googleusercontent.com";
 let gmailTokenClient = null;
 
-function requestGmailToken() {
+function requestGmailToken(opts = {}) {
     return new Promise((resolve, reject) => {
         if (!gmailTokenClient) {
             try {
@@ -40,7 +40,11 @@ function requestGmailToken() {
             if (resp.error) reject(new Error(resp.error_description || resp.error));
             else resolve(resp.access_token);
         };
-        gmailTokenClient.requestAccessToken({ prompt: "" });
+        try {
+            gmailTokenClient.requestAccessToken(opts);
+        } catch (e) {
+            reject(e);
+        }
     });
 }
 
@@ -777,7 +781,7 @@ async function initApp() {
             document.getElementById(tab.dataset.tab).classList.add("active");
             if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
             if (tab.dataset.tab === "salidasViewer") renderViewer();
-            if (tab.dataset.tab === "planCargas") renderPlan();
+            if (tab.dataset.tab === "planCargas") { renderPlan(); intentarAutoSync(); }
             if (tab.dataset.tab === "historial") {
                 // Renderizar la sub-pestaña activa de historial
                 const activa = document.querySelector("#historial .sub-tab.active");
@@ -2282,15 +2286,34 @@ async function initApp() {
         });
     }
 
-    async function sincronizarPlanDesdeGmail() {
+    function extraerFechaDeAsunto(asunto) {
+        if (!asunto) return null;
+        const m = asunto.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{2,4})/);
+        if (!m) return null;
+        const dia = parseInt(m[1]);
+        const mes = parseInt(m[2]);
+        let anio = parseInt(m[3]);
+        if (anio < 100) anio += 2000;
+        if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
+        return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    }
+
+    async function sincronizarPlanDesdeGmail(modo = "manual") {
+        const esAuto = modo === "auto";
         const btn = document.getElementById("btnPlanSincronizar");
-        if (btn) { btn.disabled = true; btn.textContent = "⏳ Sincronizando…"; }
+        if (btn && !esAuto) { btn.disabled = true; btn.textContent = "⏳ Sincronizando…"; }
         try {
-            mostrarEstadoPlan("Abriendo autenticación de Google (tagsaaduana@gmail.com)…", "info");
-            const token = await requestGmailToken();
+            if (!esAuto) mostrarEstadoPlan("Abriendo autenticación de Google (tagsaaduana@gmail.com)…", "info");
+            const tokenOpts = esAuto
+                ? { prompt: "none", hint: "tagsaaduana@gmail.com" }
+                : { prompt: "" };
+            const token = await requestGmailToken(tokenOpts);
             mostrarEstadoPlan("Buscando el plan más reciente en Gmail…", "info");
             const { filas, asunto, filename } = await obtenerPlanDesdeGmail(token);
-            const fecha = getFechaPlan();
+            const fechaSeleccionada = getFechaPlan();
+            const fechaAsunto = extraerFechaDeAsunto(asunto);
+            const fecha = fechaAsunto || fechaSeleccionada;
+            const fechaVisual = fecha.split("-").reverse().join("/");
 
             // Conservar estado cumplido de filas que ya existían (match por tanque+despacho+producto)
             const previas = planes[fecha] && planes[fecha].filas ? planes[fecha].filas : [];
@@ -2319,14 +2342,44 @@ async function initApp() {
             };
             autoMatchearPlan(fecha);
             GH.guardarPlan(planes);
+
+            // Si la fecha del asunto es distinta a la del filtro, actualizar el filtro
+            if (fecha !== fechaSeleccionada && planFechaInput) {
+                planFechaInput.value = fecha;
+                if (fechaInput) fechaInput.value = fecha;
+            }
             renderPlan();
-            mostrarEstadoPlan(`Plan importado: ${filas.length} cargas desde "${asunto}" (${filename}).`, "success");
+
+            // Primera sincronizacion manual exitosa: marcamos consentimiento
+            // para que los proximos autosyncs se hagan solos sin popup.
+            if (!esAuto) localStorage.setItem("planGmailConsentio", "1");
+
+            if (!fechaAsunto) {
+                mostrarEstadoPlan(`Plan importado bajo ${fechaVisual} (no se detectó fecha en el asunto "${asunto}"). ${filas.length} cargas.`, "warning");
+            } else if (fecha !== fechaSeleccionada) {
+                mostrarEstadoPlan(`Plan para ${fechaVisual} importado (${filas.length} cargas). Cambiamos el filtro a esa fecha.`, "success");
+            } else {
+                mostrarEstadoPlan(`Plan para ${fechaVisual} importado: ${filas.length} cargas.`, "success");
+            }
         } catch (e) {
-            console.error("[plan]", e);
-            mostrarEstadoPlan("Error: " + e.message, "error");
+            if (esAuto) {
+                console.log("[plan] auto-sync falló (se ignora):", e.message);
+            } else {
+                console.error("[plan]", e);
+                mostrarEstadoPlan("Error: " + e.message, "error");
+            }
         } finally {
-            if (btn) { btn.disabled = false; btn.textContent = "📧 Sincronizar con Gmail"; }
+            if (btn && !esAuto) { btn.disabled = false; btn.textContent = "📧 Sincronizar con Gmail"; }
         }
+    }
+
+    let ultimoAutoSync = 0;
+    function intentarAutoSync() {
+        if (localStorage.getItem("planGmailConsentio") !== "1") return;
+        const ahora = Date.now();
+        if (ahora - ultimoAutoSync < 2 * 60 * 1000) return;
+        ultimoAutoSync = ahora;
+        sincronizarPlanDesdeGmail("auto");
     }
 
     const planFechaInput = document.getElementById("planFechaInput");
@@ -2381,6 +2434,13 @@ async function initApp() {
     });
 
     actualizarBadgePlan();
+
+    // Auto-sync Gmail al iniciar (si el admin ya consintió alguna vez)
+    // y reintento cada 10 minutos.
+    if (rolActual === "admin") {
+        setTimeout(intentarAutoSync, 2000);
+        setInterval(intentarAutoSync, 10 * 60 * 1000);
+    }
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s
     if (rolActual === "viewer") {

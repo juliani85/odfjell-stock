@@ -2332,8 +2332,11 @@ async function initApp() {
     const planFechaInput = document.getElementById("planFechaInput");
     if (planFechaInput) {
         planFechaInput.value = hoyISO();
+        if (fechaInput) fechaInput.value = planFechaInput.value;
         planFechaInput.addEventListener("change", () => {
             ocultarEstadoPlan();
+            if (fechaInput) fechaInput.value = planFechaInput.value;
+            verificarRemitoEnVivo();
             renderPlan();
         });
     }

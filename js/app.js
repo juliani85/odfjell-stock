@@ -79,6 +79,22 @@ function listarAdjuntos(part) {
     return out;
 }
 
+function listarTodasLasPartes(part) {
+    const out = [];
+    function recorrer(p) {
+        if (!p) return;
+        out.push({
+            filename: p.filename || "",
+            mime: (p.mimeType || "").toLowerCase(),
+            hasAtt: !!(p.body && p.body.attachmentId),
+            bodySize: (p.body && p.body.size) || 0
+        });
+        if (p.parts) for (const sub of p.parts) recorrer(sub);
+    }
+    recorrer(part);
+    return out;
+}
+
 function buscarAdjuntoExcel(part) {
     const todos = listarAdjuntos(part);
     const excelExt = /\.(xls|xlsx|xlsm|xlsb)$/i;
@@ -130,15 +146,22 @@ async function obtenerPlanDesdeGmail(token) {
     const asuntosVistos = [];
     const adjuntosVistos = [];
     for (const msgRef of candidates) {
-        const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}`, token);
+        const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
         if (!/plan\s+de\s+cargas?/i.test(subject)) continue;
         asuntosVistos.push(subject);
+        console.log("[plan] Asunto:", subject);
+        console.log("[plan] payload.mimeType:", msg.payload.mimeType);
+        console.log("[plan] payload completo:", msg.payload);
+        const partes = listarTodasLasPartes(msg.payload);
+        console.log("[plan] Todas las partes detectadas:", partes);
         const att = buscarAdjuntoExcel(msg.payload);
         if (!att) {
             const todos = listarAdjuntos(msg.payload);
             if (todos.length > 0) {
                 adjuntosVistos.push(...todos.map(a => `${a.filename} [${a.mime || "?"}]`));
+            } else {
+                adjuntosVistos.push(...partes.map(p => `${p.filename || '(sin nombre)'} [${p.mime}]${p.hasAtt ? '' : ' (sin attachmentId)'}`));
             }
             continue;
         }

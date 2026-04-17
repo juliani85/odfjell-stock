@@ -98,13 +98,32 @@ function formatearHoraPlan(val) {
 }
 
 async function obtenerPlanDesdeGmail(token) {
-    const q = encodeURIComponent('subject:("plan de carga" OR "plan de cargas") has:attachment newer_than:7d');
-    const list = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${q}&maxResults=10`, token);
-    if (!list.messages || list.messages.length === 0) {
-        throw new Error('No se encontraron mails recientes con asunto "plan de carga" o "plan de cargas" y adjunto.');
+    let profileEmail = "?";
+    try {
+        const p = await gmailGet("https://gmail.googleapis.com/gmail/v1/users/me/profile", token);
+        profileEmail = p.emailAddress || "?";
+    } catch (_) {}
+
+    const runQuery = async (q) => {
+        const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=25`;
+        const r = await gmailGet(url, token);
+        return r.messages || [];
+    };
+
+    let candidates = await runQuery('subject:"plan de cargas" newer_than:30d');
+    if (candidates.length === 0) candidates = await runQuery('subject:"plan de carga" newer_than:30d');
+    if (candidates.length === 0) candidates = await runQuery('subject:plan newer_than:60d');
+
+    if (candidates.length === 0) {
+        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto en los últimos 60 días. ¿Te loggeaste con tagsaaduana@gmail.com?`);
     }
-    for (const msgRef of list.messages) {
+
+    const asuntosVistos = [];
+    for (const msgRef of candidates) {
         const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}`, token);
+        const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
+        if (!/plan\s+de\s+cargas?/i.test(subject)) continue;
+        asuntosVistos.push(subject);
         const att = buscarAdjuntoExcel(msg.payload);
         if (!att) continue;
         const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
@@ -156,10 +175,12 @@ async function obtenerPlanDesdeGmail(token) {
             });
         }
         if (filas.length === 0) continue;
-        const subject = (msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "";
         return { filas, asunto: subject, filename: att.filename };
     }
-    throw new Error("No se encontró ningún Excel válido en los mails del plan.");
+    const detalle = asuntosVistos.length > 0
+        ? ` Asuntos vistos: ${asuntosVistos.slice(0, 3).join(" / ")}`
+        : "";
+    throw new Error(`Cuenta ${profileEmail}: no encontré ningún mail con asunto "plan de carga(s)" + Excel adjunto válido.${detalle}`);
 }
 
 // --- GITHUB STORAGE ---

@@ -756,6 +756,26 @@ tbody tr:hover { background: var(--gray-50); }
     text-align: center;
 }
 
+/* Plan de Cargas */
+#tablaPlan tr.plan-cumplido {
+    background: #f0fdf4;
+    color: #15803d;
+    text-decoration: line-through;
+    text-decoration-color: #16a34a;
+}
+#tablaPlan tr.plan-cumplido code { color: #15803d; }
+.plan-estado-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.plan-estado-pendiente { background: #fef3c7; color: #92400e; }
+.plan-estado-cumplido { background: #dcfce7; color: #166534; }
+#planEstado.alerta { font-size: 0.9rem; }
+
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }

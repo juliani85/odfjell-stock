@@ -53,6 +53,7 @@
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
             <button class="tab" data-tab="historialTanque" data-rol="admin">Historial por Tanque</button>
             <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
+            <button class="tab" data-tab="planCargas" data-rol="admin">Plan de Cargas <span id="badgePlanPendientes" class="badge-nuevas hidden">0</span></button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
@@ -409,6 +410,56 @@
                 </div>
             </div>
         </section>
+        <!-- PLAN DE CARGAS -->
+        <section id="planCargas" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Plan de Cargas</h2>
+                    <div class="filtros">
+                        <label for="planFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
+                        <input type="date" id="planFechaInput">
+                        <button class="btn btn-primary" id="btnPlanSincronizar">📧 Sincronizar con Gmail</button>
+                        <button class="btn btn-secondary" id="btnPlanImprimir">Imprimir</button>
+                    </div>
+                </div>
+                <div id="planEstado" class="alerta hidden" style="margin-bottom:1rem"></div>
+                <div id="planResumen" class="resumen-cards hidden">
+                    <div class="resumen-card">
+                        <span class="resumen-numero" id="planTotalFilas">0</span>
+                        <span class="resumen-label">Cargas planificadas</span>
+                    </div>
+                    <div class="resumen-card ocupados">
+                        <span class="resumen-numero" id="planPendientes">0</span>
+                        <span class="resumen-label">Pendientes</span>
+                    </div>
+                    <div class="resumen-card kilos">
+                        <span class="resumen-numero" id="planCumplidos">0</span>
+                        <span class="resumen-label">Cumplidas</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="tablaPlan">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Tanque</th>
+                                <th>Producto</th>
+                                <th>Cliente</th>
+                                <th>Despacho</th>
+                                <th>Fecha Orig.</th>
+                                <th>Hora</th>
+                                <th>Buque/Viaje</th>
+                                <th>Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="9">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <!-- VISTA UMA: SALIDAS -->
         <section id="salidasViewer" class="tab-content">
             <div class="form-card">
@@ -455,6 +506,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>

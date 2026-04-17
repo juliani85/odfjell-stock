@@ -16,6 +16,152 @@ const ROLES = {
 
 let usuarioActual = null;
 
+// --- GMAIL OAUTH ---
+const GMAIL_CLIENT_ID = "933883889395-ofaj2ikjfgk227so46qm06o65htra0hm.apps.googleusercontent.com";
+let gmailTokenClient = null;
+
+function requestGmailToken() {
+    return new Promise((resolve, reject) => {
+        if (!gmailTokenClient) {
+            try {
+                if (typeof google === "undefined" || !google.accounts || !google.accounts.oauth2) {
+                    return reject(new Error("Google Identity Services no cargó todavía. Refrescá la página (Ctrl+Shift+R) y probá de nuevo."));
+                }
+                gmailTokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: GMAIL_CLIENT_ID,
+                    scope: "https://www.googleapis.com/auth/gmail.readonly",
+                    callback: () => {},
+                });
+            } catch (e) {
+                return reject(e);
+            }
+        }
+        gmailTokenClient.callback = (resp) => {
+            if (resp.error) reject(new Error(resp.error_description || resp.error));
+            else resolve(resp.access_token);
+        };
+        gmailTokenClient.requestAccessToken({ prompt: "" });
+    });
+}
+
+function base64UrlToUint8Array(b64url) {
+    const b64 = b64url.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = b64.length % 4 === 0 ? 0 : (4 - b64.length % 4);
+    const binary = atob(b64 + "=".repeat(pad));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+}
+
+async function gmailGet(url, token) {
+    const res = await fetch(url, { headers: { Authorization: "Bearer " + token } });
+    if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        throw new Error(`Gmail ${res.status}: ${t.slice(0, 200)}`);
+    }
+    return res.json();
+}
+
+function buscarAdjuntoExcel(part) {
+    if (!part) return null;
+    const fn = (part.filename || "").toLowerCase();
+    if (part.body && part.body.attachmentId && (fn.endsWith(".xls") || fn.endsWith(".xlsx"))) {
+        return { id: part.body.attachmentId, filename: part.filename };
+    }
+    if (part.parts) {
+        for (const p of part.parts) {
+            const f = buscarAdjuntoExcel(p);
+            if (f) return f;
+        }
+    }
+    return null;
+}
+
+function parseFechaPlanExcel(val) {
+    if (val === null || val === undefined || val === "") return "";
+    if (typeof val === "string") return val.trim();
+    if (typeof val === "number" && typeof XLSX !== "undefined" && XLSX.SSF) {
+        const d = XLSX.SSF.parse_date_code(val);
+        if (d) return `${String(d.d).padStart(2, "0")}/${String(d.m).padStart(2, "0")}/${d.y}`;
+    }
+    if (val instanceof Date) {
+        return `${String(val.getDate()).padStart(2, "0")}/${String(val.getMonth() + 1).padStart(2, "0")}/${val.getFullYear()}`;
+    }
+    return String(val);
+}
+
+function formatearHoraPlan(val) {
+    if (val === null || val === undefined || val === "") return "";
+    const s = String(val).replace(/\D/g, "").padStart(4, "0");
+    if (s.length < 3) return s;
+    return s.slice(0, 2) + ":" + s.slice(2, 4);
+}
+
+async function obtenerPlanDesdeGmail(token) {
+    const q = encodeURIComponent('subject:"plan de carga" has:attachment newer_than:7d');
+    const list = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${q}&maxResults=10`, token);
+    if (!list.messages || list.messages.length === 0) {
+        throw new Error('No se encontraron mails recientes con asunto "plan de carga" y adjunto.');
+    }
+    for (const msgRef of list.messages) {
+        const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}`, token);
+        const att = buscarAdjuntoExcel(msg.payload);
+        if (!att) continue;
+        const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
+        const bytes = base64UrlToUint8Array(attData.data);
+        const wb = XLSX.read(bytes, { type: "array", cellDates: true });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+        if (rows.length < 2) continue;
+        const header = rows[0].map(h => String(h).toLowerCase().trim());
+        const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
+        const ci = {
+            tnk: idx(["tnk", "tanq"]),
+            prod: idx(["prod"]),
+            clie: idx(["clie", "cli"]),
+            buque: idx(["buque"]),
+            viaje: idx(["viaje"]),
+            subc: idx(["subc"]),
+            conoc: idx(["conoc"]),
+            despacho: idx(["despa"]),
+            exLegal: idx(["ex.", "legal"]),
+            fecha: idx(["fecha"]),
+            hora: idx(["hora"]),
+            obs: idx(["obs"]),
+        };
+        if (ci.tnk < 0 || ci.despacho < 0) continue;
+        const filas = [];
+        for (let i = 1; i < rows.length; i++) {
+            const r = rows[i];
+            const tnk = String(r[ci.tnk] || "").trim();
+            const desp = String(r[ci.despacho] || "").trim();
+            if (!tnk && !desp) continue;
+            filas.push({
+                id: Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7),
+                tanque: tnk.padStart(3, "0"),
+                producto: String(r[ci.prod] || "").trim(),
+                cliente: String(r[ci.clie] || "").trim(),
+                buque: String(r[ci.buque] || "").trim(),
+                viaje: String(r[ci.viaje] || "").trim(),
+                subCliente: String(r[ci.subc] || "").trim(),
+                conoc: String(r[ci.conoc] || "").trim(),
+                despacho: desp,
+                exLegal: String(r[ci.exLegal] || "").trim(),
+                fechaOrig: parseFechaPlanExcel(r[ci.fecha]),
+                horaCarga: formatearHoraPlan(r[ci.hora]),
+                observaciones: String(r[ci.obs] || "").trim(),
+                cumplido: false,
+                salidaId: null,
+                cumplidoAt: null,
+            });
+        }
+        if (filas.length === 0) continue;
+        const subject = (msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "";
+        return { filas, asunto: subject, filename: att.filename };
+    }
+    throw new Error("No se encontró ningún Excel válido en los mails del plan.");
+}
+
 // --- GITHUB STORAGE ---
 const GH = {
     _p: ["Z2hwX1lFS0k4","d1FLRmtobEtW","YlE1ODNpcU00","cks3WUpzazJi","YjYxag=="],
@@ -23,12 +169,16 @@ const GH = {
     repo: "juliani85/odfjell-stock",
     file: "datos.json",
     fileVistas: "vistas.json",
+    filePlan: "plan.json",
     sha: null,
     shaVistas: null,
+    shaPlan: null,
     _timer: null,
     _pendiente: null,
     _timerVistas: null,
     _pendienteVistas: null,
+    _timerPlan: null,
+    _pendientePlan: null,
     _estado: "sincronizado",
     _listeners: [],
 
@@ -210,6 +360,80 @@ const GH = {
         } finally {
             this._enviandoVistas = false;
         }
+    },
+
+    async cargarPlan() {
+        try {
+            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
+                headers: { Authorization: `token ${this.token}` }
+            });
+            if (!res.ok) {
+                if (res.status !== 404) console.warn('[GH cargarPlan]', res.status);
+                return null;
+            }
+            const data = await res.json();
+            this.shaPlan = data.sha;
+            const contenido = JSON.parse(atob(data.content));
+            return contenido.planes || {};
+        } catch (e) {
+            console.error('[GH cargarPlan]', e);
+            return null;
+        }
+    },
+
+    guardarPlan(planes) {
+        this._pendientePlan = planes;
+        if (this._timerPlan) clearTimeout(this._timerPlan);
+        this._timerPlan = setTimeout(() => this._enviarPlan(), 1500);
+    },
+
+    async _enviarPlan() {
+        if (!this._pendientePlan || this._enviandoPlan) return;
+        this._enviandoPlan = true;
+        const planes = this._pendientePlan;
+        try {
+            const r = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
+                headers: { Authorization: `token ${this.token}` }
+            });
+            if (r.ok) {
+                const d = await r.json();
+                this.shaPlan = d.sha;
+            } else if (r.status === 404) {
+                this.shaPlan = null;
+            } else {
+                throw new Error(`GitHub ${r.status} al refrescar sha de plan`);
+            }
+
+            const datos = { planes, actualizado: new Date().toISOString() };
+            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
+            const body = {
+                message: `Actualizar plan ${new Date().toISOString().slice(0, 16)}`,
+                content: contenido
+            };
+            if (this.shaPlan) body.sha = this.shaPlan;
+
+            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `token ${this.token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
+            }
+            const data = await res.json();
+            this.shaPlan = data.content.sha;
+            if (this._pendientePlan === planes) this._pendientePlan = null;
+        } catch (e) {
+            console.error('[GH sync plan]', e);
+            if (this._timerPlan) clearTimeout(this._timerPlan);
+            this._timerPlan = setTimeout(() => this._enviarPlan(), 5000);
+        } finally {
+            this._enviandoPlan = false;
+        }
     }
 };
 
@@ -324,12 +548,13 @@ async function initApp() {
     });
 
     // --- RENOMBRADO DE DESPACHOS NO ESTANDAR ---
-    // Un despacho es valido para salida si su nombre contiene IC04, IC06, TRP o EC01.
+    // Un despacho es valido para salida si su nombre contiene IC04, IC06, TRP, EC01, REMO o TRM6.
     // Los historicos pueden venir con formatos como FISCAL-..., PARTICULAR, IDA4, etc.
     function esDespachoValido(nombre) {
         if (!nombre) return false;
         const n = nombre.toUpperCase();
-        return n.includes("IC04") || n.includes("IC06") || n.includes("TRP") || n.includes("EC01");
+        return n.includes("IC04") || n.includes("IC06") || n.includes("TRP") ||
+               n.includes("EC01") || n.includes("REMO") || n.includes("TRM6");
     }
 
     function getDespachosConsultados() {
@@ -354,6 +579,7 @@ async function initApp() {
                 h.despacho = despachoNuevo;
             }
         });
+        renombrarDespachoEnPlan(tanqueObj.tanque, despachoViejo, despachoNuevo);
         guardarDatos();
     }
 
@@ -364,7 +590,7 @@ async function initApp() {
         const inputKilosId = "inputRenombrarKilos";
         const errorId = "renombrarError";
         const html = `
-            <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong>, <strong>TRP</strong> o <strong>EC01</strong>).</p>
+            <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong>, <strong>TRP</strong>, <strong>EC01</strong>, <strong>REMO</strong> o <strong>TRM6</strong>).</p>
             <p style="font-size:0.9rem;color:var(--gray-500);margin-bottom:0.25rem">Stock disponible: <strong>${formatKg(stockViejo)} kg</strong></p>
             <div class="form-group" style="margin-top:1rem">
                 <label for="${inputNombreId}">Nuevo nombre del despacho</label>
@@ -485,6 +711,7 @@ async function initApp() {
             document.getElementById(tab.dataset.tab).classList.add("active");
             if (tab.dataset.tab === "reporteDiario") renderReporteDiario();
             if (tab.dataset.tab === "salidasViewer") renderViewer();
+            if (tab.dataset.tab === "planCargas") renderPlan();
             if (tab.dataset.tab === "historialTanque") {
                 volverListaHistTanque();
                 renderHistTanqueLista();
@@ -599,7 +826,7 @@ async function initApp() {
         const invalido = !esDespachoValido(desp.despacho);
         const avisoInvalido = invalido
             ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                    <span>⚠ Formato no estándar — se espera IC04, IC06, TRP o EC01.</span>
+                    <span>⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO o TRM6.</span>
                     <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar</button>
                 </div>`
             : "";
@@ -721,14 +948,17 @@ async function initApp() {
             const restante2 = despachoActual.stock;
 
             historial.unshift(salida);
+            const matchPlan = matchearSalidaConPlan(salida);
             guardarDatos();
 
             modal.classList.add("hidden");
             limpiarFormulario();
             renderStock();
             renderHistorial();
+            renderPlan();
 
-            mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg`, "success");
+            const sufijoPlan = matchPlan ? " · ✓ Plan del día actualizado" : "";
+            mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg${sufijoPlan}`, "success");
             paso1.className = "paso active";
 
             // Listo para cargar el siguiente remito
@@ -909,10 +1139,12 @@ async function initApp() {
         }
 
         historial = historial.filter(s => s.id !== id);
+        desmatchearSalidaEnPlan(id);
         guardarDatos();
 
         renderStock();
         renderHistorial();
+        renderPlan();
     };
 
     // --- HELPER: saldo actual de un despacho ---
@@ -1802,6 +2034,259 @@ async function initApp() {
         const mergedSim = { ...(remoto.sim || {}), ...simCache };
         setSim(mergedSim);
     }
+
+    // =============================================
+    // PLAN DE CARGAS (importacion desde Gmail)
+    // =============================================
+    let planes = {};
+    const planRemoto = await GH.cargarPlan();
+    if (planRemoto) planes = planRemoto;
+
+    function hoyISO() {
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    function getFechaPlan() {
+        const inp = document.getElementById("planFechaInput");
+        if (!inp) return hoyISO();
+        if (!inp.value) inp.value = hoyISO();
+        return inp.value;
+    }
+
+    function mostrarEstadoPlan(msg, tipo = "info") {
+        const el = document.getElementById("planEstado");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "alerta " + (tipo === "error" ? "error" : tipo === "success" ? "success" : "warning");
+        el.classList.remove("hidden");
+    }
+
+    function ocultarEstadoPlan() {
+        const el = document.getElementById("planEstado");
+        if (el) el.classList.add("hidden");
+    }
+
+    function actualizarBadgePlan() {
+        const badge = document.getElementById("badgePlanPendientes");
+        if (!badge) return;
+        const plan = planes[hoyISO()];
+        if (plan && plan.filas) {
+            const pend = plan.filas.filter(f => !f.cumplido).length;
+            if (pend > 0) {
+                badge.textContent = pend;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        } else {
+            badge.classList.add("hidden");
+        }
+    }
+
+    function renderPlan() {
+        const fecha = getFechaPlan();
+        const plan = planes[fecha];
+        const tbody = document.querySelector("#tablaPlan tbody");
+        const resumen = document.getElementById("planResumen");
+        if (!tbody) return;
+
+        if (!plan || !plan.filas || plan.filas.length === 0) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="9">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>';
+            if (resumen) resumen.classList.add("hidden");
+            actualizarBadgePlan();
+            return;
+        }
+
+        const pendientes = plan.filas.filter(f => !f.cumplido).length;
+        const cumplidos = plan.filas.length - pendientes;
+
+        if (resumen) resumen.classList.remove("hidden");
+        document.getElementById("planTotalFilas").textContent = plan.filas.length;
+        document.getElementById("planPendientes").textContent = pendientes;
+        document.getElementById("planCumplidos").textContent = cumplidos;
+
+        tbody.innerHTML = plan.filas.map(f => {
+            const cls = f.cumplido ? "plan-cumplido" : "";
+            const estadoBadge = f.cumplido
+                ? '<span class="plan-estado-badge plan-estado-cumplido">✓ OK</span>'
+                : '<span class="plan-estado-badge plan-estado-pendiente">PEND.</span>';
+            const buqueViaje = [f.buque, f.viaje].filter(Boolean).join(" / ");
+            return `<tr class="${cls}" data-id="${f.id}">
+                <td>${estadoBadge}</td>
+                <td><strong>TK ${f.tanque}</strong></td>
+                <td>${f.producto}</td>
+                <td>${f.cliente}</td>
+                <td><code>${f.despacho}</code></td>
+                <td>${f.fechaOrig || "-"}</td>
+                <td>${f.horaCarga || "-"}</td>
+                <td>${buqueViaje}</td>
+                <td>${f.observaciones || ""}</td>
+            </tr>`;
+        }).join("");
+
+        actualizarBadgePlan();
+    }
+
+    function matchearSalidaConPlan(salida) {
+        const fechas = Object.keys(planes).sort().reverse();
+        for (const f of fechas) {
+            const plan = planes[f];
+            if (!plan || !plan.filas) continue;
+            const match = plan.filas.find(fi =>
+                !fi.cumplido &&
+                fi.tanque === salida.tanque &&
+                (fi.producto || "").toUpperCase() === (salida.producto || "").toUpperCase() &&
+                fi.despacho === salida.despacho
+            );
+            if (match) {
+                match.cumplido = true;
+                match.salidaId = salida.id;
+                match.cumplidoAt = new Date().toISOString();
+                GH.guardarPlan(planes);
+                return match;
+            }
+        }
+        return null;
+    }
+
+    function desmatchearSalidaEnPlan(salidaId) {
+        let cambio = false;
+        Object.values(planes).forEach(plan => {
+            if (!plan.filas) return;
+            plan.filas.forEach(f => {
+                if (f.salidaId === salidaId) {
+                    f.cumplido = false;
+                    f.salidaId = null;
+                    f.cumplidoAt = null;
+                    cambio = true;
+                }
+            });
+        });
+        if (cambio) GH.guardarPlan(planes);
+    }
+
+    function renombrarDespachoEnPlan(tanqueNum, despachoViejo, despachoNuevo) {
+        let cambio = false;
+        Object.values(planes).forEach(plan => {
+            if (!plan.filas) return;
+            plan.filas.forEach(f => {
+                if (f.tanque === tanqueNum && f.despacho === despachoViejo) {
+                    f.despacho = despachoNuevo;
+                    cambio = true;
+                }
+            });
+        });
+        if (cambio) GH.guardarPlan(planes);
+    }
+
+    function autoMatchearPlan(fecha) {
+        const plan = planes[fecha];
+        if (!plan || !plan.filas) return;
+        const salidasDia = historial.filter(h => (h.tipo || "SALIDA") === "SALIDA" && h.fecha === fecha);
+        const yaMatcheadas = new Set();
+        plan.filas.forEach(f => { if (f.salidaId) yaMatcheadas.add(f.salidaId); });
+        plan.filas.forEach(fila => {
+            if (fila.cumplido) return;
+            const match = salidasDia.find(s =>
+                !yaMatcheadas.has(s.id) &&
+                s.tanque === fila.tanque &&
+                (s.producto || "").toUpperCase() === (fila.producto || "").toUpperCase() &&
+                s.despacho === fila.despacho
+            );
+            if (match) {
+                fila.cumplido = true;
+                fila.salidaId = match.id;
+                fila.cumplidoAt = new Date().toISOString();
+                yaMatcheadas.add(match.id);
+            }
+        });
+    }
+
+    async function sincronizarPlanDesdeGmail() {
+        const btn = document.getElementById("btnPlanSincronizar");
+        if (btn) { btn.disabled = true; btn.textContent = "⏳ Sincronizando…"; }
+        try {
+            mostrarEstadoPlan("Abriendo autenticación de Google (tagsaaduana@gmail.com)…", "info");
+            const token = await requestGmailToken();
+            mostrarEstadoPlan("Buscando el plan más reciente en Gmail…", "info");
+            const { filas, asunto, filename } = await obtenerPlanDesdeGmail(token);
+            const fecha = getFechaPlan();
+
+            // Conservar estado cumplido de filas que ya existían (match por tanque+despacho+producto)
+            const previas = planes[fecha] && planes[fecha].filas ? planes[fecha].filas : [];
+            filas.forEach(f => {
+                const prev = previas.find(p =>
+                    p.cumplido && p.tanque === f.tanque && p.despacho === f.despacho && p.producto === f.producto && !filas.some(x => x.id !== f.id && x.id === p.id)
+                );
+                if (prev) {
+                    f.cumplido = true;
+                    f.salidaId = prev.salidaId;
+                    f.cumplidoAt = prev.cumplidoAt;
+                }
+            });
+
+            planes[fecha] = {
+                filas,
+                asunto,
+                filename,
+                importadoAt: new Date().toISOString(),
+                importadoPor: usuarioActual,
+            };
+            autoMatchearPlan(fecha);
+            GH.guardarPlan(planes);
+            renderPlan();
+            mostrarEstadoPlan(`Plan importado: ${filas.length} cargas desde "${asunto}" (${filename}).`, "success");
+        } catch (e) {
+            console.error("[plan]", e);
+            mostrarEstadoPlan("Error: " + e.message, "error");
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = "📧 Sincronizar con Gmail"; }
+        }
+    }
+
+    const planFechaInput = document.getElementById("planFechaInput");
+    if (planFechaInput) {
+        planFechaInput.value = hoyISO();
+        planFechaInput.addEventListener("change", () => {
+            ocultarEstadoPlan();
+            renderPlan();
+        });
+    }
+
+    const btnPlanSinc = document.getElementById("btnPlanSincronizar");
+    if (btnPlanSinc) btnPlanSinc.addEventListener("click", sincronizarPlanDesdeGmail);
+
+    const btnPlanImp = document.getElementById("btnPlanImprimir");
+    if (btnPlanImp) btnPlanImp.addEventListener("click", () => {
+        const fecha = getFechaPlan();
+        const plan = planes[fecha];
+        if (!plan || !plan.filas || plan.filas.length === 0) {
+            alert("No hay plan para imprimir en esta fecha.");
+            return;
+        }
+        const filas = plan.filas.map(f => `<tr${f.cumplido ? ' style="background:#f0fdf4;color:#15803d;text-decoration:line-through"' : ''}>
+            <td>${f.cumplido ? "✓" : ""}</td>
+            <td>TK ${f.tanque}</td>
+            <td>${f.producto}</td>
+            <td>${f.cliente}</td>
+            <td>${f.despacho}</td>
+            <td>${f.fechaOrig || "-"}</td>
+            <td>${f.horaCarga || "-"}</td>
+            <td>${[f.buque, f.viaje].filter(Boolean).join(" / ")}</td>
+        </tr>`).join("");
+        const html = `<!DOCTYPE html><html><head><title>Plan ${fecha}</title>
+        <style>body{font-family:Arial,sans-serif;padding:2rem}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;font-size:0.85rem}th{background:#f0f0f0;text-align:left}</style>
+        </head><body>
+        <h2>Odfjell Terminals Tagsa SA - Campana</h2>
+        <p>Plan de Cargas del ${fecha.split("-").reverse().join("/")} — ${plan.filas.length} cargas</p>
+        <table><thead><tr><th></th><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Despacho</th><th>Fecha Orig.</th><th>Hora</th><th>Buque/Viaje</th></tr></thead>
+        <tbody>${filas}</tbody></table>
+        </body></html>`;
+        const win = window.open("", "_blank");
+        win.document.write(html); win.document.close(); win.print();
+    });
+
+    actualizarBadgePlan();
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s
     if (rolActual === "viewer") {

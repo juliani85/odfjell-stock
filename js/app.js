@@ -135,12 +135,15 @@ async function obtenerPlanDesdeGmail(token) {
         return r.messages || [];
     };
 
-    let candidates = await runQuery('subject:"plan de cargas" newer_than:30d');
-    if (candidates.length === 0) candidates = await runQuery('subject:"plan de carga" newer_than:30d');
-    if (candidates.length === 0) candidates = await runQuery('subject:plan newer_than:60d');
+    const qA = await runQuery('subject:"plan de cargas" newer_than:60d');
+    const qB = await runQuery('subject:"plan de carga" newer_than:60d');
+    const qC = await runQuery('subject:plan has:attachment newer_than:90d');
+    const mapa = new Map();
+    [...qA, ...qB, ...qC].forEach(m => { if (!mapa.has(m.id)) mapa.set(m.id, m); });
+    const candidates = [...mapa.values()];
 
     if (candidates.length === 0) {
-        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto en los últimos 60 días. ¿Te loggeaste con tagsaaduana@gmail.com?`);
+        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto en los últimos 90 días. ¿Te loggeaste con tagsaaduana@gmail.com?`);
     }
 
     const asuntosVistos = [];

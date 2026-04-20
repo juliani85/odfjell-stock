@@ -2382,42 +2382,53 @@ async function initApp() {
         });
     }
 
-    function claveDedupe(f) {
-        // Para filas body (sin hora) dedupeamos solo por tanque+despacho.
-        // Para Excel incluimos horaCarga asi dos camiones del mismo despacho en horarios
-        // distintos cuentan como dos filas.
-        if (!f.horaCarga) return `${f.tanque}|${f.despacho}|NOHORA`;
-        return `${f.tanque}|${f.despacho}|${f.horaCarga}`;
-    }
-
     function mergearFilasPlan(filasExistentes, filasNuevas) {
-        const mapa = new Map();
-        // Priorizamos las existentes (preservan cumplido / id)
-        for (const f of filasExistentes) mapa.set(claveDedupe(f), f);
+        // filasNuevas = todas las filas que vienen de Gmail ahora (Excel + cuerpo, todos los mails del dia).
+        // No dedupeamos dentro de filasNuevas: cada fila repetida representa un camion distinto
+        // (3 filas iguales = 3 camiones del mismo despacho).
+        // filasExistentes puede tener filas ya marcadas como cumplidas; transferimos ese estado
+        // a filasNuevas por match 1-a-1 (tanque+despacho+horaCarga).
+        const existentesCumplidas = filasExistentes.filter(p => p.cumplido);
+        const existentesPendientes = filasExistentes.filter(p => !p.cumplido);
+        const usadas = new Set();
+
         for (const nueva of filasNuevas) {
-            const key = claveDedupe(nueva);
-            const exist = mapa.get(key);
-            if (!exist) {
-                // Si nueva es body y hay una Excel con mismo tanque+despacho (sin importar hora), no duplicar
-                if (nueva.fuente === "body") {
-                    const match = [...mapa.values()].find(x => x.tanque === nueva.tanque && x.despacho === nueva.despacho);
-                    if (match) continue;
-                }
-                mapa.set(key, nueva);
-            } else {
-                // Mergeamos info faltante pero NO pisamos cumplido ni producto ya asignado
-                exist.producto = exist.producto || nueva.producto;
-                exist.cliente = exist.cliente || nueva.cliente;
-                exist.buque = exist.buque || nueva.buque;
-                exist.viaje = exist.viaje || nueva.viaje;
-                exist.subCliente = exist.subCliente || nueva.subCliente;
-                exist.conoc = exist.conoc || nueva.conoc;
-                exist.horaCarga = exist.horaCarga || nueva.horaCarga;
-                exist.fechaOrig = exist.fechaOrig || nueva.fechaOrig;
-                if (!exist.observaciones) exist.observaciones = nueva.observaciones;
+            // Primero buscar match en cumplidas (prioridad: mantener cumplido)
+            let match = existentesCumplidas.find(p =>
+                !usadas.has(p.id) &&
+                p.tanque === nueva.tanque &&
+                p.despacho === nueva.despacho &&
+                (p.horaCarga || "") === (nueva.horaCarga || "")
+            );
+            if (match) {
+                nueva.id = match.id;
+                nueva.cumplido = true;
+                nueva.salidaId = match.salidaId;
+                nueva.cumplidoAt = match.cumplidoAt;
+                usadas.add(match.id);
+                continue;
+            }
+            // Sino buscar en pendientes para preservar el mismo ID
+            match = existentesPendientes.find(p =>
+                !usadas.has(p.id) &&
+                p.tanque === nueva.tanque &&
+                p.despacho === nueva.despacho &&
+                (p.horaCarga || "") === (nueva.horaCarga || "")
+            );
+            if (match) {
+                nueva.id = match.id;
+                usadas.add(match.id);
             }
         }
-        return [...mapa.values()];
+
+        // Filtrar filas del cuerpo que ya aparecen en Excel (mismo tanque+despacho, ignorando hora)
+        const excelKeys = new Set(
+            filasNuevas.filter(f => f.fuente === "excel").map(f => `${f.tanque}|${f.despacho}`)
+        );
+        return filasNuevas.filter(f => {
+            if (f.fuente === "body" && excelKeys.has(`${f.tanque}|${f.despacho}`)) return false;
+            return true;
+        });
     }
 
     async function sincronizarPlanDesdeGmail(modo = "manual") {

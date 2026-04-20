@@ -202,10 +202,16 @@ async function parsearFilasExcel(msgRef, att, token) {
     const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
     const bytes = base64UrlToUint8Array(attData.data);
     const wb = XLSX.read(bytes, { type: "array", cellDates: true });
+    console.log(`[plan:excel] hojas en el workbook:`, wb.SheetNames);
     const sheet = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-    if (rows.length < 2) return [];
+    console.log(`[plan:excel] "${att.filename}" → ${rows.length} filas (incluye header)`);
+    if (rows.length < 2) {
+        console.warn(`[plan:excel] Excel vacío o sólo header. Primera fila:`, rows[0]);
+        return [];
+    }
     const header = rows[0].map(h => String(h).toLowerCase().trim());
+    console.log(`[plan:excel] header:`, header);
     const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
     const ci = {
         tnk: idx(["tnk", "tanq"]),
@@ -221,7 +227,11 @@ async function parsearFilasExcel(msgRef, att, token) {
         hora: idx(["hora"]),
         obs: idx(["obs"]),
     };
-    if (ci.tnk < 0 || ci.despacho < 0) return [];
+    console.log(`[plan:excel] columnas detectadas: tnk=${ci.tnk}, despacho=${ci.despacho}, prod=${ci.prod}, cliente=${ci.clie}`);
+    if (ci.tnk < 0 || ci.despacho < 0) {
+        console.warn(`[plan:excel] no se encontró columna "tnk/tanq" (${ci.tnk}) o "despa" (${ci.despacho}) en el header.`);
+        return [];
+    }
     const filas = [];
     for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
@@ -314,6 +324,9 @@ async function obtenerPlanesDesdeGmail(token) {
             } catch (e) {
                 console.warn(`[plan] error parseando Excel de "${subject}":`, e);
             }
+        } else {
+            const adjuntos = listarAdjuntos(msg.payload);
+            console.log(`[plan] "${subject}" no tiene adjunto Excel reconocido. Adjuntos del mail:`, adjuntos);
         }
 
         const bodyTxt = extraerCuerpoMail(msg.payload);
@@ -322,6 +335,7 @@ async function obtenerPlanesDesdeGmail(token) {
         console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, filasBody=${filasBody.length}`);
 
         if (filasExcel.length === 0 && filasBody.length === 0) {
+            console.warn(`[plan] sin filas. Primeros 500 chars del cuerpo del mail "${subject}":\n`, (bodyTxt || "").slice(0, 500));
             descartados.push({ subject, motivo: "sin filas parseables (Excel ni cuerpo)", fecha });
             continue;
         }

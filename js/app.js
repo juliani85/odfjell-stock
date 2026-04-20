@@ -66,6 +66,78 @@ async function gmailGet(url, token) {
     return res.json();
 }
 
+function extraerCuerpoMail(payload) {
+    // Prioriza text/plain, sino text/html stripeado. Recorre recursivamente.
+    let plain = "";
+    let html = "";
+    function recorrer(p) {
+        if (!p) return;
+        if (p.mimeType === "text/plain" && p.body && p.body.data && !plain) {
+            plain = new TextDecoder().decode(base64UrlToUint8Array(p.body.data));
+        } else if (p.mimeType === "text/html" && p.body && p.body.data && !html) {
+            html = new TextDecoder().decode(base64UrlToUint8Array(p.body.data));
+        }
+        if (p.parts) for (const sub of p.parts) recorrer(sub);
+    }
+    recorrer(payload);
+    if (plain) return plain;
+    if (html) {
+        return html
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(/<script[\s\S]*?<\/script>/gi, " ")
+            .replace(/<br\s*\/?>/gi, "\n")
+            .replace(/<\/?(p|div|tr|li)[^>]*>/gi, "\n")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/gi, " ")
+            .replace(/&amp;/gi, "&")
+            .replace(/&lt;/gi, "<")
+            .replace(/&gt;/gi, ">")
+            .replace(/&quot;/gi, '"')
+            .replace(/&#39;/gi, "'");
+    }
+    return "";
+}
+
+function parsearSalidasDesdeBody(bodyText) {
+    if (!bodyText) return [];
+    // Cortar parte quoted (respuesta/forward): "De:", "From:", "-----Original", lineas que empiezan con ">"
+    const cortado = bodyText
+        .split(/\n\s*(?:De:|From:|-----+\s*Original|Enviado (?:el|por):)/i)[0]
+        .split(/\n\s*>/)[0];
+    const filas = [];
+    const regex = /\bTK\s*(\d{1,3})\s*[-–—]\s*(.+?)\s+(\S*(?:IC04|IC06|TRP|EC01|REMO|TRM6)\S*)/gi;
+    const usados = new Set();
+    let m;
+    while ((m = regex.exec(cortado)) !== null) {
+        const tanque = m[1].padStart(3, "0");
+        const cliente = m[2].trim().replace(/\s+/g, " ");
+        const despacho = m[3].trim().toUpperCase();
+        const key = `${tanque}|${despacho}`;
+        if (usados.has(key)) continue;
+        usados.add(key);
+        filas.push({
+            id: Date.now() + "-body-" + filas.length + "-" + Math.random().toString(36).slice(2, 7),
+            tanque,
+            producto: "",
+            cliente,
+            buque: "",
+            viaje: "",
+            subCliente: "",
+            conoc: "",
+            despacho,
+            exLegal: "",
+            fechaOrig: "",
+            horaCarga: "",
+            observaciones: "(agregado por mail)",
+            cumplido: false,
+            salidaId: null,
+            cumplidoAt: null,
+            fuente: "body",
+        });
+    }
+    return filas;
+}
+
 function listarAdjuntos(part) {
     const out = [];
     function recorrer(p) {
@@ -126,7 +198,60 @@ function formatearHoraPlan(val) {
     return s.slice(0, 2) + ":" + s.slice(2, 4);
 }
 
-async function obtenerPlanDesdeGmail(token) {
+async function parsearFilasExcel(msgRef, att, token) {
+    const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
+    const bytes = base64UrlToUint8Array(attData.data);
+    const wb = XLSX.read(bytes, { type: "array", cellDates: true });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+    if (rows.length < 2) return [];
+    const header = rows[0].map(h => String(h).toLowerCase().trim());
+    const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
+    const ci = {
+        tnk: idx(["tnk", "tanq"]),
+        prod: idx(["prod"]),
+        clie: idx(["clie", "cli"]),
+        buque: idx(["buque"]),
+        viaje: idx(["viaje"]),
+        subc: idx(["subc"]),
+        conoc: idx(["conoc"]),
+        despacho: idx(["despa"]),
+        exLegal: idx(["ex.", "legal"]),
+        fecha: idx(["fecha"]),
+        hora: idx(["hora"]),
+        obs: idx(["obs"]),
+    };
+    if (ci.tnk < 0 || ci.despacho < 0) return [];
+    const filas = [];
+    for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const tnk = String(r[ci.tnk] || "").trim();
+        const desp = String(r[ci.despacho] || "").trim();
+        if (!tnk && !desp) continue;
+        filas.push({
+            id: Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7),
+            tanque: tnk.padStart(3, "0"),
+            producto: String(r[ci.prod] || "").trim(),
+            cliente: String(r[ci.clie] || "").trim(),
+            buque: String(r[ci.buque] || "").trim(),
+            viaje: String(r[ci.viaje] || "").trim(),
+            subCliente: String(r[ci.subc] || "").trim(),
+            conoc: String(r[ci.conoc] || "").trim(),
+            despacho: desp,
+            exLegal: String(r[ci.exLegal] || "").trim(),
+            fechaOrig: parseFechaPlanExcel(r[ci.fecha]),
+            horaCarga: formatearHoraPlan(r[ci.hora]),
+            observaciones: String(r[ci.obs] || "").trim(),
+            cumplido: false,
+            salidaId: null,
+            cumplidoAt: null,
+            fuente: "excel",
+        });
+    }
+    return filas;
+}
+
+async function obtenerPlanesDesdeGmail(token) {
     let profileEmail = "?";
     try {
         const p = await gmailGet("https://gmail.googleapis.com/gmail/v1/users/me/profile", token);
@@ -134,102 +259,73 @@ async function obtenerPlanDesdeGmail(token) {
     } catch (_) {}
 
     const runQuery = async (q) => {
-        const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=25`;
+        const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=30`;
         const r = await gmailGet(url, token);
         return r.messages || [];
     };
 
     const qA = await runQuery('subject:"plan de cargas" newer_than:60d');
     const qB = await runQuery('subject:"plan de carga" newer_than:60d');
-    const qC = await runQuery('subject:plan has:attachment newer_than:90d');
+    const qC = await runQuery('subject:plan newer_than:60d');
     const mapa = new Map();
     [...qA, ...qB, ...qC].forEach(m => { if (!mapa.has(m.id)) mapa.set(m.id, m); });
     const candidates = [...mapa.values()];
-
     if (candidates.length === 0) {
-        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto en los últimos 90 días. ¿Te loggeaste con tagsaaduana@gmail.com?`);
+        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto. ¿Te loggeaste con tagsaaduana@gmail.com?`);
     }
 
-    const asuntosVistos = [];
-    const adjuntosVistos = [];
+    // Extrae fecha del asunto. 2-digit year -> +2000.
+    const extraerFecha = (asunto) => {
+        const m = (asunto || "").match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{2,4})/);
+        if (!m) return null;
+        const dia = parseInt(m[1]);
+        const mes = parseInt(m[2]);
+        let anio = parseInt(m[3]);
+        if (anio < 100) anio += 2000;
+        if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
+        return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    };
+
+    const porFecha = {};
     for (const msgRef of candidates) {
         const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
         if (!/plan\s+de\s+cargas?/i.test(subject)) continue;
-        asuntosVistos.push(subject);
-        console.log("[plan] Asunto:", subject);
-        console.log("[plan] payload.mimeType:", msg.payload.mimeType);
-        console.log("[plan] payload completo:", msg.payload);
-        const partes = listarTodasLasPartes(msg.payload);
-        console.log("[plan] Todas las partes detectadas:", partes);
+        const fecha = extraerFecha(subject);
+        if (!fecha) continue;
+
         const att = buscarAdjuntoExcel(msg.payload);
-        if (!att) {
-            const todos = listarAdjuntos(msg.payload);
-            if (todos.length > 0) {
-                adjuntosVistos.push(...todos.map(a => `${a.filename} [${a.mime || "?"}]`));
-            } else {
-                adjuntosVistos.push(...partes.map(p => `${p.filename || '(sin nombre)'} [${p.mime}]${p.hasAtt ? '' : ' (sin attachmentId)'}`));
+        let filasExcel = [];
+        let filename = "";
+        if (att) {
+            filename = att.filename;
+            try {
+                filasExcel = await parsearFilasExcel(msgRef, att, token);
+            } catch (e) {
+                console.warn("[plan] error parseando Excel", e);
             }
-            continue;
         }
-        const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
-        const bytes = base64UrlToUint8Array(attData.data);
-        const wb = XLSX.read(bytes, { type: "array", cellDates: true });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-        if (rows.length < 2) continue;
-        const header = rows[0].map(h => String(h).toLowerCase().trim());
-        const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
-        const ci = {
-            tnk: idx(["tnk", "tanq"]),
-            prod: idx(["prod"]),
-            clie: idx(["clie", "cli"]),
-            buque: idx(["buque"]),
-            viaje: idx(["viaje"]),
-            subc: idx(["subc"]),
-            conoc: idx(["conoc"]),
-            despacho: idx(["despa"]),
-            exLegal: idx(["ex.", "legal"]),
-            fecha: idx(["fecha"]),
-            hora: idx(["hora"]),
-            obs: idx(["obs"]),
-        };
-        if (ci.tnk < 0 || ci.despacho < 0) continue;
-        const filas = [];
-        for (let i = 1; i < rows.length; i++) {
-            const r = rows[i];
-            const tnk = String(r[ci.tnk] || "").trim();
-            const desp = String(r[ci.despacho] || "").trim();
-            if (!tnk && !desp) continue;
-            filas.push({
-                id: Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7),
-                tanque: tnk.padStart(3, "0"),
-                producto: String(r[ci.prod] || "").trim(),
-                cliente: String(r[ci.clie] || "").trim(),
-                buque: String(r[ci.buque] || "").trim(),
-                viaje: String(r[ci.viaje] || "").trim(),
-                subCliente: String(r[ci.subc] || "").trim(),
-                conoc: String(r[ci.conoc] || "").trim(),
-                despacho: desp,
-                exLegal: String(r[ci.exLegal] || "").trim(),
-                fechaOrig: parseFechaPlanExcel(r[ci.fecha]),
-                horaCarga: formatearHoraPlan(r[ci.hora]),
-                observaciones: String(r[ci.obs] || "").trim(),
-                cumplido: false,
-                salidaId: null,
-                cumplidoAt: null,
-            });
-        }
-        if (filas.length === 0) continue;
-        return { filas, asunto: subject, filename: att.filename };
+
+        const bodyTxt = extraerCuerpoMail(msg.payload);
+        const filasBody = parsearSalidasDesdeBody(bodyTxt);
+
+        if (filasExcel.length === 0 && filasBody.length === 0) continue;
+
+        if (!porFecha[fecha]) porFecha[fecha] = { filas: [], fuentes: [] };
+        porFecha[fecha].filas.push(...filasExcel, ...filasBody);
+        porFecha[fecha].fuentes.push({
+            asunto: subject,
+            filename: filename || "(cuerpo)",
+            excelRows: filasExcel.length,
+            bodyRows: filasBody.length,
+        });
     }
-    const detAsuntos = asuntosVistos.length > 0
-        ? ` Asuntos: ${asuntosVistos.slice(0, 3).join(" / ")}.`
-        : "";
-    const detAdj = adjuntosVistos.length > 0
-        ? ` Adjuntos encontrados: ${adjuntosVistos.slice(0, 5).join(" · ")}`
-        : " (ningún adjunto detectado en esos mails)";
-    throw new Error(`Cuenta ${profileEmail}: no encontré ningún Excel válido.${detAsuntos}${detAdj}`);
+
+    if (Object.keys(porFecha).length === 0) {
+        throw new Error(`Cuenta ${profileEmail}: encontré mails con "plan" en el asunto pero ninguno con filas parseables (Excel ni cuerpo).`);
+    }
+
+    return porFecha;
 }
 
 // --- GITHUB STORAGE ---
@@ -2286,16 +2382,42 @@ async function initApp() {
         });
     }
 
-    function extraerFechaDeAsunto(asunto) {
-        if (!asunto) return null;
-        const m = asunto.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{2,4})/);
-        if (!m) return null;
-        const dia = parseInt(m[1]);
-        const mes = parseInt(m[2]);
-        let anio = parseInt(m[3]);
-        if (anio < 100) anio += 2000;
-        if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
-        return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    function claveDedupe(f) {
+        // Para filas body (sin hora) dedupeamos solo por tanque+despacho.
+        // Para Excel incluimos horaCarga asi dos camiones del mismo despacho en horarios
+        // distintos cuentan como dos filas.
+        if (!f.horaCarga) return `${f.tanque}|${f.despacho}|NOHORA`;
+        return `${f.tanque}|${f.despacho}|${f.horaCarga}`;
+    }
+
+    function mergearFilasPlan(filasExistentes, filasNuevas) {
+        const mapa = new Map();
+        // Priorizamos las existentes (preservan cumplido / id)
+        for (const f of filasExistentes) mapa.set(claveDedupe(f), f);
+        for (const nueva of filasNuevas) {
+            const key = claveDedupe(nueva);
+            const exist = mapa.get(key);
+            if (!exist) {
+                // Si nueva es body y hay una Excel con mismo tanque+despacho (sin importar hora), no duplicar
+                if (nueva.fuente === "body") {
+                    const match = [...mapa.values()].find(x => x.tanque === nueva.tanque && x.despacho === nueva.despacho);
+                    if (match) continue;
+                }
+                mapa.set(key, nueva);
+            } else {
+                // Mergeamos info faltante pero NO pisamos cumplido ni producto ya asignado
+                exist.producto = exist.producto || nueva.producto;
+                exist.cliente = exist.cliente || nueva.cliente;
+                exist.buque = exist.buque || nueva.buque;
+                exist.viaje = exist.viaje || nueva.viaje;
+                exist.subCliente = exist.subCliente || nueva.subCliente;
+                exist.conoc = exist.conoc || nueva.conoc;
+                exist.horaCarga = exist.horaCarga || nueva.horaCarga;
+                exist.fechaOrig = exist.fechaOrig || nueva.fechaOrig;
+                if (!exist.observaciones) exist.observaciones = nueva.observaciones;
+            }
+        }
+        return [...mapa.values()];
     }
 
     async function sincronizarPlanDesdeGmail(modo = "manual") {
@@ -2308,59 +2430,50 @@ async function initApp() {
                 ? { prompt: "none", hint: "tagsaaduana@gmail.com" }
                 : { prompt: "" };
             const token = await requestGmailToken(tokenOpts);
-            mostrarEstadoPlan("Buscando el plan más reciente en Gmail…", "info");
-            const { filas, asunto, filename } = await obtenerPlanDesdeGmail(token);
+            if (!esAuto) mostrarEstadoPlan("Buscando mails con plan de cargas…", "info");
+            const porFecha = await obtenerPlanesDesdeGmail(token);
+
             const fechaSeleccionada = getFechaPlan();
-            const fechaAsunto = extraerFechaDeAsunto(asunto);
-            const fecha = fechaAsunto || fechaSeleccionada;
-            const fechaVisual = fecha.split("-").reverse().join("/");
+            const resumenPorFecha = [];
 
-            // Conservar estado cumplido de filas que ya existían (match por tanque+despacho+producto)
-            const previas = planes[fecha] && planes[fecha].filas ? planes[fecha].filas : [];
-            filas.forEach(f => {
-                const prev = previas.find(p =>
-                    p.cumplido && p.tanque === f.tanque && p.despacho === f.despacho && p.producto === f.producto && !filas.some(x => x.id !== f.id && x.id === p.id)
-                );
-                if (prev) {
-                    f.cumplido = true;
-                    f.salidaId = prev.salidaId;
-                    f.cumplidoAt = prev.cumplidoAt;
-                }
-            });
+            for (const [fecha, info] of Object.entries(porFecha)) {
+                const existentes = (planes[fecha] && planes[fecha].filas) ? planes[fecha].filas : [];
+                const mergadas = mergearFilasPlan(existentes, info.filas);
 
-            filas.forEach(f => {
-                const tq = stock.find(t => t.tanque === f.tanque);
-                if (tq && tq.producto) f.producto = tq.producto;
-            });
+                // Completar producto desde stock si falta
+                mergadas.forEach(f => {
+                    const tq = stock.find(t => t.tanque === f.tanque);
+                    if (tq && tq.producto) f.producto = tq.producto;
+                });
 
-            planes[fecha] = {
-                filas,
-                asunto,
-                filename,
-                importadoAt: new Date().toISOString(),
-                importadoPor: usuarioActual,
-            };
-            autoMatchearPlan(fecha);
+                planes[fecha] = {
+                    filas: mergadas,
+                    asunto: info.fuentes.map(s => s.asunto).join(" | "),
+                    filename: info.fuentes.map(s => s.filename).join(" | "),
+                    importadoAt: new Date().toISOString(),
+                    importadoPor: usuarioActual,
+                };
+                autoMatchearPlan(fecha);
+                const agregadas = mergadas.length - existentes.length;
+                resumenPorFecha.push(`${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${agregadas > 0 ? " (+" + agregadas + " nuevas)" : ""}`);
+            }
+
             GH.guardarPlan(planes);
 
-            // Si la fecha del asunto es distinta a la del filtro, actualizar el filtro
-            if (fecha !== fechaSeleccionada && planFechaInput) {
-                planFechaInput.value = fecha;
-                if (fechaInput) fechaInput.value = fecha;
+            // Si la fecha seleccionada no tiene plan pero vino uno reciente, apuntar a la mas reciente
+            if (!planes[fechaSeleccionada] || planes[fechaSeleccionada].filas.length === 0) {
+                const fechas = Object.keys(porFecha).sort().reverse();
+                if (fechas.length > 0 && planFechaInput) {
+                    planFechaInput.value = fechas[0];
+                    if (fechaInput) fechaInput.value = fechas[0];
+                }
             }
             renderPlan();
 
-            // Primera sincronizacion manual exitosa: marcamos consentimiento
-            // para que los proximos autosyncs se hagan solos sin popup.
             if (!esAuto) localStorage.setItem("planGmailConsentio", "1");
-
-            if (!fechaAsunto) {
-                mostrarEstadoPlan(`Plan importado bajo ${fechaVisual} (no se detectó fecha en el asunto "${asunto}"). ${filas.length} cargas.`, "warning");
-            } else if (fecha !== fechaSeleccionada) {
-                mostrarEstadoPlan(`Plan para ${fechaVisual} importado (${filas.length} cargas). Cambiamos el filtro a esa fecha.`, "success");
-            } else {
-                mostrarEstadoPlan(`Plan para ${fechaVisual} importado: ${filas.length} cargas.`, "success");
-            }
+            const msg = resumenPorFecha.join(" · ");
+            if (!esAuto) mostrarEstadoPlan(`Sincronizado. ${msg}`, "success");
+            else console.log("[plan] auto-sync OK:", msg);
         } catch (e) {
             if (esAuto) {
                 console.log("[plan] auto-sync falló (se ignora):", e.message);

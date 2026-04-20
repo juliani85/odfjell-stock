@@ -2261,7 +2261,15 @@ async function initApp() {
 
     function renderPlan() {
         const fecha = getFechaPlan();
-        if (autoMatchearPlan(fecha)) GH.guardarPlan(planes);
+        let persistir = false;
+        Object.values(planes).forEach(p => {
+            if (!p || !p.filas) return;
+            const antes = p.filas.length;
+            p.filas = p.filas.filter(f => !despachoExcluidoDelPlan(f.despacho));
+            if (p.filas.length !== antes) persistir = true;
+        });
+        if (autoMatchearPlan(fecha)) persistir = true;
+        if (persistir) GH.guardarPlan(planes);
         const plan = planes[fecha];
         const tbody = document.querySelector("#tablaPlan tbody");
         const resumen = document.getElementById("planResumen");
@@ -2310,6 +2318,11 @@ async function initApp() {
 
     function normDespacho(d) {
         return String(d || "").toUpperCase().replace(/^DI/, "");
+    }
+
+    // Despachos excluidos del plan de cargas a pedido de Julian.
+    function despachoExcluidoDelPlan(desp) {
+        return /REMO/i.test(String(desp || ""));
     }
 
     function matchearSalidaConPlan(salida) {
@@ -2398,6 +2411,7 @@ async function initApp() {
         // (3 filas iguales = 3 camiones del mismo despacho).
         // filasExistentes puede tener filas ya marcadas como cumplidas; transferimos ese estado
         // a filasNuevas por match 1-a-1 (tanque+despacho+horaCarga).
+        filasNuevas = filasNuevas.filter(f => !despachoExcluidoDelPlan(f.despacho));
         const existentesCumplidas = filasExistentes.filter(p => p.cumplido);
         const existentesPendientes = filasExistentes.filter(p => !p.cumplido);
         const usadas = new Set();

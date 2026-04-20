@@ -67,7 +67,6 @@ async function gmailGet(url, token) {
 }
 
 function extraerCuerpoMail(payload) {
-    // Prioriza text/plain, sino text/html stripeado. Recorre recursivamente.
     let plain = "";
     let html = "";
     function recorrer(p) {
@@ -80,6 +79,10 @@ function extraerCuerpoMail(payload) {
         if (p.parts) for (const sub of p.parts) recorrer(sub);
     }
     recorrer(payload);
+    return { plain, html };
+}
+
+function cuerpoATexto({ plain, html }) {
     if (plain) return plain;
     if (html) {
         return html
@@ -96,6 +99,124 @@ function extraerCuerpoMail(payload) {
             .replace(/&#39;/gi, "'");
     }
     return "";
+}
+
+function detectarColumnasPlan(headerStrings) {
+    const header = headerStrings.map(h => String(h).toLowerCase().trim());
+    const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
+    return {
+        header,
+        tnk: idx(["tnk", "tanq"]),
+        prod: idx(["prod"]),
+        clie: idx(["clie", "cli"]),
+        buque: idx(["buque"]),
+        viaje: idx(["viaje"]),
+        subc: idx(["subc"]),
+        conoc: idx(["conoc"]),
+        despacho: idx(["despa"]),
+        exLegal: idx(["ex.", "legal"]),
+        fecha: idx(["fecha"]),
+        hora: idx(["hora"]),
+        obs: idx(["obs"]),
+    };
+}
+
+function construirFilaPlan(cols, ci, fuente, seq) {
+    const tnk = String(cols[ci.tnk] || "").trim();
+    const desp = String(cols[ci.despacho] || "").trim();
+    if (!tnk && !desp) return null;
+    const get = (i) => i >= 0 ? String(cols[i] || "").trim() : "";
+    return {
+        id: Date.now() + "-" + fuente + "-" + seq + "-" + Math.random().toString(36).slice(2, 7),
+        tanque: tnk.padStart(3, "0"),
+        producto: get(ci.prod),
+        cliente: get(ci.clie),
+        buque: get(ci.buque),
+        viaje: get(ci.viaje),
+        subCliente: get(ci.subc),
+        conoc: get(ci.conoc),
+        despacho: desp,
+        exLegal: get(ci.exLegal),
+        fechaOrig: get(ci.fecha),
+        horaCarga: formatearHoraPlan(get(ci.hora)),
+        observaciones: get(ci.obs),
+        cumplido: false,
+        salidaId: null,
+        cumplidoAt: null,
+        fuente,
+    };
+}
+
+function parsearTablaDesdeTexto(texto) {
+    if (!texto) return [];
+    const lineas = texto.split("\n").map(l => l.replace(/\r$/, ""));
+    for (let start = 0; start < lineas.length; start++) {
+        const raw = lineas[start];
+        if (!raw) continue;
+        let sep = "\t";
+        let headerCols = raw.split(sep);
+        if (headerCols.length < 3) {
+            if (!/\s{2,}/.test(raw)) continue;
+            sep = /\s{2,}/;
+            headerCols = raw.split(sep);
+        }
+        if (headerCols.length < 3) continue;
+        const ci = detectarColumnasPlan(headerCols);
+        if (ci.tnk < 0 || ci.despacho < 0) continue;
+        const filas = [];
+        for (let i = start + 1; i < lineas.length; i++) {
+            const linea = lineas[i];
+            if (!linea.trim()) {
+                if (filas.length > 0) break;
+                continue;
+            }
+            const cols = linea.split(sep);
+            if (cols.length < Math.max(ci.tnk, ci.despacho) + 1) continue;
+            const fila = construirFilaPlan(cols, ci, "body-tabla", filas.length);
+            if (fila) filas.push(fila);
+        }
+        if (filas.length > 0) {
+            console.log(`[plan:tabla-texto] header detectado en línea ${start}, ${filas.length} filas parseadas`);
+            return filas;
+        }
+    }
+    return [];
+}
+
+function parsearTablaDesdeHTML(html) {
+    if (!html) return [];
+    try {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const tablas = [...doc.querySelectorAll("table")];
+        for (const tabla of tablas) {
+            const filasHtml = [...tabla.querySelectorAll("tr")].map(tr =>
+                [...tr.querySelectorAll("th, td")].map(c => c.textContent.replace(/\s+/g, " ").trim())
+            );
+            if (filasHtml.length < 2) continue;
+            let headerIdx = -1;
+            for (let i = 0; i < filasHtml.length; i++) {
+                const h = filasHtml[i].map(x => x.toLowerCase());
+                const hasTnk = h.some(c => c.includes("tnk") || c.includes("tanq"));
+                const hasDesp = h.some(c => c.includes("despa"));
+                if (hasTnk && hasDesp) { headerIdx = i; break; }
+            }
+            if (headerIdx < 0) continue;
+            const ci = detectarColumnasPlan(filasHtml[headerIdx]);
+            if (ci.tnk < 0 || ci.despacho < 0) continue;
+            const filas = [];
+            for (let i = headerIdx + 1; i < filasHtml.length; i++) {
+                const fila = construirFilaPlan(filasHtml[i], ci, "body-tabla", filas.length);
+                if (fila) filas.push(fila);
+            }
+            if (filas.length > 0) {
+                console.log(`[plan:tabla-html] tabla con header en fila ${headerIdx}, ${filas.length} filas parseadas`);
+                return filas;
+            }
+        }
+    } catch (e) {
+        console.warn("[plan:tabla-html] error parseando:", e);
+    }
+    return [];
 }
 
 function parsearSalidasDesdeBody(bodyText) {
@@ -202,61 +323,18 @@ async function parsearFilasExcel(msgRef, att, token) {
     const attData = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}/attachments/${att.id}`, token);
     const bytes = base64UrlToUint8Array(attData.data);
     const wb = XLSX.read(bytes, { type: "array", cellDates: true });
-    console.log(`[plan:excel] hojas en el workbook:`, wb.SheetNames);
     const sheet = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-    console.log(`[plan:excel] "${att.filename}" → ${rows.length} filas (incluye header)`);
-    if (rows.length < 2) {
-        console.warn(`[plan:excel] Excel vacío o sólo header. Primera fila:`, rows[0]);
-        return [];
-    }
-    const header = rows[0].map(h => String(h).toLowerCase().trim());
-    console.log(`[plan:excel] header:`, header);
-    const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
-    const ci = {
-        tnk: idx(["tnk", "tanq"]),
-        prod: idx(["prod"]),
-        clie: idx(["clie", "cli"]),
-        buque: idx(["buque"]),
-        viaje: idx(["viaje"]),
-        subc: idx(["subc"]),
-        conoc: idx(["conoc"]),
-        despacho: idx(["despa"]),
-        exLegal: idx(["ex.", "legal"]),
-        fecha: idx(["fecha"]),
-        hora: idx(["hora"]),
-        obs: idx(["obs"]),
-    };
-    console.log(`[plan:excel] columnas detectadas: tnk=${ci.tnk}, despacho=${ci.despacho}, prod=${ci.prod}, cliente=${ci.clie}`);
-    if (ci.tnk < 0 || ci.despacho < 0) {
-        console.warn(`[plan:excel] no se encontró columna "tnk/tanq" (${ci.tnk}) o "despa" (${ci.despacho}) en el header.`);
-        return [];
-    }
+    if (rows.length < 2) return [];
+    const ci = detectarColumnasPlan(rows[0]);
+    if (ci.tnk < 0 || ci.despacho < 0) return [];
     const filas = [];
     for (let i = 1; i < rows.length; i++) {
-        const r = rows[i];
-        const tnk = String(r[ci.tnk] || "").trim();
-        const desp = String(r[ci.despacho] || "").trim();
-        if (!tnk && !desp) continue;
-        filas.push({
-            id: Date.now() + "-" + i + "-" + Math.random().toString(36).slice(2, 7),
-            tanque: tnk.padStart(3, "0"),
-            producto: String(r[ci.prod] || "").trim(),
-            cliente: String(r[ci.clie] || "").trim(),
-            buque: String(r[ci.buque] || "").trim(),
-            viaje: String(r[ci.viaje] || "").trim(),
-            subCliente: String(r[ci.subc] || "").trim(),
-            conoc: String(r[ci.conoc] || "").trim(),
-            despacho: desp,
-            exLegal: String(r[ci.exLegal] || "").trim(),
-            fechaOrig: parseFechaPlanExcel(r[ci.fecha]),
-            horaCarga: formatearHoraPlan(r[ci.hora]),
-            observaciones: String(r[ci.obs] || "").trim(),
-            cumplido: false,
-            salidaId: null,
-            cumplidoAt: null,
-            fuente: "excel",
-        });
+        const fila = construirFilaPlan(rows[i], ci, "excel", i);
+        if (!fila) continue;
+        // Excel trae fechas como objetos Date; reformateamos.
+        fila.fechaOrig = parseFechaPlanExcel(rows[i][ci.fecha]);
+        filas.push(fila);
     }
     return filas;
 }
@@ -324,19 +402,21 @@ async function obtenerPlanesDesdeGmail(token) {
             } catch (e) {
                 console.warn(`[plan] error parseando Excel de "${subject}":`, e);
             }
-        } else {
-            const adjuntos = listarAdjuntos(msg.payload);
-            console.log(`[plan] "${subject}" no tiene adjunto Excel reconocido. Adjuntos del mail:`, adjuntos);
         }
 
-        const bodyTxt = extraerCuerpoMail(msg.payload);
-        const filasBody = parsearSalidasDesdeBody(bodyTxt);
+        const cuerpo = extraerCuerpoMail(msg.payload);
+        let filasTabla = parsearTablaDesdeTexto(cuerpo.plain);
+        if (filasTabla.length === 0) filasTabla = parsearTablaDesdeHTML(cuerpo.html);
+        const filasProsa = parsearSalidasDesdeBody(cuerpoATexto(cuerpo));
 
-        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, filasBody=${filasBody.length}`);
+        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, filasTabla=${filasTabla.length}, filasProsa=${filasProsa.length}`);
+
+        const filasBody = filasTabla.length > 0 ? filasTabla : filasProsa;
 
         if (filasExcel.length === 0 && filasBody.length === 0) {
-            console.warn(`[plan] sin filas. Primeros 500 chars del cuerpo del mail "${subject}":\n`, (bodyTxt || "").slice(0, 500));
-            descartados.push({ subject, motivo: "sin filas parseables (Excel ni cuerpo)", fecha });
+            console.warn(`[plan] sin filas. Primeros 800 chars del cuerpo plain del mail "${subject}":\n`, (cuerpo.plain || "").slice(0, 800));
+            console.warn(`[plan] primeros 800 chars del cuerpo HTML:\n`, (cuerpo.html || "").slice(0, 800));
+            descartados.push({ subject, motivo: "sin filas parseables (Excel, tabla pegada ni cuerpo)", fecha });
             continue;
         }
 
@@ -2483,7 +2563,7 @@ async function initApp() {
             filasNuevas.filter(f => f.fuente === "excel").map(f => `${f.tanque}|${normDespacho(f.despacho)}`)
         );
         return filasNuevas.filter(f => {
-            if (f.fuente === "body" && excelKeys.has(`${f.tanque}|${normDespacho(f.despacho)}`)) return false;
+            if (f.fuente !== "excel" && excelKeys.has(`${f.tanque}|${normDespacho(f.despacho)}`)) return false;
             return true;
         });
     }

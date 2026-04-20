@@ -2261,6 +2261,7 @@ async function initApp() {
 
     function renderPlan() {
         const fecha = getFechaPlan();
+        if (autoMatchearPlan(fecha)) GH.guardarPlan(planes);
         const plan = planes[fecha];
         const tbody = document.querySelector("#tablaPlan tbody");
         const resumen = document.getElementById("planResumen");
@@ -2307,8 +2308,13 @@ async function initApp() {
         actualizarBadgePlan();
     }
 
+    function normDespacho(d) {
+        return String(d || "").toUpperCase().replace(/^DI/, "");
+    }
+
     function matchearSalidaConPlan(salida) {
         const fechas = Object.keys(planes).sort().reverse();
+        const despSalida = normDespacho(salida.despacho);
         for (const f of fechas) {
             const plan = planes[f];
             if (!plan || !plan.filas) continue;
@@ -2316,7 +2322,7 @@ async function initApp() {
                 !fi.cumplido &&
                 fi.tanque === salida.tanque &&
                 (fi.producto || "").toUpperCase() === (salida.producto || "").toUpperCase() &&
-                fi.despacho === salida.despacho
+                normDespacho(fi.despacho) === despSalida
             );
             if (match) {
                 match.cumplido = true;
@@ -2361,25 +2367,29 @@ async function initApp() {
 
     function autoMatchearPlan(fecha) {
         const plan = planes[fecha];
-        if (!plan || !plan.filas) return;
+        if (!plan || !plan.filas) return false;
         const salidasDia = historial.filter(h => (h.tipo || "SALIDA") === "SALIDA" && h.fecha === fecha);
         const yaMatcheadas = new Set();
         plan.filas.forEach(f => { if (f.salidaId) yaMatcheadas.add(f.salidaId); });
+        let cambio = false;
         plan.filas.forEach(fila => {
             if (fila.cumplido) return;
+            const despFila = normDespacho(fila.despacho);
             const match = salidasDia.find(s =>
                 !yaMatcheadas.has(s.id) &&
                 s.tanque === fila.tanque &&
                 (s.producto || "").toUpperCase() === (fila.producto || "").toUpperCase() &&
-                s.despacho === fila.despacho
+                normDespacho(s.despacho) === despFila
             );
             if (match) {
                 fila.cumplido = true;
                 fila.salidaId = match.id;
                 fila.cumplidoAt = new Date().toISOString();
                 yaMatcheadas.add(match.id);
+                cambio = true;
             }
         });
+        return cambio;
     }
 
     function mergearFilasPlan(filasExistentes, filasNuevas) {
@@ -2393,11 +2403,12 @@ async function initApp() {
         const usadas = new Set();
 
         for (const nueva of filasNuevas) {
+            const despNueva = normDespacho(nueva.despacho);
             // Primero buscar match en cumplidas (prioridad: mantener cumplido)
             let match = existentesCumplidas.find(p =>
                 !usadas.has(p.id) &&
                 p.tanque === nueva.tanque &&
-                p.despacho === nueva.despacho &&
+                normDespacho(p.despacho) === despNueva &&
                 (p.horaCarga || "") === (nueva.horaCarga || "")
             );
             if (match) {
@@ -2412,7 +2423,7 @@ async function initApp() {
             match = existentesPendientes.find(p =>
                 !usadas.has(p.id) &&
                 p.tanque === nueva.tanque &&
-                p.despacho === nueva.despacho &&
+                normDespacho(p.despacho) === despNueva &&
                 (p.horaCarga || "") === (nueva.horaCarga || "")
             );
             if (match) {
@@ -2423,10 +2434,10 @@ async function initApp() {
 
         // Filtrar filas del cuerpo que ya aparecen en Excel (mismo tanque+despacho, ignorando hora)
         const excelKeys = new Set(
-            filasNuevas.filter(f => f.fuente === "excel").map(f => `${f.tanque}|${f.despacho}`)
+            filasNuevas.filter(f => f.fuente === "excel").map(f => `${f.tanque}|${normDespacho(f.despacho)}`)
         );
         return filasNuevas.filter(f => {
-            if (f.fuente === "body" && excelKeys.has(`${f.tanque}|${f.despacho}`)) return false;
+            if (f.fuente === "body" && excelKeys.has(`${f.tanque}|${normDespacho(f.despacho)}`)) return false;
             return true;
         });
     }

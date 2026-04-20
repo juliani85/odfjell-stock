@@ -287,12 +287,22 @@ async function obtenerPlanesDesdeGmail(token) {
     };
 
     const porFecha = {};
+    const descartados = [];
+    console.log(`[plan] ${candidates.length} candidatos encontrados en Gmail (cuenta: ${profileEmail})`);
     for (const msgRef of candidates) {
         const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
-        if (!/plan\s+de\s+cargas?/i.test(subject)) continue;
+        if (!/plan\s+de\s+cargas?/i.test(subject)) {
+            console.log(`[plan] descartado (no contiene "plan de carga(s)"): "${subject}"`);
+            descartados.push({ subject, motivo: "asunto no matchea" });
+            continue;
+        }
         const fecha = extraerFecha(subject);
-        if (!fecha) continue;
+        if (!fecha) {
+            console.log(`[plan] descartado (no se pudo extraer fecha del asunto): "${subject}"`);
+            descartados.push({ subject, motivo: "fecha no parseable" });
+            continue;
+        }
 
         const att = buscarAdjuntoExcel(msg.payload);
         let filasExcel = [];
@@ -302,14 +312,19 @@ async function obtenerPlanesDesdeGmail(token) {
             try {
                 filasExcel = await parsearFilasExcel(msgRef, att, token);
             } catch (e) {
-                console.warn("[plan] error parseando Excel", e);
+                console.warn(`[plan] error parseando Excel de "${subject}":`, e);
             }
         }
 
         const bodyTxt = extraerCuerpoMail(msg.payload);
         const filasBody = parsearSalidasDesdeBody(bodyTxt);
 
-        if (filasExcel.length === 0 && filasBody.length === 0) continue;
+        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, filasBody=${filasBody.length}`);
+
+        if (filasExcel.length === 0 && filasBody.length === 0) {
+            descartados.push({ subject, motivo: "sin filas parseables (Excel ni cuerpo)", fecha });
+            continue;
+        }
 
         if (!porFecha[fecha]) porFecha[fecha] = { filas: [], fuentes: [] };
         porFecha[fecha].filas.push(...filasExcel, ...filasBody);
@@ -322,10 +337,13 @@ async function obtenerPlanesDesdeGmail(token) {
     }
 
     if (Object.keys(porFecha).length === 0) {
-        throw new Error(`Cuenta ${profileEmail}: encontré mails con "plan" en el asunto pero ninguno con filas parseables (Excel ni cuerpo).`);
+        const detalle = descartados.length > 0
+            ? ` Descartados: ${descartados.map(d => `"${d.subject}" (${d.motivo})`).join("; ")}`
+            : "";
+        throw new Error(`Cuenta ${profileEmail}: encontré mails con "plan" en el asunto pero ninguno con filas parseables.${detalle}`);
     }
 
-    return porFecha;
+    return { porFecha, descartados };
 }
 
 // --- GITHUB STORAGE ---
@@ -2467,7 +2485,7 @@ async function initApp() {
                 : { prompt: "" };
             const token = await requestGmailToken(tokenOpts);
             if (!esAuto) mostrarEstadoPlan("Buscando mails con plan de cargas…", "info");
-            const porFecha = await obtenerPlanesDesdeGmail(token);
+            const { porFecha, descartados } = await obtenerPlanesDesdeGmail(token);
 
             const fechaSeleccionada = getFechaPlan();
             const resumenPorFecha = [];
@@ -2496,20 +2514,22 @@ async function initApp() {
 
             GH.guardarPlan(planes);
 
-            // Si la fecha seleccionada no tiene plan pero vino uno reciente, apuntar a la mas reciente
-            if (!planes[fechaSeleccionada] || planes[fechaSeleccionada].filas.length === 0) {
-                const fechas = Object.keys(porFecha).sort().reverse();
-                if (fechas.length > 0 && planFechaInput) {
-                    planFechaInput.value = fechas[0];
-                    if (fechaInput) fechaInput.value = fechas[0];
-                }
-            }
             renderPlan();
 
             if (!esAuto) localStorage.setItem("planGmailConsentio", "1");
             const msg = resumenPorFecha.join(" · ");
-            if (!esAuto) mostrarEstadoPlan(`Sincronizado. ${msg}`, "success");
-            else console.log("[plan] auto-sync OK:", msg);
+            const falta = !porFecha[fechaSeleccionada];
+            let avisoFalta = "";
+            if (falta) {
+                const descPorFecha = descartados.filter(d => d.fecha === fechaSeleccionada);
+                if (descPorFecha.length > 0) {
+                    avisoFalta = ` ⚠️ Para ${fechaSeleccionada.split("-").reverse().join("/")}: ${descPorFecha.map(d => `"${d.subject}" descartado (${d.motivo})`).join("; ")}`;
+                } else {
+                    avisoFalta = ` ⚠️ No llegó plan para ${fechaSeleccionada.split("-").reverse().join("/")}.`;
+                }
+            }
+            if (!esAuto) mostrarEstadoPlan(`Sincronizado. ${msg}${avisoFalta}`, falta ? "info" : "success");
+            else console.log("[plan] auto-sync OK:", msg, avisoFalta);
         } catch (e) {
             if (esAuto) {
                 console.log("[plan] auto-sync falló (se ignora):", e.message);

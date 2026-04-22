@@ -147,76 +147,120 @@ function construirFilaPlan(cols, ci, fuente, seq) {
     };
 }
 
-function parsearTablaDesdeTexto(texto) {
+// Dado el texto que precede a una tabla, detecta si se trata de filas a
+// "anular" o a "agregar". Si no hay marcadores claros, default "agregar".
+function detectarAccionDelBloque(textoPrevio) {
+    const t = String(textoPrevio || "").toLowerCase();
+    const idxAnul = Math.max(t.lastIndexOf("anul"), t.lastIndexOf("cancel"));
+    const idxAgreg = Math.max(t.lastIndexOf("agreg"), t.lastIndexOf("sum"));
+    if (idxAnul < 0 && idxAgreg < 0) return "agregar";
+    if (idxAnul > idxAgreg) return "anular";
+    return "agregar";
+}
+
+function textoAntesDeNodo(nodo) {
+    const partes = [];
+    let actual = nodo;
+    while (actual && actual.parentElement) {
+        let prev = actual.previousSibling;
+        while (prev) {
+            partes.unshift(prev.textContent || "");
+            prev = prev.previousSibling;
+        }
+        actual = actual.parentElement;
+    }
+    return partes.join(" ");
+}
+
+// Devuelve array de bloques: [{ accion, filas }]. Encuentra todas las tablas
+// en el texto plano (separadas por cambios de header) y asigna acción según
+// el texto que las precede.
+function parsearBloquesDesdeTexto(texto) {
     if (!texto) return [];
     const lineas = texto.split("\n").map(l => l.replace(/\r$/, ""));
-    for (let start = 0; start < lineas.length; start++) {
-        const raw = lineas[start];
-        if (!raw) continue;
+    const bloques = [];
+    let i = 0;
+    while (i < lineas.length) {
+        const raw = lineas[i];
+        if (!raw) { i++; continue; }
         let sep = "\t";
         let headerCols = raw.split(sep);
         if (headerCols.length < 3) {
-            if (!/\s{2,}/.test(raw)) continue;
+            if (!/\s{2,}/.test(raw)) { i++; continue; }
             sep = /\s{2,}/;
             headerCols = raw.split(sep);
         }
-        if (headerCols.length < 3) continue;
+        if (headerCols.length < 3) { i++; continue; }
         const ci = detectarColumnasPlan(headerCols);
-        if (ci.tnk < 0 || ci.despacho < 0) continue;
+        if (ci.tnk < 0 || ci.despacho < 0) { i++; continue; }
+
+        const textoPrevio = lineas.slice(Math.max(0, i - 10), i).join(" ");
+        const accion = detectarAccionDelBloque(textoPrevio);
+
         const filas = [];
-        for (let i = start + 1; i < lineas.length; i++) {
-            const linea = lineas[i];
+        let j = i + 1;
+        while (j < lineas.length) {
+            const linea = lineas[j];
             if (!linea.trim()) {
                 if (filas.length > 0) break;
+                j++;
                 continue;
             }
             const cols = linea.split(sep);
-            if (cols.length < Math.max(ci.tnk, ci.despacho) + 1) continue;
+            if (cols.length < Math.max(ci.tnk, ci.despacho) + 1) { j++; continue; }
             const fila = construirFilaPlan(cols, ci, "body-tabla", filas.length);
             if (fila) filas.push(fila);
+            j++;
         }
         if (filas.length > 0) {
-            console.log(`[plan:tabla-texto] header detectado en línea ${start}, ${filas.length} filas parseadas`);
-            return filas;
+            console.log(`[plan:tabla-texto] bloque desde línea ${i}: acción=${accion}, ${filas.length} filas`);
+            bloques.push({ accion, filas });
         }
+        i = j;
     }
-    return [];
+    return bloques;
 }
 
-function parsearTablaDesdeHTML(html) {
+function parsearBloquesDesdeHTML(html) {
     if (!html) return [];
     try {
         const doc = new DOMParser().parseFromString(html, "text/html");
         const tablas = [...doc.querySelectorAll("table")];
+        const bloques = [];
         for (const tabla of tablas) {
             const filasHtml = [...tabla.querySelectorAll("tr")].map(tr =>
                 [...tr.querySelectorAll("th, td")].map(c => c.textContent.replace(/\s+/g, " ").trim())
             );
             if (filasHtml.length < 2) continue;
             let headerIdx = -1;
-            for (let i = 0; i < filasHtml.length; i++) {
-                const h = filasHtml[i].map(x => x.toLowerCase());
+            for (let k = 0; k < filasHtml.length; k++) {
+                const h = filasHtml[k].map(x => x.toLowerCase());
                 const hasTnk = h.some(c => c.includes("tnk") || c.includes("tanq"));
                 const hasDesp = h.some(c => c.includes("despa"));
-                if (hasTnk && hasDesp) { headerIdx = i; break; }
+                if (hasTnk && hasDesp) { headerIdx = k; break; }
             }
             if (headerIdx < 0) continue;
             const ci = detectarColumnasPlan(filasHtml[headerIdx]);
             if (ci.tnk < 0 || ci.despacho < 0) continue;
+
+            const textoPrevio = textoAntesDeNodo(tabla);
+            const accion = detectarAccionDelBloque(textoPrevio);
+
             const filas = [];
-            for (let i = headerIdx + 1; i < filasHtml.length; i++) {
-                const fila = construirFilaPlan(filasHtml[i], ci, "body-tabla", filas.length);
+            for (let k = headerIdx + 1; k < filasHtml.length; k++) {
+                const fila = construirFilaPlan(filasHtml[k], ci, "body-tabla", filas.length);
                 if (fila) filas.push(fila);
             }
             if (filas.length > 0) {
-                console.log(`[plan:tabla-html] tabla con header en fila ${headerIdx}, ${filas.length} filas parseadas`);
-                return filas;
+                console.log(`[plan:tabla-html] tabla header en fila ${headerIdx}: acción=${accion}, ${filas.length} filas`);
+                bloques.push({ accion, filas });
             }
         }
+        return bloques;
     } catch (e) {
         console.warn("[plan:tabla-html] error parseando:", e);
+        return [];
     }
-    return [];
 }
 
 function parsearSalidasDesdeBody(bodyText) {
@@ -405,28 +449,36 @@ async function obtenerPlanesDesdeGmail(token) {
         }
 
         const cuerpo = extraerCuerpoMail(msg.payload);
-        let filasTabla = parsearTablaDesdeTexto(cuerpo.plain);
-        if (filasTabla.length === 0) filasTabla = parsearTablaDesdeHTML(cuerpo.html);
-        const filasProsa = parsearSalidasDesdeBody(cuerpoATexto(cuerpo));
+        let bloques = parsearBloquesDesdeHTML(cuerpo.html);
+        if (bloques.length === 0) bloques = parsearBloquesDesdeTexto(cuerpo.plain);
+        const filasProsa = bloques.length === 0 ? parsearSalidasDesdeBody(cuerpoATexto(cuerpo)) : [];
 
-        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, filasTabla=${filasTabla.length}, filasProsa=${filasProsa.length}`);
+        const filasAgregar = [];
+        const filasAnular = [];
+        for (const b of bloques) {
+            if (b.accion === "anular") filasAnular.push(...b.filas);
+            else filasAgregar.push(...b.filas);
+        }
+        filasAgregar.push(...filasProsa);
 
-        const filasBody = filasTabla.length > 0 ? filasTabla : filasProsa;
+        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, agregar=${filasAgregar.length}, anular=${filasAnular.length}`);
 
-        if (filasExcel.length === 0 && filasBody.length === 0) {
+        if (filasExcel.length === 0 && filasAgregar.length === 0 && filasAnular.length === 0) {
             console.warn(`[plan] sin filas. Primeros 800 chars del cuerpo plain del mail "${subject}":\n`, (cuerpo.plain || "").slice(0, 800));
             console.warn(`[plan] primeros 800 chars del cuerpo HTML:\n`, (cuerpo.html || "").slice(0, 800));
             descartados.push({ subject, motivo: "sin filas parseables (Excel, tabla pegada ni cuerpo)", fecha });
             continue;
         }
 
-        if (!porFecha[fecha]) porFecha[fecha] = { filas: [], fuentes: [] };
-        porFecha[fecha].filas.push(...filasExcel, ...filasBody);
+        if (!porFecha[fecha]) porFecha[fecha] = { filas: [], anuladas: [], fuentes: [] };
+        porFecha[fecha].filas.push(...filasExcel, ...filasAgregar);
+        porFecha[fecha].anuladas.push(...filasAnular);
         porFecha[fecha].fuentes.push({
             asunto: subject,
             filename: filename || "(cuerpo)",
             excelRows: filasExcel.length,
-            bodyRows: filasBody.length,
+            agregarRows: filasAgregar.length,
+            anularRows: filasAnular.length,
         });
     }
 
@@ -2688,10 +2740,34 @@ async function initApp() {
             const resumenPorFecha = [];
 
             for (const [fecha, info] of Object.entries(porFecha)) {
-                const existentes = (planes[fecha] && planes[fecha].filas) ? planes[fecha].filas : [];
+                // 1. Aplicar anulaciones sobre filas existentes no cumplidas.
+                let anuladasAplicadas = 0;
+                let anuladasIgnoradas = 0;
+                let existentes = (planes[fecha] && planes[fecha].filas) ? planes[fecha].filas : [];
+                if (info.anuladas && info.anuladas.length > 0) {
+                    const restantes = [];
+                    for (const f of existentes) {
+                        const match = info.anuladas.find(a =>
+                            a.tanque === f.tanque &&
+                            normDespacho(a.despacho) === normDespacho(f.despacho)
+                        );
+                        if (match) {
+                            if (f.cumplido) {
+                                anuladasIgnoradas++;
+                                restantes.push(f);
+                            } else {
+                                anuladasAplicadas++;
+                            }
+                        } else {
+                            restantes.push(f);
+                        }
+                    }
+                    existentes = restantes;
+                }
+
+                // 2. Merge de las filas a agregar.
                 const mergadas = mergearFilasPlan(existentes, info.filas);
 
-                // Completar producto desde stock si falta
                 mergadas.forEach(f => {
                     const tq = stock.find(t => t.tanque === f.tanque);
                     if (tq && tq.producto) f.producto = tq.producto;
@@ -2706,7 +2782,12 @@ async function initApp() {
                 };
                 autoMatchearPlan(fecha);
                 const agregadas = mergadas.length - existentes.length;
-                resumenPorFecha.push(`${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${agregadas > 0 ? " (+" + agregadas + " nuevas)" : ""}`);
+                const detalles = [];
+                if (agregadas > 0) detalles.push(`+${agregadas} nuevas`);
+                if (anuladasAplicadas > 0) detalles.push(`-${anuladasAplicadas} anuladas`);
+                if (anuladasIgnoradas > 0) detalles.push(`⚠ ${anuladasIgnoradas} anuladas ignoradas (ya cumplidas)`);
+                const sufijo = detalles.length > 0 ? ` (${detalles.join(", ")})` : "";
+                resumenPorFecha.push(`${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${sufijo}`);
             }
 
             GH.guardarPlan(planes);

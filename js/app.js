@@ -506,8 +506,12 @@ const GH = {
         }
     },
 
-    guardar(stock, historial) {
-        this._pendiente = { stock, historial };
+    // Recibe un merger (remoto => { stock, historial }) que se ejecuta DENTRO del
+    // ciclo de envío, después de leer el remoto fresco. Así dos admin pusheando
+    // en paralelo no se pisan: antes de cada PUT se mergea con lo último que hay
+    // en GitHub, y si el PUT devuelve 409 (sha stale), reintenta el loop.
+    guardar(merger) {
+        this._pendiente = merger;
         this._setEstado("pendiente");
         if (this._timer) { clearTimeout(this._timer); this._timer = null; }
         this._enviar();
@@ -519,9 +523,26 @@ const GH = {
         this._setEstado("enviando");
 
         while (this._pendiente) {
-            const { stock, historial } = this._pendiente;
+            const merger = this._pendiente;
             try {
-                await this.refrescarSha();
+                // Leer remoto fresco (actualiza this.sha).
+                let remoto = null;
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
+                        headers: { Authorization: `token ${this.token}` }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.sha = data.sha;
+                        remoto = JSON.parse(atob(data.content));
+                    } else if (res.status !== 404) {
+                        throw new Error(`GitHub GET ${res.status}`);
+                    }
+                } catch (e) {
+                    throw e;
+                }
+
+                const { stock, historial } = merger(remoto);
 
                 const datos = { stock, historial, actualizado: new Date().toISOString() };
                 const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
@@ -540,15 +561,17 @@ const GH = {
                     body: JSON.stringify(body)
                 });
 
+                if (res.status === 409 || res.status === 422) {
+                    console.warn('[GH sync stock] conflict, reintentando con remoto fresco');
+                    continue;
+                }
                 if (!res.ok) {
                     const text = await res.text().catch(() => '');
                     throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
                 }
                 const data = await res.json();
                 this.sha = data.content.sha;
-                if (this._pendiente && this._pendiente.stock === stock && this._pendiente.historial === historial) {
-                    this._pendiente = null;
-                }
+                if (this._pendiente === merger) this._pendiente = null;
             } catch (e) {
                 console.error('[GH sync stock]', e);
                 this._enviando = false;
@@ -792,11 +815,87 @@ async function initApp() {
     const subtFecha = document.getElementById("subtFecha");
     if (subtFecha) subtFecha.textContent = `Stock al ${hoySub.toLocaleDateString("es-AR")}`;
 
-    // Función para guardar en localStorage + GitHub
+    // Aplica una entrada del historial al stock local (para mergear movimientos
+    // que hizo otro usuario en paralelo).
+    function aplicarEntradaAlStock(h) {
+        const tipo = h.tipo || "SALIDA";
+        if (tipo === "SALIDA") {
+            const tanque = stock.find(t => t.tanque === h.tanque);
+            if (!tanque) return;
+            const desp = tanque.despachos.find(d => d.despacho === h.despacho);
+            if (desp) desp.stock -= h.kilos;
+        } else if (tipo === "INGRESO") {
+            const tanque = stock.find(t => t.tanque === h.tanque);
+            if (!tanque) return;
+            const desp = tanque.despachos.find(d => d.despacho === h.despacho);
+            if (desp) {
+                desp.stock += h.kilos;
+            } else {
+                const nuevo = { despacho: h.despacho, stock: h.kilos };
+                if (h.cliente) nuevo.cliente = h.cliente;
+                tanque.despachos.push(nuevo);
+            }
+            if (!tanque.producto && h.producto) tanque.producto = h.producto;
+            if (!tanque.cliente && h.cliente) tanque.cliente = h.cliente;
+        } else if (tipo === "TRANSFERENCIA") {
+            const partes = String(h.tanque || "").split("→");
+            if (partes.length !== 2) return;
+            const [origenNum, destinoNum] = partes;
+            const origen = stock.find(t => t.tanque === origenNum);
+            if (origen) {
+                const despO = origen.despachos.find(d => d.despacho === h.despacho);
+                if (despO) despO.stock -= h.kilos;
+            }
+            let destino = stock.find(t => t.tanque === destinoNum);
+            if (!destino) {
+                destino = { tanque: destinoNum, producto: h.producto, cliente: h.cliente, despachos: [] };
+                stock.push(destino);
+            }
+            const despD = destino.despachos.find(d => d.despacho === h.despacho);
+            if (despD) {
+                despD.stock += h.kilos;
+            } else {
+                destino.despachos.push({ despacho: h.despacho, stock: h.kilos });
+            }
+        }
+    }
+
+    // Mergea entradas remotas nuevas (ids no presentes en local) al historial
+    // y al stock local. Retorna cantidad de entradas agregadas.
+    function mergearEntradasRemotas(remoto) {
+        if (!remoto || !Array.isArray(remoto.historial)) return 0;
+        const idsLocal = new Set(historial.map(h => h.id));
+        const nuevas = remoto.historial.filter(h => !idsLocal.has(h.id));
+        for (const h of nuevas) {
+            historial.push(h);
+            aplicarEntradaAlStock(h);
+        }
+        if (nuevas.length > 0) historial.sort((a, b) => (b.id || 0) - (a.id || 0));
+        return nuevas.length;
+    }
+
+    function rerenderAfterMerge() {
+        renderStock();
+        renderHistorial();
+        renderPlan();
+        if (document.getElementById("reporteDiario")?.classList.contains("active")) {
+            renderReporteDiario();
+        }
+    }
+
     function guardarDatos() {
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
-        GH.guardar(stock, historial);
+        GH.guardar((remoto) => {
+            const nuevas = mergearEntradasRemotas(remoto);
+            if (nuevas > 0) {
+                localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+                localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+                rerenderAfterMerge();
+                mostrarAlerta(`Se sincronizaron ${nuevas} movimiento(s) nuevo(s) de otro usuario.`, "info");
+            }
+            return { stock, historial };
+        });
     }
 
     // Indicador visual de sincronización: solo punto de color,
@@ -2707,6 +2806,21 @@ async function initApp() {
     if (rolActual === "admin") {
         setTimeout(intentarAutoSync, 2000);
         setInterval(intentarAutoSync, 10 * 60 * 1000);
+
+        // Polling del historial remoto cada 30s: trae movimientos cargados por
+        // otro admin y los aplica al stock local.
+        setInterval(async () => {
+            if (GH._enviando || GH._pendiente) return;
+            const remoto = await GH.cargar();
+            if (!remoto) return;
+            const nuevas = mergearEntradasRemotas(remoto);
+            if (nuevas > 0) {
+                localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+                localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+                rerenderAfterMerge();
+                mostrarAlerta(`Se sincronizaron ${nuevas} movimiento(s) nuevo(s) de otro usuario.`, "info");
+            }
+        }, 30000);
     }
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s

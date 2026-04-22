@@ -152,15 +152,23 @@ function construirFilaPlan(cols, ci, fuente, seq) {
 // del plan de días anteriores que quedaron en la cola del mail.
 function sacarQuotedTexto(texto) {
     if (!texto) return "";
-    return texto
-        .split(/\n\s*(?:De:|From:|-----+\s*Original|Enviado (?:el|por):|El .+? escribió:)/i)[0]
-        .split(/\n\s*>/)[0];
+    const re = /(?:^|\n|\r\n)\s*(?:De:|From:|-{5,}\s*(?:Original|Mensaje original)|Enviado\s+(?:el|por):|El\s+.{1,120}?\s+escribió:)/i;
+    const m = texto.match(re);
+    const cortado = m ? texto.slice(0, m.index) : texto;
+    return cortado.split(/\n\s*>/)[0];
 }
 
-// Remueve nodos quoted del DOM HTML antes de parsear tablas. Cubre Gmail,
-// Outlook y Apple Mail. Retorna el doc mutado (in-place).
+// Remueve nodos quoted del DOM HTML antes de parsear tablas. Estrategia doble:
+// 1. Selectores clásicos (blockquote, gmail_quote, etc.).
+// 2. Tree walker buscando el primer marcador de reply en texto renderizado
+//    ("De:", "From:", "Enviado el:", etc.) y borra ese nodo + todo lo posterior
+//    en orden de documento. Cubre los forwards de Outlook donde la cola queda
+//    embebida como texto plano entre divs, sin blockquote.
 function sacarQuotedDelDoc(doc) {
-    const selectores = [
+    const body = doc.body;
+    if (!body) return doc;
+
+    const selectoresBasicos = [
         "blockquote",
         ".gmail_quote",
         ".gmail_quote_container",
@@ -171,24 +179,41 @@ function sacarQuotedDelDoc(doc) {
         "div[id^='divRplyFwdMsg']",
         "hr#stopSpelling",
     ];
-    const encontrados = doc.querySelectorAll(selectores.join(","));
-    console.log(`[plan:quoted-html] nodos quoted removidos: ${encontrados.length} (selectores match: ${[...encontrados].map(e => e.tagName + (e.className ? "." + e.className.split(" ")[0] : "")).join(", ") || "ninguno"})`);
-    encontrados.forEach(el => el.remove());
+    const basicos = body.querySelectorAll(selectoresBasicos.join(","));
+    console.log(`[plan:quoted-html] nodos quoted (selectores básicos): ${basicos.length}`);
+    basicos.forEach(el => el.remove());
 
-    // Fallback: si no encontramos ningún marcador estándar, buscar texto
-    // tipo "De:", "From:", "Enviado el:", "El ... escribió:" y remover todo
-    // lo que venga después dentro del body.
-    if (encontrados.length === 0 && doc.body) {
-        const html = doc.body.innerHTML;
-        const re = /(?:^|\n|<br[^>]*>|<\/p>|<\/div>)\s*(?:<[^>]+>)*\s*(?:De:|From:|Enviado\s+(?:el|por):|El\s+[^<\n]+?\s+escribió:|-{5,}\s*Mensaje\s+original)/i;
-        const m = html.match(re);
+    // Buscar un marcador de reply en los nodos de texto del DOM.
+    const marcador = /(?:^|\s)(?:De:|From:|Enviado\s+(?:el|por):|El\s+.{1,80}?\s+escribió:|-{5,}\s*Mensaje\s+original|-{5,}\s*Original\s+Message)\s*/i;
+    const walker = doc.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+    let nodoHit = null;
+    let idxHit = -1;
+    let matchHit = null;
+    while (walker.nextNode()) {
+        const val = walker.currentNode.nodeValue || "";
+        const m = val.match(marcador);
         if (m) {
-            const idx = html.indexOf(m[0]);
-            console.log(`[plan:quoted-html] fallback: cortando por marcador "${m[0].trim().slice(0, 40)}" en pos ${idx}`);
-            doc.body.innerHTML = html.slice(0, idx);
-        } else {
-            console.log(`[plan:quoted-html] fallback: no se encontró marcador de reply por regex`);
+            nodoHit = walker.currentNode;
+            idxHit = val.indexOf(m[0]);
+            matchHit = m[0];
+            break;
         }
+    }
+    if (nodoHit) {
+        console.log(`[plan:quoted-html] corte por marcador de texto: "${matchHit.trim().slice(0, 40)}"`);
+        nodoHit.nodeValue = (nodoHit.nodeValue || "").slice(0, idxHit);
+        let actual = nodoHit;
+        while (actual && actual !== body) {
+            let next = actual.nextSibling;
+            while (next) {
+                const toRemove = next;
+                next = next.nextSibling;
+                toRemove.remove();
+            }
+            actual = actual.parentNode;
+        }
+    } else {
+        console.log(`[plan:quoted-html] no se encontró marcador de reply en texto renderizado`);
     }
     return doc;
 }

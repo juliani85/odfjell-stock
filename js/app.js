@@ -163,6 +163,7 @@ function sacarQuotedDelDoc(doc) {
     const selectores = [
         "blockquote",
         ".gmail_quote",
+        ".gmail_quote_container",
         ".gmail_extra",
         ".gmail_attr",
         ".yahoo_quoted",
@@ -170,7 +171,25 @@ function sacarQuotedDelDoc(doc) {
         "div[id^='divRplyFwdMsg']",
         "hr#stopSpelling",
     ];
-    doc.querySelectorAll(selectores.join(",")).forEach(el => el.remove());
+    const encontrados = doc.querySelectorAll(selectores.join(","));
+    console.log(`[plan:quoted-html] nodos quoted removidos: ${encontrados.length} (selectores match: ${[...encontrados].map(e => e.tagName + (e.className ? "." + e.className.split(" ")[0] : "")).join(", ") || "ninguno"})`);
+    encontrados.forEach(el => el.remove());
+
+    // Fallback: si no encontramos ningún marcador estándar, buscar texto
+    // tipo "De:", "From:", "Enviado el:", "El ... escribió:" y remover todo
+    // lo que venga después dentro del body.
+    if (encontrados.length === 0 && doc.body) {
+        const html = doc.body.innerHTML;
+        const re = /(?:^|\n|<br[^>]*>|<\/p>|<\/div>)\s*(?:<[^>]+>)*\s*(?:De:|From:|Enviado\s+(?:el|por):|El\s+[^<\n]+?\s+escribió:|-{5,}\s*Mensaje\s+original)/i;
+        const m = html.match(re);
+        if (m) {
+            const idx = html.indexOf(m[0]);
+            console.log(`[plan:quoted-html] fallback: cortando por marcador "${m[0].trim().slice(0, 40)}" en pos ${idx}`);
+            doc.body.innerHTML = html.slice(0, idx);
+        } else {
+            console.log(`[plan:quoted-html] fallback: no se encontró marcador de reply por regex`);
+        }
+    }
     return doc;
 }
 

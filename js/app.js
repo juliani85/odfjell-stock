@@ -2873,6 +2873,24 @@ async function initApp() {
     const btnPlanSinc = document.getElementById("btnPlanSincronizar");
     if (btnPlanSinc) btnPlanSinc.addEventListener("click", sincronizarPlanDesdeGmail);
 
+    const btnPlanLimpiar = document.getElementById("btnPlanLimpiar");
+    if (btnPlanLimpiar) btnPlanLimpiar.addEventListener("click", async () => {
+        const fecha = getFechaPlan();
+        const plan = planes[fecha];
+        const cumplidas = plan && plan.filas ? plan.filas.filter(f => f.cumplido).length : 0;
+        const totales = plan && plan.filas ? plan.filas.length : 0;
+        const fechaBonita = fecha.split("-").reverse().join("/");
+        const msgBase = `Se va a borrar el plan del ${fechaBonita} (${totales} filas) y resincronizar desde Gmail.`;
+        const msgCumplidas = cumplidas > 0 ? `\n\n⚠ ${cumplidas} fila(s) ya estaban cumplidas — el historial de salidas NO se toca, pero estas marcas de "cumplido" se pierden hasta que se vuelvan a matchear con las salidas registradas.` : "";
+        if (!confirm(msgBase + msgCumplidas + "\n\n¿Continuar?")) return;
+
+        delete planes[fecha];
+        GH.guardarPlan(planes);
+        renderPlan();
+        mostrarEstadoPlan(`Plan del ${fechaBonita} borrado. Sincronizando desde Gmail…`, "info");
+        await sincronizarPlanDesdeGmail("manual");
+    });
+
     const btnPlanImp = document.getElementById("btnPlanImprimir");
     if (btnPlanImp) btnPlanImp.addEventListener("click", () => {
         const fecha = getFechaPlan();

@@ -226,7 +226,7 @@ function parsearSalidasDesdeBody(bodyText) {
         .split(/\n\s*(?:De:|From:|-----+\s*Original|Enviado (?:el|por):)/i)[0]
         .split(/\n\s*>/)[0];
     const filas = [];
-    const regex = /\bTK\s*(\d{1,3})\s*[-–—]\s*(.+?)\s+(\S*(?:IC04|IC06|TRP|EC01|REMO|TRM6)\S*)/gi;
+    const regex = /\bTK\s*(\d{1,3})\s*[-–—]\s*(.+?)\s+(\S*(?:IC04|IC06|TRP|EC01|REMO|TRM6|IT14)\S*)/gi;
     const usados = new Set();
     let m;
     while ((m = regex.exec(cortado)) !== null) {
@@ -826,13 +826,14 @@ async function initApp() {
     });
 
     // --- RENOMBRADO DE DESPACHOS NO ESTANDAR ---
-    // Un despacho es valido para salida si su nombre contiene IC04, IC06, TRP, EC01, REMO o TRM6.
+    // Un despacho es valido para salida si su nombre contiene IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.
     // Los historicos pueden venir con formatos como FISCAL-..., PARTICULAR, IDA4, etc.
     function esDespachoValido(nombre) {
         if (!nombre) return false;
         const n = nombre.toUpperCase();
         return n.includes("IC04") || n.includes("IC06") || n.includes("TRP") ||
-               n.includes("EC01") || n.includes("REMO") || n.includes("TRM6");
+               n.includes("EC01") || n.includes("REMO") || n.includes("TRM6") ||
+               n.includes("IT14");
     }
 
     function getDespachosConsultados() {
@@ -868,7 +869,7 @@ async function initApp() {
         const inputKilosId = "inputRenombrarKilos";
         const errorId = "renombrarError";
         const html = `
-            <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong>, <strong>TRP</strong>, <strong>EC01</strong>, <strong>REMO</strong> o <strong>TRM6</strong>).</p>
+            <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong>, <strong>TRP</strong>, <strong>EC01</strong>, <strong>REMO</strong>, <strong>TRM6</strong> o <strong>IT14</strong>).</p>
             <p style="font-size:0.9rem;color:var(--gray-500);margin-bottom:0.25rem">Stock disponible: <strong>${formatKg(stockViejo)} kg</strong></p>
             <div class="form-group" style="margin-top:1rem">
                 <label for="${inputNombreId}">Nuevo nombre del despacho</label>
@@ -1108,7 +1109,7 @@ async function initApp() {
         const invalido = !esDespachoValido(desp.despacho);
         const avisoInvalido = invalido
             ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                    <span>⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO o TRM6.</span>
+                    <span>⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.</span>
                     <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar</button>
                 </div>`
             : "";

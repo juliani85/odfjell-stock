@@ -1108,9 +1108,8 @@ async function initApp() {
         const clienteDesp = desp.cliente || tanqueActual.cliente;
         const invalido = !esDespachoValido(desp.despacho);
         const avisoInvalido = invalido
-            ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                    <span>⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.</span>
-                    <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar</button>
+            ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem">
+                    ⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.
                 </div>`
             : "";
         infoDespacho.className = "info-box found";
@@ -1120,13 +1119,17 @@ async function initApp() {
                 <div><span class="info-label">Cliente</span><br><span class="info-value">${clienteDesp}</span></div>
                 <div><span class="info-label">Stock Disponible</span><br><span class="info-value" style="font-size:1.3rem;color:var(--primary)">${formatKg(desp.stock)} kg</span></div>
             </div>
+            <div style="margin-top:0.75rem;display:flex;justify-content:flex-end">
+                <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar despacho</button>
+            </div>
             ${avisoInvalido}
         `;
         infoDespacho.classList.remove("hidden");
 
+        const btnRen = document.getElementById("btnRenombrarDespacho");
+        if (btnRen) btnRen.addEventListener("click", () => lanzarRenombrarDespacho(desp));
+
         if (invalido) {
-            const btnRen = document.getElementById("btnRenombrarDespacho");
-            if (btnRen) btnRen.addEventListener("click", () => lanzarRenombrarDespacho(desp));
             const yaConsultado = getDespachosConsultados().includes(desp.despacho);
             if (!yaConsultado) {
                 addDespachoConsultado(desp.despacho);

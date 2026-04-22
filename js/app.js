@@ -147,6 +147,33 @@ function construirFilaPlan(cols, ci, fuente, seq) {
     };
 }
 
+// Recorta la parte "quoted" del cuerpo de texto (respuestas/forwards), igual
+// que hace parsearSalidasDesdeBody. Evita que los parsers de tabla lean filas
+// del plan de días anteriores que quedaron en la cola del mail.
+function sacarQuotedTexto(texto) {
+    if (!texto) return "";
+    return texto
+        .split(/\n\s*(?:De:|From:|-----+\s*Original|Enviado (?:el|por):|El .+? escribió:)/i)[0]
+        .split(/\n\s*>/)[0];
+}
+
+// Remueve nodos quoted del DOM HTML antes de parsear tablas. Cubre Gmail,
+// Outlook y Apple Mail. Retorna el doc mutado (in-place).
+function sacarQuotedDelDoc(doc) {
+    const selectores = [
+        "blockquote",
+        ".gmail_quote",
+        ".gmail_extra",
+        ".gmail_attr",
+        ".yahoo_quoted",
+        ".OutlookMessageHeader",
+        "div[id^='divRplyFwdMsg']",
+        "hr#stopSpelling",
+    ];
+    doc.querySelectorAll(selectores.join(",")).forEach(el => el.remove());
+    return doc;
+}
+
 // Dado el texto que precede a una tabla, detecta si se trata de filas a
 // "anular" o a "agregar". Si no hay marcadores claros, default "agregar".
 function detectarAccionDelBloque(textoPrevio) {
@@ -177,7 +204,8 @@ function textoAntesDeNodo(nodo) {
 // el texto que las precede.
 function parsearBloquesDesdeTexto(texto) {
     if (!texto) return [];
-    const lineas = texto.split("\n").map(l => l.replace(/\r$/, ""));
+    const cortado = sacarQuotedTexto(texto);
+    const lineas = cortado.split("\n").map(l => l.replace(/\r$/, ""));
     const bloques = [];
     let i = 0;
     while (i < lineas.length) {
@@ -225,6 +253,7 @@ function parsearBloquesDesdeHTML(html) {
     if (!html) return [];
     try {
         const doc = new DOMParser().parseFromString(html, "text/html");
+        sacarQuotedDelDoc(doc);
         const tablas = [...doc.querySelectorAll("table")];
         const bloques = [];
         for (const tabla of tablas) {

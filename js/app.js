@@ -1617,17 +1617,18 @@ async function initApp() {
         tbody.innerHTML = datos.map(s => {
             const tipo = s.tipo || "SALIDA";
             const tipoClass = tipo === "INGRESO" ? "tipo-ingreso" : tipo === "TRANSFERENCIA" ? "tipo-transferencia" : "tipo-salida";
+            const tipoLabel = tipo === "TRANSFERENCIA" ? "TRANSF." : tipo;
             return `<tr>
             <td>${s.fecha}</td>
             <td>${s.hora || "-"}</td>
-            <td><span class="tipo-badge ${tipoClass}">${tipo}</span></td>
+            <td><span class="tipo-badge ${tipoClass}">${tipoLabel}</span></td>
             <td><strong>${s.remito || "-"}</strong></td>
             <td><strong>TK ${s.tanque}</strong></td>
             <td>${s.producto}</td>
             <td><code>${s.despacho}</code></td>
             <td><strong>${formatKg(s.kilos)} kg</strong></td>
             <td>${(s.usuario || "-").toUpperCase()}</td>
-            <td><button class="btn btn-danger" onclick="anularSalida(${s.id})">Anular</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="anularSalida(${s.id})" title="Anular">Anular</button></td>
         </tr>`;
         }).join("");
     }

@@ -729,11 +729,20 @@ tbody tr:hover { background: var(--gray-50); }
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .tipo-salida { background: #fef2f2; color: #dc2626; }
 .tipo-ingreso { background: #f0fdf4; color: #16a34a; }
 .tipo-transferencia { background: #eff6ff; color: #1a56db; }
+
+/* Columna de acciones del historial: no encoger el botón Anular */
+#tablaHistorial th:last-child,
+#tablaHistorial td:last-child {
+    white-space: nowrap;
+    text-align: right;
+}
+#tablaHistorial td:last-child .btn { white-space: nowrap; }
 
 /* Círculo nuevo (UMA) */
 .circulo-nuevo {

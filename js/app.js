@@ -1,7 +1,7 @@
 // Usuarios válidos
 const USUARIOS = {
     cesar: "admin",
-    julian: "admin",
+    julian: "memorando",
     claudia: "admin",
     uma: "user"
 };

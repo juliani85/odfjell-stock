@@ -986,17 +986,31 @@ async function initApp() {
     }
 
     // Mergea entradas remotas nuevas (ids no presentes en local) al historial
-    // y al stock local. Retorna cantidad de entradas agregadas.
+    // y al stock local. También propaga renombramientos: si el remoto tiene una
+    // entrada con el mismo id pero despacho distinto, actualiza el local —
+    // significa que otro admin renombró el despacho y el cambio todavía no
+    // llegaba por el sync. Retorna total de cambios aplicados.
     function mergearEntradasRemotas(remoto) {
         if (!remoto || !Array.isArray(remoto.historial)) return 0;
-        const idsLocal = new Set(historial.map(h => h.id));
-        const nuevas = remoto.historial.filter(h => !idsLocal.has(h.id));
+        const porIdLocal = new Map();
+        historial.forEach(h => porIdLocal.set(h.id, h));
+        const nuevas = [];
+        let renombrados = 0;
+        for (const hR of remoto.historial) {
+            const local = porIdLocal.get(hR.id);
+            if (!local) {
+                nuevas.push(hR);
+            } else if (local.despacho !== hR.despacho) {
+                local.despacho = hR.despacho;
+                renombrados++;
+            }
+        }
         for (const h of nuevas) {
             historial.push(h);
             aplicarEntradaAlStock(h);
         }
         if (nuevas.length > 0) historial.sort((a, b) => (b.id || 0) - (a.id || 0));
-        return nuevas.length;
+        return nuevas.length + renombrados;
     }
 
     function rerenderAfterMerge() {

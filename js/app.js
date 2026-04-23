@@ -2026,6 +2026,21 @@ async function initApp() {
     ingDespacho.addEventListener("input", validarIngreso);
     ingKilos.addEventListener("input", validarIngreso);
 
+    // Flujo de teclado: Enter en despacho → kilos; Enter en kilos → registrar.
+    ingDespacho.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (ingDespacho.value.trim()) ingKilos.focus();
+        }
+    });
+    ingKilos.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const btn = document.getElementById("btnIngRegistrar");
+            if (!btn.disabled) btn.click();
+        }
+    });
+
     function validarIngreso() {
         const desp = ingDespacho.value.trim();
         const kilos = parseInt(ingKilos.value) || 0;
@@ -2105,6 +2120,7 @@ async function initApp() {
         };
 
         modal.classList.remove("hidden");
+        setTimeout(() => document.getElementById("btnConfirmar").focus(), 0);
     });
 
     document.getElementById("btnIngLimpiar").addEventListener("click", ingLimpiar);

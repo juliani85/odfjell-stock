@@ -600,6 +600,15 @@ const GH = {
         return this._estado !== "sincronizado";
     },
 
+    // atob devuelve un string donde cada char es un byte; para un JSON con
+    // caracteres UTF-8 multi-byte (ej: "→") hay que decodificar como UTF-8.
+    _b64ToJson(b64) {
+        const raw = atob(b64);
+        const bytes = new Uint8Array(raw.length);
+        for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+        return JSON.parse(new TextDecoder("utf-8").decode(bytes));
+    },
+
     async cargar() {
         try {
             const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
@@ -608,7 +617,7 @@ const GH = {
             if (!res.ok) return null;
             const data = await res.json();
             this.sha = data.sha;
-            const contenido = JSON.parse(atob(data.content));
+            const contenido = this._b64ToJson(data.content);
             return contenido;
         } catch (e) {
             return null;
@@ -659,7 +668,7 @@ const GH = {
                     if (res.ok) {
                         const data = await res.json();
                         this.sha = data.sha;
-                        remoto = JSON.parse(atob(data.content));
+                        remoto = this._b64ToJson(data.content);
                     } else if (res.status !== 404) {
                         throw new Error(`GitHub GET ${res.status}`);
                     }
@@ -722,7 +731,7 @@ const GH = {
             }
             const data = await res.json();
             this.shaVistas = data.sha;
-            const contenido = JSON.parse(atob(data.content));
+            const contenido = this._b64ToJson(data.content);
             return { vistas: contenido.vistas || [], sim: contenido.sim || {} };
         } catch (e) {
             console.error('[GH cargarVistas]', e);
@@ -799,7 +808,7 @@ const GH = {
             }
             const data = await res.json();
             this.shaPlan = data.sha;
-            const contenido = JSON.parse(atob(data.content));
+            const contenido = this._b64ToJson(data.content);
             return contenido.planes || {};
         } catch (e) {
             console.error('[GH cargarPlan]', e);
@@ -1642,7 +1651,7 @@ async function initApp() {
             <td><code>${s.despacho}</code></td>
             <td><strong>${formatKg(s.kilos)} kg</strong></td>
             <td>${(s.usuario || "-").toUpperCase()}</td>
-            <td><button class="btn btn-danger btn-sm btn-icon" onclick="anularSalida(${s.id})" title="Anular" aria-label="Anular">✕</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="anularSalida(${s.id})">Anular</button></td>
         </tr>`;
         }).join("");
     }

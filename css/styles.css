@@ -736,32 +736,34 @@ tbody tr:hover { background: var(--gray-50); }
 .tipo-ingreso { background: #f0fdf4; color: #16a34a; }
 .tipo-transferencia { background: #eff6ff; color: #1a56db; }
 
-/* Columna de acciones del historial: no encoger el botón Anular */
+/* Historial de salidas: layout compacto para que todo entre sin scroll
+   horizontal. El badge TRANSFERENCIA y el botón Anular son los principales
+   competidores por ancho; acortamos padding y fuente sin sacrificar lectura. */
 #tablaHistorial th,
 #tablaHistorial td {
-    padding: 0.55rem 0.6rem;
+    padding: 0.5rem 0.55rem;
     font-size: 0.8rem;
+    vertical-align: middle;
 }
 #tablaHistorial th:last-child,
 #tablaHistorial td:last-child {
     white-space: nowrap;
     text-align: right;
-    padding-right: 0.75rem;
+    padding-right: 0.7rem;
 }
-#tablaHistorial td:last-child .btn-icon {
-    padding: 0.25rem;
-    width: 28px;
-    height: 28px;
-    font-size: 0.9rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
+#tablaHistorial td:last-child .btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
 }
 #tablaHistorial td code {
     font-size: 0.78rem;
     word-break: break-all;
+}
+#tablaHistorial td:nth-child(6) { /* Producto: permite wrap a 2 líneas */
+    white-space: normal;
+    word-break: break-word;
+    max-width: 180px;
 }
 
 /* Círculo nuevo (UMA) */

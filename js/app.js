@@ -2688,7 +2688,13 @@ async function initApp() {
     }
 
     function normDespacho(d) {
-        return String(d || "").toUpperCase().replace(/^DI/, "");
+        // Normaliza para matchear despachos pese a typos/formatos distintos:
+        // - quita prefijo "DI" opcional
+        // - quita "008" intermedio cuando aparece justo después del año
+        //   (typo frecuente: copiar el TK 008 dentro del número de despacho).
+        let s = String(d || "").toUpperCase().replace(/^DI/, "");
+        s = s.replace(/^(\d{2})008/, "$1");
+        return s;
     }
 
     // Despachos excluidos del plan de cargas a pedido de Julian.

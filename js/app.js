@@ -1642,7 +1642,7 @@ async function initApp() {
             <td><code>${s.despacho}</code></td>
             <td><strong>${formatKg(s.kilos)} kg</strong></td>
             <td>${(s.usuario || "-").toUpperCase()}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="anularSalida(${s.id})" title="Anular">Anular</button></td>
+            <td><button class="btn btn-danger btn-sm btn-icon" onclick="anularSalida(${s.id})" title="Anular" aria-label="Anular">✕</button></td>
         </tr>`;
         }).join("");
     }

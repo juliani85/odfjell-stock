@@ -2700,9 +2700,16 @@ async function initApp() {
         // Normaliza para matchear despachos pese a typos/formatos distintos:
         // - quita prefijo "DI" opcional
         // - quita "008" intermedio cuando aparece justo después del año
-        //   (typo frecuente: copiar el TK 008 dentro del número de despacho).
+        //   (typo frecuente: copiar el TK 008 dentro del número de despacho)
+        // - normaliza la secuencia numérica a 6 dígitos (típico formato), lo
+        //   que tolera ceros extras o faltantes en la secuencia
+        //   (ej: 26TR060002482A ↔ 26TR06002482A).
         let s = String(d || "").toUpperCase().replace(/^DI/, "");
         s = s.replace(/^(\d{2})008/, "$1");
+        s = s.replace(
+            /^(\d{2})([A-Z]{2,4}\d{0,2})(\d{4,8})([A-Z])$/,
+            (_, anio, tipo, seq, letra) => anio + tipo + String(parseInt(seq, 10)).padStart(6, "0") + letra
+        );
         return s;
     }
 

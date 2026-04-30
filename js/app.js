@@ -676,9 +676,9 @@ const GH = {
                     throw e;
                 }
 
-                const { stock, historial } = merger(remoto);
+                const merged = merger(remoto);
 
-                const datos = { stock, historial, actualizado: new Date().toISOString() };
+                const datos = { ...merged, actualizado: new Date().toISOString() };
                 const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
                 const body = {
                     message: `Actualizar datos ${new Date().toISOString().slice(0, 16)}`,
@@ -933,15 +933,18 @@ async function initLogin() {
 async function initApp() {
     // Cargar datos desde GitHub, fallback a localStorage, fallback a stock inicial
     const ghData = await GH.cargar();
-    let stock, historial;
+    let stock, historial, anulados;
     if (ghData && ghData.stock) {
         stock = ghData.stock;
         historial = ghData.historial || [];
+        anulados = ghData.anulados || [];
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+        localStorage.setItem("anuladosV3", JSON.stringify(anulados));
     } else {
         stock = JSON.parse(localStorage.getItem("stockTanquesV3")) || JSON.parse(JSON.stringify(stockInicial));
         historial = JSON.parse(localStorage.getItem("historialSalidasV3")) || [];
+        anulados = JSON.parse(localStorage.getItem("anuladosV3") || "[]");
     }
 
     // Fecha dinámica en subtítulo
@@ -994,32 +997,92 @@ async function initApp() {
         }
     }
 
-    // Mergea entradas remotas nuevas (ids no presentes en local) al historial
-    // y al stock local. También propaga renombramientos: si el remoto tiene una
-    // entrada con el mismo id pero despacho distinto, actualiza el local —
-    // significa que otro admin renombró el despacho y el cambio todavía no
-    // llegaba por el sync. Retorna total de cambios aplicados.
-    function mergearEntradasRemotas(remoto) {
-        if (!remoto || !Array.isArray(remoto.historial)) return 0;
-        const porIdLocal = new Map();
-        historial.forEach(h => porIdLocal.set(h.id, h));
-        const nuevas = [];
-        let renombrados = 0;
-        for (const hR of remoto.historial) {
-            const local = porIdLocal.get(hR.id);
-            if (!local) {
-                nuevas.push(hR);
-            } else if (local.despacho !== hR.despacho) {
-                local.despacho = hR.despacho;
-                renombrados++;
+    // Revierte el efecto de una entrada del historial sobre el stock.
+    // Se usa cuando un id queda en `anulados` y todavía está en el historial
+    // local (porque la anulación la disparó otro admin).
+    function revertirEntradaDelStock(h) {
+        const tipo = h.tipo || "SALIDA";
+        if (tipo === "SALIDA") {
+            const tanque = stock.find(t => t.tanque === h.tanque);
+            if (!tanque) return;
+            const desp = tanque.despachos.find(d => d.despacho === h.despacho);
+            if (desp) desp.stock += h.kilos;
+        } else if (tipo === "INGRESO") {
+            const tanque = stock.find(t => t.tanque === h.tanque);
+            if (!tanque) return;
+            const desp = tanque.despachos.find(d => d.despacho === h.despacho);
+            if (desp) desp.stock -= h.kilos;
+        } else if (tipo === "TRANSFERENCIA") {
+            const partes = String(h.tanque || "").split("→");
+            if (partes.length !== 2) return;
+            const [origenNum, destinoNum] = partes;
+            const origen = stock.find(t => t.tanque === origenNum);
+            if (origen) {
+                const despO = origen.despachos.find(d => d.despacho === h.despacho);
+                if (despO) despO.stock += h.kilos;
+            }
+            const destino = stock.find(t => t.tanque === destinoNum);
+            if (destino) {
+                const despD = destino.despachos.find(d => d.despacho === h.despacho);
+                if (despD) despD.stock -= h.kilos;
             }
         }
-        for (const h of nuevas) {
-            historial.push(h);
-            aplicarEntradaAlStock(h);
+    }
+
+    // Mergea estado remoto al local:
+    // - Une lista de tombstones (anulados) — si una entrada anulada en remoto
+    //   sigue en mi historial local, la quito y reverso su efecto al stock.
+    // - Agrega entradas remotas nuevas y aplica su efecto al stock.
+    // - Propaga renombramientos de despacho (mismo id, distinto despacho).
+    // - Filtra del remoto cualquier entrada cuyo id ya esté en anulados (para
+    //   no revivir entradas que un admin acaba de anular).
+    // Retorna total de cambios aplicados.
+    function mergearEntradasRemotas(remoto) {
+        if (!remoto) return 0;
+        let cambios = 0;
+
+        // 1. Tombstones: unir lista local + remota.
+        const setAnul = new Set(anulados);
+        const remoteAnul = Array.isArray(remoto.anulados) ? remoto.anulados : [];
+        for (const id of remoteAnul) {
+            if (!setAnul.has(id)) {
+                anulados.push(id);
+                setAnul.add(id);
+                // Si la entrada anulada todavía está en mi historial local, removerla.
+                const idx = historial.findIndex(h => h.id === id);
+                if (idx >= 0) {
+                    revertirEntradaDelStock(historial[idx]);
+                    historial.splice(idx, 1);
+                    cambios++;
+                }
+            }
         }
-        if (nuevas.length > 0) historial.sort((a, b) => (b.id || 0) - (a.id || 0));
-        return nuevas.length + renombrados;
+
+        // 2. Entradas remotas nuevas + propagación de renombramientos.
+        if (Array.isArray(remoto.historial)) {
+            const porIdLocal = new Map();
+            historial.forEach(h => porIdLocal.set(h.id, h));
+            const nuevas = [];
+            let renombrados = 0;
+            for (const hR of remoto.historial) {
+                if (setAnul.has(hR.id)) continue; // ignorar revivals
+                const local = porIdLocal.get(hR.id);
+                if (!local) {
+                    nuevas.push(hR);
+                } else if (local.despacho !== hR.despacho) {
+                    local.despacho = hR.despacho;
+                    renombrados++;
+                }
+            }
+            for (const h of nuevas) {
+                historial.push(h);
+                aplicarEntradaAlStock(h);
+            }
+            if (nuevas.length > 0) historial.sort((a, b) => (b.id || 0) - (a.id || 0));
+            cambios += nuevas.length + renombrados;
+        }
+
+        return cambios;
     }
 
     function rerenderAfterMerge() {
@@ -1034,15 +1097,17 @@ async function initApp() {
     function guardarDatos() {
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+        localStorage.setItem("anuladosV3", JSON.stringify(anulados));
         GH.guardar((remoto) => {
-            const nuevas = mergearEntradasRemotas(remoto);
-            if (nuevas > 0) {
+            const cambios = mergearEntradasRemotas(remoto);
+            if (cambios > 0) {
                 localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
                 localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+                localStorage.setItem("anuladosV3", JSON.stringify(anulados));
                 rerenderAfterMerge();
-                mostrarAlerta(`Se sincronizaron ${nuevas} movimiento(s) nuevo(s) de otro usuario.`, "info");
+                mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
             }
-            return { stock, historial };
+            return { stock, historial, anulados };
         });
     }
 
@@ -1673,6 +1738,7 @@ async function initApp() {
         }
 
         historial = historial.filter(s => s.id !== id);
+        if (!anulados.includes(id)) anulados.push(id);
         desmatchearSalidaEnPlan(id);
         guardarDatos();
 
@@ -3020,12 +3086,13 @@ async function initApp() {
             if (GH._enviando || GH._pendiente) return;
             const remoto = await GH.cargar();
             if (!remoto) return;
-            const nuevas = mergearEntradasRemotas(remoto);
-            if (nuevas > 0) {
+            const cambios = mergearEntradasRemotas(remoto);
+            if (cambios > 0) {
                 localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
                 localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+                localStorage.setItem("anuladosV3", JSON.stringify(anulados));
                 rerenderAfterMerge();
-                mostrarAlerta(`Se sincronizaron ${nuevas} movimiento(s) nuevo(s) de otro usuario.`, "info");
+                mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
             }
         }, 30000);
     }

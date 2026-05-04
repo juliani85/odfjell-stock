@@ -1319,6 +1319,16 @@ async function initApp() {
         const num = inputTanque.value.trim().padStart(3, "0");
         inputTanque.value = num;
 
+        if (tanquesDesafectados.includes(num)) {
+            infoTanque.className = "info-box not-found";
+            infoTanque.innerHTML = `<strong>Tanque ${num} desafectado — no operable.</strong>`;
+            infoTanque.classList.remove("hidden");
+            desactivarPaso(2);
+            desactivarPaso(3);
+            tanqueActual = null;
+            return;
+        }
+
         const tanque = stock.find(t => t.tanque === num);
 
         if (!tanque) {
@@ -1618,6 +1628,7 @@ async function initApp() {
         const filtroLower = filtro.toLowerCase();
 
         const filtrados = stock.filter(t => {
+            if (tanquesDesafectados.includes(t.tanque)) return false;
             const totalStock = t.despachos.reduce((s, d) => s + d.stock, 0);
             if (totalStock <= 0) return false;
             if (!filtro) return true;
@@ -1871,6 +1882,7 @@ async function initApp() {
         const filtroLower = filtro.toLowerCase();
 
         const filtrados = stock.filter(t => {
+            if (tanquesDesafectados.includes(t.tanque)) return false;
             const totalStock = t.despachos.reduce((s, d) => s + d.stock, 0);
             if (totalStock <= 0) return false;
             if (!filtro) return true;
@@ -1943,7 +1955,7 @@ async function initApp() {
 
     // --- IMPRIMIR STOCK MENSUAL ---
     document.getElementById("btnImprimirMensual").addEventListener("click", () => {
-        const filtrados = stock.filter(t => t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
+        const filtrados = stock.filter(t => !tanquesDesafectados.includes(t.tanque) && t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
         if (filtrados.length === 0) { alert("No hay stock para imprimir."); return; }
 
         let totalKg = 0;
@@ -2047,6 +2059,17 @@ async function initApp() {
     function ingBuscarTanque() {
         const num = ingInputTanque.value.trim().padStart(3, "0");
         ingInputTanque.value = num;
+
+        if (tanquesDesafectados.includes(num)) {
+            ingTanqueActual = null;
+            ingInfoTanque.className = "info-box not-found";
+            ingInfoTanque.innerHTML = `<strong>Tanque ${num} desafectado — no operable.</strong>`;
+            ingInfoTanque.classList.remove("hidden");
+            ingProductoNuevo.classList.add("hidden");
+            ingPaso2.className = "paso disabled";
+            ingKilos.disabled = true;
+            return;
+        }
 
         const tanque = stock.find(t => t.tanque === num);
         const totalStock = tanque ? tanque.despachos.reduce((s, d) => s + d.stock, 0) : 0;
@@ -2254,6 +2277,16 @@ async function initApp() {
         const num = trfInputOrigen.value.trim().padStart(3, "0");
         trfInputOrigen.value = num;
 
+        if (tanquesDesafectados.includes(num)) {
+            trfInfoOrigen.className = "info-box not-found";
+            trfInfoOrigen.innerHTML = `<strong>Tanque ${num} desafectado — no operable.</strong>`;
+            trfInfoOrigen.classList.remove("hidden");
+            trfOrigenTanque = null;
+            trfPaso2.className = "paso disabled";
+            trfPaso3.className = "paso disabled";
+            return;
+        }
+
         const tanque = stock.find(t => t.tanque === num);
         const totalStock = tanque ? tanque.despachos.reduce((s, d) => s + d.stock, 0) : 0;
 
@@ -2331,6 +2364,14 @@ async function initApp() {
         if (num === trfOrigenTanque.tanque) {
             trfInfoDestino.className = "info-box not-found";
             trfInfoDestino.innerHTML = `<strong>El destino no puede ser igual al origen.</strong>`;
+            trfInfoDestino.classList.remove("hidden");
+            trfDestinoTanque = null;
+            return;
+        }
+
+        if (tanquesDesafectados.includes(num)) {
+            trfInfoDestino.className = "info-box not-found";
+            trfInfoDestino.innerHTML = `<strong>Tanque ${num} desafectado — no operable.</strong>`;
             trfInfoDestino.classList.remove("hidden");
             trfDestinoTanque = null;
             return;
@@ -3145,6 +3186,7 @@ async function initApp() {
 
         const lista = Array.from(mapa.values())
             .filter(t => {
+                if (tanquesDesafectados.includes(t.tanque)) return false;
                 if (!filtro) return true;
                 return t.tanque.includes(filtroLower) ||
                        (t.producto || "").toLowerCase().includes(filtroLower) ||

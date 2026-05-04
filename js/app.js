@@ -1877,11 +1877,59 @@ async function initApp() {
     });
 
     // --- REPORTE STOCK MENSUAL ---
+    // Lee la fecha+hora del filtro de corte. Devuelve null si no hay fecha
+    // (== usar el stock actual).
+    function getCorteRepMen() {
+        const f = document.getElementById("repMenFecha")?.value;
+        if (!f) return null;
+        const h = document.getElementById("repMenHora")?.value || "19:00";
+        const ms = new Date(`${f}T${h}:00`).getTime();
+        return isNaN(ms) ? null : ms;
+    }
+
+    // Reconstruye el stock al momento del corte revirtiendo todos los
+    // movimientos del historial con fecha+hora posterior. No considera
+    // renombramientos (esos no quedan en el historial), así que despachos
+    // renombrados después del corte aparecerán con su nombre actual.
+    function reconstruirStockAlCorte(corteMs) {
+        const clon = JSON.parse(JSON.stringify(stock));
+        if (!corteMs) return clon;
+        const posteriores = (historial || []).filter(h => {
+            const dt = new Date(`${h.fecha}T${h.hora || "00:00"}:00`).getTime();
+            return dt > corteMs;
+        });
+        for (const h of posteriores) {
+            const tipo = h.tipo || "SALIDA";
+            if (tipo === "SALIDA") {
+                const tk = clon.find(t => t.tanque === h.tanque);
+                if (!tk) continue;
+                const dp = tk.despachos.find(x => x.despacho === h.despacho);
+                if (dp) dp.stock += h.kilos;
+            } else if (tipo === "INGRESO") {
+                const tk = clon.find(t => t.tanque === h.tanque);
+                if (!tk) continue;
+                const dp = tk.despachos.find(x => x.despacho === h.despacho);
+                if (dp) dp.stock -= h.kilos;
+            } else if (tipo === "TRANSFERENCIA") {
+                const partes = String(h.tanque || "").split("→");
+                if (partes.length !== 2) continue;
+                const [oN, dN] = partes;
+                const o = clon.find(t => t.tanque === oN);
+                if (o) { const dp = o.despachos.find(x => x.despacho === h.despacho); if (dp) dp.stock += h.kilos; }
+                const dst = clon.find(t => t.tanque === dN);
+                if (dst) { const dp = dst.despachos.find(x => x.despacho === h.despacho); if (dp) dp.stock -= h.kilos; }
+            }
+        }
+        return clon;
+    }
+
     function renderRepMensual(filtro = "") {
         const container = document.getElementById("repMensualCards");
         const filtroLower = filtro.toLowerCase();
+        const corte = getCorteRepMen();
+        const stockBase = corte ? reconstruirStockAlCorte(corte) : stock;
 
-        const filtrados = stock.filter(t => {
+        const filtrados = stockBase.filter(t => {
             if (tanquesDesafectados.includes(t.tanque)) return false;
             const totalStock = t.despachos.reduce((s, d) => s + d.stock, 0);
             if (totalStock <= 0) return false;
@@ -1949,13 +1997,20 @@ async function initApp() {
         document.getElementById("repMenKilos").textContent = formatKg(totalKg);
     }
 
-    document.getElementById("filtroRepMensual").addEventListener("input", (e) => {
-        renderRepMensual(e.target.value);
+    const _filtroRepMen = document.getElementById("filtroRepMensual");
+    _filtroRepMen.addEventListener("input", (e) => renderRepMensual(e.target.value));
+    document.getElementById("repMenFecha").addEventListener("change", () => renderRepMensual(_filtroRepMen.value));
+    document.getElementById("repMenHora").addEventListener("change", () => renderRepMensual(_filtroRepMen.value));
+    document.getElementById("btnRepMenAhora").addEventListener("click", () => {
+        document.getElementById("repMenFecha").value = "";
+        renderRepMensual(_filtroRepMen.value);
     });
 
     // --- IMPRIMIR STOCK MENSUAL ---
     document.getElementById("btnImprimirMensual").addEventListener("click", () => {
-        const filtrados = stock.filter(t => !tanquesDesafectados.includes(t.tanque) && t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
+        const corte = getCorteRepMen();
+        const stockBase = corte ? reconstruirStockAlCorte(corte) : stock;
+        const filtrados = stockBase.filter(t => !tanquesDesafectados.includes(t.tanque) && t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
         if (filtrados.length === 0) { alert("No hay stock para imprimir."); return; }
 
         let totalKg = 0;
@@ -1991,7 +2046,9 @@ async function initApp() {
             </tr>`;
         }).join("");
 
-        const hoy = new Date().toISOString().slice(0, 10);
+        const subtCorte = corte
+            ? `Corte al ${new Date(corte).toLocaleString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}`
+            : `Stock actual al ${new Date().toLocaleString("es-AR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}`;
         const html = `<!DOCTYPE html><html><head><title>Stock Mensual</title>
         <style>
             body { font-family: Arial, sans-serif; padding: 1.5rem; }
@@ -2003,7 +2060,7 @@ async function initApp() {
             .total { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; text-align: right; }
         </style></head><body>
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
-        <p>Reporte de Stock Mensual — ${hoy.split("-").reverse().join("/")}</p>
+        <p>Reporte de Stock Mensual — ${subtCorte}</p>
         <table>
             <thead><tr><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Stock</th><th>Nivel</th><th>Despachos</th></tr></thead>
             <tbody>${filas}</tbody>

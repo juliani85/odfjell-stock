@@ -431,6 +431,10 @@
                     <div class="stock-header">
                         <h2>Reporte de Stock Mensual</h2>
                         <div class="filtros">
+                            <label for="repMenFecha" style="font-size:0.9rem;color:var(--gray-500)">Corte:</label>
+                            <input type="date" id="repMenFecha">
+                            <input type="time" id="repMenHora" value="19:00" step="60">
+                            <button class="btn btn-secondary btn-sm" id="btnRepMenAhora" type="button">Ahora</button>
                             <input type="text" id="filtroRepMensual" placeholder="Buscar tanque, producto o cliente...">
                             <button class="btn btn-secondary" id="btnImprimirMensual">Imprimir</button>
                         </div>

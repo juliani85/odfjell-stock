@@ -380,3 +380,11 @@ const capacidadTanques = {
     "096": 406821, "097": 403532, "098": 403683, "099": 403648, "100": 404698,
     "101": 404079, "102": 403730,
 };
+
+// Tanques desafectados (no operables). No deben aparecer en stock ni en los
+// dropdowns de movimientos (salida, ingreso, transferencia).
+const tanquesDesafectados = [
+    "003", "016", "020", "022", "026", "040", "043", "045", "053", "057",
+    "059", "062", "064", "066", "068", "070", "077", "083", "087", "090",
+    "091", "092", "093", "094", "095", "098",
+];

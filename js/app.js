@@ -1923,20 +1923,28 @@ async function initApp() {
         return clon;
     }
 
+    // Devuelve un array con TODOS los tanques fiscales en orden, completando
+    // con un objeto vacío los que no aparecen en stockBase (para que el reporte
+    // muestre los tanques fiscales sin movimientos).
+    function expandirFiscales(stockBase) {
+        const porId = new Map(stockBase.map(t => [t.tanque, t]));
+        return tanquesFiscales.map(id =>
+            porId.get(id) || { tanque: id, producto: "", cliente: "", despachos: [] }
+        );
+    }
+
     function renderRepMensual(filtro = "") {
         const container = document.getElementById("repMensualCards");
         const filtroLower = filtro.toLowerCase();
         const corte = getCorteRepMen();
         const stockBase = corte ? reconstruirStockAlCorte(corte) : stock;
+        const completo = expandirFiscales(stockBase);
 
-        const filtrados = stockBase.filter(t => {
-            if (tanquesDesafectados.includes(t.tanque)) return false;
-            const totalStock = t.despachos.reduce((s, d) => s + d.stock, 0);
-            if (totalStock <= 0) return false;
+        const filtrados = completo.filter(t => {
             if (!filtro) return true;
             return t.tanque.includes(filtroLower) ||
-                   t.producto.toLowerCase().includes(filtroLower) ||
-                   t.cliente.toLowerCase().includes(filtroLower);
+                   (t.producto || "").toLowerCase().includes(filtroLower) ||
+                   (t.cliente || "").toLowerCase().includes(filtroLower);
         });
 
         let totalKg = 0;
@@ -1974,13 +1982,16 @@ async function initApp() {
                 </div>
             </div>` : "";
 
-            return `<div class="stock-card rep-mensual-card" onclick="this.classList.toggle('open')">
+            const vacio = totalTanque <= 0;
+            const productoMostrar = t.producto || (vacio ? "<em style='color:var(--gray-500)'>Tanque vacío</em>" : "");
+            const clienteMostrar = t.cliente || "";
+            return `<div class="stock-card rep-mensual-card${vacio ? ' rep-mensual-vacio' : ''}" onclick="this.classList.toggle('open')">
                 <div class="stock-card-header">
                     <div class="stock-card-left">
                         <span class="stock-card-tanque">TK ${t.tanque}</span>
                         <div>
-                            <div class="stock-card-producto">${t.producto}</div>
-                            <div class="stock-card-cliente">${t.cliente}</div>
+                            <div class="stock-card-producto">${productoMostrar}</div>
+                            <div class="stock-card-cliente">${clienteMostrar}</div>
                         </div>
                     </div>
                     <div style="text-align:right">
@@ -1992,7 +2003,7 @@ async function initApp() {
             </div>`;
         }).join("");
 
-        document.getElementById("repMenTanques").textContent = filtrados.length;
+        document.getElementById("repMenTanques").textContent = filtrados.filter(t => t.despachos.reduce((s, d) => s + d.stock, 0) > 0).length;
         document.getElementById("repMenDespachos").textContent = totalDesp;
         document.getElementById("repMenKilos").textContent = formatKg(totalKg);
     }
@@ -2010,8 +2021,7 @@ async function initApp() {
     document.getElementById("btnImprimirMensual").addEventListener("click", () => {
         const corte = getCorteRepMen();
         const stockBase = corte ? reconstruirStockAlCorte(corte) : stock;
-        const filtrados = stockBase.filter(t => !tanquesDesafectados.includes(t.tanque) && t.despachos.reduce((s, d) => s + d.stock, 0) > 0);
-        if (filtrados.length === 0) { alert("No hay stock para imprimir."); return; }
+        const filtrados = expandirFiscales(stockBase);
 
         let totalKg = 0;
         const filas = filtrados.map(t => {
@@ -2021,6 +2031,7 @@ async function initApp() {
             let pct = cap > 0 ? Math.min(Math.round((totalTanque / cap) * 100), 100) : 0;
             if (pct < 0) pct = 0;
             const nivelColor = pct > 80 ? "#ef4444" : pct > 50 ? "#f59e0b" : "#22c55e";
+            const vacio = totalTanque <= 0;
 
             const despRows = t.despachos.filter(d => d.stock > 0).map(d => {
                 const clienteDesp = d.cliente || t.cliente;
@@ -2031,10 +2042,10 @@ async function initApp() {
                 </div>`;
             }).join("");
 
-            return `<tr>
+            return `<tr${vacio ? ' style="color:#999"' : ''}>
                 <td style="font-weight:700;color:#1a56db">TK ${t.tanque}</td>
-                <td>${t.producto}</td>
-                <td>${t.cliente}</td>
+                <td>${t.producto || (vacio ? "<em>Tanque vacío</em>" : "")}</td>
+                <td>${t.cliente || ""}</td>
                 <td style="text-align:right;font-weight:600">${formatKg(totalTanque)} kg</td>
                 <td style="text-align:center">
                     <div style="display:inline-block;width:40px;height:60px;border:2px solid #888;border-top:3px solid #555;border-radius:0 0 4px 4px;position:relative;background:white;overflow:hidden">

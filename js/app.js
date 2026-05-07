@@ -2180,27 +2180,43 @@ async function initApp() {
 
     // Cuando elige producto en tanque vacío, habilitar paso 2
     ingSelectProducto.addEventListener("change", function() {
-        if (this.value && this.value !== "__NUEVO__" && ingClienteNuevo.value.trim()) {
-            habilitarIngPaso2();
-        } else if (this.value === "__NUEVO__") {
+        if (this.value === "__NUEVO__") {
             ingProductoOtro.classList.remove("hidden");
         }
+        actualizarHabilitacionIngPaso2();
     });
 
-    ingClienteNuevo.addEventListener("input", () => {
-        const prodOk = ingSelectProducto.value && (ingSelectProducto.value !== "__NUEVO__" || ingNuevoProducto.value.trim());
-        if (prodOk && ingClienteNuevo.value.trim()) habilitarIngPaso2();
+    ingClienteNuevo.addEventListener("input", actualizarHabilitacionIngPaso2);
+    ingNuevoProducto.addEventListener("input", actualizarHabilitacionIngPaso2);
+
+    // Enter en cliente / nombre de producto nuevo → mueve el foco al despacho.
+    function moverFocoADespachoSiListo() {
+        if (estadoIngPaso2Listo()) {
+            habilitarIngPaso2();
+            ingDespacho.focus();
+        }
+    }
+    ingClienteNuevo.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); moverFocoADespachoSiListo(); }
+    });
+    ingNuevoProducto.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); ingClienteNuevo.focus(); }
     });
 
-    ingNuevoProducto.addEventListener("input", () => {
-        if (ingNuevoProducto.value.trim() && ingClienteNuevo.value.trim()) habilitarIngPaso2();
-    });
+    function estadoIngPaso2Listo() {
+        const prodOk = ingSelectProducto.value &&
+            (ingSelectProducto.value !== "__NUEVO__" || ingNuevoProducto.value.trim());
+        return prodOk && ingClienteNuevo.value.trim();
+    }
+
+    function actualizarHabilitacionIngPaso2() {
+        if (estadoIngPaso2Listo()) habilitarIngPaso2();
+    }
 
     function habilitarIngPaso2() {
         ingPaso1.className = "paso done";
         ingPaso2.className = "paso active";
         ingKilos.disabled = false;
-        ingDespacho.focus();
     }
 
     // Validar ingreso

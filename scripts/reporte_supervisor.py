@@ -104,6 +104,14 @@ def html_descargas_buque(buque: dict, fecha_str: str) -> str:
     descargas = buque.get("descargas") or []
     if not descargas:
         return ""
+    # Estilos de celda con color negro forzado para que clientes de mail
+    # (Gmail, Outlook) no autolinkeen los números de Cto. en azul.
+    td = "padding:4px 6px;border:1px solid #d1d5db;color:#111"
+    td_r = f"{td};text-align:right"
+
+    def nolink(txt):
+        return f'<span style="color:#111">{txt or ""}</span>'
+
     bloques = []
     for d in descargas:
         filas = d.get("filas") or []
@@ -117,101 +125,60 @@ def html_descargas_buque(buque: dict, fecha_str: str) -> str:
             except Exception:
                 pass
 
-        # Tabla particulares
+        # Tabla particulares (solo Pre-arribo)
         if filas:
             rows = []
-            tot_decl = tot_res = 0
             for f in filas:
                 decl = float(f.get("kgDeclarados") or 0)
-                res = float(f.get("kgResultantes") or 0)
-                dif = res - decl if (decl > 0 and res > 0) else None
-                pct = (dif / decl * 100) if (dif is not None and decl > 0) else None
-                tot_decl += decl
-                tot_res += res
-                fuera = pct is not None and abs(pct) > 0.6
-                color = "background:#fee2e2" if fuera else ""
-                pct_txt = fmt_pct(pct) if pct is not None else "<em>pendiente</em>"
-                dif_txt = fmt_kg(dif) if dif is not None else "—"
                 rows.append(f"""
-                <tr style="{color}">
-                    <td>{f.get("solPart") or ""}</td>
-                    <td>{f.get("cto") or ""}</td>
-                    <td>{f.get("mercaderia") or ""}</td>
-                    <td>{f.get("receptor") or ""}</td>
-                    <td style="text-align:right">{fmt_kg(decl)}</td>
-                    <td>{f.get("tkDestino") or ""}</td>
-                    <td>{f.get("sbfa") or ""}</td>
-                    <td>{f.get("medic") or ""}</td>
-                    <td style="text-align:right">{fmt_kg(res) if res else ""}</td>
-                    <td style="text-align:right">{dif_txt}</td>
-                    <td style="text-align:right">{pct_txt}</td>
+                <tr>
+                    <td style="{td}">{nolink(f.get("solPart"))}</td>
+                    <td style="{td}">{nolink(f.get("cto"))}</td>
+                    <td style="{td}">{nolink(f.get("mercaderia"))}</td>
+                    <td style="{td}">{nolink(f.get("receptor"))}</td>
+                    <td style="{td_r}">{fmt_kg(decl)}</td>
+                    <td style="{td}">{nolink(f.get("tkDestino"))}</td>
                 </tr>
                 """)
             tabla_part = f"""
-            <h4 style="margin:0.8rem 0 0.3rem 0;font-size:0.95rem">Conocimientos por Solicitud Particular ({len(filas)})</h4>
+            <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos por Solicitud Particular ({len(filas)})</h4>
             <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                 <thead style="background:#e5e7eb">
                     <tr>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Part. N°</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Producto</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Empresa</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Decl.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Tk.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">SBFA</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Medic.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Result.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                        <th style="{td};text-align:left">Part. N°</th>
+                        <th style="{td};text-align:left">Cto. N°</th>
+                        <th style="{td};text-align:left">Producto</th>
+                        <th style="{td};text-align:left">Empresa</th>
+                        <th style="{td_r}">Kg.</th>
+                        <th style="{td};text-align:left">Tk.</th>
                     </tr>
                 </thead>
                 <tbody>{"".join(rows)}</tbody>
-                <tfoot style="background:#f3f4f6;font-weight:bold">
-                    <tr>
-                        <td colspan="4" style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Totales</td>
-                        <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(tot_decl)}</td>
-                        <td colspan="3" style="border:1px solid #d1d5db"></td>
-                        <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(tot_res)}</td>
-                        <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(tot_res - tot_decl)}</td>
-                        <td style="padding:4px 6px;border:1px solid #d1d5db"></td>
-                    </tr>
-                </tfoot>
             </table>
             """
         else:
             tabla_part = "<p style='color:#6b7280;font-style:italic;margin:0.5rem 0'>Sin solicitudes particulares cargadas.</p>"
 
-        # Tabla DAP
+        # Tabla DAP (solo Pre-arribo: Documento, Cto., Cant. Doctada)
         if dap:
             rows_dap = []
             for x in dap:
                 doc_kg = float(x.get("cantDoctada") or 0)
-                res_kg = float(x.get("cantResult") or 0)
-                dif = res_kg - doc_kg if (doc_kg > 0 and res_kg > 0) else None
-                pct = (dif / doc_kg * 100) if (dif is not None and doc_kg > 0) else None
-                fuera = pct is not None and abs(pct) > 0.6
-                color = "background:#fee2e2" if fuera else ""
                 rows_dap.append(f"""
-                <tr style="{color}">
-                    <td style="padding:4px 6px;border:1px solid #d1d5db">{x.get("documento") or ""}</td>
-                    <td style="padding:4px 6px;border:1px solid #d1d5db">{x.get("cto") or ""}</td>
-                    <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(doc_kg)}</td>
-                    <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(res_kg) if res_kg else ""}</td>
-                    <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_kg(dif) if dif is not None else "—"}</td>
-                    <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">{fmt_pct(pct) if pct is not None else "<em>pendiente</em>"}</td>
+                <tr>
+                    <td style="{td}">{nolink(x.get("documento"))}</td>
+                    <td style="{td}">{nolink(x.get("cto"))}</td>
+                    <td style="{td_r}">{fmt_kg(doc_kg)}</td>
                 </tr>
                 """)
             tabla_dap = f"""
-            <h4 style="margin:0.8rem 0 0.3rem 0;font-size:0.95rem">Conocimientos DAP ({len(dap)})</h4>
+            <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos DAP ({len(dap)})</h4>
             <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                 <thead style="background:#e5e7eb">
                     <tr>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Documento Aduanero</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Doctada</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Result.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
-                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                        <th style="{td};text-align:left">Documento Aduanero</th>
+                        <th style="{td};text-align:left">Cto. N°</th>
+                        <th style="{td_r}">Cant. Doctada</th>
                     </tr>
                 </thead>
                 <tbody>{"".join(rows_dap)}</tbody>
@@ -308,7 +275,11 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     subject = f"Reporte para Supervisores — {fecha} — {len(buques)} buque(s) descargando"
 
     html = f"""<!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"></head>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<meta name="x-apple-disable-message-reformatting">
+</head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #111; max-width: 1200px; margin: 0 auto; padding: 1rem">
 
 <div style="border-bottom: 3px solid #1e3a8a; padding-bottom: 0.5rem; margin-bottom: 1rem">

@@ -1953,82 +1953,51 @@ async function initApp() {
                 for (const d of b.descargas) {
                     const filas = (d.filas || []).filter(f => Object.values(f || {}).some(v => v !== "" && v !== null && v !== undefined));
                     const dap = (d.dap || []).filter(x => Object.values(x || {}).some(v => v !== "" && v !== null && v !== undefined));
-                    let totDecl = 0, totRes = 0;
+                    // Estilo de celda con color negro forzado para que clientes de mail
+                    // (Gmail, Outlook) no autolinkeen los números de Cto. en azul.
+                    const tdStyle = "padding:4px 6px;border:1px solid #d1d5db;color:#111";
+                    const tdR = `${tdStyle};text-align:right`;
+                    const noLink = (txt) => `<span style="color:#111">${txt || ""}</span>`;
                     const rowsPart = filas.map(f => {
                         const decl = Number(f.kgDeclarados) || 0;
-                        const res = Number(f.kgResultantes) || 0;
-                        totDecl += decl; totRes += res;
-                        const dif = (decl > 0 && res > 0) ? res - decl : null;
-                        const pct = (dif !== null && decl > 0) ? dif / decl * 100 : null;
-                        const fuera = pct !== null && Math.abs(pct) > 0.6;
-                        const bg = fuera ? "background:#fee2e2" : "";
-                        return `<tr style="${bg}">
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.solPart || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.cto || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.mercaderia || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.receptor || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(decl)}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.tkDestino || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.sbfa || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.medic || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${res ? fmt(res) : ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${dif !== null ? fmt(dif) : "—"}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${pct !== null ? fmtPct(pct) : "<em>pendiente</em>"}</td>
+                        return `<tr>
+                            <td style="${tdStyle}">${noLink(f.solPart)}</td>
+                            <td style="${tdStyle}">${noLink(f.cto)}</td>
+                            <td style="${tdStyle}">${noLink(f.mercaderia)}</td>
+                            <td style="${tdStyle}">${noLink(f.receptor)}</td>
+                            <td style="${tdR}">${fmt(decl)}</td>
+                            <td style="${tdStyle}">${noLink(f.tkDestino)}</td>
                         </tr>`;
                     }).join("");
                     const tablaPart = filas.length ? `
-                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px">Conocimientos por Solicitud Particular (${filas.length})</h4>
+                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos por Solicitud Particular (${filas.length})</h4>
                         <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                             <thead style="background:#e5e7eb"><tr>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Part. N°</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Producto</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Empresa</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Decl.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Tk.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">SBFA</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Medic.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Result.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                                <th style="${tdStyle};text-align:left">Part. N°</th>
+                                <th style="${tdStyle};text-align:left">Cto. N°</th>
+                                <th style="${tdStyle};text-align:left">Producto</th>
+                                <th style="${tdStyle};text-align:left">Empresa</th>
+                                <th style="${tdR}">Kg.</th>
+                                <th style="${tdStyle};text-align:left">Tk.</th>
                             </tr></thead>
                             <tbody>${rowsPart}</tbody>
-                            <tfoot style="background:#f3f4f6;font-weight:bold"><tr>
-                                <td colspan="4" style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Totales</td>
-                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totDecl)}</td>
-                                <td colspan="3" style="border:1px solid #d1d5db"></td>
-                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totRes)}</td>
-                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totRes - totDecl)}</td>
-                                <td style="padding:4px 6px;border:1px solid #d1d5db"></td>
-                            </tr></tfoot>
                         </table>` : `<p style='color:#6b7280;font-style:italic'>Sin solicitudes particulares cargadas.</p>`;
 
                     const rowsDap = dap.map(x => {
                         const docKg = Number(x.cantDoctada) || 0;
-                        const resKg = Number(x.cantResult) || 0;
-                        const dif = (docKg > 0 && resKg > 0) ? resKg - docKg : null;
-                        const pct = (dif !== null && docKg > 0) ? dif / docKg * 100 : null;
-                        const fuera = pct !== null && Math.abs(pct) > 0.6;
-                        const bg = fuera ? "background:#fee2e2" : "";
-                        return `<tr style="${bg}">
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${x.documento || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db">${x.cto || ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(docKg)}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${resKg ? fmt(resKg) : ""}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${dif !== null ? fmt(dif) : "—"}</td>
-                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${pct !== null ? fmtPct(pct) : "<em>pendiente</em>"}</td>
+                        return `<tr>
+                            <td style="${tdStyle}">${noLink(x.documento)}</td>
+                            <td style="${tdStyle}">${noLink(x.cto)}</td>
+                            <td style="${tdR}">${fmt(docKg)}</td>
                         </tr>`;
                     }).join("");
                     const tablaDap = dap.length ? `
-                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px">Conocimientos DAP (${dap.length})</h4>
+                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos DAP (${dap.length})</h4>
                         <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                             <thead style="background:#e5e7eb"><tr>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Documento Aduanero</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Doctada</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Result.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
-                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                                <th style="${tdStyle};text-align:left">Documento Aduanero</th>
+                                <th style="${tdStyle};text-align:left">Cto. N°</th>
+                                <th style="${tdR}">Cant. Doctada</th>
                             </tr></thead>
                             <tbody>${rowsDap}</tbody>
                         </table>` : "";

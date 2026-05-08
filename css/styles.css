@@ -913,8 +913,8 @@ tbody tr:hover { background: var(--gray-50); }
 /* SB/FA */
 .sbfa-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; table-layout: fixed; }
 .sbfa-table th, .sbfa-table td { padding: 0.3rem 0.3rem; border: 1px solid var(--gray-200); vertical-align: middle; }
-.sbfa-table thead th { background: var(--gray-50); font-weight: 700; text-align: left; font-size: 0.72rem; line-height: 1.15; white-space: normal; word-break: break-word; }
-.sbfa-table thead .sbfa-grupo th { white-space: nowrap; font-size: 0.75rem; }
+.sbfa-table thead th { background: var(--gray-50); font-weight: 700; text-align: left; font-size: 0.72rem; line-height: 1.15; white-space: nowrap; }
+.sbfa-table thead .sbfa-grupo th { font-size: 0.75rem; }
 .sbfa-table tfoot th { background: var(--gray-50); font-weight: 700; text-align: right; font-size: 0.78rem; }
 .sbfa-table .col-pre { background: #eff6ff; }
 .sbfa-table .col-post { background: #fefce8; }
@@ -928,16 +928,16 @@ tbody tr:hover { background: var(--gray-50); }
    para que toda la tabla entre sin scroll horizontal */
 .sbfa-table .col-part      { width: 3%; padding-left: 1px; padding-right: 1px; }
 .sbfa-table .col-part input { padding: 0.25rem 1px; text-align: center; }
-.sbfa-table .col-cto       { width: 8%; }
-.sbfa-table .col-producto  { width: 17%; }
-.sbfa-table .col-empresa   { width: 23%; }
+.sbfa-table .col-cto       { width: 7%; }
+.sbfa-table .col-producto  { width: 16%; }
+.sbfa-table .col-empresa   { width: 20%; }
 .sbfa-table .col-kg-pre    { width: 8%; }
 .sbfa-table .col-tk        { width: 6%; }
 .sbfa-table .col-sbfa      { width: 9%; }
-.sbfa-table .col-medic     { width: 5%; }
+.sbfa-table .col-medic     { width: 8%; }
 .sbfa-table .col-kg-post   { width: 8%; }
-.sbfa-table .col-dif-kg    { width: 6%; }
-.sbfa-table .col-dif-pct   { width: 5%; }
+.sbfa-table .col-dif-kg    { width: 7%; }
+.sbfa-table .col-dif-pct   { width: 6%; }
 .sbfa-table .col-borrar    { width: 2%; padding: 0; text-align: center; }
 .sbfa-table .btn-borrar-fila { padding: 0; margin: 0; min-width: 0; width: 18px; height: 18px; line-height: 1; font-size: 0.95rem; }
 
@@ -948,8 +948,8 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-tabla-dap .dap-result   { width: 14%; }
 .sbfa-tabla-dap .dap-difkg    { width: 8%; }
 .sbfa-tabla-dap .dap-difpct   { width: 8%; }
-/* Permitir que los títulos largos del DAP wrappeen en lugar de encimarse */
-.sbfa-tabla-dap thead th { white-space: normal; line-height: 1.15; }
+/* Headers del DAP en una sola línea (los anchos en porcentajes ya alcanzan) */
+.sbfa-tabla-dap thead th { white-space: nowrap; line-height: 1.15; }
 .sbfa-table .dif-kg, .sbfa-table .dif-pct { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sbfa-table .fuera-tol { background: #fee2e2; color: #b91c1c; font-weight: 700; }
 .sbfa-table .dentro-tol { color: var(--gray-700); }

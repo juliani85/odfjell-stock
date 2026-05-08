@@ -3223,6 +3223,9 @@ async function initApp() {
 
         // --- BARCOS: tracking AIS ---
         inicializarBarcos();
+
+        // --- SB/FA ---
+        inicializarSbfa();
     }
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s
@@ -3699,6 +3702,417 @@ async function initApp() {
             await cargarTracking();
             renderBarcos();
         }, 5 * 60 * 1000);
+    }
+
+    // --- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE ---
+    let sbfaConfig = { descargas: [] };
+    let sbfaEditandoId = null;
+    const SBFA_TOLERANCIA_PCT = 0.6;
+
+    async function cargarSbfaCfg() {
+        const cfg = await fetchJSON("sbfa.json");
+        if (cfg) sbfaConfig = cfg;
+        if (!sbfaConfig.descargas) sbfaConfig.descargas = [];
+    }
+
+    async function guardarSbfaCfg() {
+        try {
+            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json`;
+            const get = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
+            let sha = null;
+            if (get.ok) {
+                const data = await get.json();
+                sha = data.sha;
+            }
+            const contenido = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
+            const body = { message: `chore: actualizar sbfa.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
+            if (sha) body.sha = sha;
+            const put = await fetch(url, {
+                method: "PUT",
+                headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            if (!put.ok) throw new Error(`GitHub ${put.status}`);
+            return true;
+        } catch (e) {
+            console.error("[sbfa] error guardando:", e);
+            mostrarAlerta(`Error guardando sbfa.json: ${e.message}`, "error");
+            return false;
+        }
+    }
+
+    function sbfaCalcDif(decl, res) {
+        const d = Number(decl) || 0;
+        const r = Number(res) || 0;
+        const dif = r - d;
+        const pct = d > 0 ? (dif / d) * 100 : 0;
+        return { dif, pct };
+    }
+
+    function sbfaFmt(n) {
+        if (n === null || n === undefined || isNaN(n)) return "0";
+        return Math.round(n).toLocaleString("es-AR");
+    }
+
+    function sbfaFmtPct(p) {
+        if (p === null || p === undefined || isNaN(p)) return "0,000%";
+        return p.toFixed(3).replace(".", ",") + "%";
+    }
+
+    function sbfaResumen(d) {
+        let totDecl = 0, totRes = 0, fueraTol = 0;
+        (d.filas || []).forEach(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            totDecl += decl;
+            totRes += res;
+            if (decl > 0) {
+                const pct = (res - decl) / decl * 100;
+                if (Math.abs(pct) > SBFA_TOLERANCIA_PCT) fueraTol++;
+            }
+        });
+        return { totDecl, totRes, totDif: totRes - totDecl, fueraTol };
+    }
+
+    function renderSbfaLista(filtro = "") {
+        const cont = document.getElementById("sbfaLista");
+        if (!cont) return;
+        const f = (filtro || "").toUpperCase().trim();
+        const items = (sbfaConfig.descargas || [])
+            .filter(d => !f || (d.buque || "").toUpperCase().includes(f) || (d.manifiesto || "").toUpperCase().includes(f))
+            .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
+
+        if (!items.length) {
+            cont.innerHTML = `<p style="color:var(--gray-500)">No hay descargas registradas. Tocá <strong>+ Nueva descarga</strong> para empezar.</p>`;
+            return;
+        }
+        cont.innerHTML = items.map(d => {
+            const r = sbfaResumen(d);
+            const claseFuera = r.fueraTol > 0 ? "sbfa-card fuera-tol" : "sbfa-card";
+            const fechaTxt = d.fecha ? d.fecha.split("-").reverse().join("/") : "—";
+            const difPct = r.totDecl > 0 ? r.totDif / r.totDecl * 100 : 0;
+            return `<div class="${claseFuera}" data-sbfa-id="${d.id}">
+                <div class="sbfa-card-header">
+                    <div>
+                        <div class="sbfa-card-titulo">${d.buque || "(sin buque)"} — MANI ${d.manifiesto || "—"}</div>
+                        <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP</div>
+                    </div>
+                    ${r.fueraTol > 0 ? `<span style="color:#b91c1c;font-weight:700">⚠ ${r.fueraTol} fuera de tolerancia</span>` : `<span style="color:#16a34a">Dentro de tolerancia</span>`}
+                </div>
+                <div class="sbfa-card-totales">
+                    <span><strong>Declarados:</strong> ${sbfaFmt(r.totDecl)} kg</span>
+                    <span><strong>Resultantes:</strong> ${sbfaFmt(r.totRes)} kg</span>
+                    <span><strong>Dif:</strong> ${sbfaFmt(r.totDif)} kg (${sbfaFmtPct(difPct)})</span>
+                </div>
+            </div>`;
+        }).join("");
+        cont.querySelectorAll("[data-sbfa-id]").forEach(el => {
+            el.addEventListener("click", () => abrirSbfaEditor(Number(el.dataset.sbfaId)));
+        });
+    }
+
+    function abrirSbfaEditor(id) {
+        const editor = document.getElementById("sbfaEditor");
+        const eliminarBtn = document.getElementById("btnSbfaEliminar");
+        if (id) {
+            const d = (sbfaConfig.descargas || []).find(x => x.id === id);
+            if (!d) return;
+            sbfaEditandoId = id;
+            document.getElementById("sbfaEditorTitulo").textContent = `Editando ${d.buque || ""} — MANI ${d.manifiesto || ""}`;
+            document.getElementById("sbfaBuque").value = d.buque || "";
+            document.getElementById("sbfaManifiesto").value = d.manifiesto || "";
+            document.getElementById("sbfaAgencia").value = d.agencia || "B&M";
+            document.getElementById("sbfaCuit").value = d.cuit || "30-71631314-6";
+            document.getElementById("sbfaFecha").value = d.fecha || "";
+            document.getElementById("sbfaNotas").value = d.notas || "";
+            renderSbfaTablaFilas(d.filas || []);
+            renderSbfaTablaDap(d.dap || []);
+            eliminarBtn.style.display = "";
+        } else {
+            sbfaEditandoId = null;
+            document.getElementById("sbfaEditorTitulo").textContent = "Nueva descarga";
+            document.getElementById("sbfaBuque").value = "";
+            document.getElementById("sbfaManifiesto").value = "";
+            document.getElementById("sbfaAgencia").value = "B&M";
+            document.getElementById("sbfaCuit").value = "30-71631314-6";
+            document.getElementById("sbfaFecha").value = new Date().toISOString().slice(0, 10);
+            document.getElementById("sbfaNotas").value = "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.";
+            renderSbfaTablaFilas([{}]);
+            renderSbfaTablaDap([{}]);
+            eliminarBtn.style.display = "";
+        }
+        editor.classList.remove("hidden");
+        editor.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function cerrarSbfaEditor() {
+        document.getElementById("sbfaEditor").classList.add("hidden");
+        sbfaEditandoId = null;
+    }
+
+    function renderSbfaTablaFilas(filas) {
+        const tbody = document.querySelector("#sbfaTablaFilas tbody");
+        tbody.innerHTML = filas.map((f, i) => sbfaFilaHTML(f, i)).join("");
+        sbfaBindFilaEvents();
+        sbfaRecalcularTotales();
+    }
+
+    function sbfaFilaHTML(f, i) {
+        return `<tr data-i="${i}">
+            <td><input data-k="solPart" value="${f.solPart || ""}"></td>
+            <td><input data-k="cto" value="${f.cto || ""}"></td>
+            <td class="col-num"><input data-k="kgDeclarados" type="number" step="1" value="${f.kgDeclarados ?? ""}"></td>
+            <td><input data-k="sbfa" value="${f.sbfa || ""}"></td>
+            <td><input data-k="tkDestino" value="${f.tkDestino || ""}"></td>
+            <td><input data-k="medic" value="${f.medic || ""}"></td>
+            <td class="col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
+            <td class="dif-kg" data-difkg>0</td>
+            <td class="dif-pct" data-difpct>0,000%</td>
+            <td><input data-k="mercaderia" value="${f.mercaderia || ""}"></td>
+            <td><input data-k="receptor" value="${f.receptor || ""}"></td>
+            <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
+        </tr>`;
+    }
+
+    function sbfaBindFilaEvents() {
+        document.querySelectorAll("#sbfaTablaFilas tbody input").forEach(inp => {
+            inp.addEventListener("input", sbfaRecalcularTotales);
+        });
+        document.querySelectorAll("#sbfaTablaFilas [data-borrar]").forEach(b => {
+            b.addEventListener("click", () => {
+                const idx = Number(b.dataset.borrar);
+                const filas = sbfaLeerFilas();
+                filas.splice(idx, 1);
+                renderSbfaTablaFilas(filas.length ? filas : [{}]);
+            });
+        });
+    }
+
+    function sbfaLeerFilas() {
+        return Array.from(document.querySelectorAll("#sbfaTablaFilas tbody tr")).map(tr => {
+            const obj = {};
+            tr.querySelectorAll("input[data-k]").forEach(inp => {
+                const v = inp.value.trim();
+                if (inp.type === "number") obj[inp.dataset.k] = v === "" ? null : Number(v);
+                else obj[inp.dataset.k] = v;
+            });
+            return obj;
+        });
+    }
+
+    function sbfaRecalcularTotales() {
+        let totDecl = 0, totRes = 0;
+        document.querySelectorAll("#sbfaTablaFilas tbody tr").forEach(tr => {
+            const decl = Number(tr.querySelector('[data-k="kgDeclarados"]').value) || 0;
+            const res = Number(tr.querySelector('[data-k="kgResultantes"]').value) || 0;
+            totDecl += decl;
+            totRes += res;
+            const { dif, pct } = sbfaCalcDif(decl, res);
+            const tdKg = tr.querySelector("[data-difkg]");
+            const tdPct = tr.querySelector("[data-difpct]");
+            tdKg.textContent = sbfaFmt(dif);
+            tdPct.textContent = sbfaFmtPct(pct);
+            const fuera = decl > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            tdKg.classList.toggle("fuera-tol", fuera);
+            tdPct.classList.toggle("fuera-tol", fuera);
+            tdKg.classList.toggle("dentro-tol", !fuera && decl > 0);
+            tdPct.classList.toggle("dentro-tol", !fuera && decl > 0);
+        });
+        document.getElementById("sbfaTotalDecl").textContent = sbfaFmt(totDecl);
+        document.getElementById("sbfaTotalRes").textContent = sbfaFmt(totRes);
+        document.getElementById("sbfaTotalDif").textContent = sbfaFmt(totRes - totDecl);
+        document.getElementById("sbfaTotalDifPct").textContent = sbfaFmtPct(totDecl > 0 ? (totRes - totDecl) / totDecl * 100 : 0);
+
+        // DAP
+        let totDoc = 0, totDapRes = 0;
+        document.querySelectorAll("#sbfaTablaDap tbody tr").forEach(tr => {
+            const doc = Number(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
+            const res = Number(tr.querySelector('[data-k="cantResult"]').value) || 0;
+            totDoc += doc;
+            totDapRes += res;
+            const { dif, pct } = sbfaCalcDif(doc, res);
+            const tdKg = tr.querySelector("[data-difkg]");
+            const tdPct = tr.querySelector("[data-difpct]");
+            tdKg.textContent = sbfaFmt(dif);
+            tdPct.textContent = sbfaFmtPct(pct);
+            const fuera = doc > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            tdKg.classList.toggle("fuera-tol", fuera);
+            tdPct.classList.toggle("fuera-tol", fuera);
+        });
+        document.getElementById("sbfaDapTotalDoc").textContent = sbfaFmt(totDoc);
+        document.getElementById("sbfaDapTotalRes").textContent = sbfaFmt(totDapRes);
+        document.getElementById("sbfaDapTotalDif").textContent = sbfaFmt(totDapRes - totDoc);
+        document.getElementById("sbfaDapTotalDifPct").textContent = sbfaFmtPct(totDoc > 0 ? (totDapRes - totDoc) / totDoc * 100 : 0);
+    }
+
+    function renderSbfaTablaDap(items) {
+        const tbody = document.querySelector("#sbfaTablaDap tbody");
+        tbody.innerHTML = items.map((d, i) => sbfaDapHTML(d, i)).join("");
+        sbfaBindDapEvents();
+        sbfaRecalcularTotales();
+    }
+
+    function sbfaDapHTML(d, i) {
+        return `<tr data-i="${i}">
+            <td><input data-k="documento" value="${d.documento || ""}"></td>
+            <td><input data-k="cto" value="${d.cto || ""}"></td>
+            <td class="col-num"><input data-k="cantDoctada" type="number" step="1" value="${d.cantDoctada ?? ""}"></td>
+            <td class="col-num"><input data-k="cantResult" type="number" step="1" value="${d.cantResult ?? ""}"></td>
+            <td class="dif-kg" data-difkg>0</td>
+            <td class="dif-pct" data-difpct>0,000%</td>
+            <td><input data-k="obs" value="${d.obs || ""}"></td>
+            <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
+        </tr>`;
+    }
+
+    function sbfaBindDapEvents() {
+        document.querySelectorAll("#sbfaTablaDap tbody input").forEach(inp => {
+            inp.addEventListener("input", sbfaRecalcularTotales);
+        });
+        document.querySelectorAll("#sbfaTablaDap [data-borrar]").forEach(b => {
+            b.addEventListener("click", () => {
+                const idx = Number(b.dataset.borrar);
+                const items = sbfaLeerDap();
+                items.splice(idx, 1);
+                renderSbfaTablaDap(items.length ? items : [{}]);
+            });
+        });
+    }
+
+    function sbfaLeerDap() {
+        return Array.from(document.querySelectorAll("#sbfaTablaDap tbody tr")).map(tr => {
+            const obj = {};
+            tr.querySelectorAll("input[data-k]").forEach(inp => {
+                const v = inp.value.trim();
+                if (inp.type === "number") obj[inp.dataset.k] = v === "" ? null : Number(v);
+                else obj[inp.dataset.k] = v;
+            });
+            return obj;
+        });
+    }
+
+    function sbfaArmarDescarga() {
+        return {
+            id: sbfaEditandoId || Date.now(),
+            buque: document.getElementById("sbfaBuque").value.trim().toUpperCase(),
+            manifiesto: document.getElementById("sbfaManifiesto").value.trim(),
+            agencia: document.getElementById("sbfaAgencia").value.trim(),
+            cuit: document.getElementById("sbfaCuit").value.trim(),
+            fecha: document.getElementById("sbfaFecha").value,
+            notas: document.getElementById("sbfaNotas").value.trim(),
+            filas: sbfaLeerFilas().filter(f => Object.values(f).some(v => v !== "" && v !== null)),
+            dap: sbfaLeerDap().filter(d => Object.values(d).some(v => v !== "" && v !== null)),
+            actualizadoPor: usuarioActual,
+            actualizadoTs: new Date().toISOString(),
+        };
+    }
+
+    async function guardarSbfaDescarga() {
+        const d = sbfaArmarDescarga();
+        if (!d.buque || !d.manifiesto) { alert("Falta buque o manifiesto."); return; }
+        const i = sbfaConfig.descargas.findIndex(x => x.id === d.id);
+        if (i >= 0) sbfaConfig.descargas[i] = d;
+        else sbfaConfig.descargas.push(d);
+        if (await guardarSbfaCfg()) {
+            sbfaEditandoId = d.id;
+            mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
+            renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+        }
+    }
+
+    async function eliminarSbfaDescarga() {
+        if (!sbfaEditandoId) { cerrarSbfaEditor(); return; }
+        if (!confirm("¿Eliminar esta descarga? No se puede deshacer.")) return;
+        sbfaConfig.descargas = sbfaConfig.descargas.filter(x => x.id !== sbfaEditandoId);
+        if (await guardarSbfaCfg()) {
+            cerrarSbfaEditor();
+            renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+        }
+    }
+
+    function descargarJSON(filename, data) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportarSbfaJSON() {
+        const d = sbfaArmarDescarga();
+        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
+        descargarJSON(`sbfa_${slug}.json`, d);
+        mostrarAlerta("JSON descargado. Corré: python generar_detalle_sbfa.py sbfa_*.json", "info");
+    }
+
+    function exportarActaJSON() {
+        const d = sbfaArmarDescarga();
+        const fueraTol = (d.filas || []).filter(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            if (decl <= 0) return false;
+            return Math.abs((res - decl) / decl * 100) > SBFA_TOLERANCIA_PCT;
+        });
+        const payload = {
+            tipo: "acta_denuncia",
+            descarga: d,
+            fueraTolerancia: fueraTol,
+            tolerancia_pct: SBFA_TOLERANCIA_PCT,
+            generadoPor: usuarioActual,
+            generadoTs: new Date().toISOString(),
+        };
+        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
+        descargarJSON(`acta_${slug}.json`, payload);
+        mostrarAlerta(`JSON descargado (${fueraTol.length} conocimientos fuera de tolerancia). Corré: python generar_acta_denuncia.py acta_*.json`, "info");
+    }
+
+    function exportarNotaJSON() {
+        const d = sbfaArmarDescarga();
+        const fueraTol = (d.filas || []).filter(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            if (decl <= 0) return false;
+            return Math.abs((res - decl) / decl * 100) > SBFA_TOLERANCIA_PCT;
+        });
+        const payload = {
+            tipo: "nota_sbfa",
+            descarga: d,
+            fueraTolerancia: fueraTol,
+            tolerancia_pct: SBFA_TOLERANCIA_PCT,
+            generadoPor: usuarioActual,
+            generadoTs: new Date().toISOString(),
+        };
+        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
+        descargarJSON(`nota_${slug}.json`, payload);
+        mostrarAlerta("JSON descargado. Corré: python generar_nota_sbfa.py nota_*.json", "info");
+    }
+
+    async function inicializarSbfa() {
+        await cargarSbfaCfg();
+        renderSbfaLista();
+
+        document.getElementById("btnSbfaNueva").addEventListener("click", () => abrirSbfaEditor(null));
+        document.getElementById("btnSbfaCancelar").addEventListener("click", cerrarSbfaEditor);
+        document.getElementById("btnSbfaGuardar").addEventListener("click", guardarSbfaDescarga);
+        document.getElementById("btnSbfaEliminar").addEventListener("click", eliminarSbfaDescarga);
+        document.getElementById("btnSbfaAddFila").addEventListener("click", () => {
+            const filas = sbfaLeerFilas();
+            filas.push({});
+            renderSbfaTablaFilas(filas);
+        });
+        document.getElementById("btnSbfaAddDap").addEventListener("click", () => {
+            const items = sbfaLeerDap();
+            items.push({});
+            renderSbfaTablaDap(items);
+        });
+        document.getElementById("btnSbfaExportarJSON").addEventListener("click", exportarSbfaJSON);
+        document.getElementById("btnSbfaActaJSON").addEventListener("click", exportarActaJSON);
+        document.getElementById("btnSbfaNotaJSON").addEventListener("click", exportarNotaJSON);
+        document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value));
     }
 
     // --- INIT ---

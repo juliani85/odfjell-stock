@@ -54,6 +54,7 @@
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
             <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
             <button class="tab" data-tab="barcos" data-rol="admin">Barcos <span id="badgeBarcosCerca" class="badge-nuevas hidden">0</span></button>
+            <button class="tab" data-tab="sbfa" data-rol="admin">SB/FA</button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
@@ -533,6 +534,135 @@
                 </div>
 
                 <div id="barcosCards"></div>
+            </div>
+        </section>
+
+        <!-- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE -->
+        <section id="sbfa" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>SB/FA — Detalle de descargas</h2>
+                    <div class="filtros">
+                        <input type="text" id="sbfaFiltro" placeholder="Buscar buque o manifiesto…">
+                        <button class="btn btn-primary btn-sm" id="btnSbfaNueva" type="button">+ Nueva descarga</button>
+                    </div>
+                </div>
+                <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                    Detalle resultante del ingreso de manifiesto, por solicitud particular y conocimientos DAP.
+                    Tolerancia ley: <strong>±0.6%</strong> (Resolución 2220/1990, Anexo II punto 12.1).
+                </p>
+                <div id="sbfaLista"></div>
+            </div>
+
+            <!-- Editor de descarga -->
+            <div id="sbfaEditor" class="form-card hidden" style="margin-top:1.25rem">
+                <div class="stock-header">
+                    <h2 id="sbfaEditorTitulo">Nueva descarga</h2>
+                    <div class="filtros">
+                        <button class="btn btn-secondary btn-sm" id="btnSbfaCancelar" type="button">Cerrar</button>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;margin-bottom:1rem">
+                    <div class="form-group">
+                        <label for="sbfaBuque">Buque (B/T)</label>
+                        <input type="text" id="sbfaBuque" placeholder="BOW CHAIN">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaManifiesto">Manifiesto N°</label>
+                        <input type="text" id="sbfaManifiesto" placeholder="33184-E">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaAgencia">Agencia marítima</label>
+                        <input type="text" id="sbfaAgencia" placeholder="B&amp;M" value="B&amp;M">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaCuit">CUIT agencia</label>
+                        <input type="text" id="sbfaCuit" placeholder="30-71631314-6" value="30-71631314-6">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaFecha">Fecha descarga</label>
+                        <input type="date" id="sbfaFecha">
+                    </div>
+                </div>
+
+                <h3 style="font-size:1rem;margin:1rem 0 0.5rem">Conocimientos por solicitud particular</h3>
+                <div class="table-container">
+                    <table class="sbfa-table" id="sbfaTablaFilas">
+                        <thead>
+                            <tr>
+                                <th>Sol. Part. N°</th>
+                                <th>Cto. N°</th>
+                                <th>Kg. Declarados</th>
+                                <th>SB/FA N°</th>
+                                <th>TK destino</th>
+                                <th>Medic. N°</th>
+                                <th>Kg. Resultantes</th>
+                                <th>Dif. Kg.</th>
+                                <th>Dif. %</th>
+                                <th>Mercadería</th>
+                                <th>Receptor</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right">Totales</th>
+                                <th id="sbfaTotalDecl">0</th>
+                                <th colspan="3"></th>
+                                <th id="sbfaTotalRes">0</th>
+                                <th id="sbfaTotalDif">0</th>
+                                <th id="sbfaTotalDifPct">0%</th>
+                                <th colspan="3"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnSbfaAddFila" type="button">+ Agregar fila</button>
+
+                <h3 style="font-size:1rem;margin:1.5rem 0 0.5rem">Conocimientos DAP (Directos a Plaza)</h3>
+                <div class="table-container">
+                    <table class="sbfa-table" id="sbfaTablaDap">
+                        <thead>
+                            <tr>
+                                <th>Documento Aduanero</th>
+                                <th>Cto. N°</th>
+                                <th>Cant. Doctada</th>
+                                <th>Cant. Result.</th>
+                                <th>Dif. Kg.</th>
+                                <th>Dif. %</th>
+                                <th>Observaciones</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right">Totales DAP</th>
+                                <th id="sbfaDapTotalDoc">0</th>
+                                <th id="sbfaDapTotalRes">0</th>
+                                <th id="sbfaDapTotalDif">0</th>
+                                <th id="sbfaDapTotalDifPct">0%</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnSbfaAddDap" type="button">+ Agregar conocimiento DAP</button>
+
+                <div class="form-group" style="margin-top:1rem">
+                    <label for="sbfaNotas">Notas / Observaciones</label>
+                    <textarea id="sbfaNotas" rows="2" placeholder="Mediciones iniciales realizadas, etc."></textarea>
+                </div>
+
+                <div class="form-actions" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem">
+                    <button class="btn btn-primary" id="btnSbfaGuardar" type="button">Guardar descarga</button>
+                    <button class="btn btn-secondary" id="btnSbfaExportarJSON" type="button" title="Descarga JSON para alimentar el generador PDF">Exportar JSON (PDF)</button>
+                    <button class="btn btn-secondary" id="btnSbfaActaJSON" type="button" title="Exporta JSON para generar el Acta de Denuncia">Acta de Denuncia (JSON)</button>
+                    <button class="btn btn-secondary" id="btnSbfaNotaJSON" type="button" title="Exporta JSON para generar la Nota SB/FA">Nota SB/FA (JSON)</button>
+                    <button class="btn btn-secondary" id="btnSbfaEliminar" type="button" style="margin-left:auto;color:#b91c1c">Eliminar descarga</button>
+                </div>
             </div>
         </section>
 

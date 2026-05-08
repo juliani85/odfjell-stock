@@ -846,3 +846,24 @@ tbody tr:hover { background: var(--gray-50); }
 /* Tarjetas de tanques vacíos en el reporte mensual: se ven atenuadas */
 .rep-mensual-vacio { opacity: 0.55; }
 .rep-mensual-vacio .stock-card-total { color: var(--gray-500) !important; }
+
+/* SB/FA */
+.sbfa-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.sbfa-table th, .sbfa-table td { padding: 0.4rem 0.5rem; border: 1px solid var(--gray-200); vertical-align: middle; }
+.sbfa-table thead th { background: var(--gray-50); font-weight: 700; text-align: left; white-space: nowrap; }
+.sbfa-table tfoot th { background: var(--gray-50); font-weight: 700; text-align: right; }
+.sbfa-table input { width: 100%; min-width: 60px; padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; box-sizing: border-box; }
+.sbfa-table .col-num input { text-align: right; }
+.sbfa-table .dif-kg, .sbfa-table .dif-pct { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sbfa-table .fuera-tol { background: #fee2e2; color: #b91c1c; font-weight: 700; }
+.sbfa-table .dentro-tol { color: var(--gray-700); }
+.sbfa-table .btn-borrar-fila { background: none; border: none; color: #b91c1c; cursor: pointer; font-weight: 700; font-size: 1rem; padding: 0; }
+
+.sbfa-card { padding: 1rem; border: 2px solid var(--gray-200); border-radius: 10px; background: white; margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.15s; }
+.sbfa-card:hover { border-color: var(--primary); }
+.sbfa-card.fuera-tol { border-color: #dc2626; background: #fff5f5; }
+.sbfa-card-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+.sbfa-card-titulo { font-weight: 700; font-size: 1.05rem; }
+.sbfa-card-meta { color: var(--gray-500); font-size: 0.85rem; }
+.sbfa-card-totales { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem; }
+.sbfa-card-totales span strong { color: var(--gray-700); }

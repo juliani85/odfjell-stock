@@ -510,7 +510,7 @@
         <!-- BARCOS -->
         <section id="barcos" class="tab-content">
             <div class="form-card">
-                <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1.25rem;border:1px solid var(--gray-200)">
+                <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1rem;border:1px solid var(--gray-200)">
                     <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-700)">Agregar barco al seguimiento</h3>
                     <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap">
                         <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
@@ -519,6 +519,19 @@
                         </div>
                         <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
                     </div>
+                </div>
+
+                <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1.25rem;border:1px solid var(--gray-200)">
+                    <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.5rem;color:var(--gray-700)">📧 Avisos por mail al arribar un barco</h3>
+                    <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.75rem">Cuando el tracking detecte que un barco arribó a Campana, se manda un mail a estas casillas.</p>
+                    <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                            <label for="mailArribo">Casilla de mail</label>
+                            <input type="email" id="mailArribo" placeholder="ejemplo@dominio.com">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnAgregarMailArribo" type="button">Agregar</button>
+                    </div>
+                    <div id="mailsArriboLista" style="margin-top:0.75rem"></div>
                 </div>
 
                 <input type="hidden" id="barcosUmbral" value="24">

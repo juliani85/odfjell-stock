@@ -28,6 +28,9 @@ jobs:
         run: pip install requests
 
       - name: Run tracker
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python scripts/track_vessels.py
 
       - name: Commit cambios si hay

@@ -242,10 +242,112 @@ def buscar_imo_por_nombre(nombre: str) -> str | None:
     return candidatos[0][0]
 
 
+def cargar_tracking_previo() -> dict[str, Any]:
+    """Lee el tracking.json previo (si existe) para comparar contra el nuevo
+    y detectar transiciones de estado."""
+    if not TRACKING_JSON.exists():
+        return {"barcos": {}}
+    try:
+        return json.loads(TRACKING_JSON.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"  No se pudo leer tracking previo: {e}")
+        return {"barcos": {}}
+
+
+def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
+    """Devuelve lista de barcos que arribaron (transición a en_puerto en Campana)
+    desde el tracking previo. Cada item: {imo, nombre, puerto, arribo}."""
+    arribos = []
+    barcos_prev = tracking_previo.get("barcos", {})
+    barcos_nuevos = tracking_nuevo.get("barcos", {})
+    for imo, datos in barcos_nuevos.items():
+        if not isinstance(datos, dict):
+            continue
+        estado_nuevo = (datos.get("estado") or "").lower()
+        if estado_nuevo != "en_puerto":
+            continue
+        puerto = (datos.get("puerto_actual") or "").lower()
+        if "campana" not in puerto:
+            continue  # solo nos interesa Campana
+        prev = barcos_prev.get(imo) or {}
+        estado_prev = (prev.get("estado") or "").lower() if isinstance(prev, dict) else ""
+        # Solo notificamos si es una transición (antes no estaba en puerto en Campana)
+        if estado_prev == "en_puerto" and "campana" in (prev.get("puerto_actual") or "").lower():
+            continue  # ya estaba ahí, no es un arribo nuevo
+        arribos.append({
+            "imo": imo,
+            "nombre": datos.get("nombre") or imo,
+            "puerto": datos.get("puerto_actual") or "Campana",
+            "arribo": datos.get("arribo") or datos.get("ultimo_reporte"),
+        })
+    return arribos
+
+
+def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
+    """Envía un mail por cada arribo detectado a la lista de destinatarios.
+    Usa SMTP de Gmail con App Password (variables de entorno GMAIL_USER y
+    GMAIL_APP_PASSWORD). Devuelve True si se envió todo OK."""
+    if not arribos or not destinatarios:
+        return True
+
+    user = os.environ.get("GMAIL_USER", "").strip()
+    pwd = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    if not user or not pwd:
+        print("  GMAIL_USER / GMAIL_APP_PASSWORD no configurados — no se envía mail.")
+        return False
+
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    ok = True
+    for arr in arribos:
+        nombre = arr["nombre"]
+        puerto = arr["puerto"]
+        arribo = arr.get("arribo") or "ahora"
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"🚢 Arribo a Campana — {nombre}"
+        msg["From"] = f"TAGSA Aduana <{user}>"
+        msg["To"] = ", ".join(destinatarios)
+
+        texto = (
+            f"El buque {nombre} (IMO {arr['imo']}) acaba de arribar al puerto.\n\n"
+            f"Puerto: {puerto}\n"
+            f"Hora de arribo: {arribo}\n\n"
+            f"Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.\n"
+        )
+        html = f"""
+        <html><body style="font-family:Arial,sans-serif;font-size:14px;color:#111">
+        <h2 style="color:#1e3a8a">🚢 Arribo a Campana — {nombre}</h2>
+        <p>El buque <strong>{nombre}</strong> (IMO {arr['imo']}) acaba de arribar al puerto.</p>
+        <table style="border-collapse:collapse;margin:1em 0">
+            <tr><td style="padding:4px 12px;color:#6b7280">Puerto</td><td style="padding:4px 12px"><strong>{puerto}</strong></td></tr>
+            <tr><td style="padding:4px 12px;color:#6b7280">Hora de arribo</td><td style="padding:4px 12px"><strong>{arribo}</strong></td></tr>
+        </table>
+        <p style="color:#6b7280;font-size:12px">Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.</p>
+        </body></html>
+        """
+        msg.attach(MIMEText(texto, "plain", "utf-8"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=20) as smtp:
+                smtp.login(user, pwd)
+                smtp.send_message(msg)
+            print(f"  Mail de arribo enviado: {nombre} → {len(destinatarios)} destinatarios")
+        except Exception as e:
+            print(f"  ERROR enviando mail para {nombre}: {e}")
+            ok = False
+    return ok
+
+
 def main() -> int:
     config = json.loads(BARCOS_JSON.read_text(encoding="utf-8"))
     barcos = config.get("barcos", [])
     print(f"Trackeando {len(barcos)} barcos...")
+
+    # Cargar tracking previo para detectar transiciones
+    tracking_previo = cargar_tracking_previo()
 
     config_modificado = False
     # Primero resolver IMOs faltantes por nombre
@@ -300,6 +402,20 @@ def main() -> int:
         json.dumps(salida, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     print(f"Escrito {TRACKING_JSON}")
+
+    # Detectar arribos y enviar mails
+    arribos = detectar_arribos(tracking_previo, salida)
+    if arribos:
+        nombres = ", ".join(a["nombre"] for a in arribos)
+        print(f"Arribos detectados: {nombres}")
+        destinatarios = (config.get("notificaciones") or {}).get("mailsArribo") or []
+        if destinatarios:
+            enviar_mail_arribos(arribos, destinatarios)
+        else:
+            print("  Sin destinatarios configurados (notificaciones.mailsArribo en barcos.json).")
+    else:
+        print("Sin arribos nuevos.")
+
     return 0
 
 

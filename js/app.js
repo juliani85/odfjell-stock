@@ -3748,11 +3748,64 @@ async function initApp() {
         if (await guardarBarcosCfg()) renderBarcos();
     }
 
+    function renderMailsArriboLista() {
+        const lista = document.getElementById("mailsArriboLista");
+        if (!lista) return;
+        const mails = ((barcosConfig.notificaciones || {}).mailsArribo) || [];
+        if (!mails.length) {
+            lista.innerHTML = `<p style="font-size:0.8rem;color:var(--gray-500);font-style:italic">Sin destinatarios. Cuando un barco arribe no se enviará mail.</p>`;
+            return;
+        }
+        lista.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:0.4rem">` +
+            mails.map(m => `<span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.6rem;background:white;border:1px solid var(--gray-300);border-radius:14px;font-size:0.8rem">
+                ${m}
+                <button data-quitar-mail="${m}" type="button" style="border:none;background:none;cursor:pointer;color:#dc2626;font-weight:700">×</button>
+            </span>`).join("") + `</div>`;
+        lista.querySelectorAll("[data-quitar-mail]").forEach(b => {
+            b.addEventListener("click", () => quitarMailArribo(b.dataset.quitarMail));
+        });
+    }
+
+    async function agregarMailArribo() {
+        const inp = document.getElementById("mailArribo");
+        const mail = inp.value.trim().toLowerCase();
+        if (!mail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+            alert("Ingresá un mail válido.");
+            return;
+        }
+        barcosConfig.notificaciones = barcosConfig.notificaciones || { mailsArribo: [] };
+        barcosConfig.notificaciones.mailsArribo = barcosConfig.notificaciones.mailsArribo || [];
+        if (barcosConfig.notificaciones.mailsArribo.includes(mail)) {
+            alert(`"${mail}" ya está en la lista.`);
+            return;
+        }
+        barcosConfig.notificaciones.mailsArribo.push(mail);
+        if (await guardarBarcosCfg()) {
+            inp.value = "";
+            renderMailsArriboLista();
+            mostrarAlerta(`Mail agregado: ${mail}`, "info");
+        }
+    }
+
+    async function quitarMailArribo(mail) {
+        if (!confirm(`¿Quitar "${mail}" de la lista de avisos?`)) return;
+        const lista = (barcosConfig.notificaciones || {}).mailsArribo || [];
+        barcosConfig.notificaciones.mailsArribo = lista.filter(m => m !== mail);
+        if (await guardarBarcosCfg()) {
+            renderMailsArriboLista();
+        }
+    }
+
     async function inicializarBarcos() {
         await Promise.all([cargarBarcosCfg(), cargarTracking()]);
         renderBarcos();
+        renderMailsArriboLista();
 
         document.getElementById("btnAgregarBarco").addEventListener("click", agregarBarco);
+        document.getElementById("btnAgregarMailArribo").addEventListener("click", agregarMailArribo);
+        document.getElementById("mailArribo").addEventListener("keydown", e => {
+            if (e.key === "Enter") agregarMailArribo();
+        });
 
         // Auto-refresh tracking cada 5 min mientras la app está abierta
         setInterval(async () => {

@@ -4036,18 +4036,18 @@ async function initApp() {
 
     function sbfaFilaHTML(f, i) {
         return `<tr data-i="${i}">
-            <td class="col-pre"><input data-k="solPart" value="${f.solPart || ""}" placeholder="1883-1884"></td>
-            <td class="col-pre"><input data-k="cto" value="${f.cto || ""}" placeholder="OTUS 35-A-B"></td>
-            <td class="col-pre"><input data-k="mercaderia" value="${f.mercaderia || ""}" placeholder="ISOPAR L"></td>
-            <td class="col-pre"><input data-k="receptor" value="${f.receptor || ""}" placeholder="BRE-PBB"></td>
-            <td class="col-pre col-num"><input data-k="kgDeclarados" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgDeclarados)}" placeholder="0"></td>
-            <td class="col-pre"><input data-k="tkDestino" value="${f.tkDestino || ""}" placeholder="61-67"></td>
-            <td class="col-post"><input data-k="sbfa" value="${f.sbfa || ""}"></td>
-            <td class="col-post"><input data-k="medic" value="${f.medic || ""}"></td>
-            <td class="col-post col-num"><input data-k="kgResultantes" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgResultantes)}" placeholder="0"></td>
-            <td class="dif-kg" data-difkg>0</td>
-            <td class="dif-pct" data-difpct>0,00%</td>
-            <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
+            <td class="col-pre col-part"><input data-k="solPart" value="${f.solPart || ""}" placeholder="1883"></td>
+            <td class="col-pre col-cto"><input data-k="cto" value="${f.cto || ""}" placeholder="OTUS 35-A-B"></td>
+            <td class="col-pre col-producto"><input data-k="mercaderia" value="${f.mercaderia || ""}" placeholder="ISOPAR L"></td>
+            <td class="col-pre col-empresa"><input data-k="receptor" value="${f.receptor || ""}" placeholder="BRENTAG-PBB"></td>
+            <td class="col-pre col-num col-kg-pre"><input data-k="kgDeclarados" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgDeclarados)}" placeholder="0" maxlength="9"></td>
+            <td class="col-pre col-tk"><input data-k="tkDestino" value="${f.tkDestino || ""}" placeholder="61-67"></td>
+            <td class="col-post col-sbfa"><input data-k="sbfa" value="${f.sbfa || ""}"></td>
+            <td class="col-post col-medic"><input data-k="medic" value="${f.medic || ""}"></td>
+            <td class="col-post col-num col-kg-post"><input data-k="kgResultantes" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgResultantes)}" placeholder="0" maxlength="9"></td>
+            <td class="dif-kg col-dif-kg" data-difkg>0</td>
+            <td class="dif-pct col-dif-pct" data-difpct>0,00%</td>
+            <td class="col-borrar"><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
     }
 

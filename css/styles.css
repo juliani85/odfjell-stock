@@ -860,6 +860,22 @@ tbody tr:hover { background: var(--gray-50); }
 .rep-mensual-vacio { opacity: 0.55; }
 .rep-mensual-vacio .stock-card-total { color: var(--gray-500) !important; }
 
+/* Tanques con producto RENPQ (precursores químicos Decreto 593/19) */
+.stock-card.renpq { border-left: 4px solid #d97706; background: #fffbeb; }
+.renpq-badge {
+    display: inline-block;
+    background: #d97706;
+    color: white;
+    padding: 0.12rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    cursor: help;
+}
+
 /* SB/FA */
 .sbfa-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 .sbfa-table th, .sbfa-table td { padding: 0.4rem 0.5rem; border: 1px solid var(--gray-200); vertical-align: middle; }

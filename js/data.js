@@ -401,3 +401,97 @@ const tanquesFiscales = [
     "078", "079", "080", "081", "082", "084", "085", "086", "088", "089",
     "096", "097", "099", "100", "101", "102",
 ];
+
+// Precursores químicos según RENPRE (Decreto 593/19) — Listas I, II y III
+// Cada entrada tiene 'patrones' (substrings que se buscan en el nombre del producto, ya normalizado)
+const precursoresRENPQ = [
+    // ===== LISTA I — uso restringido (estupefacientes / drogas duras) =====
+    { lista: "I", nombre: "Acetona", patrones: ["ACETONA", "DIMETILCETONA", "PROPANONA"] },
+    { lista: "I", nombre: "Tolueno", patrones: ["TOLUENO", "TOLUOL", "METILBENCENO"] },
+    { lista: "I", nombre: "Metiletilcetona (MEK)", patrones: ["MEK", "METILETILCETONA", "METIL ETIL CETONA", "BUTANONA", "MET ETIL CETONA"] },
+    { lista: "I", nombre: "Anhídrido acético", patrones: ["ANHIDRIDO ACETICO", "ANH ACETICO"] },
+    { lista: "I", nombre: "Ácido sulfúrico", patrones: ["ACIDO SULFURICO", "AC SULFURICO", "SULFURICO", "OLEUM"] },
+    { lista: "I", nombre: "Ácido clorhídrico", patrones: ["ACIDO CLORHIDRICO", "AC CLORHIDRICO", "CLORHIDRICO", "MURIATICO"] },
+    { lista: "I", nombre: "Ácido yodhídrico", patrones: ["ACIDO YODHIDRICO", "YODHIDRICO"] },
+    { lista: "I", nombre: "Diclorometano", patrones: ["DICLOROMETANO", "CLORURO DE METILENO", "METILENO CLORURO"] },
+    { lista: "I", nombre: "Cloroformo", patrones: ["CLOROFORMO", "TRICLOROMETANO"] },
+    { lista: "I", nombre: "Éter etílico", patrones: ["ETER ETILICO", "DIETIL ETER", "DIETILETER", "ETER SULFURICO", "ETER DIETILICO"] },
+    { lista: "I", nombre: "Benzaldehído", patrones: ["BENZALDEHIDO", "ALDEHIDO BENZOICO"] },
+    { lista: "I", nombre: "Permanganato de potasio", patrones: ["PERMANGANATO"] },
+    { lista: "I", nombre: "Fósforo rojo", patrones: ["FOSFORO ROJO"] },
+    { lista: "I", nombre: "Nitroetano", patrones: ["NITROETANO"] },
+    { lista: "I", nombre: "Nitrometano", patrones: ["NITROMETANO", "NITROCARBOL"] },
+    { lista: "I", nombre: "Ácido fenilacético", patrones: ["ACIDO FENILACETICO", "FENILACETICO"] },
+    { lista: "I", nombre: "Metilamina", patrones: ["METILAMINA", "MONOMETILAMINA"] },
+    { lista: "I", nombre: "Monoetilamina", patrones: ["MONOETILAMINA", "ETILAMINA"] },
+    { lista: "I", nombre: "Piperidina", patrones: ["PIPERIDINA"] },
+    { lista: "I", nombre: "Safrol", patrones: ["SAFROL", "ISOSAFROL"] },
+    { lista: "I", nombre: "Piperonal", patrones: ["PIPERONAL", "HELIOTROPINA"] },
+    { lista: "I", nombre: "Efedrina", patrones: ["EFEDRINA"] },
+    { lista: "I", nombre: "Seudoefedrina", patrones: ["SEUDOEFEDRINA", "PSEUDOEFEDRINA"] },
+    { lista: "I", nombre: "Ergotamina", patrones: ["ERGOTAMINA"] },
+
+    // ===== LISTA II =====
+    { lista: "II", nombre: "Benceno", patrones: ["BENCENO", "BENZOL"] },
+    { lista: "II", nombre: "Hexano", patrones: ["HEXANO"] },
+    { lista: "II", nombre: "Xilenos", patrones: ["XILENO", "XILOL", "DIMETILBENCENO"] },
+    { lista: "II", nombre: "Metilisobutilcetona (MIBK)", patrones: ["MIBK", "METILISOBUTILCETONA", "ISOPROPILACETONA"] },
+    { lista: "II", nombre: "Acetato de etilo", patrones: ["ACETATO DE ETILO", "ACETATO ETILICO"] },
+    { lista: "II", nombre: "Ácido acético", patrones: ["ACIDO ACETICO", "AC ACETICO", "ETANOICO"] },
+    { lista: "II", nombre: "Amoníaco", patrones: ["AMONIACO", "AMONIO ANHIDRO"] },
+    { lista: "II", nombre: "Hidróxido de sodio", patrones: ["HIDROXIDO DE SODIO", "SODA CAUSTICA"] },
+    { lista: "II", nombre: "Hidróxido de potasio", patrones: ["HIDROXIDO DE POTASIO", "POTASA CAUSTICA"] },
+    { lista: "II", nombre: "Sulfato de sodio", patrones: ["SULFATO DE SODIO", "SULFATO SODICO"] },
+    { lista: "II", nombre: "Carbonato de sodio", patrones: ["CARBONATO DE SODIO", "SODA SOLVAY"] },
+    { lista: "II", nombre: "Ácido o-aminobenzoico", patrones: ["AMINOBENZOICO", "ANTRANILICO"] },
+
+    // ===== LISTA III =====
+    { lista: "III", nombre: "Etanol", patrones: ["ETANOL", "ALCOHOL ETILICO"] },
+    { lista: "III", nombre: "Metanol", patrones: ["METANOL", "ALCOHOL METILICO", "CARBINOL"] },
+    { lista: "III", nombre: "Alcohol isopropílico", patrones: ["ALCOHOL ISOPROPILICO", "ISOPROPILICO", "ISOPROPANOL", "IPA", "2-PROPANOL"] },
+    { lista: "III", nombre: "Alcohol n-butílico", patrones: ["N-BUTANOL", "ALCOHOL N-BUTILICO", "ALCOHOL BUTILICO", "1-BUTANOL"] },
+    { lista: "III", nombre: "Alcohol isobutílico", patrones: ["ALCOHOL ISOBUTILICO", "ISOBUTANOL"] },
+    { lista: "III", nombre: "Tricloroetileno", patrones: ["TRICLOROETILENO"] },
+    { lista: "III", nombre: "Acetato isopropílico", patrones: ["ACETATO ISOPROPILICO", "ACETATO 2-PROPILICO"] },
+    { lista: "III", nombre: "Dietilamina", patrones: ["DIETILAMINA"] },
+    { lista: "III", nombre: "Formamida", patrones: ["FORMAMIDA", "METANAMIDA"] },
+    { lista: "III", nombre: "Ciclohexanona", patrones: ["CICLOHEXANONA"] },
+    { lista: "III", nombre: "Ácido fórmico", patrones: ["ACIDO FORMICO", "FORMICO", "METANOICO"] },
+    { lista: "III", nombre: "Cloruro de bencilo", patrones: ["CLORURO DE BENCILO"] },
+    { lista: "III", nombre: "Cianuro de bencilo", patrones: ["CIANURO DE BENCILO", "FENILACETONITRILO"] },
+    { lista: "III", nombre: "Kerosene", patrones: ["KEROSENE", "KEROSINA"] },
+    { lista: "III", nombre: "Cloruro de acetilo", patrones: ["CLORURO DE ACETILO", "ETANOILO"] },
+    { lista: "III", nombre: "Yodo", patrones: ["YODO"] },
+    { lista: "III", nombre: "Cianuro de sodio", patrones: ["CIANURO DE SODIO", "CIANURO SODICO"] },
+    { lista: "III", nombre: "Cianuro de potasio", patrones: ["CIANURO DE POTASIO", "CIANURO POTASICO"] },
+    { lista: "III", nombre: "Cloruro de amonio", patrones: ["CLORURO DE AMONIO", "MURIATO DE AMONIA"] },
+    { lista: "III", nombre: "Nitrito de sodio", patrones: ["NITRITO DE SODIO"] },
+    { lista: "III", nombre: "Bicarbonato de sodio", patrones: ["BICARBONATO DE SODIO", "HIDROGENOCARBONATO"] },
+    { lista: "III", nombre: "Óxido de calcio", patrones: ["OXIDO DE CALCIO", "CAL VIVA"] },
+    { lista: "III", nombre: "Hidróxido de calcio", patrones: ["HIDROXIDO DE CALCIO", "CAL APAGADA", "HIDRATO CALCICO"] },
+];
+
+// Normaliza un nombre de producto: mayúsculas, sin tildes, sin espacios extra ni paréntesis
+function _normalizarProducto(s) {
+    if (!s) return "";
+    return String(s).toUpperCase()
+        .normalize("NFD").replace(/[̀-ͯ]/g, "") // quita tildes
+        .replace(/[()\.,;:]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+// Devuelve { lista, nombre } si el producto es precursor RENPQ; null si no.
+// Usa word-boundary para evitar falsos positivos (ej: "HEXANOL" no debe matchear "HEXANO").
+function getRenpqInfo(producto) {
+    const norm = _normalizarProducto(producto);
+    if (!norm) return null;
+    for (const p of precursoresRENPQ) {
+        for (const pat of p.patrones) {
+            const escaped = pat.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const re = new RegExp(`(^|[^A-Z0-9])${escaped}($|[^A-Z0-9])`);
+            if (re.test(norm)) return { lista: p.lista, nombre: p.nombre };
+        }
+    }
+    return null;
+}

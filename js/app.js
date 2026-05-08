@@ -1686,12 +1686,17 @@ async function initApp() {
                 </div>
             </div>` : "";
 
-            return `<div class="stock-card" onclick="this.classList.toggle('open')">
+            const renpq = getRenpqInfo(t.producto);
+            const renpqBadge = renpq
+                ? `<span class="renpq-badge" title="Precursor químico — RENPQ Lista ${renpq.lista} (Decreto 593/19)">⚠ RNPQ ${renpq.lista}</span>`
+                : "";
+            const cardCls = renpq ? "stock-card renpq" : "stock-card";
+            return `<div class="${cardCls}" onclick="this.classList.toggle('open')">
                 <div class="stock-card-header">
                     <div class="stock-card-left">
                         <span class="stock-card-tanque">TK ${t.tanque}</span>
                         <div>
-                            <div class="stock-card-producto">${t.producto}</div>
+                            <div class="stock-card-producto">${t.producto} ${renpqBadge}</div>
                             <div class="stock-card-cliente">${t.cliente}</div>
                         </div>
                     </div>
@@ -2000,12 +2005,17 @@ async function initApp() {
             const vacio = totalTanque <= 0;
             const productoMostrar = t.producto || (vacio ? "<em style='color:var(--gray-500)'>Tanque vacío</em>" : "");
             const clienteMostrar = t.cliente || "";
-            return `<div class="stock-card rep-mensual-card${vacio ? ' rep-mensual-vacio' : ''}" onclick="this.classList.toggle('open')">
+            const renpqRm = t.producto ? getRenpqInfo(t.producto) : null;
+            const renpqBadgeRm = renpqRm
+                ? ` <span class="renpq-badge" title="Precursor químico — RENPQ Lista ${renpqRm.lista}">⚠ RNPQ ${renpqRm.lista}</span>`
+                : "";
+            const rmCls = renpqRm ? " renpq" : "";
+            return `<div class="stock-card rep-mensual-card${vacio ? ' rep-mensual-vacio' : ''}${rmCls}" onclick="this.classList.toggle('open')">
                 <div class="stock-card-header">
                     <div class="stock-card-left">
                         <span class="stock-card-tanque">TK ${t.tanque}</span>
                         <div>
-                            <div class="stock-card-producto">${productoMostrar}</div>
+                            <div class="stock-card-producto">${productoMostrar}${renpqBadgeRm}</div>
                             <div class="stock-card-cliente">${clienteMostrar}</div>
                         </div>
                     </div>

@@ -4327,6 +4327,42 @@ table tr.fuera td.num { color: #b91c1c; font-weight: bold; }
 .recuadro > div:last-child { border-right: none; }
 .recuadro .label { background: #e5e7eb; font-weight: bold; font-size: 8pt; }
 .checkboxes { border: 1px solid #000; padding: 6px 10px; margin: 0.4rem 0; font-size: 10pt; text-align: center; }
+/* ===== Acta de Denuncia OM-2090 ===== */
+.acta-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+.acta-logo-arca { background: #1e3a8a; padding: 6px 8px; border: 1px solid #000; }
+.acta-logo-arca img { height: 32px; display: block; }
+.acta-logo-leyenda { font-size: 7pt; font-weight: bold; text-align: center; line-height: 1.2; margin-top: 2px; }
+.acta-codigo-box { border: 1px solid #000; min-width: 230px; }
+.acta-codigo-box-row { display: grid; grid-template-columns: 1fr 1fr; }
+.acta-codigo-box-row > div { padding: 3px 6px; font-size: 8pt; text-align: center; }
+.acta-codigo-box-row > div:first-child { border-right: 1px solid #000; }
+.acta-codigo-box-header { background: #fff; font-weight: bold; border-bottom: 1px solid #000; }
+.acta-codigo-box-data { min-height: 24px; }
+.acta-titulo { text-align: center; font-size: 13pt; font-weight: bold; margin: 0.6rem 0 0.5rem; letter-spacing: 0.04em; }
+.acta-lugar-fecha { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 0.4rem 0 0.6rem; font-size: 9pt; }
+.acta-lugar-fecha > div { border-bottom: 1px solid #000; padding: 0.2rem 0.5rem 0.1rem; text-align: center; }
+.acta-lugar-fecha .lbl { border-bottom: none; font-size: 8pt; padding: 0; margin-top: 2px; color: #4b5563; }
+.acta-checks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 8px; margin: 0.4rem 0; font-size: 8pt; }
+.acta-checks .ch { display: flex; align-items: center; gap: 4px; }
+.acta-checks .ch-box { display: inline-block; width: 11px; height: 11px; border: 1px solid #000; text-align: center; line-height: 9px; font-size: 9pt; flex-shrink: 0; }
+.acta-checks .ch-box.checked { font-weight: bold; }
+.acta-section-title { background: #e5e7eb; border: 1px solid #000; font-weight: bold; font-size: 9pt; padding: 3px 6px; text-align: center; margin-top: 0.4rem; }
+.acta-tabla { width: 100%; border-collapse: collapse; font-size: 8pt; }
+.acta-tabla th, .acta-tabla td { border: 1px solid #000; padding: 3px 5px; vertical-align: top; }
+.acta-tabla th { background: #f3f4f6; font-weight: bold; text-align: center; font-size: 8pt; }
+.acta-tabla td.vacio { height: 20px; }
+.acta-relacion { border: 1px solid #000; min-height: 80px; padding: 6px 8px; font-size: 9pt; line-height: 1.35; text-align: justify; border-top: none; }
+.acta-ratifica { display: flex; align-items: center; gap: 4px; margin-top: 0.4rem; font-size: 9pt; padding: 3px 6px; }
+.acta-firma-receptor { text-align: right; margin-top: 0.4rem; font-size: 8pt; }
+.acta-firma-receptor .linea { border-top: 1px solid #000; display: inline-block; min-width: 200px; padding-top: 2px; margin-bottom: 2px; }
+.acta-om { font-size: 7pt; color: #4b5563; margin-top: 0.5rem; }
+.acta-denunciantes-box { border: 2px solid #000; padding: 0.4rem; margin-top: 0.6rem; }
+.acta-denunciantes-titulo { font-weight: bold; font-size: 9pt; }
+.acta-pagina2-section { border: 1px solid #000; margin-top: 0.4rem; }
+.acta-pagina2-section .head { background: #f3f4f6; padding: 3px 6px; font-weight: bold; font-size: 9pt; border-bottom: 1px solid #000; display: flex; gap: 0.5rem; }
+.acta-pagina2-section .body { padding: 6px 8px; font-size: 9pt; line-height: 1.45; }
+.acta-firma-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-top: 1rem; font-size: 8pt; text-align: center; }
+.acta-firma-3 > div { border-top: 1px solid #000; padding-top: 2px; }
 .cuerpo p { line-height: 1.4; text-align: justify; margin: 0.4rem 0; }
 .firma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; text-align: center; font-size: 10pt; }
 .firma-grid .linea { border-top: 1px solid #000; padding-top: 0.3rem; margin-top: 2rem; }
@@ -4386,47 +4422,182 @@ ${dap.length ? `
 ${d.notas ? `<div class="notas"><strong>NOTAS:</strong> ${d.notas}</div>` : ""}
 </section>
 
-<!-- ============== PÁGINA 2: ACTA DE DENUNCIA ============== -->
+<!-- ============== PÁGINA 2: ACTA DE DENUNCIA — OM-2090 (página 1) ============== -->
 <section class="pagina">
-${headerArcaHtml()}
+${actaHeaderHtml(numeroNota, anioNota)}
 
-<div class="recuadro">
-<div class="label">CÓDIGO ORIGEN</div><div class="label">NÚMERO Y AÑO</div>
-<div>DF-TAGSA</div><div>${numeroNota} / ${anioNota}</div>
+<div class="acta-titulo">ACTA DE DENUNCIA</div>
+
+<div class="acta-lugar-fecha">
+<div>Campana, Provincia de Buenos Aires<div class="lbl">Lugar</div></div>
+<div>${hoy}<div class="lbl">Fecha</div></div>
 </div>
 
-<h1 class="titulo">ACTA DE DENUNCIA</h1>
-
-<div class="recuadro">
-<div class="label">LUGAR</div><div class="label">FECHA</div>
-<div>Campana, Provincia de Buenos Aires</div><div>${hoy}</div>
+<div class="acta-checks">
+<div class="ch"><span class="ch-box"></span> COMPARENDO PERSONAL</div>
+<div class="ch"><span class="ch-box"></span> TELEFÓNICA</div>
+<div class="ch"><span class="ch-box checked">X</span> DE OFICIO</div>
+<div class="ch"><span class="ch-box"></span> SE AGREGA</div>
+<div class="ch"><span class="ch-box"></span> ANÓNIMA</div>
+<div class="ch"><span class="ch-box"></span> POSTAL</div>
+<div class="ch"><span class="ch-box"></span> OTROS MEDIOS</div>
+<div class="ch"><span class="ch-box"></span> SE AGREGA</div>
 </div>
 
-<div class="checkboxes">
-☐ SE AGREGA &nbsp;&nbsp;&nbsp; ☒ DE OFICIO &nbsp;&nbsp;&nbsp; ☐ COMPARENDO PERSONAL &nbsp;&nbsp;&nbsp; ☐ TELEFÓNICA
+<div class="acta-section-title">RELACIÓN DEL/LOS HECHO/S DENUNCIADO/S:</div>
+<div class="acta-relacion">
+Quien suscribe, agente <strong>IGLESIAS, JULIAN</strong> — Legajo 30388-7, destacado como medidor en el Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA, Campana — denuncia que: finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T <strong>${d.buque}</strong>, MANI N° <strong>${d.manifiesto || "(pendiente)"}</strong>, fecha de descarga <strong>${fechaDescarga}</strong>, se constataron diferencias entre los kilos declarados y los kilos resultantes de la medición en tanque que <strong>exceden la tolerancia legal de ±${fmtPct(SBFA_TOLERANCIA_PCT)}</strong> establecida en el punto 12.1, Anexo II de la Resolución 2220/1990, conforme detalle adjunto.
+${fueraTol.length ? `<br><br>Conocimientos fuera de tolerancia (${fueraTol.length}): ${listaFueras}.` : ""}
+<br><br>Se invoca el art. 956 y ss. del Código Aduanero (Ley 22.415) a fin de que se disponga el curso de acción correspondiente.
 </div>
 
-<div class="cuerpo">
-<p>En la ciudad de Campana, Provincia de Buenos Aires, a los ${hoy}, el agente abajo firmante, destacado en el Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA — deja constancia de la siguiente denuncia:</p>
-
-<p><strong>HECHOS:</strong> Finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T <strong>${d.buque}</strong>, MANI N° <strong>${d.manifiesto}</strong>, fecha de descarga <strong>${fechaDescarga}</strong>, se constataron diferencias entre los kilos declarados y los kilos resultantes de la medición en tanque que <strong>exceden la tolerancia legal de ±${fmtPct(SBFA_TOLERANCIA_PCT)}</strong> establecida en el punto 12.1, Anexo II de la Resolución 2220/1990.</p>
-
-${fueraTol.length ? `
-<p><strong>CONOCIMIENTOS FUERA DE TOLERANCIA (${fueraTol.length}):</strong></p>
-<table>
-<thead><tr><th>Part.</th><th>Cto.</th><th>Producto</th><th>Empresa</th><th class="num">Kg. Decl.</th><th>Tk.</th><th>SBFA</th><th class="num">Kg. Result.</th><th class="num">Dif. Kg.</th><th class="num">Dif. %</th></tr></thead>
-<tbody>${fueraHtml}</tbody>
+<div class="acta-section-title">LUGAR EN QUE OCURREN:</div>
+<table class="acta-tabla">
+<thead>
+<tr>
+<th rowspan="2" style="width:35%">DOMICILIO</th>
+<th rowspan="2" style="width:25%">LOCALIDAD</th>
+<th rowspan="2" style="width:25%">PROVINCIA</th>
+<th colspan="2" style="width:15%">ACOMPAÑA CROQUIS</th>
+</tr>
+<tr><th style="width:7.5%">SI</th><th style="width:7.5%">NO</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA</td>
+<td>Campana</td>
+<td>Buenos Aires</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+</tr>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+</tbody>
 </table>
-` : `<p><em>No se detectaron conocimientos fuera de la tolerancia legal en esta descarga.</em></p>`}
 
-<p><strong>FUNDAMENTOS:</strong> El art. 956 y siguientes del Código Aduanero (Ley 22.415) y la Resolución 2220/1990 (Anexo II, punto 12.1) regulan los sobrantes y faltantes en mercadería ingresada a depósito fiscal. Las diferencias detectadas exceden la tolerancia admitida y configuran un caso a relevar para que la Jefatura disponga el curso a seguir.</p>
+<div class="acta-section-title">DATOS DEL/LOS DENUNCIADO/S:</div>
+<table class="acta-tabla">
+<thead><tr><th style="width:35%">APELLIDOS Y NOMBRES O RAZÓN SOCIAL</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
+<tbody>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+</tbody>
+</table>
 
-<p><strong>ELEMENTOS QUE SE ADJUNTAN:</strong> Manifiesto SIM, planillas de medición y Sobrantes/Faltantes; detalle resultante del ingreso de MANI; conocimientos referidos.</p>
+<div class="acta-section-title">DATOS DEL/LOS TESTIGO/S Y/U OTRO MEDIO DE PRUEBA:</div>
+<table class="acta-tabla">
+<thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
+<tbody>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+</tbody>
+</table>
+
+<div class="acta-ratifica">
+RATIFICA DENUNCIA: SI <span class="ch-box checked" style="margin:0 4px">X</span> NO <span class="ch-box" style="margin:0 4px"></span>
 </div>
 
-<div class="firma-grid">
-<div><div class="linea"><strong>Agente actuante</strong></div><div style="font-size:9pt">Aclaración y legajo</div></div>
-<div><div class="linea"><strong>Jefe / Supervisor</strong></div><div style="font-size:9pt">Aclaración y legajo</div></div>
+<div class="acta-firma-receptor">
+<div class="linea">&nbsp;</div><br>
+<strong>FIRMA Y SELLO AGENTE RECEPTOR</strong><br>
+<span style="font-size:7pt">(NECESARIAMENTE)</span>
+</div>
+
+<div class="acta-denunciantes-box">
+<div class="acta-denunciantes-titulo">AGENCIA DE RECAUDACIÓN Y CONTROL ADUANERO</div>
+<div style="font-size:11pt;font-weight:bold;margin:2px 0">DENUNCIANTE/S</div>
+<div style="font-size:8pt;font-style:italic">(en caso de ratificar denuncia)</div>
+
+<table class="acta-tabla" style="margin-top:0.4rem">
+<thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
+<tbody>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+</tbody>
+</table>
+
+<div style="margin-top:0.4rem;font-size:9pt">
+SOLICITA RESERVA DE IDENTIDAD: SI <span class="ch-box" style="margin:0 4px"></span> NO <span class="ch-box checked" style="margin:0 4px">X</span> <em>(Proceder Conforme)</em><br>
+FIRMA DENUNCIANTE/S:
+</div>
+
+<div class="acta-firma-receptor">
+<div class="linea">&nbsp;</div><br>
+<strong>FIRMA Y SELLO AGENTE RECEPTOR</strong><br>
+<span style="font-size:7pt">(NECESARIAMENTE)</span>
+</div>
+</div>
+
+<div class="acta-om">OM - 2090</div>
+</section>
+
+<!-- ============== PÁGINA 3: OM-2090 (página 2) — uso administrativo ============== -->
+<section class="pagina">
+
+<div class="acta-pagina2-section">
+<div class="head"><span style="width:18px">1.</span> AUTORIDAD ADUANERA RECEPTORA</div>
+<div class="body">
+<div style="display:grid;grid-template-columns:18px 1fr;gap:6px"><span>1.1.</span><div>
+<div style="display:flex;gap:1.5rem;align-items:end">
+<div style="flex:1;border-bottom:1px solid #000;padding:0 4px;font-size:9pt">Buenos Aires,</div>
+<div style="flex:1;border-bottom:1px solid #000;padding:0 4px"></div>
+</div>
+<div style="display:flex;gap:1.5rem;font-size:7pt;color:#4b5563"><div style="flex:1;text-align:center">Lugar</div><div style="flex:1;text-align:center">Fecha</div></div>
+<p style="margin:0.4rem 0">Al SR. JUEZ ADMINISTRATIVO, en los términos del art. 1.082, C.A.<br>Previamente, regístrese.</p>
+<div style="text-align:right;margin-top:1rem"><div style="display:inline-block;border-top:1px solid #000;padding-top:2px;min-width:200px"><strong>FUNCIONARIO RESPONSABLE</strong></div></div>
+</div></div>
+<hr style="margin:0.4rem 0;border:none;border-top:1px solid #000">
+<div style="display:grid;grid-template-columns:18px 1fr;gap:6px"><span>1.2.</span><div>
+<div style="display:flex;gap:1.5rem;align-items:end">
+<div style="flex:1;border-bottom:1px solid #000;padding:0 4px;height:14px"></div>
+<div style="flex:1;border-bottom:1px solid #000;padding:0 4px;height:14px"></div>
+</div>
+<div style="display:flex;gap:1.5rem;font-size:7pt;color:#4b5563"><div style="flex:1;text-align:center">Lugar</div><div style="flex:1;text-align:center">Fecha</div></div>
+<p style="margin:0.4rem 0">PROCÉDASE A INVESTIGAR.</p>
+<div style="text-align:right;margin-top:1rem"><div style="display:inline-block;border-top:1px solid #000;padding-top:2px;min-width:200px"><strong>FUNCIONARIO RESPONSABLE</strong></div></div>
+</div></div>
+</div>
+</div>
+
+<div class="acta-pagina2-section">
+<div class="head" style="justify-content:center">RESULTADO DE LA INVESTIGACIÓN</div>
+<div class="body">
+<div style="display:flex;gap:2rem;font-size:9pt;margin-bottom:0.4rem">
+<div><span class="ch-box"></span> NEGATIVO — ARCHÍVESE</div>
+<div><span class="ch-box"></span> POSITIVO — DAR CURSO SEGÚN 1.1.</div>
+</div>
+<div>OBSERVACIONES:</div>
+<div style="border-bottom:1px solid #000;height:14px;margin:0.2rem 0"></div>
+<div style="border-bottom:1px solid #000;height:14px;margin:0.2rem 0"></div>
+<div style="border-bottom:1px solid #000;height:14px;margin:0.2rem 0"></div>
+<div style="margin-top:0.5rem;font-size:9pt">SE ADOPTARON MEDIDAS PRECAUTORIAS:
+<span class="ch-box" style="margin:0 4px"></span> AFIRMATIVO — DAR CURSO SEGÚN 1.1.
+<span class="ch-box" style="margin:0 4px"></span> NEGATIVO</div>
+<div class="acta-firma-3"><div>Lugar</div><div>Fecha</div><div>P/SECRETARÍA DE CONTROL</div></div>
+</div>
+</div>
+
+<div class="acta-pagina2-section">
+<div class="head"><span style="width:18px">2.</span> INFORMACIÓN DE LA AUTORIDAD DE SUMARIO A POLICÍA ADUANERA</div>
+<div class="body">
+<p>RECAYÓ RESOLUCIÓN/FALLO N° ____________ / __________, QUE SI/NO SE ENCUENTRA FIRME.</p>
+<p>SE DIO SI/NO CUMPLIMIENTO OM-2032.</p>
+<div class="acta-firma-3"><div>Lugar</div><div>Fecha</div><div>P/AUTORIDAD DEL SUMARIO</div></div>
+</div>
+</div>
+
+<div class="acta-pagina2-section">
+<div class="head"><span style="width:18px">3.</span> INFORMACIÓN DEL SERVICIO JURÍDICO A POLICÍA ADUANERA</div>
+<div style="font-size:8pt;font-style:italic;text-align:center;border-bottom:1px solid #000;padding:2px">( EN CASO DE HABERSE INTERPUESTO RECURSO )</div>
+<div class="body">
+<p>TRAMITA CAUSA ____________________________________ POR ANTE ____________________________________</p>
+<p>RECAYÓ SENTENCIA: <span class="ch-box" style="margin:0 4px"></span> CONFIRMA &nbsp; <span class="ch-box" style="margin:0 4px"></span> REVOCA &nbsp; <span class="ch-box" style="margin:0 4px"></span> OTRA (EXPLICAR) ____________</p>
+<p>QUE SI/NO SE ENCUENTRA FIRME.</p>
+<p style="margin-top:0.4rem">TRAMITA CAUSA ____________________________________ POR ANTE ____________________________________</p>
+<p>RECAYÓ SENTENCIA: <span class="ch-box" style="margin:0 4px"></span> CONFIRMA ANTERIOR &nbsp; <span class="ch-box" style="margin:0 4px"></span> REVOCA ANTERIOR &nbsp; <span class="ch-box" style="margin:0 4px"></span> OTRO (EXPLICAR) ____________</p>
+<p style="margin-top:0.4rem">PRESCRIBE ____________________________________</p>
+<div class="acta-firma-3"><div>Lugar</div><div>Fecha</div><div>INFORMANTE</div></div>
+</div>
 </div>
 </section>
 
@@ -4484,6 +4655,31 @@ ${fueraTol.length ? `
                 <strong>AGENCIA DE RECAUDACIÓN Y CONTROL ADUANERO</strong><br>
                 Dirección General de Aduanas<br>
                 Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA — Campana
+            </div>
+        </div>`;
+    }
+
+    function actaHeaderHtml(numeroNota, anioNota) {
+        // Header del Acta de Denuncia OM-2090: logo a la izquierda + recuadro código a la derecha
+        const logoUrl = new URL("img/logo-arca.svg", window.location.href).href;
+        return `<div class="acta-header">
+            <div>
+                <div class="acta-logo-arca"><img src="${logoUrl}" alt="ARCA"></div>
+                <div class="acta-logo-leyenda">
+                    AGENCIA DE RECAUDACIÓN<br>
+                    Y CONTROL ADUANERO<br>
+                    <span style="font-weight:normal">Dirección General de Aduanas</span>
+                </div>
+            </div>
+            <div class="acta-codigo-box">
+                <div class="acta-codigo-box-row acta-codigo-box-header">
+                    <div>CÓDIGO ORIGEN</div>
+                    <div>NÚMERO Y AÑO</div>
+                </div>
+                <div class="acta-codigo-box-row">
+                    <div class="acta-codigo-box-data">DF-TAGSA</div>
+                    <div class="acta-codigo-box-data">${numeroNota || ""} / ${anioNota || ""}</div>
+                </div>
             </div>
         </div>`;
     }

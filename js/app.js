@@ -3886,17 +3886,17 @@ async function initApp() {
 
     function sbfaFilaHTML(f, i) {
         return `<tr data-i="${i}">
-            <td class="col-pre"><input data-k="solPart" value="${f.solPart || ""}"></td>
-            <td class="col-pre"><input data-k="cto" value="${f.cto || ""}"></td>
+            <td class="col-pre"><input data-k="solPart" value="${f.solPart || ""}" placeholder="1883-1884"></td>
+            <td class="col-pre"><input data-k="cto" value="${f.cto || ""}" placeholder="OTUS 35-A-B"></td>
+            <td class="col-pre"><input data-k="mercaderia" value="${f.mercaderia || ""}" placeholder="ISOPAR L"></td>
+            <td class="col-pre"><input data-k="receptor" value="${f.receptor || ""}" placeholder="BRE-PBB"></td>
             <td class="col-pre col-num"><input data-k="kgDeclarados" type="number" step="1" value="${f.kgDeclarados ?? ""}"></td>
+            <td class="col-pre"><input data-k="tkDestino" value="${f.tkDestino || ""}" placeholder="61-67"></td>
             <td class="col-post"><input data-k="sbfa" value="${f.sbfa || ""}"></td>
-            <td class="col-post"><input data-k="tkDestino" value="${f.tkDestino || ""}"></td>
             <td class="col-post"><input data-k="medic" value="${f.medic || ""}"></td>
             <td class="col-post col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
             <td class="dif-kg" data-difkg>0</td>
             <td class="dif-pct" data-difpct>0,000%</td>
-            <td class="col-pre"><input data-k="mercaderia" value="${f.mercaderia || ""}"></td>
-            <td class="col-pre"><input data-k="receptor" value="${f.receptor || ""}"></td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
     }

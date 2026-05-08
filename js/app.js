@@ -3862,7 +3862,7 @@ async function initApp() {
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
         if (!items.length) {
-            cont.innerHTML = `<p style="color:var(--gray-500)">No hay descargas registradas. Tocá <strong>+ Nueva descarga</strong> para empezar.</p>`;
+            cont.innerHTML = `<p style="color:var(--gray-500)">No hay descargas registradas. Para crear una, andá a la pestaña <strong>Barcos</strong> y tocá <strong>📋 Cargar SB/FA</strong> en el barco que corresponda.</p>`;
             return;
         }
         cont.innerHTML = items.map(d => {
@@ -4858,7 +4858,6 @@ ${fueraTol.length ? `
         // Re-renderizar barcos para que cada card muestre el conteo de descargas SB/FA del buque
         if (typeof renderBarcos === "function") renderBarcos();
 
-        document.getElementById("btnSbfaNueva").addEventListener("click", () => abrirSbfaEditor(null));
         document.getElementById("btnSbfaCancelar").addEventListener("click", cerrarSbfaEditor);
         document.getElementById("btnSbfaGuardar").addEventListener("click", guardarSbfaDescarga);
         document.getElementById("btnSbfaEliminar").addEventListener("click", eliminarSbfaDescarga);

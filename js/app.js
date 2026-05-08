@@ -4197,12 +4197,19 @@ async function initApp() {
 
     async function eliminarSbfaDescarga() {
         if (!sbfaEditandoId) { cerrarSbfaEditor(); return; }
-        if (!confirm("¿Eliminar esta descarga? No se puede deshacer.")) return;
+        const pass = prompt("Para eliminar una descarga SB/FA, ingresá la contraseña del usuario JULIAN:");
+        if (pass === null) return; // canceló
+        if (pass !== USUARIOS.julian) {
+            alert("Contraseña incorrecta. La descarga NO se eliminó.");
+            return;
+        }
+        if (!confirm("¿Confirmás la eliminación? No se puede deshacer.")) return;
         sbfaConfig.descargas = sbfaConfig.descargas.filter(x => x.id !== sbfaEditandoId);
         if (await guardarSbfaCfg()) {
             cerrarSbfaEditor();
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();
+            mostrarAlerta("Descarga eliminada.", "info");
         }
     }
 

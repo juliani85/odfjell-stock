@@ -876,6 +876,40 @@ tbody tr:hover { background: var(--gray-50); }
     cursor: help;
 }
 
+/* Label compacto dentro de la barra de filtros — evita duplicar style inline */
+.filtro-label { font-size: 0.9rem; color: var(--gray-500); }
+
+/* Bloque de configuración colapsable — bajo perfil, no compite con el contenido principal */
+.config-collapsable {
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--gray-50);
+}
+.config-collapsable summary {
+    cursor: pointer;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    font-weight: 600;
+    list-style: none;
+    user-select: none;
+}
+.config-collapsable summary::-webkit-details-marker { display: none; }
+.config-collapsable summary::before {
+    content: "▸ ";
+    display: inline-block;
+    transition: transform 0.15s;
+    color: var(--gray-500);
+}
+.config-collapsable[open] summary::before { transform: rotate(90deg); }
+.config-collapsable summary:hover { color: var(--primary); }
+.config-collapsable-body { padding: 0.5rem 0.9rem 0.9rem; border-top: 1px solid var(--gray-200); }
+.config-bloque + .config-bloque { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200); }
+.config-bloque h3 { font-size: 0.9rem; font-weight: 600; color: var(--gray-700); margin: 0 0 0.5rem; }
+.config-help { font-size: 0.8rem; color: var(--gray-500); margin: 0 0 0.6rem; }
+.config-row { display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap; }
+
 /* SB/FA */
 .sbfa-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; table-layout: fixed; }
 .sbfa-table th, .sbfa-table td { padding: 0.3rem 0.3rem; border: 1px solid var(--gray-200); vertical-align: middle; }

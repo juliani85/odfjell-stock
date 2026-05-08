@@ -256,25 +256,29 @@
 
         <!-- STOCK POR TANQUE -->
         <section id="stock" class="tab-content">
-            <div class="stock-header">
-                <h2>Stock por Tanque y Despacho</h2>
-                <input type="text" id="filtroStock" placeholder="Buscar tanque, producto o cliente...">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Stock por Tanque y Despacho</h2>
+                    <div class="filtros">
+                        <input type="text" id="filtroStock" placeholder="Buscar tanque, producto o cliente...">
+                    </div>
+                </div>
+                <div class="resumen-cards">
+                    <div class="resumen-card">
+                        <span class="resumen-numero" id="totalTanques">0</span>
+                        <span class="resumen-label">Tanques con producto</span>
+                    </div>
+                    <div class="resumen-card ocupados">
+                        <span class="resumen-numero" id="totalDespachos">0</span>
+                        <span class="resumen-label">Despachos activos</span>
+                    </div>
+                    <div class="resumen-card kilos">
+                        <span class="resumen-numero" id="totalKilos">0</span>
+                        <span class="resumen-label">Total Kg</span>
+                    </div>
+                </div>
+                <div id="stockCards"></div>
             </div>
-            <div class="resumen-cards">
-                <div class="resumen-card">
-                    <span class="resumen-numero" id="totalTanques">0</span>
-                    <span class="resumen-label">Tanques con producto</span>
-                </div>
-                <div class="resumen-card ocupados">
-                    <span class="resumen-numero" id="totalDespachos">0</span>
-                    <span class="resumen-label">Despachos activos</span>
-                </div>
-                <div class="resumen-card kilos">
-                    <span class="resumen-numero" id="totalKilos">0</span>
-                    <span class="resumen-label">Total Kg</span>
-                </div>
-            </div>
-            <div id="stockCards"></div>
         </section>
 
         <!-- HISTORIAL (contiene sub-pestañas) -->
@@ -287,86 +291,16 @@
 
             <!-- SUB: HISTORIAL DE SALIDAS -->
             <div id="histSalidas" class="sub-tab-content active">
-                <div class="stock-header">
-                    <h2>Historial de Salidas</h2>
-                    <div class="filtros">
-                        <input type="text" id="filtroHistorial" placeholder="Buscar...">
-                        <button class="btn btn-secondary" id="btnExportar">Exportar CSV</button>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table id="tablaHistorial">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Tipo</th>
-                                <th>Remito</th>
-                                <th>Tanque</th>
-                                <th>Producto</th>
-                                <th>Despacho</th>
-                                <th>Kilos</th>
-                                <th>Usuario</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SUB: HISTORIAL POR TANQUE -->
-            <div id="histPorTanque" class="sub-tab-content">
-                <div id="histTanqueListaView">
+                <div class="form-card">
                     <div class="stock-header">
-                        <h2>Historial por Tanque</h2>
-                        <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
-                    </div>
-                    <div id="histTanqueCards"></div>
-                </div>
-                <div id="histTanqueDetalleView" class="hidden">
-                    <div class="stock-header">
-                        <button class="btn btn-secondary" id="btnVolverHistTanque">← Volver</button>
-                        <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                        <h2>Historial de Salidas</h2>
+                        <div class="filtros">
+                            <input type="text" id="filtroHistorial" placeholder="Buscar...">
+                            <button class="btn btn-secondary btn-sm" id="btnExportar">Exportar CSV</button>
+                        </div>
                     </div>
                     <div class="table-container">
-                        <table id="tablaHistTanque">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Hora</th>
-                                    <th>Tipo</th>
-                                    <th>Remito</th>
-                                    <th>Producto</th>
-                                    <th>Despacho</th>
-                                    <th>Kilos</th>
-                                    <th>Usuario</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUB: HISTORIAL POR DESPACHO -->
-            <div id="histPorDespacho" class="sub-tab-content">
-                <div id="histDespachoListaView">
-                    <div class="stock-header">
-                        <h2>Historial por Despacho</h2>
-                        <input type="text" id="filtroHistDespacho" placeholder="Buscar despacho, producto o cliente...">
-                    </div>
-                    <div id="histDespachoCards"></div>
-                </div>
-                <div id="histDespachoDetalleView" class="hidden">
-                    <div class="stock-header">
-                        <button class="btn btn-secondary" id="btnVolverHistDespacho">← Volver</button>
-                        <h2 id="histDespachoDetalleTitulo">Movimientos del Despacho</h2>
-                    </div>
-                    <div class="table-container">
-                        <table id="tablaHistDespacho">
+                        <table id="tablaHistorial">
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
@@ -375,12 +309,96 @@
                                     <th>Remito</th>
                                     <th>Tanque</th>
                                     <th>Producto</th>
+                                    <th>Despacho</th>
                                     <th>Kilos</th>
                                     <th>Usuario</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>
+                            </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR TANQUE -->
+            <div id="histPorTanque" class="sub-tab-content">
+                <div id="histTanqueListaView">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <h2>Historial por Tanque</h2>
+                            <div class="filtros">
+                                <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
+                            </div>
+                        </div>
+                        <div id="histTanqueCards"></div>
+                    </div>
+                </div>
+                <div id="histTanqueDetalleView" class="hidden">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <button class="btn btn-secondary btn-sm" id="btnVolverHistTanque">← Volver</button>
+                            <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                        </div>
+                        <div class="table-container">
+                            <table id="tablaHistTanque">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Remito</th>
+                                        <th>Producto</th>
+                                        <th>Despacho</th>
+                                        <th>Kilos</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR DESPACHO -->
+            <div id="histPorDespacho" class="sub-tab-content">
+                <div id="histDespachoListaView">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <h2>Historial por Despacho</h2>
+                            <div class="filtros">
+                                <input type="text" id="filtroHistDespacho" placeholder="Buscar despacho, producto o cliente...">
+                            </div>
+                        </div>
+                        <div id="histDespachoCards"></div>
+                    </div>
+                </div>
+                <div id="histDespachoDetalleView" class="hidden">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <button class="btn btn-secondary btn-sm" id="btnVolverHistDespacho">← Volver</button>
+                            <h2 id="histDespachoDetalleTitulo">Movimientos del Despacho</h2>
+                        </div>
+                        <div class="table-container">
+                            <table id="tablaHistDespacho">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Remito</th>
+                                        <th>Tanque</th>
+                                        <th>Producto</th>
+                                        <th>Kilos</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -399,9 +417,9 @@
                     <div class="stock-header">
                         <h2>Reporte de Salidas</h2>
                         <div class="filtros">
-                            <label for="reporteFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
+                            <label for="reporteFechaInput" class="filtro-label">Fecha:</label>
                             <input type="date" id="reporteFechaInput">
-                            <button class="btn btn-secondary" id="btnImprimirReporte">Imprimir Reporte</button>
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirReporte">Imprimir Reporte</button>
                         </div>
                     </div>
                     <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
@@ -433,12 +451,12 @@
                     <div class="stock-header">
                         <h2>Reporte de Stock Mensual</h2>
                         <div class="filtros">
-                            <label for="repMenFecha" style="font-size:0.9rem;color:var(--gray-500)">Corte:</label>
+                            <label for="repMenFecha" class="filtro-label">Corte:</label>
                             <input type="date" id="repMenFecha">
                             <input type="time" id="repMenHora" value="19:00" step="60">
                             <button class="btn btn-secondary btn-sm" id="btnRepMenAhora" type="button">Ahora</button>
                             <input type="text" id="filtroRepMensual" placeholder="Buscar tanque, producto o cliente...">
-                            <button class="btn btn-secondary" id="btnImprimirMensual">Imprimir</button>
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirMensual">Imprimir</button>
                         </div>
                     </div>
                     <div class="resumen-cards">
@@ -465,10 +483,10 @@
                 <div class="stock-header">
                     <h2>Plan de Cargas</h2>
                     <div class="filtros">
-                        <label for="planFechaInput" style="font-size:0.9rem;color:var(--gray-500)">Fecha:</label>
+                        <label for="planFechaInput" class="filtro-label">Fecha:</label>
                         <input type="date" id="planFechaInput">
-                        <button class="btn btn-primary" id="btnPlanSincronizar">📧 Sincronizar con Gmail</button>
-                        <button class="btn btn-secondary" id="btnPlanImprimir">Imprimir</button>
+                        <button class="btn btn-primary btn-sm" id="btnPlanSincronizar">📧 Sincronizar con Gmail</button>
+                        <button class="btn btn-secondary btn-sm" id="btnPlanImprimir">Imprimir</button>
                     </div>
                 </div>
                 <div id="planEstado" class="alerta hidden" style="margin-bottom:1rem"></div>
@@ -510,29 +528,34 @@
         <!-- BARCOS -->
         <section id="barcos" class="tab-content">
             <div class="form-card">
-                <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1rem;border:1px solid var(--gray-200)">
-                    <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-700)">Agregar barco al seguimiento</h3>
-                    <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap">
-                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
-                            <label for="barcoNombre">Nombre del barco</label>
-                            <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
+                <details class="config-collapsable">
+                    <summary>⚙ Configurar barcos y notificaciones</summary>
+                    <div class="config-collapsable-body">
+                        <div class="config-bloque">
+                            <h3>Agregar barco al seguimiento</h3>
+                            <div class="config-row">
+                                <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                                    <label for="barcoNombre">Nombre del barco</label>
+                                    <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
+                            </div>
                         </div>
-                        <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
-                    </div>
-                </div>
 
-                <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1.25rem;border:1px solid var(--gray-200)">
-                    <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.5rem;color:var(--gray-700)">📧 Avisos por mail al arribar un barco</h3>
-                    <p style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.75rem">Cuando el tracking detecte que un barco arribó a Campana, se manda un mail a estas casillas.</p>
-                    <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap">
-                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
-                            <label for="mailArribo">Casilla de mail</label>
-                            <input type="email" id="mailArribo" placeholder="ejemplo@dominio.com">
+                        <div class="config-bloque">
+                            <h3>📧 Avisos por mail al arribar un barco</h3>
+                            <p class="config-help">Cuando el tracking detecte que un barco arribó a Campana, se manda mail a estas casillas.</p>
+                            <div class="config-row">
+                                <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                                    <label for="mailArribo">Casilla de mail</label>
+                                    <input type="email" id="mailArribo" placeholder="ejemplo@dominio.com">
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btnAgregarMailArribo" type="button">Agregar</button>
+                            </div>
+                            <div id="mailsArriboLista" style="margin-top:0.75rem"></div>
                         </div>
-                        <button class="btn btn-primary btn-sm" id="btnAgregarMailArribo" type="button">Agregar</button>
                     </div>
-                    <div id="mailsArriboLista" style="margin-top:0.75rem"></div>
-                </div>
+                </details>
 
                 <input type="hidden" id="barcosUmbral" value="24">
                 <div id="barcosCards"></div>

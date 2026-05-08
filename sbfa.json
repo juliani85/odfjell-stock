@@ -1,3 +1,51 @@
 {
-  "descargas": []
+  "descargas": [
+    {
+      "id": 1778258489124,
+      "buque": "BOW CAROLINE",
+      "manifiesto": "555",
+      "agencia": "dulce",
+      "cuit": "",
+      "fecha": "2026-05-08",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "1883",
+          "cto": "451",
+          "mercaderia": "isopar",
+          "receptor": "bre",
+          "kgDeclarados": 458842,
+          "tkDestino": "61-47",
+          "sbfa": "2",
+          "medic": "202",
+          "kgResultantes": 520000
+        },
+        {
+          "solPart": "58",
+          "cto": "1233",
+          "mercaderia": "acetato",
+          "receptor": "pbb",
+          "kgDeclarados": 125000,
+          "tkDestino": "45",
+          "sbfa": "3",
+          "medic": "203",
+          "kgResultantes": 150000
+        },
+        {
+          "solPart": "45",
+          "cto": "122",
+          "mercaderia": "acido",
+          "receptor": "inmobal",
+          "kgDeclarados": 50000,
+          "tkDestino": "20",
+          "sbfa": "4",
+          "medic": "203",
+          "kgResultantes": 49000
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T16:41:29.124Z"
+    }
+  ]
 }

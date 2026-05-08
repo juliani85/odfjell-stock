@@ -5,7 +5,7 @@
       "buque": "BOW CAROLINE",
       "manifiesto": "5562",
       "agencia": "dulce",
-      "cuit": "",
+      "cuit": "4455",
       "fecha": "2026-05-08",
       "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
       "filas": [
@@ -23,7 +23,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T16:25:47.629Z"
+      "actualizadoTs": "2026-05-08T16:25:56.481Z"
     }
   ]
 }

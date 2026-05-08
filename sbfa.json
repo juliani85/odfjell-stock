@@ -1,3 +1,117 @@
 {
-  "descargas": []
+  "descargas": [
+    {
+      "id": 1778259966032,
+      "buque": "BOW CAROLINE",
+      "manifiesto": "0",
+      "agencia": "BYM",
+      "cuit": "3071631346",
+      "fecha": "2026-05-09",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "870",
+          "cto": "105",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "AUTOVENTURES",
+          "kgDeclarados": 81000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "871",
+          "cto": "126",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "CICLOQUIMICA",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "872",
+          "cto": "123-124-125",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FARLOC",
+          "kgDeclarados": 81000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "873",
+          "cto": "127",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "LARING",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "874",
+          "cto": "113-128-129-130-131",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FEBEL",
+          "kgDeclarados": 135000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "875",
+          "cto": "118-119-120-121-122",
+          "mercaderia": "MONOETIGLENGLICOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 135000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "876",
+          "cto": "114",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "CALLEGARI",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "877",
+          "cto": "104-106-111-112-115-116-117",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "TRUE",
+          "kgDeclarados": 347000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "878",
+          "cto": "107-108-109-110-132",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "TOTAL",
+          "kgDeclarados": 240000,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T17:06:06.032Z"
+    }
+  ]
 }

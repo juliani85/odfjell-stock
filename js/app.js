@@ -3605,14 +3605,15 @@ async function initApp() {
                 <div style="margin-top:0.5rem;font-size:0.95rem">${estadoTxt}</div>
                 ${detalles.length ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--gray-500)">${detalles.join(" · ")}</div>` : ""}
                 ${sbfaInfo}
-                <div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap">
+                <div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center">
                     <button class="btn btn-primary btn-sm" data-sbfa-buque="${b.nombre}" type="button">📋 Cargar SB/FA</button>
                     ${dx.length ? `<button class="btn btn-secondary btn-sm" data-sbfa-ver="${b.nombre}" type="button">Ver descargas (${dx.length})</button>` : ""}
+                    <button class="btn btn-sm" data-quitar-barco="${b.imo || b.nombre}" type="button" title="Quitar del seguimiento" style="margin-left:auto;background:none;color:#b91c1c;border:1px solid #fca5a5">✕ Quitar</button>
                 </div>
             </div>`;
         }).join("");
 
-        c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno abajo.</p>`;
+        c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno arriba.</p>`;
 
         // Eventos de los botones SB/FA (después de setear innerHTML)
         c.querySelectorAll("[data-sbfa-buque]").forEach(btn => {
@@ -3625,6 +3626,12 @@ async function initApp() {
             btn.addEventListener("click", e => {
                 e.stopPropagation();
                 verDescargasSbfaDeBarco(btn.dataset.sbfaVer);
+            });
+        });
+        c.querySelectorAll("[data-quitar-barco]").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.stopPropagation();
+                quitarBarco(btn.dataset.quitarBarco);
             });
         });
 
@@ -3720,11 +3727,6 @@ async function initApp() {
         await Promise.all([cargarBarcosCfg(), cargarTracking()]);
         renderBarcos();
 
-        document.getElementById("barcosUmbral").addEventListener("change", renderBarcos);
-        document.getElementById("btnBarcosRefresh").addEventListener("click", async () => {
-            await cargarTracking();
-            renderBarcos();
-        });
         document.getElementById("btnAgregarBarco").addEventListener("click", agregarBarco);
 
         // Auto-refresh tracking cada 5 min mientras la app está abierta

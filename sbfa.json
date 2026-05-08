@@ -323,7 +323,32 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T19:22:23.141Z"
+      "actualizadoTs": "2026-05-08T19:22:23.140Z"
+    },
+    {
+      "id": 1778268740925,
+      "buque": "BOW CECIL",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-05-08",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "1",
+          "cto": "522",
+          "mercaderia": "FSFGS",
+          "receptor": "FSFF",
+          "kgDeclarados": 52000,
+          "tkDestino": "15",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T19:32:20.925Z"
     }
   ]
 }

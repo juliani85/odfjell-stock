@@ -1,3 +1,29 @@
 {
-  "descargas": []
+  "descargas": [
+    {
+      "id": 1778257542335,
+      "buque": "BOW CAROLINE",
+      "manifiesto": "5562",
+      "agencia": "dulce",
+      "cuit": "",
+      "fecha": "2026-05-08",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "3434",
+          "cto": "66hg",
+          "mercaderia": "isoparl",
+          "receptor": "pbb",
+          "kgDeclarados": 458000,
+          "tkDestino": "61-89",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T16:25:42.335Z"
+    }
+  ]
 }

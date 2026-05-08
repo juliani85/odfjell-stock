@@ -4161,7 +4161,7 @@ async function initApp() {
                 const idx = Number(b.dataset.borrar);
                 const filas = sbfaLeerFilas();
                 filas.splice(idx, 1);
-                renderSbfaTablaFilas(filas.length ? filas : [{}]);
+                renderSbfaTablaFilas(filas);
             });
         });
     }
@@ -4295,7 +4295,7 @@ async function initApp() {
                 const idx = Number(b.dataset.borrar);
                 const items = sbfaLeerDap();
                 items.splice(idx, 1);
-                renderSbfaTablaDap(items.length ? items : [{}]);
+                renderSbfaTablaDap(items);
             });
         });
     }

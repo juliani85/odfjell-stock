@@ -2112,8 +2112,7 @@ async function initApp() {
                     throw new Error(`GitHub ${res.status}: ${txt}`);
                 }
                 estado.style.color = "#16a34a";
-                estado.innerHTML = `✓ Reporte del ${fecha} disparado. Se envía en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
-                mostrarModalInfo(`Reporte del ${fecha} disparado. Se enviará a ${lista.length} destinatario(s) en ~30 segundos.`, "Reporte enviado");
+                estado.innerHTML = `✓ Reporte del ${fecha} disparado. Se envía a ${lista.length} destinatario(s) en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
             } catch (e) {
                 estado.style.color = "#b91c1c";
                 estado.textContent = `Error: ${e.message}`;

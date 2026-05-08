@@ -118,7 +118,7 @@
       "buque": "BOW CARDINAL",
       "manifiesto": "2",
       "agencia": "BYM",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-05-11",
       "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
       "filas": [
@@ -130,8 +130,8 @@
           "kgDeclarados": 1128817,
           "tkDestino": "27-28-29-31-32",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "4444",
+          "kgResultantes": 1500000
         },
         {
           "solPart": "864",
@@ -323,7 +323,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T19:22:23.140Z"
+      "actualizadoTs": "2026-05-08T20:05:48.627Z"
     }
   ]
 }

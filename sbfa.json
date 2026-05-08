@@ -52,7 +52,7 @@
       "buque": "BOW CAROLINE",
       "manifiesto": "45",
       "agencia": "dulce",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-05-08",
       "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
       "filas": [
@@ -63,14 +63,14 @@
           "receptor": "bre - pbb",
           "kgDeclarados": 500000,
           "tkDestino": "50-40",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1",
+          "medic": "200",
+          "kgResultantes": 495000
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T16:44:36.687Z"
+      "actualizadoTs": "2026-05-08T16:45:17.972Z"
     }
   ]
 }

@@ -926,11 +926,11 @@ tbody tr:hover { background: var(--gray-50); }
 
 /* Anchos específicos por columna — proporcionados con table-layout:fixed
    para que toda la tabla entre sin scroll horizontal */
-.sbfa-table .col-part      { width: 3%; padding-left: 1px; padding-right: 1px; }
-.sbfa-table .col-part input { padding: 0.25rem 1px; text-align: center; }
+.sbfa-table .col-part      { width: 5%; padding-left: 2px; padding-right: 2px; }
+.sbfa-table .col-part input { padding: 0.25rem 2px; text-align: center; }
 .sbfa-table .col-cto       { width: 7%; }
 .sbfa-table .col-producto  { width: 16%; }
-.sbfa-table .col-empresa   { width: 20%; }
+.sbfa-table .col-empresa   { width: 18%; }
 .sbfa-table .col-kg-pre    { width: 8%; }
 .sbfa-table .col-tk        { width: 6%; }
 .sbfa-table .col-sbfa      { width: 9%; }

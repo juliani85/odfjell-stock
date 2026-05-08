@@ -1294,6 +1294,21 @@ async function initApp() {
     });
 
     // --- TABS ---
+    // Si es vista mobile (≤768px) y la pestaña activa está oculta por CSS,
+    // cambiar a la primera pestaña visible (default Cargas)
+    function ajustarTabsMobile() {
+        if (window.innerWidth > 768) return;
+        const activa = document.querySelector(".tab.active");
+        if (activa && getComputedStyle(activa).display === "none") {
+            const primera = Array.from(document.querySelectorAll(".tab")).find(t =>
+                getComputedStyle(t).display !== "none" && !t.classList.contains("hidden")
+            );
+            if (primera) primera.click();
+        }
+    }
+    setTimeout(ajustarTabsMobile, 50);
+    window.addEventListener("resize", ajustarTabsMobile);
+
     document.querySelectorAll(".tab").forEach(tab => {
         tab.addEventListener("click", () => {
             document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));

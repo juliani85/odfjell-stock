@@ -886,3 +886,33 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-card-meta { color: var(--gray-500); font-size: 0.85rem; }
 .sbfa-card-totales { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem; }
 .sbfa-card-totales span strong { color: var(--gray-700); }
+
+/* ===== Modo móvil: vista de solo consulta (≤768px) ===== */
+@media (max-width: 768px) {
+    /* Ocultar pestañas de carga: solo dejar las de consulta */
+    .tab[data-tab="salida"],
+    .tab[data-tab="ingreso"],
+    .tab[data-tab="transferencia"],
+    .tab[data-tab="historial"],
+    .tab[data-tab="sbfa"] {
+        display: none !important;
+    }
+    /* Las que quedan: Cargas, Stock, Reportes, Barcos */
+    .tabs { gap: 0.15rem; }
+    .tab { font-size: 0.85rem; padding: 0.7rem 0.4rem; }
+
+    /* Tablas grandes con scroll horizontal pero sin romper el layout */
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Cards de barcos: botones más cómodos */
+    .barco-card .btn { min-height: 44px; }
+
+    /* Stock por tanque: cards apilados ya por defecto */
+
+    /* Filtros y headers de sección */
+    .filtros { flex-wrap: wrap; gap: 0.4rem; }
+    .filtros input, .filtros select { flex: 1 1 100%; }
+
+    /* Plan de cargas: ya tiene su propia vista compacta — asegurarme que la tabla scroll */
+    #tablaPlan { font-size: 0.8rem; }
+}

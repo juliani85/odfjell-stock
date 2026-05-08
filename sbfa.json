@@ -46,6 +46,31 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-05-08T16:41:29.124Z"
+    },
+    {
+      "id": 1778258676686,
+      "buque": "BOW CAROLINE",
+      "manifiesto": "45",
+      "agencia": "dulce",
+      "cuit": "",
+      "fecha": "2026-05-08",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "45",
+          "cto": "3",
+          "mercaderia": "isopar",
+          "receptor": "bre - pbb",
+          "kgDeclarados": 500000,
+          "tkDestino": "50-40",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T16:44:36.687Z"
     }
   ]
 }

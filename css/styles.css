@@ -987,18 +987,32 @@ tbody tr:hover { background: var(--gray-50); }
     #repSupervisor .form-group { width: 100%; }
     #repSupervisor .stock-header { flex-direction: column; align-items: stretch; gap: 0.4rem; }
 
-    /* Vista previa del reporte: scroll horizontal para que las tablas no
-       desborden ni se aplasten en pantalla chica */
+    /* Vista previa del reporte: cada tabla tiene su propio wrapper con
+       scroll horizontal (.rep-tabla-wrap) para no romper el ancho de la
+       pantalla en mobile */
     #repSupVistaPrevia {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        overflow-x: hidden;
         font-size: 12px;
+        box-sizing: border-box;
     }
-    #repSupVistaPrevia table {
-        min-width: 560px; /* fuerza mínimo legible; el contenedor scrollea */
+    #repSupVistaPrevia .rep-tabla-wrap {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+    }
+    #repSupVistaPrevia .rep-tabla-wrap table {
+        min-width: 560px; /* fuerza mínimo legible; el wrapper scrollea */
+    }
+    /* Cards de barco (cada div con border-radius dentro de la vista previa)
+       no debe expandirse más allá del viewport */
+    #repSupVistaPrevia > div > div {
+        max-width: 100%;
+        box-sizing: border-box;
     }
     #repSupVistaPrevia h2,
     #repSupVistaPrevia h3,
+    #repSupVistaPrevia h4,
     #repSupVistaPrevia p {
         max-width: 100%;
         word-wrap: break-word;

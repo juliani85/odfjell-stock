@@ -1973,6 +1973,7 @@ async function initApp() {
                     }).join("");
                     const tablaPart = filas.length ? `
                         <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos por Solicitud Particular (${filas.length})</h4>
+                        <div class="rep-tabla-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%">
                         <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                             <thead style="background:#e5e7eb"><tr>
                                 <th style="${tdStyle};text-align:left">Part. N°</th>
@@ -1983,7 +1984,8 @@ async function initApp() {
                                 <th style="${tdStyle};text-align:left">Tk.</th>
                             </tr></thead>
                             <tbody>${rowsPart}</tbody>
-                        </table>` : `<p style='color:#6b7280;font-style:italic'>Sin solicitudes particulares cargadas.</p>`;
+                        </table>
+                        </div>` : `<p style='color:#6b7280;font-style:italic'>Sin solicitudes particulares cargadas.</p>`;
 
                     const rowsDap = dap.map(x => {
                         const docKg = Number(x.cantDoctada) || 0;
@@ -1995,6 +1997,7 @@ async function initApp() {
                     }).join("");
                     const tablaDap = dap.length ? `
                         <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px;color:#111">Conocimientos DAP (${dap.length})</h4>
+                        <div class="rep-tabla-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%">
                         <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                             <thead style="background:#e5e7eb"><tr>
                                 <th style="${tdStyle};text-align:left">Documento Aduanero</th>
@@ -2002,7 +2005,8 @@ async function initApp() {
                                 <th style="${tdR}">Cant. Doctada</th>
                             </tr></thead>
                             <tbody>${rowsDap}</tbody>
-                        </table>` : "";
+                        </table>
+                        </div>` : "";
 
                     const imoTxt = b.imo ? `IMO ${b.imo}` : "";
                     bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
@@ -2039,6 +2043,7 @@ async function initApp() {
                 </tr>`;
             }).join("");
             planHtml = `<p style="margin:0.3rem 0">Total: <strong>${planDia.length}</strong> cargas · Cumplidas: <strong style="color:#16a34a">${cump}</strong> · Pendientes: <strong style="color:#d97706">${pend}</strong></p>
+                <div class="rep-tabla-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%">
                 <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
                     <thead style="background:#e5e7eb"><tr>
                         <th style="padding:4px 6px;border:1px solid #d1d5db;width:30px"></th>
@@ -2051,7 +2056,8 @@ async function initApp() {
                         <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Obs.</th>
                     </tr></thead>
                     <tbody>${rows}</tbody>
-                </table>`;
+                </table>
+                </div>`;
         }
 
         return `<div style="font-family:Arial,sans-serif;font-size:13px;color:#111">

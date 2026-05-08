@@ -3947,6 +3947,22 @@ async function initApp() {
         if (_sbfaAutoSaveTimer) { clearInterval(_sbfaAutoSaveTimer); _sbfaAutoSaveTimer = null; }
     }
 
+    // Compara dos descargas SOLO por su contenido editable (ignora id, ts, anulada, etc.)
+    function sbfaDescargasIguales(a, b) {
+        if (!a || !b) return !a && !b;
+        const norm = (d) => JSON.stringify({
+            buque: (d.buque || "").trim().toUpperCase(),
+            manifiesto: (d.manifiesto || "").trim(),
+            agencia: (d.agencia || "").trim(),
+            cuit: (d.cuit || "").trim(),
+            fecha: d.fecha || "",
+            notas: (d.notas || "").trim(),
+            filas: (d.filas || []).filter(f => Object.values(f).some(v => v !== "" && v !== null && v !== undefined)),
+            dap: (d.dap || []).filter(x => Object.values(x).some(v => v !== "" && v !== null && v !== undefined)),
+        });
+        return norm(a) === norm(b);
+    }
+
     function abrirSbfaEditor(id) {
         const editor = document.getElementById("sbfaEditor");
         const eliminarBtn = document.getElementById("btnSbfaEliminar");
@@ -3981,12 +3997,32 @@ async function initApp() {
             eliminarBtn.style.display = "";
         }
 
-        // Recuperar borrador si existe y es más nuevo que la versión guardada
+        // Recuperar borrador SI Y SOLO SI:
+        //  1) existe en localStorage
+        //  2) su contenido es DIFERENTE al de la descarga guardada (descarte de borradores idénticos)
+        //  3) su _ts es posterior al actualizadoTs de la descarga
         const borrador = sbfaLeerBorrador(sbfaEditandoId);
-        if (borrador && (!sbfaEditandoId ||
-            (sbfaEditandoId && (sbfaConfig.descargas.find(x => x.id === sbfaEditandoId)?.actualizadoTs || "") < new Date(borrador._ts).toISOString()))) {
+        const guardada = sbfaEditandoId
+            ? sbfaConfig.descargas.find(x => x.id === sbfaEditandoId) || null
+            : null;
+        const borradorDistinto = borrador && !sbfaDescargasIguales(borrador, guardada);
+        const borradorPosterior = borrador && (
+            !guardada || !guardada.actualizadoTs ||
+            new Date(borrador._ts).getTime() > new Date(guardada.actualizadoTs).getTime()
+        );
+
+        if (borrador && borradorDistinto && borradorPosterior) {
             const fechaTxt = new Date(borrador._ts).toLocaleString("es-AR");
-            if (confirm(`Hay un borrador sin guardar de esta descarga (${fechaTxt}). ¿Lo recuperás?`)) {
+            // Detalle de qué cambia: contar filas pre/post completas en cada versión
+            const contar = (d) => (d?.filas || []).filter(f => Object.values(f || {}).some(v => v !== "" && v !== null && v !== undefined)).length;
+            const filasBorrador = contar(borrador);
+            const filasGuardada = contar(guardada);
+            const msg = `Hay un borrador sin guardar de esta descarga del ${fechaTxt}.\n\n` +
+                `Filas con datos:\n` +
+                `   • Versión guardada: ${filasGuardada}\n` +
+                `   • Borrador: ${filasBorrador}\n\n` +
+                `¿Recuperás el borrador? (Cancelar = mantener la versión guardada)`;
+            if (confirm(msg)) {
                 document.getElementById("sbfaBuque").value = borrador.buque || "";
                 document.getElementById("sbfaManifiesto").value = borrador.manifiesto || "";
                 document.getElementById("sbfaAgencia").value = borrador.agencia || "";
@@ -3998,6 +4034,9 @@ async function initApp() {
             } else {
                 sbfaLimpiarBorrador(sbfaEditandoId);
             }
+        } else if (borrador) {
+            // Borrador existente pero idéntico/obsoleto: limpiar para evitar confusión futura
+            sbfaLimpiarBorrador(sbfaEditandoId);
         }
 
         editor.classList.remove("hidden");
@@ -4299,8 +4338,13 @@ async function initApp() {
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
         if (await guardarSbfaCfg()) {
-            sbfaLimpiarBorrador(sbfaEditandoId);  // borrador ya no es necesario
+            // Limpiar borradores de AMBAS keys posibles (la nueva y la del id)
+            sbfaLimpiarBorrador(sbfaEditandoId);
+            sbfaLimpiarBorrador(null);  // por si era nueva descarga, limpiar "sbfaBorrador_nuevo"
             sbfaEditandoId = d.id;
+            // Reset del timer del auto-save: que la próxima ejecución sea 30s desde ahora,
+            // no inmediata, y así no se genere un borrador idéntico al guardado.
+            sbfaIniciarAutoSave();
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();

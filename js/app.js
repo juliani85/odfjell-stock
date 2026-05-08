@@ -3904,26 +3904,69 @@ async function initApp() {
         sbfaRecalcularTotales();
     }
 
+    function sbfaFmtKgInput(n) {
+        if (n === null || n === undefined || n === "") return "";
+        const num = Number(n);
+        if (isNaN(num)) return "";
+        return num.toLocaleString("es-AR");
+    }
+
+    function sbfaParseKg(str) {
+        if (str === null || str === undefined || str === "") return null;
+        const limpio = String(str).replace(/[^\d-]/g, "");
+        if (limpio === "" || limpio === "-") return null;
+        const n = Number(limpio);
+        return isNaN(n) ? null : n;
+    }
+
     function sbfaFilaHTML(f, i) {
         return `<tr data-i="${i}">
             <td class="col-pre"><input data-k="solPart" value="${f.solPart || ""}" placeholder="1883-1884"></td>
             <td class="col-pre"><input data-k="cto" value="${f.cto || ""}" placeholder="OTUS 35-A-B"></td>
             <td class="col-pre"><input data-k="mercaderia" value="${f.mercaderia || ""}" placeholder="ISOPAR L"></td>
             <td class="col-pre"><input data-k="receptor" value="${f.receptor || ""}" placeholder="BRE-PBB"></td>
-            <td class="col-pre col-num"><input data-k="kgDeclarados" type="number" step="1" value="${f.kgDeclarados ?? ""}"></td>
+            <td class="col-pre col-num"><input data-k="kgDeclarados" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgDeclarados)}" placeholder="0"></td>
             <td class="col-pre"><input data-k="tkDestino" value="${f.tkDestino || ""}" placeholder="61-67"></td>
             <td class="col-post"><input data-k="sbfa" value="${f.sbfa || ""}"></td>
             <td class="col-post"><input data-k="medic" value="${f.medic || ""}"></td>
-            <td class="col-post col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
+            <td class="col-post col-num"><input data-k="kgResultantes" data-kg inputmode="numeric" value="${sbfaFmtKgInput(f.kgResultantes)}" placeholder="0"></td>
             <td class="dif-kg" data-difkg>0</td>
             <td class="dif-pct" data-difpct>0,00%</td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
     }
 
+    function sbfaFormatearInputKg(inp) {
+        // Reformatea con separadores de miles preservando posición del cursor
+        const raw = inp.value;
+        const cursor = inp.selectionStart || 0;
+        const digitsBefore = (raw.slice(0, cursor).match(/\d/g) || []).length;
+        const num = sbfaParseKg(raw);
+        const formateado = num === null ? "" : num.toLocaleString("es-AR");
+        if (formateado === raw) return;
+        inp.value = formateado;
+        // Restaurar cursor al N-ésimo dígito
+        let nuevoCursor = formateado.length;
+        let dig = 0;
+        for (let i = 0; i < formateado.length; i++) {
+            if (/\d/.test(formateado[i])) {
+                dig++;
+                if (dig === digitsBefore) { nuevoCursor = i + 1; break; }
+            }
+        }
+        try { inp.setSelectionRange(nuevoCursor, nuevoCursor); } catch (_) {}
+    }
+
     function sbfaBindFilaEvents() {
         document.querySelectorAll("#sbfaTablaFilas tbody input").forEach(inp => {
-            inp.addEventListener("input", sbfaRecalcularTotales);
+            if (inp.dataset.kg !== undefined) {
+                inp.addEventListener("input", () => {
+                    sbfaFormatearInputKg(inp);
+                    sbfaRecalcularTotales();
+                });
+            } else {
+                inp.addEventListener("input", sbfaRecalcularTotales);
+            }
         });
         document.querySelectorAll("#sbfaTablaFilas [data-borrar]").forEach(b => {
             b.addEventListener("click", () => {
@@ -3939,9 +3982,11 @@ async function initApp() {
         return Array.from(document.querySelectorAll("#sbfaTablaFilas tbody tr")).map(tr => {
             const obj = {};
             tr.querySelectorAll("input[data-k]").forEach(inp => {
-                const v = inp.value.trim();
-                if (inp.type === "number") obj[inp.dataset.k] = v === "" ? null : Number(v);
-                else obj[inp.dataset.k] = v;
+                if (inp.dataset.kg !== undefined) {
+                    obj[inp.dataset.k] = sbfaParseKg(inp.value);
+                } else {
+                    obj[inp.dataset.k] = inp.value.trim();
+                }
             });
             return obj;
         });
@@ -3950,8 +3995,8 @@ async function initApp() {
     function sbfaRecalcularTotales() {
         let totDecl = 0, totRes = 0;
         document.querySelectorAll("#sbfaTablaFilas tbody tr").forEach(tr => {
-            const decl = Number(tr.querySelector('[data-k="kgDeclarados"]').value) || 0;
-            const res = Number(tr.querySelector('[data-k="kgResultantes"]').value) || 0;
+            const decl = sbfaParseKg(tr.querySelector('[data-k="kgDeclarados"]').value) || 0;
+            const res = sbfaParseKg(tr.querySelector('[data-k="kgResultantes"]').value) || 0;
             totDecl += decl;
             totRes += res;
             const tdKg = tr.querySelector("[data-difkg]");
@@ -3991,8 +4036,8 @@ async function initApp() {
         // DAP — misma lógica
         let totDoc = 0, totDapRes = 0;
         document.querySelectorAll("#sbfaTablaDap tbody tr").forEach(tr => {
-            const doc = Number(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
-            const res = Number(tr.querySelector('[data-k="cantResult"]').value) || 0;
+            const doc = sbfaParseKg(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
+            const res = sbfaParseKg(tr.querySelector('[data-k="cantResult"]').value) || 0;
             totDoc += doc;
             totDapRes += res;
             const tdKg = tr.querySelector("[data-difkg]");
@@ -4037,8 +4082,8 @@ async function initApp() {
         return `<tr data-i="${i}">
             <td><input data-k="documento" value="${d.documento || ""}"></td>
             <td><input data-k="cto" value="${d.cto || ""}"></td>
-            <td class="col-num"><input data-k="cantDoctada" type="number" step="1" value="${d.cantDoctada ?? ""}"></td>
-            <td class="col-num"><input data-k="cantResult" type="number" step="1" value="${d.cantResult ?? ""}"></td>
+            <td class="col-num"><input data-k="cantDoctada" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantDoctada)}" placeholder="0"></td>
+            <td class="col-num"><input data-k="cantResult" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantResult)}" placeholder="0"></td>
             <td class="dif-kg" data-difkg>0</td>
             <td class="dif-pct" data-difpct>0,00%</td>
             <td><input data-k="obs" value="${d.obs || ""}"></td>
@@ -4048,7 +4093,14 @@ async function initApp() {
 
     function sbfaBindDapEvents() {
         document.querySelectorAll("#sbfaTablaDap tbody input").forEach(inp => {
-            inp.addEventListener("input", sbfaRecalcularTotales);
+            if (inp.dataset.kg !== undefined) {
+                inp.addEventListener("input", () => {
+                    sbfaFormatearInputKg(inp);
+                    sbfaRecalcularTotales();
+                });
+            } else {
+                inp.addEventListener("input", sbfaRecalcularTotales);
+            }
         });
         document.querySelectorAll("#sbfaTablaDap [data-borrar]").forEach(b => {
             b.addEventListener("click", () => {
@@ -4064,9 +4116,11 @@ async function initApp() {
         return Array.from(document.querySelectorAll("#sbfaTablaDap tbody tr")).map(tr => {
             const obj = {};
             tr.querySelectorAll("input[data-k]").forEach(inp => {
-                const v = inp.value.trim();
-                if (inp.type === "number") obj[inp.dataset.k] = v === "" ? null : Number(v);
-                else obj[inp.dataset.k] = v;
+                if (inp.dataset.kg !== undefined) {
+                    obj[inp.dataset.k] = sbfaParseKg(inp.value);
+                } else {
+                    obj[inp.dataset.k] = inp.value.trim();
+                }
             });
             return obj;
         });

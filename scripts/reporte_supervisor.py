@@ -56,13 +56,21 @@ def fmt_pct(n) -> str:
         return ""
 
 
-def fecha_local_str() -> str:
-    # Argentina: UTC-3
+def fecha_local_str(iso: str | None = None) -> str:
+    # Si recibimos una fecha ISO la formateamos; sino devolvemos hoy en Argentina (UTC-3)
+    if iso:
+        try:
+            y, m, d = iso.split("-")
+            return f"{d}/{m}/{y}"
+        except Exception:
+            pass
     arg = datetime.now(timezone.utc) - timedelta(hours=3)
     return arg.strftime("%d/%m/%Y")
 
 
-def fecha_local_iso() -> str:
+def fecha_local_iso(iso: str | None = None) -> str:
+    if iso:
+        return iso
     arg = datetime.now(timezone.utc) - timedelta(hours=3)
     return arg.strftime("%Y-%m-%d")
 
@@ -232,8 +240,8 @@ def html_descargas_buque(barco: dict, descargas: list[dict]) -> str:
     return "".join(bloques)
 
 
-def html_plan_dia(plan: dict) -> str:
-    fecha_hoy = fecha_local_iso()
+def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
+    fecha_hoy = fecha_local_iso(fecha_iso)
     # Estructura: plan["planes"][fecha]["filas"][...]
     plan_fecha = (plan or {}).get("planes", {}).get(fecha_hoy, {})
     cargas = plan_fecha.get("filas", []) if isinstance(plan_fecha, dict) else []
@@ -282,13 +290,13 @@ def html_plan_dia(plan: dict) -> str:
     """
 
 
-def armar_html_reporte() -> tuple[str, str]:
+def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     """Devuelve (subject, html_body)."""
     tracking = cargar_json(TRACKING_JSON, {})
     sbfa = cargar_json(SBFA_JSON, {})
     plan = cargar_json(PLAN_JSON, {})
 
-    fecha = fecha_local_str()
+    fecha = fecha_local_str(fecha_iso)
     barcos = barcos_en_puerto_campana(tracking)
 
     # Bloques por barco
@@ -301,7 +309,7 @@ def armar_html_reporte() -> tuple[str, str]:
     else:
         seccion_barcos = "<p style='color:#6b7280;font-style:italic'>Ningún barco operando en Campana al momento del reporte.</p>"
 
-    seccion_plan = html_plan_dia(plan)
+    seccion_plan = html_plan_dia(plan, fecha_iso)
 
     subject = f"Reporte para Supervisores — {fecha} — {len(barcos)} buque(s) operando"
 
@@ -363,6 +371,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--destinatarios", required=True,
                         help="Lista separada por comas (a@b.com,c@d.com)")
+    parser.add_argument("--fecha", default=None,
+                        help="Fecha del reporte en formato YYYY-MM-DD (default: hoy en Arg)")
     args = parser.parse_args()
 
     destinatarios = [m.strip() for m in args.destinatarios.split(",") if m.strip()]
@@ -370,7 +380,7 @@ def main() -> int:
         print("ERROR: No se pasaron destinatarios.")
         return 1
 
-    subject, html = armar_html_reporte()
+    subject, html = armar_html_reporte(args.fecha)
     ok = enviar(destinatarios, subject, html)
     return 0 if ok else 2
 

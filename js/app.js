@@ -1902,8 +1902,19 @@ async function initApp() {
     function inicializarReporteSupervisor() {
         if (_repSupInicializado) return;
         _repSupInicializado = true;
+        const inpFecha = document.getElementById("repSupFecha");
+        if (inpFecha && !inpFecha.value) inpFecha.value = new Date().toISOString().slice(0, 10);
         document.getElementById("btnRepSupVista").addEventListener("click", repSupVistaPrevia);
         document.getElementById("btnRepSupEnviar").addEventListener("click", repSupEnviar);
+    }
+
+    function repSupFechaISO() {
+        return document.getElementById("repSupFecha")?.value || new Date().toISOString().slice(0, 10);
+    }
+    function repSupFechaDDMMYYYY() {
+        const iso = repSupFechaISO();
+        const [y, m, d] = iso.split("-");
+        return `${d}/${m}/${y}`;
     }
 
     function repSupBarcosEnPuerto() {
@@ -1927,8 +1938,8 @@ async function initApp() {
     }
 
     function repSupArmarHTML() {
-        const fechaHoy = new Date().toLocaleDateString("es-AR");
-        const isoHoy = new Date().toISOString().slice(0, 10);
+        const isoHoy = repSupFechaISO();
+        const fechaHoy = repSupFechaDDMMYYYY();
         const fmt = n => (n === null || n === undefined || isNaN(n)) ? "" : Math.round(Number(n)).toLocaleString("es-AR");
         const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(2).replace(".", ",") + "%");
 
@@ -2096,46 +2107,47 @@ async function initApp() {
         cont.style.display = "block";
     }
 
-    async function repSupEnviar() {
+    function repSupEnviar() {
         const inp = document.getElementById("repSupMail");
         const estado = document.getElementById("repSupEstado");
         const mails = inp.value.trim();
-        if (!mails) { alert("Cargá al menos un mail destinatario."); inp.focus(); return; }
-        // Validación básica
+        if (!mails) { mostrarModalInfo("Cargá al menos un mail destinatario.", "Falta destinatario"); inp.focus(); return; }
         const lista = mails.split(",").map(m => m.trim()).filter(Boolean);
         const invalido = lista.find(m => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m));
-        if (invalido) { alert(`Mail inválido: "${invalido}"`); return; }
+        if (invalido) { mostrarModalInfo(`Mail inválido: "${invalido}"`, "Error"); return; }
 
-        if (!confirm(`¿Enviar reporte a ${lista.length} destinatario(s)?\n\n${lista.join("\n")}`)) return;
+        const fecha = repSupFechaDDMMYYYY();
+        const msg = `Enviar reporte del ${fecha} a ${lista.length} destinatario(s):\n\n${lista.join("\n")}`;
 
-        estado.style.color = "var(--gray-500)";
-        estado.textContent = "Disparando workflow…";
-
-        try {
-            const url = `https://api.github.com/repos/${GH.repo}/actions/workflows/reporte-supervisor.yml/dispatches`;
-            const res = await fetch(url, {
-                method: "POST",
-                headers: {
-                    Authorization: `token ${GH.token}`,
-                    Accept: "application/vnd.github+json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ref: "master",
-                    inputs: { destinatarios: lista.join(",") },
-                }),
-            });
-            if (!res.ok) {
-                const txt = await res.text();
-                throw new Error(`GitHub ${res.status}: ${txt}`);
+        mostrarModalConfirm(msg, "Confirmar envío", async () => {
+            estado.style.color = "var(--gray-500)";
+            estado.textContent = "Disparando workflow…";
+            try {
+                const url = `https://api.github.com/repos/${GH.repo}/actions/workflows/reporte-supervisor.yml/dispatches`;
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `token ${GH.token}`,
+                        Accept: "application/vnd.github+json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        ref: "master",
+                        inputs: { destinatarios: lista.join(","), fecha: repSupFechaISO() },
+                    }),
+                });
+                if (!res.ok) {
+                    const txt = await res.text();
+                    throw new Error(`GitHub ${res.status}: ${txt}`);
+                }
+                estado.style.color = "#16a34a";
+                estado.innerHTML = `✓ Reporte del ${fecha} disparado. Se envía en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
+                mostrarModalInfo(`Reporte del ${fecha} disparado. Se enviará a ${lista.length} destinatario(s) en ~30 segundos.`, "Reporte enviado");
+            } catch (e) {
+                estado.style.color = "#b91c1c";
+                estado.textContent = `Error: ${e.message}`;
             }
-            estado.style.color = "#16a34a";
-            estado.innerHTML = `✓ Reporte disparado correctamente. Se envía en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
-            mostrarModalInfo(`Reporte disparado. Se enviará a ${lista.length} destinatario(s) en ~30 segundos.`, "Reporte enviado");
-        } catch (e) {
-            estado.style.color = "#b91c1c";
-            estado.textContent = `Error: ${e.message}`;
-        }
+        });
     }
 
     // --- REPORTE STOCK MENSUAL ---
@@ -3761,6 +3773,35 @@ async function initApp() {
     // --- HELPERS ---
     function formatKg(n) { return n.toLocaleString("es-AR"); }
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
+
+    // Modal de confirmación centrado (reemplazo de confirm() nativo)
+    function mostrarModalConfirm(mensaje, titulo, onConfirm) {
+        const modal = document.getElementById("modalInfo");
+        if (!modal) { if (window.confirm(mensaje)) onConfirm(); return; }
+        document.getElementById("modalInfoTitulo").textContent = titulo || "Confirmar";
+        document.getElementById("modalInfoBody").innerHTML = `<p style="margin:0;line-height:1.5;white-space:pre-wrap">${mensaje}</p>`;
+        // Reemplazar el botón único OK por dos: Confirmar + Cancelar
+        const actions = modal.querySelector(".modal-actions");
+        const accionesPrev = actions.innerHTML;
+        actions.innerHTML = `
+            <button class="btn btn-primary" id="btnModalConfirmOk">Confirmar</button>
+            <button class="btn btn-secondary" id="btnModalConfirmCancel">Cancelar</button>
+        `;
+        modal.classList.remove("hidden");
+        const restaurar = () => {
+            modal.classList.add("hidden");
+            actions.innerHTML = accionesPrev;
+            document.removeEventListener("keydown", esc);
+        };
+        const esc = (e) => {
+            if (e.key === "Escape") { restaurar(); }
+            else if (e.key === "Enter") { restaurar(); onConfirm(); }
+        };
+        document.getElementById("btnModalConfirmOk").addEventListener("click", () => { restaurar(); onConfirm(); });
+        document.getElementById("btnModalConfirmCancel").addEventListener("click", restaurar);
+        document.addEventListener("keydown", esc);
+        document.getElementById("btnModalConfirmOk").focus();
+    }
 
     // Modal de aviso centrado (reemplazo de alert() nativo que aparece arriba de la pantalla)
     function mostrarModalInfo(mensaje, titulo) {

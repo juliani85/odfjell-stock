@@ -1893,8 +1893,250 @@ async function initApp() {
             if (st.dataset.subtab === "histSalidas") renderHistorial(document.getElementById("filtroHistorial")?.value || "");
             if (st.dataset.subtab === "histPorTanque") { volverListaHistTanque(); renderHistTanqueLista(); }
             if (st.dataset.subtab === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
+            if (st.dataset.subtab === "repSupervisor") inicializarReporteSupervisor();
         });
     });
+
+    // --- REPORTE PARA SUPERVISORES ---
+    let _repSupInicializado = false;
+    function inicializarReporteSupervisor() {
+        if (_repSupInicializado) return;
+        _repSupInicializado = true;
+        document.getElementById("btnRepSupVista").addEventListener("click", repSupVistaPrevia);
+        document.getElementById("btnRepSupEnviar").addEventListener("click", repSupEnviar);
+    }
+
+    function repSupBarcosEnPuerto() {
+        // Filtra tracking.json: estado en_puerto + puerto contiene "campana"
+        const t = (barcosTracking && barcosTracking.barcos) || {};
+        const out = [];
+        for (const imo in t) {
+            const d = t[imo];
+            if (!d || (d.estado || "").toLowerCase() !== "en_puerto") continue;
+            if (!((d.puerto_actual || "").toLowerCase().includes("campana"))) continue;
+            out.push({ imo, nombre: d.nombre || imo, puerto: d.puerto_actual || "Campana" });
+        }
+        return out;
+    }
+
+    function repSupDescargasDelBuque(nombreBuque) {
+        const u = (nombreBuque || "").toUpperCase().trim();
+        return (sbfaConfig.descargas || []).filter(d =>
+            !d.anulada && (d.buque || "").toUpperCase().trim() === u
+        );
+    }
+
+    function repSupArmarHTML() {
+        const fechaHoy = new Date().toLocaleDateString("es-AR");
+        const isoHoy = new Date().toISOString().slice(0, 10);
+        const fmt = n => (n === null || n === undefined || isNaN(n)) ? "" : Math.round(Number(n)).toLocaleString("es-AR");
+        const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(2).replace(".", ",") + "%");
+
+        const barcos = repSupBarcosEnPuerto();
+        let bloquesBarcos = "";
+        if (!barcos.length) {
+            bloquesBarcos = `<p style="color:#6b7280;font-style:italic">Ningún barco operando en Campana al momento del reporte.</p>`;
+        } else {
+            for (const b of barcos) {
+                const dx = repSupDescargasDelBuque(b.nombre);
+                if (!dx.length) {
+                    bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
+                        <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 ${b.nombre} (IMO ${b.imo})</h3>
+                        <p style="color:#6b7280;font-style:italic;margin:0">Sin descargas SB/FA registradas en el sistema.</p>
+                    </div>`;
+                    continue;
+                }
+                for (const d of dx) {
+                    const filas = (d.filas || []).filter(f => Object.values(f || {}).some(v => v !== "" && v !== null && v !== undefined));
+                    const dap = (d.dap || []).filter(x => Object.values(x || {}).some(v => v !== "" && v !== null && v !== undefined));
+                    let totDecl = 0, totRes = 0;
+                    const rowsPart = filas.map(f => {
+                        const decl = Number(f.kgDeclarados) || 0;
+                        const res = Number(f.kgResultantes) || 0;
+                        totDecl += decl; totRes += res;
+                        const dif = (decl > 0 && res > 0) ? res - decl : null;
+                        const pct = (dif !== null && decl > 0) ? dif / decl * 100 : null;
+                        const fuera = pct !== null && Math.abs(pct) > 0.6;
+                        const bg = fuera ? "background:#fee2e2" : "";
+                        return `<tr style="${bg}">
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.solPart || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.cto || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.mercaderia || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.receptor || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(decl)}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.tkDestino || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.sbfa || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${f.medic || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${res ? fmt(res) : ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${dif !== null ? fmt(dif) : "—"}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${pct !== null ? fmtPct(pct) : "<em>pendiente</em>"}</td>
+                        </tr>`;
+                    }).join("");
+                    const tablaPart = filas.length ? `
+                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px">Conocimientos por Solicitud Particular (${filas.length})</h4>
+                        <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
+                            <thead style="background:#e5e7eb"><tr>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Part. N°</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Producto</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Empresa</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Decl.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Tk.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">SBFA</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Medic.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Kg. Result.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                            </tr></thead>
+                            <tbody>${rowsPart}</tbody>
+                            <tfoot style="background:#f3f4f6;font-weight:bold"><tr>
+                                <td colspan="4" style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Totales</td>
+                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totDecl)}</td>
+                                <td colspan="3" style="border:1px solid #d1d5db"></td>
+                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totRes)}</td>
+                                <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(totRes - totDecl)}</td>
+                                <td style="padding:4px 6px;border:1px solid #d1d5db"></td>
+                            </tr></tfoot>
+                        </table>` : `<p style='color:#6b7280;font-style:italic'>Sin solicitudes particulares cargadas.</p>`;
+
+                    const rowsDap = dap.map(x => {
+                        const docKg = Number(x.cantDoctada) || 0;
+                        const resKg = Number(x.cantResult) || 0;
+                        const dif = (docKg > 0 && resKg > 0) ? resKg - docKg : null;
+                        const pct = (dif !== null && docKg > 0) ? dif / docKg * 100 : null;
+                        const fuera = pct !== null && Math.abs(pct) > 0.6;
+                        const bg = fuera ? "background:#fee2e2" : "";
+                        return `<tr style="${bg}">
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${x.documento || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db">${x.cto || ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${fmt(docKg)}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${resKg ? fmt(resKg) : ""}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${dif !== null ? fmt(dif) : "—"}</td>
+                            <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">${pct !== null ? fmtPct(pct) : "<em>pendiente</em>"}</td>
+                        </tr>`;
+                    }).join("");
+                    const tablaDap = dap.length ? `
+                        <h4 style="margin:0.8rem 0 0.3rem 0;font-size:13px">Conocimientos DAP (${dap.length})</h4>
+                        <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
+                            <thead style="background:#e5e7eb"><tr>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Documento Aduanero</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cto. N°</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Doctada</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Cant. Result.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. Kg.</th>
+                                <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:right">Dif. %</th>
+                            </tr></thead>
+                            <tbody>${rowsDap}</tbody>
+                        </table>` : "";
+
+                    bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
+                        <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 ${b.nombre} — MANI ${d.manifiesto || "(pendiente)"}</h3>
+                        <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">IMO ${b.imo} · Puerto: ${b.puerto}</p>
+                        ${tablaPart}
+                        ${tablaDap}
+                    </div>`;
+                }
+            }
+        }
+
+        // Plan del día (estructura: planes[fechaISO].filas[])
+        const planDia = (typeof planes !== "undefined" && planes && planes[isoHoy] && planes[isoHoy].filas) || [];
+        let planHtml;
+        if (!planDia.length) {
+            planHtml = `<p style="color:#6b7280;font-style:italic">Sin plan de cargas para hoy.</p>`;
+        } else {
+            const cump = planDia.filter(c => c.cumplido).length;
+            const pend = planDia.length - cump;
+            const rows = planDia.map(c => {
+                const cumplido = !!c.cumplido;
+                const marcador = cumplido ? "✓" : "⏳";
+                const color = cumplido ? "color:#16a34a" : "color:#d97706";
+                return `<tr>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db;text-align:center;${color};font-weight:bold">${marcador}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.tanque || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.producto || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.cliente || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.buque || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.despacho || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.horaCarga || ""}</td>
+                    <td style="padding:4px 6px;border:1px solid #d1d5db">${c.observaciones || ""}</td>
+                </tr>`;
+            }).join("");
+            planHtml = `<p style="margin:0.3rem 0">Total: <strong>${planDia.length}</strong> cargas · Cumplidas: <strong style="color:#16a34a">${cump}</strong> · Pendientes: <strong style="color:#d97706">${pend}</strong></p>
+                <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d1d5db">
+                    <thead style="background:#e5e7eb"><tr>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;width:30px"></th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Tk.</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Producto</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Cliente</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Buque</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Despacho</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Hora</th>
+                        <th style="padding:4px 6px;border:1px solid #d1d5db;text-align:left">Obs.</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>`;
+        }
+
+        return `<div style="font-family:Arial,sans-serif;font-size:13px;color:#111">
+            <div style="border-bottom:3px solid #1e3a8a;padding-bottom:0.5rem;margin-bottom:1rem">
+                <h2 style="color:#1e3a8a;margin:0;font-size:18px">Reporte para Supervisores — Operaciones del día</h2>
+                <p style="margin:0.3rem 0 0 0;color:#6b7280;font-size:12px">Odfjell Terminals Tagsa SA — Campana · ${fechaHoy}</p>
+            </div>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos operando en Campana (${barcos.length})</h3>
+            ${bloquesBarcos}
+            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas del día</h3>
+            ${planHtml}
+        </div>`;
+    }
+
+    function repSupVistaPrevia() {
+        const cont = document.getElementById("repSupVistaPrevia");
+        cont.innerHTML = repSupArmarHTML();
+        cont.style.display = "block";
+    }
+
+    async function repSupEnviar() {
+        const inp = document.getElementById("repSupMail");
+        const estado = document.getElementById("repSupEstado");
+        const mails = inp.value.trim();
+        if (!mails) { alert("Cargá al menos un mail destinatario."); inp.focus(); return; }
+        // Validación básica
+        const lista = mails.split(",").map(m => m.trim()).filter(Boolean);
+        const invalido = lista.find(m => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m));
+        if (invalido) { alert(`Mail inválido: "${invalido}"`); return; }
+
+        if (!confirm(`¿Enviar reporte a ${lista.length} destinatario(s)?\n\n${lista.join("\n")}`)) return;
+
+        estado.style.color = "var(--gray-500)";
+        estado.textContent = "Disparando workflow…";
+
+        try {
+            const url = `https://api.github.com/repos/${GH.repo}/actions/workflows/reporte-supervisor.yml/dispatches`;
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    Authorization: `token ${GH.token}`,
+                    Accept: "application/vnd.github+json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ref: "master",
+                    inputs: { destinatarios: lista.join(",") },
+                }),
+            });
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(`GitHub ${res.status}: ${txt}`);
+            }
+            estado.style.color = "#16a34a";
+            estado.innerHTML = `✓ Reporte disparado correctamente. Se envía en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
+            mostrarModalInfo(`Reporte disparado. Se enviará a ${lista.length} destinatario(s) en ~30 segundos.`, "Reporte enviado");
+        } catch (e) {
+            estado.style.color = "#b91c1c";
+            estado.textContent = `Error: ${e.message}`;
+        }
+    }
 
     // --- REPORTE STOCK MENSUAL ---
     // Lee la fecha+hora del filtro de corte. Devuelve null si no hay fecha

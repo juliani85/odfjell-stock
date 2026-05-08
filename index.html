@@ -409,6 +409,7 @@
             <nav class="sub-tabs">
                 <button class="sub-tab active" data-subtab="repDia">Reporte del Día</button>
                 <button class="sub-tab" data-subtab="repMensual">Reporte de Stock Mensual</button>
+                <button class="sub-tab" data-subtab="repSupervisor">Para Supervisores</button>
             </nav>
 
             <!-- SUB: REPORTE DEL DIA -->
@@ -474,6 +475,30 @@
                         </div>
                     </div>
                     <div id="repMensualCards"></div>
+                </div>
+            </div>
+
+            <!-- SUB: REPORTE PARA SUPERVISORES -->
+            <div id="repSupervisor" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte para Supervisores</h2>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Genera y envía por mail un resumen de los <strong>buques operando en Campana</strong> (con sus particulares y conocimientos DAP) más el <strong>plan de cargas del día</strong>.
+                    </p>
+
+                    <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:260px">
+                            <label for="repSupMail">Mail destinatario(s) — separá con coma para varios</label>
+                            <input type="text" id="repSupMail" placeholder="supervisor@empresa.com, otro@empresa.com">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnRepSupVista" type="button">👁 Vista previa</button>
+                        <button class="btn btn-primary btn-sm" id="btnRepSupEnviar" type="button">📧 Enviar reporte</button>
+                    </div>
+
+                    <p id="repSupEstado" style="font-size:0.85rem;margin-bottom:0.5rem"></p>
+                    <div id="repSupVistaPrevia" style="border:1px solid var(--gray-200);border-radius:8px;padding:1rem;background:#fafafa;display:none"></div>
                 </div>
             </div>
         </section>

@@ -1,0 +1,27 @@
+name: Reporte para Supervisores
+
+on:
+  workflow_dispatch:
+    inputs:
+      destinatarios:
+        description: "Mails destinatarios (separados por coma)"
+        required: true
+        type: string
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Enviar reporte
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python scripts/reporte_supervisor.py --destinatarios "${{ github.event.inputs.destinatarios }}"

@@ -4154,7 +4154,7 @@ async function initApp() {
 
     async function guardarSbfaDescarga() {
         const d = sbfaArmarDescarga();
-        if (!d.buque || !d.manifiesto) { alert("Falta buque o manifiesto."); return; }
+        if (!d.buque) { alert("Falta el buque."); return; }
         const i = sbfaConfig.descargas.findIndex(x => x.id === d.id);
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
@@ -4163,6 +4163,8 @@ async function initApp() {
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();
+            const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
+            alert(`✓ Descarga del buque ${d.buque}${manifTxt} guardada correctamente.`);
         }
     }
 

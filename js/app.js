@@ -4058,6 +4058,31 @@ async function initApp() {
         }
     }
 
+    function sbfaTabPorGrupo(e) {
+        // Tab navega solo dentro del mismo grupo (col-pre o col-post). Si estás
+        // cargando pre-arribo no querés pasar por los campos post-medición vacíos.
+        if (e.key !== "Tab") return;
+        const inp = e.target;
+        const td = inp.closest("td");
+        if (!td) return;
+        const grupo = td.classList.contains("col-pre")
+            ? "col-pre"
+            : td.classList.contains("col-post") ? "col-post" : null;
+        if (!grupo) return;
+        const tbody = inp.closest("tbody");
+        if (!tbody) return;
+        const inputs = Array.from(tbody.querySelectorAll(`td.${grupo} input`));
+        const idx = inputs.indexOf(inp);
+        if (idx === -1) return;
+        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+        if (nextIdx >= 0 && nextIdx < inputs.length) {
+            e.preventDefault();
+            inputs[nextIdx].focus();
+            inputs[nextIdx].select();
+        }
+        // Si nextIdx queda fuera de rango → comportamiento default (sale de la tabla)
+    }
+
     function sbfaFormatearInputKg(inp) {
         // Reformatea con separadores de miles preservando posición del cursor
         const raw = inp.value;
@@ -4081,6 +4106,7 @@ async function initApp() {
 
     function sbfaBindFilaEvents() {
         document.querySelectorAll("#sbfaTablaFilas tbody input").forEach(inp => {
+            inp.addEventListener("keydown", sbfaTabPorGrupo);
             if (inp.dataset.kg !== undefined) {
                 inp.addEventListener("keydown", sbfaBloquearDecimales);
                 inp.addEventListener("input", () => {

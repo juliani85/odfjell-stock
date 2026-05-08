@@ -574,11 +574,11 @@
                     </div>
                     <div class="form-group">
                         <label for="sbfaAgencia">Agencia marítima</label>
-                        <input type="text" id="sbfaAgencia" placeholder="B&amp;M" value="B&amp;M">
+                        <input type="text" id="sbfaAgencia" placeholder="Ej: B&amp;M">
                     </div>
                     <div class="form-group">
                         <label for="sbfaCuit">CUIT agencia</label>
-                        <input type="text" id="sbfaCuit" placeholder="30-71631314-6" value="30-71631314-6">
+                        <input type="text" id="sbfaCuit" placeholder="30-XXXXXXXX-X">
                     </div>
                     <div class="form-group">
                         <label for="sbfaFecha">Fecha descarga</label>
@@ -667,11 +667,13 @@
                     <textarea id="sbfaNotas" rows="2" placeholder="Mediciones iniciales realizadas, etc."></textarea>
                 </div>
 
-                <div class="form-actions" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem">
+                <div class="form-actions" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:end">
                     <button class="btn btn-primary" id="btnSbfaGuardar" type="button">Guardar descarga</button>
-                    <button class="btn btn-secondary" id="btnSbfaExportarJSON" type="button" title="Descarga JSON para alimentar el generador PDF">Exportar JSON (PDF)</button>
-                    <button class="btn btn-secondary" id="btnSbfaActaJSON" type="button" title="Exporta JSON para generar el Acta de Denuncia">Acta de Denuncia (JSON)</button>
-                    <button class="btn btn-secondary" id="btnSbfaNotaJSON" type="button" title="Exporta JSON para generar la Nota SB/FA">Nota SB/FA (JSON)</button>
+                    <div class="form-group" style="margin-bottom:0;width:120px">
+                        <label for="sbfaNotaNumero" style="font-size:0.8rem">N° Nota</label>
+                        <input type="text" id="sbfaNotaNumero" placeholder="Ej: 8">
+                    </div>
+                    <button class="btn btn-primary" id="btnSbfaImprimir" type="button" title="Imprime los 3 informes (Detalle, Acta y Nota) en una sola pasada">🖨 Imprimir Informe</button>
                     <button class="btn btn-secondary" id="btnSbfaEliminar" type="button" style="margin-left:auto;color:#b91c1c">Eliminar descarga</button>
                 </div>
             </div>

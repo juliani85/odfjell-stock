@@ -3859,10 +3859,12 @@ async function initApp() {
             document.getElementById("sbfaEditorTitulo").textContent = "Nueva descarga";
             document.getElementById("sbfaBuque").value = "";
             document.getElementById("sbfaManifiesto").value = "";
-            document.getElementById("sbfaAgencia").value = "B&M";
-            document.getElementById("sbfaCuit").value = "30-71631314-6";
+            document.getElementById("sbfaAgencia").value = "";
+            document.getElementById("sbfaCuit").value = "";
             document.getElementById("sbfaFecha").value = new Date().toISOString().slice(0, 10);
             document.getElementById("sbfaNotas").value = "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.";
+            const notaInput = document.getElementById("sbfaNotaNumero");
+            if (notaInput) notaInput.value = "";
             // 6 filas por default para ir cargando particulares antes del arribo
             renderSbfaTablaFilas([{}, {}, {}, {}, {}, {}]);
             renderSbfaTablaDap([{}]);
@@ -4059,65 +4061,311 @@ async function initApp() {
         }
     }
 
-    function descargarJSON(filename, data) {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+    function sbfaFmtFechaLarga(iso) {
+        const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const f = iso ? new Date(iso + "T00:00:00") : new Date();
+        return `${f.getDate()} de ${meses[f.getMonth()]} ${f.getFullYear()}`;
     }
 
-    function exportarSbfaJSON() {
-        const d = sbfaArmarDescarga();
-        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
-        descargarJSON(`sbfa_${slug}.json`, d);
-        mostrarAlerta("JSON descargado. Corré: python generar_detalle_sbfa.py sbfa_*.json", "info");
+    function sbfaFmtFechaCorta(iso) {
+        if (!iso) return new Date().toLocaleDateString("es-AR");
+        const [y, m, d] = iso.split("-");
+        return `${d}/${m}/${y}`;
     }
 
-    function exportarActaJSON() {
+    function imprimirInformeSbfa() {
         const d = sbfaArmarDescarga();
-        const fueraTol = (d.filas || []).filter(f => {
+        if (!d.buque || !d.manifiesto) { alert("Falta buque o manifiesto."); return; }
+
+        const filas = (d.filas || []).filter(f => Object.values(f).some(v => v !== "" && v !== null));
+        const dap = (d.dap || []).filter(x => Object.values(x).some(v => v !== "" && v !== null));
+        const fueraTol = filas.filter(f => {
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
-            if (decl <= 0) return false;
+            if (decl <= 0 || res <= 0) return false;
             return Math.abs((res - decl) / decl * 100) > SBFA_TOLERANCIA_PCT;
         });
-        const payload = {
-            tipo: "acta_denuncia",
-            descarga: d,
-            fueraTolerancia: fueraTol,
-            tolerancia_pct: SBFA_TOLERANCIA_PCT,
-            generadoPor: usuarioActual,
-            generadoTs: new Date().toISOString(),
-        };
-        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
-        descargarJSON(`acta_${slug}.json`, payload);
-        mostrarAlerta(`JSON descargado (${fueraTol.length} conocimientos fuera de tolerancia). Corré: python generar_acta_denuncia.py acta_*.json`, "info");
-    }
 
-    function exportarNotaJSON() {
-        const d = sbfaArmarDescarga();
-        const fueraTol = (d.filas || []).filter(f => {
+        const numeroNota = (document.getElementById("sbfaNotaNumero").value || "").trim() || "____";
+        const anioNota = new Date().getFullYear();
+        const hoy = new Date().toLocaleDateString("es-AR");
+        const fechaLarga = sbfaFmtFechaLarga();
+        const fechaDescarga = sbfaFmtFechaCorta(d.fecha);
+
+        const fmt = n => (n === null || n === undefined || isNaN(n)) ? "" : Math.round(Number(n)).toLocaleString("es-AR");
+        const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(3).replace(".", ",") + "%");
+
+        // Totales
+        let totDecl = 0, totRes = 0;
+        filas.forEach(f => {
+            totDecl += Number(f.kgDeclarados) || 0;
+            totRes += Number(f.kgResultantes) || 0;
+        });
+        const totDif = totRes - totDecl;
+        const totPct = totDecl > 0 ? totDif / totDecl * 100 : 0;
+
+        let totDoc = 0, totDapRes = 0;
+        dap.forEach(x => {
+            totDoc += Number(x.cantDoctada) || 0;
+            totDapRes += Number(x.cantResult) || 0;
+        });
+        const totDapDif = totDapRes - totDoc;
+        const totDapPct = totDoc > 0 ? totDapDif / totDoc * 100 : 0;
+
+        const filasHtml = filas.map(f => {
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
-            if (decl <= 0) return false;
-            return Math.abs((res - decl) / decl * 100) > SBFA_TOLERANCIA_PCT;
-        });
-        const payload = {
-            tipo: "nota_sbfa",
-            descarga: d,
-            fueraTolerancia: fueraTol,
-            tolerancia_pct: SBFA_TOLERANCIA_PCT,
-            generadoPor: usuarioActual,
-            generadoTs: new Date().toISOString(),
-        };
-        const slug = (d.manifiesto || "sin-mani").replace(/[^A-Za-z0-9]/g, "_");
-        descargarJSON(`nota_${slug}.json`, payload);
-        mostrarAlerta("JSON descargado. Corré: python generar_nota_sbfa.py nota_*.json", "info");
+            const dif = res - decl;
+            const pct = decl > 0 ? dif / decl * 100 : 0;
+            const fuera = decl > 0 && res > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            const cls = fuera ? "fuera" : "";
+            return `<tr class="${cls}">
+                <td>${f.solPart || ""}</td>
+                <td>${f.cto || ""}</td>
+                <td>${f.mercaderia || ""}</td>
+                <td>${f.receptor || ""}</td>
+                <td class="num">${fmt(decl)}</td>
+                <td>${f.tkDestino || ""}</td>
+                <td>${f.sbfa || ""}</td>
+                <td>${f.medic || ""}</td>
+                <td class="num">${fmt(res)}</td>
+                <td class="num">${fmt(dif)}</td>
+                <td class="num">${fmtPct(pct)}</td>
+            </tr>`;
+        }).join("");
+
+        const dapHtml = dap.map(x => {
+            const doc = Number(x.cantDoctada) || 0;
+            const res = Number(x.cantResult) || 0;
+            const dif = res - doc;
+            const pct = doc > 0 ? dif / doc * 100 : 0;
+            const fuera = doc > 0 && res > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            return `<tr class="${fuera ? "fuera" : ""}">
+                <td>${x.documento || ""}</td>
+                <td>${x.cto || ""}</td>
+                <td class="num">${fmt(doc)}</td>
+                <td class="num">${fmt(res)}</td>
+                <td class="num">${fmt(dif)}</td>
+                <td class="num">${fmtPct(pct)}</td>
+                <td>${x.obs || ""}</td>
+            </tr>`;
+        }).join("");
+
+        const fueraHtml = fueraTol.map(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            const dif = res - decl;
+            const pct = decl > 0 ? dif / decl * 100 : 0;
+            return `<tr>
+                <td>${f.solPart || ""}</td>
+                <td>${f.cto || ""}</td>
+                <td>${f.mercaderia || ""}</td>
+                <td>${f.receptor || ""}</td>
+                <td class="num">${fmt(decl)}</td>
+                <td>${f.tkDestino || ""}</td>
+                <td>${f.sbfa || ""}</td>
+                <td class="num">${fmt(res)}</td>
+                <td class="num">${fmt(dif)}</td>
+                <td class="num">${fmtPct(pct)}</td>
+            </tr>`;
+        }).join("");
+
+        const listaFueras = fueraTol.map(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            const dif = res - decl;
+            return `${f.cto || f.solPart || "—"} (${f.mercaderia || "s/d"}, dif. ${dif > 0 ? "+" : ""}${fmt(dif)} kg)`;
+        }).join("; ");
+
+        const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><title>Informe SBFA — ${d.buque} — MANI ${d.manifiesto}</title>
+<style>
+@page { size: A4 portrait; margin: 1.4cm; }
+@page page-detalle { size: A4 landscape; margin: 1.2cm; }
+body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; color: #111; margin: 0; padding: 0; }
+.pagina { page-break-after: always; }
+.pagina:last-child { page-break-after: auto; }
+.detalle { page: page-detalle; }
+.header-arca { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.7rem; }
+.logo-arca { background: #1e3a8a; padding: 6px; border-radius: 4px; }
+.logo-arca svg { display: block; height: 38px; width: auto; }
+.org { font-size: 9pt; line-height: 1.25; }
+.org strong { font-size: 10pt; }
+h1.titulo { text-align: center; font-size: 16pt; margin: 0.4rem 0 0.6rem; padding: 0.3rem; border: 1.5px solid #000; background: #f3f4f6; letter-spacing: 0.05em; }
+h2.subt { font-size: 11pt; margin: 0.6rem 0 0.3rem; }
+.subtitulo-detalle { font-size: 11pt; font-weight: bold; margin-bottom: 0.4rem; }
+.meta { font-size: 9pt; margin-bottom: 0.4rem; }
+table { width: 100%; border-collapse: collapse; font-size: 8pt; margin: 0.3rem 0; }
+table th, table td { border: 0.5px solid #6b7280; padding: 3px 4px; vertical-align: middle; }
+table thead th { background: #e5e7eb; font-weight: bold; text-align: left; }
+table tfoot th { background: #f3f4f6; font-weight: bold; text-align: right; }
+table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table tr.fuera td { background: #fee2e2; }
+table tr.fuera td.num { color: #b91c1c; font-weight: bold; }
+.recuadro { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; }
+.recuadro > div { padding: 4px 8px; border-right: 1px solid #000; }
+.recuadro > div:last-child { border-right: none; }
+.recuadro .label { background: #e5e7eb; font-weight: bold; font-size: 8pt; }
+.checkboxes { border: 1px solid #000; padding: 6px 10px; margin: 0.4rem 0; font-size: 10pt; text-align: center; }
+.cuerpo p { line-height: 1.4; text-align: justify; margin: 0.4rem 0; }
+.firma-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; text-align: center; font-size: 10pt; }
+.firma-grid .linea { border-top: 1px solid #000; padding-top: 0.3rem; margin-top: 2rem; }
+.notas { font-size: 8pt; color: #374151; margin-top: 0.4rem; }
+@media print { .no-print { display: none !important; } }
+.no-print { position: fixed; top: 10px; right: 10px; padding: 8px 12px; background: #1e3a8a; color: #fff; border: none; cursor: pointer; font-size: 12pt; border-radius: 4px; z-index: 9999; }
+</style></head><body>
+
+<button class="no-print" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+
+<!-- ============== PÁGINA 1: DETALLE SBFA ============== -->
+<section class="pagina detalle">
+${headerArcaHtml()}
+<div class="subtitulo-detalle">Detalle resultante del ingreso de MANI N° <strong>${d.manifiesto}</strong></div>
+<div class="meta">B/T <strong>${d.buque}</strong> · AGENCIA MARÍTIMA <strong>${d.agencia || ""}</strong> · CUIT N° <strong>${d.cuit || ""}</strong> · Fecha: <strong>${fechaDescarga}</strong></div>
+
+<table>
+<thead>
+<tr>
+<th>Part. N°</th><th>Cto. N°</th><th>Producto</th><th>Empresa</th><th class="num">Kg.</th><th>Tk.</th>
+<th>SBFA N°</th><th>Medic. N°</th><th class="num">Kg.</th>
+<th class="num">Dif. Kg.</th><th class="num">Dif. %</th>
+</tr>
+</thead>
+<tbody>
+${filasHtml || `<tr><td colspan="11" style="text-align:center;color:#6b7280">Sin filas cargadas</td></tr>`}
+</tbody>
+<tfoot>
+<tr>
+<th colspan="4">TOTALES</th>
+<th class="num">${fmt(totDecl)}</th>
+<th colspan="3"></th>
+<th class="num">${fmt(totRes)}</th>
+<th class="num">${fmt(totDif)}</th>
+<th class="num">${fmtPct(totPct)}</th>
+</tr>
+</tfoot>
+</table>
+
+${dap.length ? `
+<h2 class="subt">Conocimientos con destinación Aduanera Directos a Plaza (DAP)</h2>
+<table>
+<thead>
+<tr><th>Documento Aduanero</th><th>Cto. N°</th><th class="num">Cant. Doctada</th><th class="num">Cant. Result.</th><th class="num">Dif. Kg.</th><th class="num">Dif. %</th><th>Observaciones</th></tr>
+</thead>
+<tbody>${dapHtml}</tbody>
+<tfoot>
+<tr><th colspan="2">TOTALES DAP</th>
+<th class="num">${fmt(totDoc)}</th>
+<th class="num">${fmt(totDapRes)}</th>
+<th class="num">${fmt(totDapDif)}</th>
+<th class="num">${fmtPct(totDapPct)}</th>
+<th></th></tr>
+</tfoot>
+</table>` : ""}
+
+${d.notas ? `<div class="notas"><strong>NOTAS:</strong> ${d.notas}</div>` : ""}
+</section>
+
+<!-- ============== PÁGINA 2: ACTA DE DENUNCIA ============== -->
+<section class="pagina">
+${headerArcaHtml()}
+
+<div class="recuadro">
+<div class="label">CÓDIGO ORIGEN</div><div class="label">NÚMERO Y AÑO</div>
+<div>DF-TAGSA</div><div>${numeroNota} / ${anioNota}</div>
+</div>
+
+<h1 class="titulo">ACTA DE DENUNCIA</h1>
+
+<div class="recuadro">
+<div class="label">LUGAR</div><div class="label">FECHA</div>
+<div>Campana, Provincia de Buenos Aires</div><div>${hoy}</div>
+</div>
+
+<div class="checkboxes">
+☐ SE AGREGA &nbsp;&nbsp;&nbsp; ☒ DE OFICIO &nbsp;&nbsp;&nbsp; ☐ COMPARENDO PERSONAL &nbsp;&nbsp;&nbsp; ☐ TELEFÓNICA
+</div>
+
+<div class="cuerpo">
+<p>En la ciudad de Campana, Provincia de Buenos Aires, a los ${hoy}, el agente abajo firmante, destacado en el Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA — deja constancia de la siguiente denuncia:</p>
+
+<p><strong>HECHOS:</strong> Finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T <strong>${d.buque}</strong>, MANI N° <strong>${d.manifiesto}</strong>, fecha de descarga <strong>${fechaDescarga}</strong>, se constataron diferencias entre los kilos declarados y los kilos resultantes de la medición en tanque que <strong>exceden la tolerancia legal de ±${fmtPct(SBFA_TOLERANCIA_PCT)}</strong> establecida en el punto 12.1, Anexo II de la Resolución 2220/1990.</p>
+
+${fueraTol.length ? `
+<p><strong>CONOCIMIENTOS FUERA DE TOLERANCIA (${fueraTol.length}):</strong></p>
+<table>
+<thead><tr><th>Part.</th><th>Cto.</th><th>Producto</th><th>Empresa</th><th class="num">Kg. Decl.</th><th>Tk.</th><th>SBFA</th><th class="num">Kg. Result.</th><th class="num">Dif. Kg.</th><th class="num">Dif. %</th></tr></thead>
+<tbody>${fueraHtml}</tbody>
+</table>
+` : `<p><em>No se detectaron conocimientos fuera de la tolerancia legal en esta descarga.</em></p>`}
+
+<p><strong>FUNDAMENTOS:</strong> El art. 956 y siguientes del Código Aduanero (Ley 22.415) y la Resolución 2220/1990 (Anexo II, punto 12.1) regulan los sobrantes y faltantes en mercadería ingresada a depósito fiscal. Las diferencias detectadas exceden la tolerancia admitida y configuran un caso a relevar para que la Jefatura disponga el curso a seguir.</p>
+
+<p><strong>ELEMENTOS QUE SE ADJUNTAN:</strong> Manifiesto SIM, planillas de medición y Sobrantes/Faltantes; detalle resultante del ingreso de MANI; conocimientos referidos.</p>
+</div>
+
+<div class="firma-grid">
+<div><div class="linea"><strong>Agente actuante</strong></div><div style="font-size:9pt">Aclaración y legajo</div></div>
+<div><div class="linea"><strong>Jefe / Supervisor</strong></div><div style="font-size:9pt">Aclaración y legajo</div></div>
+</div>
+</section>
+
+<!-- ============== PÁGINA 3: NOTA SBFA ============== -->
+<section class="pagina">
+<div style="font-size:11pt;line-height:1.5">
+<p><strong>Actuación Inicial:</strong></p>
+<p>CAMPANA, ${fechaLarga}</p>
+<p><strong>Nota N°: ${numeroNota} / ${anioNota} (DF TAGSA)</strong></p>
+<p style="margin-top:0.8rem">Al Señor Jefe de Oficina Cargas a Granel y Tanques Fiscales:</p>
+<p><strong>Asunto:</strong> SB/FA B/T <strong>${d.buque}</strong> — MANI <strong>${d.manifiesto}</strong></p>
+
+<div class="cuerpo" style="margin-top:0.6rem">
+<p>Quien suscribe, agente <strong>IGLESIAS, JULIAN</strong> — Legajo 30388-7, destacado como medidor en el depósito fiscal TAGSA, informa a Ud. que:</p>
+
+<p>Finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T del asunto (MANI N° ${d.manifiesto}, descargado el ${sbfaFmtFechaLarga(d.fecha)}), resultó como se detalla en hoja adjunta.</p>
+
+${fueraTol.length ? `
+<p>Tal como se puede observar del citado detalle, <strong>${fueraTol.length} conocimiento(s) se hallan fuera de la tolerancia de ley</strong> establecida por el punto 12.1, Anexo II de la Resolución 2220/1990: ${listaFueras}.</p>` : `
+<p>Tal como se puede observar del citado detalle, los conocimientos se hallan dentro de la tolerancia de ley establecida por el punto 12.1, Anexo II de la Resolución 2220/1990.</p>`}
+
+<p>Respecto a los conocimientos que se hallan dentro de la tolerancia indicada, de acuerdo a instrucciones emanadas verbalmente por esa jefatura, se procedió a justificar y presentar, respectivamente en el SIM, los SB/FA generadas por la permisionaria.</p>
+
+<p>Sin otro particular se eleva el presente informe para su conocimiento y fines que estime corresponder.</p>
+
+<p><strong>Para mejor proveer se adjunta:</strong> MANI SIM; Planillas de medición y Sobrantes Faltantes.</p>
+</div>
+
+<div style="margin-top:3rem;text-align:center">
+<div style="border-top:1px solid #000;width:60%;margin:0 auto;padding-top:0.3rem">
+<strong>IGLESIAS, JULIAN</strong><br>
+<span style="font-size:10pt">Legajo 30388-7 — Agente medidor — DF TAGSA</span>
+</div>
+</div>
+</div>
+</section>
+
+<script>window.addEventListener('load', function(){ setTimeout(function(){ window.print(); }, 300); });</script>
+</body></html>`;
+
+        const w = window.open("", "_blank", "width=900,height=1100");
+        if (!w) { alert("No se pudo abrir la ventana de impresión. Revisá los popups bloqueados."); return; }
+        w.document.write(html);
+        w.document.close();
+    }
+
+    function headerArcaHtml() {
+        // URL absoluta del logo (la ventana popup tiene URL about:blank y no resuelve relativas)
+        const logoUrl = new URL("img/logo-arca.svg", window.location.href).href;
+        return `<div class="header-arca">
+            <div class="logo-arca">
+                <img src="${logoUrl}" style="height:38px;display:block" alt="ARCA">
+            </div>
+            <div class="org">
+                <strong>AGENCIA DE RECAUDACIÓN Y CONTROL ADUANERO</strong><br>
+                Dirección General de Aduanas<br>
+                Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA — Campana
+            </div>
+        </div>`;
     }
 
     function irASbfaDesdeBarco(buque) {
@@ -4180,9 +4428,7 @@ async function initApp() {
             items.push({});
             renderSbfaTablaDap(items);
         });
-        document.getElementById("btnSbfaExportarJSON").addEventListener("click", exportarSbfaJSON);
-        document.getElementById("btnSbfaActaJSON").addEventListener("click", exportarActaJSON);
-        document.getElementById("btnSbfaNotaJSON").addEventListener("click", exportarNotaJSON);
+        document.getElementById("btnSbfaImprimir").addEventListener("click", imprimirInformeSbfa);
         document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value));
     }
 

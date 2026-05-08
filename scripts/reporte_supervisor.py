@@ -187,13 +187,11 @@ def html_descargas_buque(buque: dict, fecha_str: str) -> str:
         else:
             tabla_dap = ""
 
-        imo_txt = f"IMO {buque['imo']} · " if buque.get("imo") else ""
+        imo_line = f'<p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">IMO {buque["imo"]}</p>' if buque.get("imo") else ""
         bloques.append(f"""
         <div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
             <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">{buque["nombre"]} — MANI {mani}</h3>
-            <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">
-                {imo_txt}Fecha de descarga: {fecha or "—"}
-            </p>
+            {imo_line}
             {tabla_part}
             {tabla_dap}
         </div>
@@ -268,7 +266,7 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
             bloques_barcos.append(html_descargas_buque(b, fecha))
         seccion_barcos = "".join(bloques_barcos)
     else:
-        seccion_barcos = f"<p style='color:#6b7280;font-style:italic'>Sin descargas registradas con fecha {fecha}.</p>"
+        seccion_barcos = "<p style='color:#6b7280;font-style:italic'>Sin descargas registradas en la fecha del reporte.</p>"
 
     seccion_plan = html_plan_dia(plan, fecha_iso)
 
@@ -289,10 +287,10 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     </p>
 </div>
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">🚢 Barcos con descarga del {fecha} ({len(buques)})</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">🚢 Barcos con descarga ({len(buques)})</h2>
 {seccion_barcos}
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas del {fecha}</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas</h2>
 {seccion_plan}
 
 <hr style="margin: 2rem 0 0.5rem 0; border: none; border-top: 1px solid #e5e7eb">

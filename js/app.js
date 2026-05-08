@@ -1947,7 +1947,7 @@ async function initApp() {
         const buques = repSupBuquesDeFecha(isoHoy);
         let bloquesBarcos = "";
         if (!buques.length) {
-            bloquesBarcos = `<p style="color:#6b7280;font-style:italic">Sin descargas registradas con fecha ${fechaHoy}.</p>`;
+            bloquesBarcos = `<p style="color:#6b7280;font-style:italic">Sin descargas registradas en la fecha del reporte.</p>`;
         } else {
             for (const b of buques) {
                 for (const d of b.descargas) {
@@ -2002,10 +2002,10 @@ async function initApp() {
                             <tbody>${rowsDap}</tbody>
                         </table>` : "";
 
-                    const imoTxt = b.imo ? `IMO ${b.imo} · ` : "";
+                    const imoTxt = b.imo ? `IMO ${b.imo}` : "";
                     bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
                         <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">${b.nombre} — MANI ${d.manifiesto || "(pendiente)"}</h3>
-                        <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">${imoTxt}Fecha de descarga: ${fechaHoy}</p>
+                        ${imoTxt ? `<p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">${imoTxt}</p>` : ""}
                         ${tablaPart}
                         ${tablaDap}
                     </div>`;
@@ -2057,9 +2057,9 @@ async function initApp() {
                 <h2 style="color:#1e3a8a;margin:0;font-size:18px">Reporte para Supervisores — Operaciones del día</h2>
                 <p style="margin:0.3rem 0 0 0;color:#6b7280;font-size:12px">Odfjell Terminals Tagsa SA — Campana · ${fechaHoy}</p>
             </div>
-            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos con descarga del ${fechaHoy} (${buques.length})</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos con descarga (${buques.length})</h3>
             ${bloquesBarcos}
-            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas del ${fechaHoy}</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas</h3>
             ${planHtml}
         </div>`;
     }

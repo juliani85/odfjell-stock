@@ -975,9 +975,17 @@ tbody tr:hover { background: var(--gray-50); }
     .tab[data-tab="sbfa"] {
         display: none !important;
     }
-    /* Las que quedan: Cargas, Stock, Reportes, Barcos */
+    /* Las que quedan: Cargas, Stock x TK, Reportes, Barcos */
     .tabs { gap: 0.15rem; }
-    .tab { font-size: 0.85rem; padding: 0.7rem 0.4rem; }
+    .tab { font-size: 0.8rem; padding: 0.65rem 0.3rem; }
+
+    /* Sub-pestañas dentro de Reportes y Historial: que entren en mobile */
+    .sub-tabs { flex-wrap: wrap; gap: 0.2rem; }
+    .sub-tab { font-size: 0.8rem; padding: 0.5rem 0.6rem; }
+
+    /* Reporte Supervisor en mobile: form en columna */
+    #repSupervisor .form-group { width: 100%; }
+    #repSupervisor .stock-header { flex-direction: column; align-items: stretch; gap: 0.4rem; }
 
     /* Tablas grandes con scroll horizontal pero sin romper el layout */
     .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }

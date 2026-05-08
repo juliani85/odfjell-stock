@@ -190,7 +190,7 @@ def html_descargas_buque(buque: dict, fecha_str: str) -> str:
         imo_txt = f"IMO {buque['imo']} · " if buque.get("imo") else ""
         bloques.append(f"""
         <div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
-            <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 {buque["nombre"]} — MANI {mani}</h3>
+            <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">{buque["nombre"]} — MANI {mani}</h3>
             <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">
                 {imo_txt}Fecha de descarga: {fecha or "—"}
             </p>

@@ -4268,14 +4268,13 @@ async function initApp() {
 
     function sbfaDapHTML(d, i) {
         return `<tr data-i="${i}">
-            <td><input data-k="documento" value="${d.documento || ""}"></td>
-            <td><input data-k="cto" value="${d.cto || ""}"></td>
-            <td class="col-num"><input data-k="cantDoctada" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantDoctada)}" placeholder="0"></td>
-            <td class="col-num"><input data-k="cantResult" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantResult)}" placeholder="0"></td>
-            <td class="dif-kg" data-difkg>0</td>
-            <td class="dif-pct" data-difpct>0,00%</td>
-            <td><input data-k="obs" value="${d.obs || ""}"></td>
-            <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
+            <td class="dap-doc"><input data-k="documento" value="${d.documento || ""}"></td>
+            <td class="dap-cto"><input data-k="cto" value="${d.cto || ""}"></td>
+            <td class="col-num dap-doctada"><input data-k="cantDoctada" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantDoctada)}" placeholder="0" maxlength="9"></td>
+            <td class="col-num dap-result"><input data-k="cantResult" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantResult)}" placeholder="0" maxlength="9"></td>
+            <td class="dif-kg dap-difkg" data-difkg>0</td>
+            <td class="dif-pct dap-difpct" data-difpct>0,00%</td>
+            <td class="col-borrar"><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
         </tr>`;
     }
 

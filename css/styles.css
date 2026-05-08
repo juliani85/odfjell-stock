@@ -905,6 +905,16 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-table .col-dif-pct   { width: 5%; }
 .sbfa-table .col-borrar    { width: 2%; padding: 0; text-align: center; }
 .sbfa-table .btn-borrar-fila { padding: 0; margin: 0; min-width: 0; width: 18px; height: 18px; line-height: 1; font-size: 0.95rem; }
+
+/* Tabla DAP — mismas proporciones que la de particulares */
+.sbfa-tabla-dap .dap-doc      { width: 30%; }
+.sbfa-tabla-dap .dap-cto      { width: 24%; }
+.sbfa-tabla-dap .dap-doctada  { width: 14%; }
+.sbfa-tabla-dap .dap-result   { width: 14%; }
+.sbfa-tabla-dap .dap-difkg    { width: 8%; }
+.sbfa-tabla-dap .dap-difpct   { width: 8%; }
+/* Permitir que los títulos largos del DAP wrappeen en lugar de encimarse */
+.sbfa-tabla-dap thead th { white-space: normal; line-height: 1.15; }
 .sbfa-table .dif-kg, .sbfa-table .dif-pct { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sbfa-table .fuera-tol { background: #fee2e2; color: #b91c1c; font-weight: 700; }
 .sbfa-table .dentro-tol { color: var(--gray-700); }

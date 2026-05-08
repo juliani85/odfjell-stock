@@ -3611,9 +3611,9 @@ async function initApp() {
                 ? `IMO ${b.imo}`
                 : `<span style="color:var(--warning)">IMO pendiente</span>`;
 
-            // Resumen de descargas SB/FA asociadas a este barco
+            // Resumen de descargas SB/FA asociadas a este barco (sin anuladas)
             const dx = (sbfaConfig.descargas || []).filter(d =>
-                (d.buque || "").toUpperCase() === (b.nombre || "").toUpperCase()
+                !d.anulada && (d.buque || "").toUpperCase() === (b.nombre || "").toUpperCase()
             );
             const sbfaInfo = dx.length
                 ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--primary)">📋 ${dx.length} descarga(s) SB/FA registradas</div>`
@@ -3830,12 +3830,35 @@ async function initApp() {
         return { totDecl, totRes, totDif: totRes - totDecl, fueraTol, pendientes, medidas };
     }
 
+    function sbfaDescargaMatch(d, filtro) {
+        if (!filtro) return true;
+        const f = filtro.toUpperCase().trim();
+        if ((d.buque || "").toUpperCase().includes(f)) return true;
+        if ((d.manifiesto || "").toUpperCase().includes(f)) return true;
+        if ((d.agencia || "").toUpperCase().includes(f)) return true;
+        if ((d.cuit || "").toUpperCase().includes(f)) return true;
+        // Buscar también dentro de filas (Cto, Sol Part, mercadería, receptor, SBFA, medic, tk)
+        const enFilas = (d.filas || []).some(row =>
+            ["solPart", "cto", "mercaderia", "receptor", "sbfa", "medic", "tkDestino"].some(k =>
+                String(row[k] || "").toUpperCase().includes(f)
+            )
+        );
+        if (enFilas) return true;
+        // Buscar en DAP
+        const enDap = (d.dap || []).some(x =>
+            ["documento", "cto", "obs"].some(k =>
+                String(x[k] || "").toUpperCase().includes(f)
+            )
+        );
+        return enDap;
+    }
+
     function renderSbfaLista(filtro = "") {
         const cont = document.getElementById("sbfaLista");
         if (!cont) return;
-        const f = (filtro || "").toUpperCase().trim();
         const items = (sbfaConfig.descargas || [])
-            .filter(d => !f || (d.buque || "").toUpperCase().includes(f) || (d.manifiesto || "").toUpperCase().includes(f))
+            .filter(d => !d.anulada) // tombstones: ocultar descargas borradas
+            .filter(d => sbfaDescargaMatch(d, filtro))
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
         if (!items.length) {
@@ -3882,11 +3905,53 @@ async function initApp() {
         });
     }
 
+    // ---- AUTO-GUARDADO en localStorage ----
+    const SBFA_BORRADOR_PREFIX = "sbfaBorrador_";
+    let _sbfaAutoSaveTimer = null;
+
+    function sbfaBorradorKey(id) { return SBFA_BORRADOR_PREFIX + (id || "nuevo"); }
+
+    function sbfaGuardarBorrador() {
+        if (document.getElementById("sbfaEditor").classList.contains("hidden")) return;
+        try {
+            const d = sbfaArmarDescarga();
+            const key = sbfaBorradorKey(sbfaEditandoId || "nuevo");
+            localStorage.setItem(key, JSON.stringify({ ...d, _ts: Date.now() }));
+        } catch (e) { /* localStorage lleno o privado: ignorar silenciosamente */ }
+    }
+
+    function sbfaLeerBorrador(id) {
+        try {
+            const raw = localStorage.getItem(sbfaBorradorKey(id || "nuevo"));
+            if (!raw) return null;
+            const obj = JSON.parse(raw);
+            // Borradores de más de 7 días se descartan
+            if (obj._ts && Date.now() - obj._ts > 7 * 24 * 3600 * 1000) {
+                localStorage.removeItem(sbfaBorradorKey(id || "nuevo"));
+                return null;
+            }
+            return obj;
+        } catch (e) { return null; }
+    }
+
+    function sbfaLimpiarBorrador(id) {
+        try { localStorage.removeItem(sbfaBorradorKey(id || "nuevo")); } catch (e) {}
+    }
+
+    function sbfaIniciarAutoSave() {
+        if (_sbfaAutoSaveTimer) clearInterval(_sbfaAutoSaveTimer);
+        _sbfaAutoSaveTimer = setInterval(sbfaGuardarBorrador, 30000); // cada 30s
+    }
+
+    function sbfaDetenerAutoSave() {
+        if (_sbfaAutoSaveTimer) { clearInterval(_sbfaAutoSaveTimer); _sbfaAutoSaveTimer = null; }
+    }
+
     function abrirSbfaEditor(id) {
         const editor = document.getElementById("sbfaEditor");
         const eliminarBtn = document.getElementById("btnSbfaEliminar");
         if (id) {
-            const d = (sbfaConfig.descargas || []).find(x => x.id === id);
+            const d = (sbfaConfig.descargas || []).find(x => x.id === id && !x.anulada);
             if (!d) return;
             sbfaEditandoId = id;
             document.getElementById("sbfaEditorTitulo").textContent = `Editando ${d.buque || ""} — MANI ${d.manifiesto || ""}`;
@@ -3915,12 +3980,34 @@ async function initApp() {
             renderSbfaTablaDap([{}]);
             eliminarBtn.style.display = "";
         }
+
+        // Recuperar borrador si existe y es más nuevo que la versión guardada
+        const borrador = sbfaLeerBorrador(sbfaEditandoId);
+        if (borrador && (!sbfaEditandoId ||
+            (sbfaEditandoId && (sbfaConfig.descargas.find(x => x.id === sbfaEditandoId)?.actualizadoTs || "") < new Date(borrador._ts).toISOString()))) {
+            const fechaTxt = new Date(borrador._ts).toLocaleString("es-AR");
+            if (confirm(`Hay un borrador sin guardar de esta descarga (${fechaTxt}). ¿Lo recuperás?`)) {
+                document.getElementById("sbfaBuque").value = borrador.buque || "";
+                document.getElementById("sbfaManifiesto").value = borrador.manifiesto || "";
+                document.getElementById("sbfaAgencia").value = borrador.agencia || "";
+                document.getElementById("sbfaCuit").value = borrador.cuit || "";
+                document.getElementById("sbfaFecha").value = borrador.fecha || "";
+                document.getElementById("sbfaNotas").value = borrador.notas || "";
+                renderSbfaTablaFilas(borrador.filas?.length ? borrador.filas : [{}, {}, {}, {}, {}, {}]);
+                renderSbfaTablaDap(borrador.dap?.length ? borrador.dap : [{}]);
+            } else {
+                sbfaLimpiarBorrador(sbfaEditandoId);
+            }
+        }
+
         editor.classList.remove("hidden");
         editor.scrollIntoView({ behavior: "smooth", block: "start" });
+        sbfaIniciarAutoSave();
     }
 
     function cerrarSbfaEditor() {
         document.getElementById("sbfaEditor").classList.add("hidden");
+        sbfaDetenerAutoSave();
         sbfaEditandoId = null;
     }
 
@@ -4186,6 +4273,7 @@ async function initApp() {
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
         if (await guardarSbfaCfg()) {
+            sbfaLimpiarBorrador(sbfaEditandoId);  // borrador ya no es necesario
             sbfaEditandoId = d.id;
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
@@ -4204,8 +4292,16 @@ async function initApp() {
             return;
         }
         if (!confirm("¿Confirmás la eliminación? No se puede deshacer.")) return;
-        sbfaConfig.descargas = sbfaConfig.descargas.filter(x => x.id !== sbfaEditandoId);
+        // Soft-delete (tombstone): marcar como anulada en lugar de quitarla del array.
+        // Así el borrado se propaga correctamente cuando otros admins sincronizan.
+        const i = sbfaConfig.descargas.findIndex(x => x.id === sbfaEditandoId);
+        if (i >= 0) {
+            sbfaConfig.descargas[i].anulada = true;
+            sbfaConfig.descargas[i].anuladaTs = new Date().toISOString();
+            sbfaConfig.descargas[i].anuladaPor = usuarioActual;
+        }
         if (await guardarSbfaCfg()) {
+            sbfaLimpiarBorrador(sbfaEditandoId);
             cerrarSbfaEditor();
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();
@@ -4725,7 +4821,7 @@ ${fueraTol.length ? `
         // Buscar descargas existentes del buque con cargas pendientes
         // (filas con kgDeclarados pero sin kgResultantes, o sin filas todavía)
         const candidatas = (sbfaConfig.descargas || [])
-            .filter(d => (d.buque || "").toUpperCase() === buqueU)
+            .filter(d => !d.anulada && (d.buque || "").toUpperCase() === buqueU)
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
         const pendiente = candidatas.find(d => {

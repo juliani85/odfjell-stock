@@ -4009,7 +4009,6 @@ async function initApp() {
             agencia: (d.agencia || "").trim(),
             cuit: (d.cuit || "").trim(),
             fecha: d.fecha || "",
-            notas: (d.notas || "").trim(),
             filas: (d.filas || []).filter(f => Object.values(f).some(v => v !== "" && v !== null && v !== undefined)),
             dap: (d.dap || []).filter(x => Object.values(x).some(v => v !== "" && v !== null && v !== undefined)),
         });
@@ -4029,7 +4028,6 @@ async function initApp() {
             document.getElementById("sbfaAgencia").value = d.agencia || "B&M";
             document.getElementById("sbfaCuit").value = d.cuit || "30-71631314-6";
             document.getElementById("sbfaFecha").value = d.fecha || "";
-            document.getElementById("sbfaNotas").value = d.notas || "";
             renderSbfaTablaFilas(d.filas || []);
             renderSbfaTablaDap(d.dap || []);
             eliminarBtn.style.display = "";
@@ -4041,7 +4039,6 @@ async function initApp() {
             document.getElementById("sbfaAgencia").value = "";
             document.getElementById("sbfaCuit").value = "";
             document.getElementById("sbfaFecha").value = new Date().toISOString().slice(0, 10);
-            document.getElementById("sbfaNotas").value = "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.";
             const notaInput = document.getElementById("sbfaNotaNumero");
             if (notaInput) notaInput.value = "";
             // 6 filas por default para ir cargando particulares antes del arribo
@@ -4081,7 +4078,6 @@ async function initApp() {
                 document.getElementById("sbfaAgencia").value = borrador.agencia || "";
                 document.getElementById("sbfaCuit").value = borrador.cuit || "";
                 document.getElementById("sbfaFecha").value = borrador.fecha || "";
-                document.getElementById("sbfaNotas").value = borrador.notas || "";
                 renderSbfaTablaFilas(borrador.filas?.length ? borrador.filas : [{}, {}, {}, {}, {}, {}]);
                 renderSbfaTablaDap(borrador.dap?.length ? borrador.dap : [{}]);
             } else {
@@ -4375,7 +4371,6 @@ async function initApp() {
             agencia: document.getElementById("sbfaAgencia").value.trim(),
             cuit: document.getElementById("sbfaCuit").value.trim(),
             fecha: document.getElementById("sbfaFecha").value,
-            notas: document.getElementById("sbfaNotas").value.trim(),
             filas: sbfaLeerFilas().filter(f => Object.values(f).some(v => v !== "" && v !== null)),
             dap: sbfaLeerDap().filter(d => Object.values(d).some(v => v !== "" && v !== null)),
             actualizadoPor: usuarioActual,
@@ -4669,7 +4664,6 @@ ${dap.length ? `
 </tfoot>
 </table>` : ""}
 
-${d.notas ? `<div class="notas"><strong>NOTAS:</strong> ${d.notas}</div>` : ""}
 </section>
 
 <!-- ============== PÁGINA 2: ACTA DE DENUNCIA — OM-2090 (página 1) ============== -->

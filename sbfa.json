@@ -130,8 +130,8 @@
           "kgDeclarados": 1128817,
           "tkDestino": "27-28-29-31-32",
           "sbfa": "",
-          "medic": "4444",
-          "kgResultantes": 1500000
+          "medic": "",
+          "kgResultantes": null
         },
         {
           "solPart": "864",
@@ -323,7 +323,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T20:05:48.627Z"
+      "actualizadoTs": "2026-05-08T20:13:14.044Z"
     }
   ]
 }

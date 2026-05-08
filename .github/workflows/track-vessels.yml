@@ -1,0 +1,50 @@
+name: Track vessels
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: track-vessels
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Run tracker
+        run: python scripts/track_vessels.py
+
+      - name: Commit tracking.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- tracking.json; then
+            git pull --rebase origin master || true
+            git add tracking.json
+            git commit -m "chore(track): actualizar tracking.json $(date -u +%Y-%m-%dT%H:%MZ)"
+            for i in 1 2 3; do
+              if git push origin master; then
+                exit 0
+              fi
+              echo "push falló, reintentando con rebase ($i/3)"
+              git pull --rebase origin master
+            done
+            exit 1
+          fi
+          echo "sin cambios en tracking.json"

@@ -53,6 +53,7 @@
             <button class="tab" data-tab="stock" data-rol="admin">Stock por Tanque</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
             <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
+            <button class="tab" data-tab="barcos" data-rol="admin">Barcos <span id="badgeBarcosCerca" class="badge-nuevas hidden">0</span></button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
         </nav>
 
@@ -502,6 +503,43 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </section>
+
+        <!-- BARCOS -->
+        <section id="barcos" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Barcos en seguimiento</h2>
+                    <div class="filtros">
+                        <label for="barcosUmbral" style="font-size:0.9rem;color:var(--gray-500)">Alerta a &lt;</label>
+                        <input type="number" id="barcosUmbral" min="1" max="240" step="1" value="24" style="width:70px"> hs
+                        <button class="btn btn-secondary btn-sm" id="btnBarcosRefresh" type="button">↻ Refrescar</button>
+                    </div>
+                </div>
+                <p id="barcosActualizado" style="margin-bottom:1rem;color:var(--gray-500);font-size:0.85rem"></p>
+                <div id="barcosCards"></div>
+
+                <details style="margin-top:1.5rem">
+                    <summary style="cursor:pointer;font-weight:600;color:var(--gray-700)">Administrar lista de barcos</summary>
+                    <div style="margin-top:1rem;padding:1rem;background:var(--gray-50);border-radius:8px">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="barcoIMO">IMO</label>
+                                <input type="text" id="barcoIMO" placeholder="Ej: 9367554" maxlength="7">
+                            </div>
+                            <div class="form-group">
+                                <label for="barcoNombre">Nombre</label>
+                                <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
+                        </div>
+                        <div id="barcosLista" style="margin-top:0.75rem"></div>
+                        <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.5rem">Los datos se actualizan cada 30 minutos vía GitHub Actions. Después de agregar/quitar un barco, los datos del nuevo barco aparecerán en la próxima corrida.</p>
+                    </div>
+                </details>
             </div>
         </section>
 

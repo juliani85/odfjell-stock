@@ -3220,6 +3220,9 @@ async function initApp() {
                 mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
             }
         }, 30000);
+
+        // --- BARCOS: tracking AIS ---
+        inicializarBarcos();
     }
 
     // Si es viewer, sincronizar vistas, render inicial y polling cada 30s
@@ -3489,6 +3492,198 @@ async function initApp() {
     function formatKg(n) { return n.toLocaleString("es-AR"); }
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
     function ocultarAlerta() { alerta.className = "alerta hidden"; }
+
+    // --- BARCOS: tracking AIS ---
+    let barcosConfig = { barcos: [] };
+    let barcosTracking = { actualizado: null, barcos: {} };
+
+    async function fetchJSON(path) {
+        try {
+            const r = await fetch(path + "?b=" + Date.now());
+            if (!r.ok) return null;
+            return await r.json();
+        } catch (_) { return null; }
+    }
+
+    function umbralAlertaHs() {
+        const v = parseInt(document.getElementById("barcosUmbral")?.value, 10);
+        return isNaN(v) || v <= 0 ? 24 : v;
+    }
+
+    function fmtFechaCorta(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso);
+        if (isNaN(d)) return "—";
+        return d.toLocaleString("es-AR", {
+            day: "2-digit", month: "2-digit",
+            hour: "2-digit", minute: "2-digit", hour12: false,
+        });
+    }
+
+    function horasHasta(iso) {
+        if (!iso) return null;
+        const ms = new Date(iso) - Date.now();
+        return ms / 3600000;
+    }
+
+    async function cargarBarcosCfg() {
+        const cfg = await fetchJSON("barcos.json");
+        if (cfg) barcosConfig = cfg;
+    }
+
+    async function cargarTracking() {
+        const trk = await fetchJSON("tracking.json");
+        if (trk) barcosTracking = trk;
+    }
+
+    function renderBarcos() {
+        const c = document.getElementById("barcosCards");
+        if (!c) return;
+        const ts = document.getElementById("barcosActualizado");
+        if (ts) ts.textContent = barcosTracking.actualizado
+            ? `Última actualización del tracking: ${fmtFechaCorta(barcosTracking.actualizado)} (UTC ${barcosTracking.actualizado.replace("T", " ").slice(0, 16)})`
+            : "Esperando primer tracking…";
+
+        const umbral = umbralAlertaHs();
+        const filas = (barcosConfig.barcos || []).map(b => {
+            const t = (barcosTracking.barcos || {})[b.imo] || {};
+            const hs = horasHasta(t.eta);
+            const acerca = hs !== null && hs >= 0 && hs <= umbral;
+            const cls = acerca ? "barco-card alerta" : (t.estado === "en_route" ? "barco-card en-ruta" : "barco-card");
+
+            let estadoTxt = "";
+            if (t.estado === "en_route") {
+                const hsTxt = hs === null ? "" : (hs < 0 ? `<span style="color:#b91c1c">demorado ${Math.round(-hs)} hs</span>` : `en ${hs.toFixed(1)} hs`);
+                estadoTxt = `🚢 En ruta a <strong>${t.destino || "—"}</strong> · ETA <strong>${fmtFechaCorta(t.eta)}</strong> ${hsTxt}`;
+            } else if (t.estado === "en_puerto") {
+                estadoTxt = `⚓ En puerto: <strong>${t.puerto_actual || "—"}</strong> desde ${fmtFechaCorta(t.arribo)}`;
+            } else if (t.estado === "navegando") {
+                estadoTxt = `🌊 Navegando · zarpó de <strong>${t.ultimo_puerto || "—"}</strong> el ${fmtFechaCorta(t.partida)}`;
+            } else if (t.error) {
+                estadoTxt = `<span style="color:var(--gray-500)">Sin datos: ${t.error}</span>`;
+            } else {
+                estadoTxt = `<span style="color:var(--gray-500)">Sin datos de tracking aún. Esperar próxima corrida (cada 30 min).</span>`;
+            }
+
+            const detalles = [];
+            if (t.velocidad_nudos != null) detalles.push(`${t.velocidad_nudos} nudos`);
+            if (t.rumbo != null) detalles.push(`rumbo ${t.rumbo}°`);
+            if (t.calado_m != null) detalles.push(`calado ${t.calado_m} m`);
+            if (t.bandera) detalles.push(t.bandera);
+
+            return `<div class="${cls}" style="padding:1rem;border-radius:10px;border:2px solid ${acerca ? '#dc2626' : (t.estado === "en_route" ? '#1a56db' : 'var(--gray-200)')};margin-bottom:0.75rem;background:white">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+                    <div>
+                        <div style="font-weight:700;font-size:1.05rem">${b.nombre} ${acerca ? '<span style="color:#dc2626">⚠</span>' : ''}</div>
+                        <div style="font-size:0.8rem;color:var(--gray-500);font-family:monospace">IMO ${b.imo}</div>
+                    </div>
+                    <a href="https://www.vesselfinder.com/vessels/details/${b.imo}" target="_blank" rel="noopener" style="font-size:0.8rem">VesselFinder ↗</a>
+                </div>
+                <div style="margin-top:0.5rem;font-size:0.95rem">${estadoTxt}</div>
+                ${detalles.length ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--gray-500)">${detalles.join(" · ")}</div>` : ""}
+            </div>`;
+        }).join("");
+
+        c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno abajo.</p>`;
+
+        // badge en la pestaña: cantidad de barcos en alerta
+        const cerca = (barcosConfig.barcos || []).filter(b => {
+            const t = (barcosTracking.barcos || {})[b.imo] || {};
+            const hs = horasHasta(t.eta);
+            return hs !== null && hs >= 0 && hs <= umbral;
+        }).length;
+        const badge = document.getElementById("badgeBarcosCerca");
+        if (badge) {
+            if (cerca > 0) { badge.textContent = cerca; badge.classList.remove("hidden"); }
+            else badge.classList.add("hidden");
+        }
+
+        renderListaBarcos();
+    }
+
+    function renderListaBarcos() {
+        const lista = document.getElementById("barcosLista");
+        if (!lista) return;
+        if (!(barcosConfig.barcos || []).length) {
+            lista.innerHTML = "";
+            return;
+        }
+        lista.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:0.5rem">` +
+            barcosConfig.barcos.map(b => `<span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.6rem;background:white;border:1px solid var(--gray-300);border-radius:14px;font-size:0.8rem">
+                ${b.nombre} <code style="color:var(--gray-500)">${b.imo}</code>
+                <button data-quitar-imo="${b.imo}" type="button" style="border:none;background:none;cursor:pointer;color:#dc2626;font-weight:700">×</button>
+            </span>`).join("") + `</div>`;
+        lista.querySelectorAll("[data-quitar-imo]").forEach(b => {
+            b.addEventListener("click", () => quitarBarco(b.dataset.quitarImo));
+        });
+    }
+
+    async function guardarBarcosCfg() {
+        // Igual que GH._enviar pero para barcos.json — read-modify-write con sha.
+        try {
+            const url = `https://api.github.com/repos/${GH.repo}/contents/barcos.json`;
+            const get = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
+            let sha = null;
+            if (get.ok) {
+                const data = await get.json();
+                sha = data.sha;
+            }
+            const contenido = btoa(new TextEncoder().encode(JSON.stringify(barcosConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
+            const body = { message: `chore: actualizar barcos.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
+            if (sha) body.sha = sha;
+            const put = await fetch(url, {
+                method: "PUT",
+                headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            if (!put.ok) throw new Error(`GitHub ${put.status}`);
+            return true;
+        } catch (e) {
+            console.error("[barcos] error guardando:", e);
+            mostrarAlerta(`Error guardando barcos.json: ${e.message}`, "error");
+            return false;
+        }
+    }
+
+    async function agregarBarco() {
+        const imo = document.getElementById("barcoIMO").value.trim();
+        const nombre = document.getElementById("barcoNombre").value.trim().toUpperCase();
+        if (!/^\d{7}$/.test(imo)) { alert("IMO inválido (7 dígitos)."); return; }
+        if (!nombre) { alert("Falta el nombre del barco."); return; }
+        if ((barcosConfig.barcos || []).some(b => b.imo === imo)) { alert("Ese IMO ya está en la lista."); return; }
+        barcosConfig.barcos = barcosConfig.barcos || [];
+        barcosConfig.barcos.push({ imo, nombre });
+        if (await guardarBarcosCfg()) {
+            document.getElementById("barcoIMO").value = "";
+            document.getElementById("barcoNombre").value = "";
+            renderBarcos();
+            mostrarAlerta(`${nombre} agregado. El tracking aparecerá en la próxima corrida del workflow (≤30 min).`, "info");
+        }
+    }
+
+    async function quitarBarco(imo) {
+        if (!confirm("¿Quitar este barco del seguimiento?")) return;
+        barcosConfig.barcos = (barcosConfig.barcos || []).filter(b => b.imo !== imo);
+        if (await guardarBarcosCfg()) renderBarcos();
+    }
+
+    async function inicializarBarcos() {
+        await Promise.all([cargarBarcosCfg(), cargarTracking()]);
+        renderBarcos();
+
+        document.getElementById("barcosUmbral").addEventListener("change", renderBarcos);
+        document.getElementById("btnBarcosRefresh").addEventListener("click", async () => {
+            await cargarTracking();
+            renderBarcos();
+        });
+        document.getElementById("btnAgregarBarco").addEventListener("click", agregarBarco);
+
+        // Auto-refresh tracking cada 5 min mientras la app está abierta
+        setInterval(async () => {
+            await cargarTracking();
+            renderBarcos();
+        }, 5 * 60 * 1000);
+    }
 
     // --- INIT ---
     paso1.classList.add("active");

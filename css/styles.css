@@ -867,7 +867,7 @@ tbody tr:hover { background: var(--gray-50); }
 
 .sbfa-card { padding: 1rem; border: 2px solid var(--gray-200); border-radius: 10px; background: white; margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.15s; }
 .sbfa-card:hover { border-color: var(--primary); }
-.sbfa-card.fuera-tol { border-color: #dc2626; background: #fff5f5; }
+.sbfa-card.requiere-acta { border-color: #d97706; background: #fffbeb; }
 .sbfa-card-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
 .sbfa-card-titulo { font-weight: 700; font-size: 1.05rem; }
 .sbfa-card-meta { color: var(--gray-500); font-size: 0.85rem; }

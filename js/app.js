@@ -3817,13 +3817,14 @@ async function initApp() {
         }
         cont.innerHTML = items.map(d => {
             const r = sbfaResumen(d);
-            const claseFuera = r.fueraTol > 0 ? "sbfa-card fuera-tol" : "sbfa-card";
+            const claseFuera = r.fueraTol > 0 ? "sbfa-card requiere-acta" : "sbfa-card";
             const fechaTxt = d.fecha ? d.fecha.split("-").reverse().join("/") : "—";
             const difPct = r.totDecl > 0 && r.totRes > 0 ? r.totDif / r.totDecl * 100 : 0;
 
             let estado;
             if (r.fueraTol > 0) {
-                estado = `<span style="color:#b91c1c;font-weight:700">⚠ ${r.fueraTol} fuera de tolerancia</span>`;
+                // No es un error: las diferencias > tolerancia son justamente lo que dispara el acta de denuncia
+                estado = `<span style="color:#d97706;font-weight:600">📋 ${r.fueraTol} para Acta de Denuncia</span>`;
             } else if (r.pendientes > 0 && r.medidas === 0) {
                 estado = `<span style="color:#1e40af;font-weight:600">⏳ Pendiente medición (${r.pendientes} fila${r.pendientes > 1 ? "s" : ""})</span>`;
             } else if (r.pendientes > 0) {

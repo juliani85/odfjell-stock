@@ -112,6 +112,218 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-05-08T18:11:41.913Z"
+    },
+    {
+      "id": 1778268143140,
+      "buque": "BOW CARDINAL",
+      "manifiesto": "2",
+      "agencia": "BYM",
+      "cuit": "",
+      "fecha": "2026-05-11",
+      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "filas": [
+        {
+          "solPart": "879",
+          "cto": "4401",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": 1128817,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "864",
+          "cto": "4101",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 749954,
+          "tkDestino": "80-85",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "856",
+          "cto": "3604-3605-3606-3607",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "EXAR",
+          "kgDeclarados": 104000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "855",
+          "cto": "3602-3603",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "CHEMOTECNICA",
+          "kgDeclarados": 200000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "854",
+          "cto": "3608",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "FARMCHEM",
+          "kgDeclarados": 16000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "842",
+          "cto": "3601",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "VARTECO",
+          "kgDeclarados": 100000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "731",
+          "cto": "2600",
+          "mercaderia": "EXX60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 351360,
+          "tkDestino": "23",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "774",
+          "cto": "402-403",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "INQUIBA",
+          "kgDeclarados": 56000,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "776",
+          "cto": "1102",
+          "mercaderia": "ACETATO DE VINILO",
+          "receptor": "DALGAR",
+          "kgDeclarados": 205814,
+          "tkDestino": "65-25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "775",
+          "cto": "401-405",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 303648,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "747",
+          "cto": "2602-360",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "ATANOR",
+          "kgDeclarados": 320000,
+          "tkDestino": "44-58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "734",
+          "cto": "2602-1101",
+          "mercaderia": "ACETATO DE VINILO",
+          "receptor": "CRILEN",
+          "kgDeclarados": 56000,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "733",
+          "cto": "2602-0404",
+          "mercaderia": "ACRILATO DE BUTILO",
+          "receptor": "CRILEN",
+          "kgDeclarados": 112000,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "728",
+          "cto": "2602-0801",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 148156,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "730",
+          "cto": "2602-0501",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 262258,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "729",
+          "cto": "2602-1001",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 198947,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "685",
+          "cto": "2602-3001",
+          "mercaderia": "SOLVENT NAPTHTHA L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 100000,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "681",
+          "cto": "2602-2901",
+          "mercaderia": "ISOPAR L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 149262,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-08T19:22:23.141Z"
     }
   ]
 }

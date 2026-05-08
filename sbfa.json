@@ -3,7 +3,7 @@
     {
       "id": 1778259966032,
       "buque": "BOW CAROLINE",
-      "manifiesto": "0",
+      "manifiesto": "1",
       "agencia": "BYM",
       "cuit": "3071631346",
       "fecha": "2026-05-09",
@@ -111,7 +111,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T17:06:06.032Z"
+      "actualizadoTs": "2026-05-08T17:39:05.159Z"
     }
   ]
 }

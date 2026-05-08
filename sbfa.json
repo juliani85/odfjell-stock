@@ -16,14 +16,14 @@
           "receptor": "pbb",
           "kgDeclarados": 458000,
           "tkDestino": "61-89",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1",
+          "medic": "5",
+          "kgResultantes": 500000
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T16:25:56.481Z"
+      "actualizadoTs": "2026-05-08T16:35:58.731Z"
     }
   ]
 }

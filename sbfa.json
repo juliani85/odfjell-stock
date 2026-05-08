@@ -120,7 +120,6 @@
       "agencia": "BYM",
       "cuit": "30-71631314-6",
       "fecha": "2026-05-11",
-      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
       "filas": [
         {
           "solPart": "879",
@@ -129,9 +128,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1128817,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "1",
-          "medic": "21",
-          "kgResultantes": 500
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         },
         {
           "solPart": "864",
@@ -323,7 +322,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T22:29:15.348Z"
+      "actualizadoTs": "2026-05-08T22:43:09.413Z"
     }
   ]
 }

@@ -3499,6 +3499,9 @@ async function initApp() {
     // --- BARCOS: tracking AIS ---
     let barcosConfig = { barcos: [] };
     let barcosTracking = { actualizado: null, barcos: {} };
+    let sbfaConfig = { descargas: [] };
+    let sbfaEditandoId = null;
+    const SBFA_TOLERANCIA_PCT = 0.6;
 
     async function fetchJSON(path) {
         try {
@@ -3583,6 +3586,14 @@ async function initApp() {
                 ? `IMO ${b.imo}`
                 : `<span style="color:var(--warning)">IMO pendiente</span>`;
 
+            // Resumen de descargas SB/FA asociadas a este barco
+            const dx = (sbfaConfig.descargas || []).filter(d =>
+                (d.buque || "").toUpperCase() === (b.nombre || "").toUpperCase()
+            );
+            const sbfaInfo = dx.length
+                ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--primary)">📋 ${dx.length} descarga(s) SB/FA registradas</div>`
+                : "";
+
             return `<div class="${cls}" style="padding:1rem;border-radius:10px;border:2px solid ${acerca ? '#dc2626' : (t.estado === "en_route" ? '#1a56db' : 'var(--gray-200)')};margin-bottom:0.75rem;background:white">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
                     <div>
@@ -3593,8 +3604,27 @@ async function initApp() {
                 </div>
                 <div style="margin-top:0.5rem;font-size:0.95rem">${estadoTxt}</div>
                 ${detalles.length ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--gray-500)">${detalles.join(" · ")}</div>` : ""}
+                ${sbfaInfo}
+                <div style="margin-top:0.6rem;display:flex;gap:0.4rem;flex-wrap:wrap">
+                    <button class="btn btn-primary btn-sm" data-sbfa-buque="${b.nombre}" type="button">📋 Cargar SB/FA</button>
+                    ${dx.length ? `<button class="btn btn-secondary btn-sm" data-sbfa-ver="${b.nombre}" type="button">Ver descargas (${dx.length})</button>` : ""}
+                </div>
             </div>`;
         }).join("");
+
+        // Eventos de los botones SB/FA
+        c.querySelectorAll("[data-sbfa-buque]").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.stopPropagation();
+                irASbfaDesdeBarco(btn.dataset.sbfaBuque);
+            });
+        });
+        c.querySelectorAll("[data-sbfa-ver]").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.stopPropagation();
+                verDescargasSbfaDeBarco(btn.dataset.sbfaVer);
+            });
+        });
 
         c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno abajo.</p>`;
 
@@ -3705,10 +3735,6 @@ async function initApp() {
     }
 
     // --- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE ---
-    let sbfaConfig = { descargas: [] };
-    let sbfaEditandoId = null;
-    const SBFA_TOLERANCIA_PCT = 0.6;
-
     async function cargarSbfaCfg() {
         const cfg = await fetchJSON("sbfa.json");
         if (cfg) sbfaConfig = cfg;
@@ -4017,6 +4043,7 @@ async function initApp() {
             sbfaEditandoId = d.id;
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+            if (typeof renderBarcos === "function") renderBarcos();
         }
     }
 
@@ -4027,6 +4054,7 @@ async function initApp() {
         if (await guardarSbfaCfg()) {
             cerrarSbfaEditor();
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+            if (typeof renderBarcos === "function") renderBarcos();
         }
     }
 
@@ -4091,9 +4119,51 @@ async function initApp() {
         mostrarAlerta("JSON descargado. Corré: python generar_nota_sbfa.py nota_*.json", "info");
     }
 
+    function irASbfaDesdeBarco(buque) {
+        // Cambiar a pestaña SB/FA
+        const tabBtn = document.querySelector('.tab[data-tab="sbfa"]');
+        if (tabBtn) tabBtn.click();
+        const buqueU = (buque || "").toUpperCase();
+
+        // Buscar descargas existentes del buque con cargas pendientes
+        // (filas con kgDeclarados pero sin kgResultantes, o sin filas todavía)
+        const candidatas = (sbfaConfig.descargas || [])
+            .filter(d => (d.buque || "").toUpperCase() === buqueU)
+            .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
+
+        const pendiente = candidatas.find(d => {
+            if (!d.filas || !d.filas.length) return true;
+            return d.filas.some(f => (Number(f.kgDeclarados) || 0) > 0 && !(Number(f.kgResultantes) > 0));
+        });
+
+        if (pendiente) {
+            abrirSbfaEditor(pendiente.id);
+            mostrarAlerta(`Abriendo descarga existente de ${buque} (con cargas pendientes).`, "info");
+        } else {
+            // Nueva descarga pre-cargada con buque y fecha de hoy
+            abrirSbfaEditor(null);
+            document.getElementById("sbfaBuque").value = buque;
+            document.getElementById("sbfaBuque").focus();
+            mostrarAlerta(`Nueva descarga para ${buque}. Cargá manifiesto y solicitudes particulares.`, "info");
+        }
+    }
+
+    function verDescargasSbfaDeBarco(buque) {
+        const tabBtn = document.querySelector('.tab[data-tab="sbfa"]');
+        if (tabBtn) tabBtn.click();
+        const filtro = document.getElementById("sbfaFiltro");
+        if (filtro) {
+            filtro.value = buque;
+            filtro.dispatchEvent(new Event("input"));
+        }
+        cerrarSbfaEditor();
+    }
+
     async function inicializarSbfa() {
         await cargarSbfaCfg();
         renderSbfaLista();
+        // Re-renderizar barcos para que cada card muestre el conteo de descargas SB/FA del buque
+        if (typeof renderBarcos === "function") renderBarcos();
 
         document.getElementById("btnSbfaNueva").addEventListener("click", () => abrirSbfaEditor(null));
         document.getElementById("btnSbfaCancelar").addEventListener("click", cerrarSbfaEditor);

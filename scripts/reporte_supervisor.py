@@ -301,7 +301,7 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
 <div style="border-bottom: 3px solid #1e3a8a; padding-bottom: 0.5rem; margin-bottom: 1rem">
     <h1 style="color: #1e3a8a; margin: 0; font-size: 18px">Reporte para Supervisores — Operaciones del día</h1>
     <p style="margin: 0.3rem 0 0 0; color: #6b7280; font-size: 12px">
-        Odfjell Terminals Tagsa SA — Campana · {fecha} · Generado automáticamente
+        Odfjell Terminals Tagsa SA — Campana · {fecha}
     </p>
 </div>
 

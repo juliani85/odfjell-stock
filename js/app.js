@@ -1917,24 +1917,25 @@ async function initApp() {
         return `${d}/${m}/${y}`;
     }
 
-    function repSupBarcosEnPuerto() {
-        // Filtra tracking.json: estado en_puerto + puerto contiene "campana"
-        const t = (barcosTracking && barcosTracking.barcos) || {};
-        const out = [];
-        for (const imo in t) {
-            const d = t[imo];
-            if (!d || (d.estado || "").toLowerCase() !== "en_puerto") continue;
-            if (!((d.puerto_actual || "").toLowerCase().includes("campana"))) continue;
-            out.push({ imo, nombre: d.nombre || imo, puerto: d.puerto_actual || "Campana" });
+    // Devuelve un map { nombreBuque -> { nombre, imo, descargas[] } } con todas
+    // las descargas SB/FA cuya fecha coincide con fechaIso.
+    function repSupBuquesDeFecha(fechaIso) {
+        const buques = {};
+        for (const d of (sbfaConfig.descargas || [])) {
+            if (d.anulada) continue;
+            if (d.fecha !== fechaIso) continue;
+            const nombre = (d.buque || "(sin buque)").trim();
+            const key = nombre.toUpperCase();
+            if (!buques[key]) {
+                // Buscar IMO en barcosConfig por si está cargado
+                const cfg = (barcosConfig.barcos || []).find(b =>
+                    (b.nombre || "").toUpperCase() === key
+                );
+                buques[key] = { nombre, imo: cfg?.imo || null, descargas: [] };
+            }
+            buques[key].descargas.push(d);
         }
-        return out;
-    }
-
-    function repSupDescargasDelBuque(nombreBuque) {
-        const u = (nombreBuque || "").toUpperCase().trim();
-        return (sbfaConfig.descargas || []).filter(d =>
-            !d.anulada && (d.buque || "").toUpperCase().trim() === u
-        );
+        return Object.values(buques);
     }
 
     function repSupArmarHTML() {
@@ -1943,21 +1944,13 @@ async function initApp() {
         const fmt = n => (n === null || n === undefined || isNaN(n)) ? "" : Math.round(Number(n)).toLocaleString("es-AR");
         const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(2).replace(".", ",") + "%");
 
-        const barcos = repSupBarcosEnPuerto();
+        const buques = repSupBuquesDeFecha(isoHoy);
         let bloquesBarcos = "";
-        if (!barcos.length) {
-            bloquesBarcos = `<p style="color:#6b7280;font-style:italic">Ningún barco operando en Campana al momento del reporte.</p>`;
+        if (!buques.length) {
+            bloquesBarcos = `<p style="color:#6b7280;font-style:italic">Sin descargas registradas con fecha ${fechaHoy}.</p>`;
         } else {
-            for (const b of barcos) {
-                const dx = repSupDescargasDelBuque(b.nombre);
-                if (!dx.length) {
-                    bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
-                        <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 ${b.nombre} (IMO ${b.imo})</h3>
-                        <p style="color:#6b7280;font-style:italic;margin:0">Sin descargas SB/FA registradas en el sistema.</p>
-                    </div>`;
-                    continue;
-                }
-                for (const d of dx) {
+            for (const b of buques) {
+                for (const d of b.descargas) {
                     const filas = (d.filas || []).filter(f => Object.values(f || {}).some(v => v !== "" && v !== null && v !== undefined));
                     const dap = (d.dap || []).filter(x => Object.values(x || {}).some(v => v !== "" && v !== null && v !== undefined));
                     let totDecl = 0, totRes = 0;
@@ -2040,9 +2033,10 @@ async function initApp() {
                             <tbody>${rowsDap}</tbody>
                         </table>` : "";
 
+                    const imoTxt = b.imo ? `IMO ${b.imo} · ` : "";
                     bloquesBarcos += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
                         <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 ${b.nombre} — MANI ${d.manifiesto || "(pendiente)"}</h3>
-                        <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">IMO ${b.imo} · Puerto: ${b.puerto}</p>
+                        <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">${imoTxt}Fecha de descarga: ${fechaHoy}</p>
                         ${tablaPart}
                         ${tablaDap}
                     </div>`;
@@ -2094,9 +2088,9 @@ async function initApp() {
                 <h2 style="color:#1e3a8a;margin:0;font-size:18px">Reporte para Supervisores — Operaciones del día</h2>
                 <p style="margin:0.3rem 0 0 0;color:#6b7280;font-size:12px">Odfjell Terminals Tagsa SA — Campana · ${fechaHoy}</p>
             </div>
-            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos operando en Campana (${barcos.length})</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos con descarga del ${fechaHoy} (${buques.length})</h3>
             ${bloquesBarcos}
-            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas del día</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas del ${fechaHoy}</h3>
             ${planHtml}
         </div>`;
     }

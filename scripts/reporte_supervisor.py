@@ -75,42 +75,35 @@ def fecha_local_iso(iso: str | None = None) -> str:
     return arg.strftime("%Y-%m-%d")
 
 
-def barcos_en_puerto_campana(tracking: dict) -> list[dict]:
-    """Devuelve lista de barcos cuyo estado AIS es en_puerto y el puerto
-    contiene 'campana' (case-insensitive)."""
-    out = []
-    for imo, datos in (tracking.get("barcos") or {}).items():
-        if not isinstance(datos, dict):
+def buques_de_fecha(sbfa: dict, barcos_cfg: dict, fecha_iso: str) -> list[dict]:
+    """Agrupa descargas SB/FA por buque, filtrando por fecha de descarga.
+    Devuelve lista de { nombre, imo, descargas[] }."""
+    buques: dict[str, dict] = {}
+    barcos_list = (barcos_cfg or {}).get("barcos") or []
+    imo_por_nombre = {(b.get("nombre") or "").upper().strip(): b.get("imo")
+                     for b in barcos_list}
+
+    for d in (sbfa.get("descargas") or []):
+        if d.get("anulada"):
             continue
-        if (datos.get("estado") or "").lower() != "en_puerto":
+        if d.get("fecha") != fecha_iso:
             continue
-        puerto = (datos.get("puerto_actual") or "").lower()
-        if "campana" not in puerto:
-            continue
-        out.append({
-            "imo": imo,
-            "nombre": datos.get("nombre") or imo,
-            "puerto": datos.get("puerto_actual") or "Campana",
-            "arribo": datos.get("arribo"),
-        })
-    return out
+        nombre = (d.get("buque") or "(sin buque)").strip()
+        key = nombre.upper()
+        if key not in buques:
+            buques[key] = {
+                "nombre": nombre,
+                "imo": imo_por_nombre.get(key),
+                "descargas": [],
+            }
+        buques[key]["descargas"].append(d)
+    return list(buques.values())
 
 
-def descargas_de_barco(sbfa: dict, nombre_buque: str) -> list[dict]:
-    """Devuelve descargas SB/FA del buque (no anuladas)."""
-    nombre_u = (nombre_buque or "").upper().strip()
-    return [
-        d for d in (sbfa.get("descargas") or [])
-        if not d.get("anulada") and (d.get("buque") or "").upper().strip() == nombre_u
-    ]
-
-
-def html_descargas_buque(barco: dict, descargas: list[dict]) -> str:
+def html_descargas_buque(buque: dict, fecha_str: str) -> str:
+    descargas = buque.get("descargas") or []
     if not descargas:
-        return f"""
-        <h3 style="color:#1e3a8a;margin:1.5rem 0 0.5rem 0">🚢 {barco["nombre"]} (IMO {barco["imo"]})</h3>
-        <p style="color:#6b7280;font-style:italic">Sin descargas SB/FA registradas en el sistema.</p>
-        """
+        return ""
     bloques = []
     for d in descargas:
         filas = d.get("filas") or []
@@ -227,11 +220,12 @@ def html_descargas_buque(barco: dict, descargas: list[dict]) -> str:
         else:
             tabla_dap = ""
 
+        imo_txt = f"IMO {buque['imo']} · " if buque.get("imo") else ""
         bloques.append(f"""
         <div style="border:1px solid #e5e7eb;border-radius:8px;padding:1rem;margin-bottom:1rem;background:#fafafa">
-            <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 {barco["nombre"]} — MANI {mani}</h3>
+            <h3 style="color:#1e3a8a;margin:0 0 0.3rem 0">🚢 {buque["nombre"]} — MANI {mani}</h3>
             <p style="color:#6b7280;font-size:12px;margin:0 0 0.6rem 0">
-                IMO {barco["imo"]} · Puerto: {barco["puerto"]} · Fecha de descarga: {fecha or "—"}
+                {imo_txt}Fecha de descarga: {fecha or "—"}
             </p>
             {tabla_part}
             {tabla_dap}
@@ -292,26 +286,26 @@ def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
 
 def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     """Devuelve (subject, html_body)."""
-    tracking = cargar_json(TRACKING_JSON, {})
     sbfa = cargar_json(SBFA_JSON, {})
     plan = cargar_json(PLAN_JSON, {})
+    barcos_cfg = cargar_json(BARCOS_JSON, {})
 
     fecha = fecha_local_str(fecha_iso)
-    barcos = barcos_en_puerto_campana(tracking)
+    iso = fecha_local_iso(fecha_iso)
+    buques = buques_de_fecha(sbfa, barcos_cfg, iso)
 
-    # Bloques por barco
-    if barcos:
+    # Bloques por buque (filtrado por fecha de descarga)
+    if buques:
         bloques_barcos = []
-        for b in barcos:
-            descargas = descargas_de_barco(sbfa, b["nombre"])
-            bloques_barcos.append(html_descargas_buque(b, descargas))
+        for b in buques:
+            bloques_barcos.append(html_descargas_buque(b, fecha))
         seccion_barcos = "".join(bloques_barcos)
     else:
-        seccion_barcos = "<p style='color:#6b7280;font-style:italic'>Ningún barco operando en Campana al momento del reporte.</p>"
+        seccion_barcos = f"<p style='color:#6b7280;font-style:italic'>Sin descargas registradas con fecha {fecha}.</p>"
 
     seccion_plan = html_plan_dia(plan, fecha_iso)
 
-    subject = f"Reporte para Supervisores — {fecha} — {len(barcos)} buque(s) operando"
+    subject = f"Reporte para Supervisores — {fecha} — {len(buques)} buque(s) descargando"
 
     html = f"""<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"></head>
@@ -324,10 +318,10 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     </p>
 </div>
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">🚢 Barcos operando en Campana ({len(barcos)})</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">🚢 Barcos con descarga del {fecha} ({len(buques)})</h2>
 {seccion_barcos}
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas del día</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas del {fecha}</h2>
 {seccion_plan}
 
 <hr style="margin: 2rem 0 0.5rem 0; border: none; border-top: 1px solid #e5e7eb">

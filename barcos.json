@@ -18,6 +18,8 @@
     }
   ],
   "notificaciones": {
-    "mailsArribo": []
+    "mailsArribo": [
+      "juiglesias@afip.gob.ar"
+    ]
   }
 }

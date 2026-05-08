@@ -587,21 +587,32 @@
                 </div>
 
                 <h3 style="font-size:1rem;margin:1rem 0 0.5rem">Conocimientos por solicitud particular</h3>
+                <p style="color:var(--gray-500);font-size:0.8rem;margin-bottom:0.5rem">
+                    🟦 <strong>Pre-arribo</strong>: se va cargando a lo largo de las semanas previas. &nbsp;
+                    🟨 <strong>Post-medición</strong>: se completa días después del arribo, con la medición real.
+                </p>
                 <div class="table-container">
                     <table class="sbfa-table" id="sbfaTablaFilas">
                         <thead>
+                            <tr class="sbfa-grupo">
+                                <th colspan="3" class="grupo-pre">Pre-arribo</th>
+                                <th colspan="4" class="grupo-post">Post-medición</th>
+                                <th colspan="2" class="grupo-calc">Diferencia</th>
+                                <th colspan="2" class="grupo-pre">Pre-arribo</th>
+                                <th></th>
+                            </tr>
                             <tr>
-                                <th>Sol. Part. N°</th>
-                                <th>Cto. N°</th>
-                                <th>Kg. Declarados</th>
-                                <th>SB/FA N°</th>
-                                <th>TK destino</th>
-                                <th>Medic. N°</th>
-                                <th>Kg. Resultantes</th>
+                                <th class="col-pre">Sol. Part. N°</th>
+                                <th class="col-pre">Cto. N°</th>
+                                <th class="col-pre">Kg. Declarados</th>
+                                <th class="col-post">SB/FA N°</th>
+                                <th class="col-post">TK destino</th>
+                                <th class="col-post">Medic. N°</th>
+                                <th class="col-post">Kg. Resultantes</th>
                                 <th>Dif. Kg.</th>
                                 <th>Dif. %</th>
-                                <th>Mercadería</th>
-                                <th>Receptor</th>
+                                <th class="col-pre">Mercadería</th>
+                                <th class="col-pre">Receptor</th>
                                 <th></th>
                             </tr>
                         </thead>

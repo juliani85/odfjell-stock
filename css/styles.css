@@ -852,6 +852,11 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-table th, .sbfa-table td { padding: 0.4rem 0.5rem; border: 1px solid var(--gray-200); vertical-align: middle; }
 .sbfa-table thead th { background: var(--gray-50); font-weight: 700; text-align: left; white-space: nowrap; }
 .sbfa-table tfoot th { background: var(--gray-50); font-weight: 700; text-align: right; }
+.sbfa-table .col-pre { background: #eff6ff; }
+.sbfa-table .col-post { background: #fefce8; }
+.sbfa-table thead .grupo-pre { background: #dbeafe; color: #1e40af; text-align: center; font-size: 0.75rem; letter-spacing: 0.05em; }
+.sbfa-table thead .grupo-post { background: #fef3c7; color: #92400e; text-align: center; font-size: 0.75rem; letter-spacing: 0.05em; }
+.sbfa-table thead .grupo-calc { background: var(--gray-100); text-align: center; font-size: 0.75rem; letter-spacing: 0.05em; }
 .sbfa-table input { width: 100%; min-width: 60px; padding: 0.3rem 0.4rem; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 0.85rem; box-sizing: border-box; }
 .sbfa-table .col-num input { text-align: right; }
 .sbfa-table .dif-kg, .sbfa-table .dif-pct { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }

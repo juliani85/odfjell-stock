@@ -3863,7 +3863,8 @@ async function initApp() {
             document.getElementById("sbfaCuit").value = "30-71631314-6";
             document.getElementById("sbfaFecha").value = new Date().toISOString().slice(0, 10);
             document.getElementById("sbfaNotas").value = "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.";
-            renderSbfaTablaFilas([{}]);
+            // 6 filas por default para ir cargando particulares antes del arribo
+            renderSbfaTablaFilas([{}, {}, {}, {}, {}, {}]);
             renderSbfaTablaDap([{}]);
             eliminarBtn.style.display = "";
         }
@@ -3885,17 +3886,17 @@ async function initApp() {
 
     function sbfaFilaHTML(f, i) {
         return `<tr data-i="${i}">
-            <td><input data-k="solPart" value="${f.solPart || ""}"></td>
-            <td><input data-k="cto" value="${f.cto || ""}"></td>
-            <td class="col-num"><input data-k="kgDeclarados" type="number" step="1" value="${f.kgDeclarados ?? ""}"></td>
-            <td><input data-k="sbfa" value="${f.sbfa || ""}"></td>
-            <td><input data-k="tkDestino" value="${f.tkDestino || ""}"></td>
-            <td><input data-k="medic" value="${f.medic || ""}"></td>
-            <td class="col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
+            <td class="col-pre"><input data-k="solPart" value="${f.solPart || ""}"></td>
+            <td class="col-pre"><input data-k="cto" value="${f.cto || ""}"></td>
+            <td class="col-pre col-num"><input data-k="kgDeclarados" type="number" step="1" value="${f.kgDeclarados ?? ""}"></td>
+            <td class="col-post"><input data-k="sbfa" value="${f.sbfa || ""}"></td>
+            <td class="col-post"><input data-k="tkDestino" value="${f.tkDestino || ""}"></td>
+            <td class="col-post"><input data-k="medic" value="${f.medic || ""}"></td>
+            <td class="col-post col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
             <td class="dif-kg" data-difkg>0</td>
             <td class="dif-pct" data-difpct>0,000%</td>
-            <td><input data-k="mercaderia" value="${f.mercaderia || ""}"></td>
-            <td><input data-k="receptor" value="${f.receptor || ""}"></td>
+            <td class="col-pre"><input data-k="mercaderia" value="${f.mercaderia || ""}"></td>
+            <td class="col-pre"><input data-k="receptor" value="${f.receptor || ""}"></td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
     }

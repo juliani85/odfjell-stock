@@ -110,7 +110,10 @@ def html_descargas_buque(buque: dict, fecha_str: str) -> str:
     td_r = f"{td};text-align:right"
 
     def nolink(txt):
-        return f'<span style="color:#111">{txt or ""}</span>'
+        # Envolver en <a> sin href + estilos forzados evita que Gmail/Outlook
+        # autolinkeen el contenido en azul subrayado.
+        return (f'<a style="color:#111 !important;text-decoration:none !important;'
+                f'cursor:default;pointer-events:none" tabindex="-1">{txt or ""}</a>')
 
     bloques = []
     for d in descargas:
@@ -277,6 +280,21 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
 <meta charset="UTF-8">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
 <meta name="x-apple-disable-message-reformatting">
+<style type="text/css">
+    /* Forzar negro y sin subrayado en cualquier <a> que el cliente de mail
+       inyecte por autolinkeo (Gmail, Outlook, iOS Mail) */
+    a, a:link, a:visited, a:hover, a:active {{
+        color: #111 !important;
+        text-decoration: none !important;
+        font-weight: inherit !important;
+    }}
+    /* Sobrescribir clases que algunos clientes aplican */
+    .il, span.il, [class*="x-gmail"], [class*="x-yahoo"] {{
+        color: #111 !important;
+        text-decoration: none !important;
+    }}
+    body, td, th, p, h2, h3, h4, span, a {{ color: #111 !important; }}
+</style>
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #111; max-width: 1200px; margin: 0 auto; padding: 1rem">
 

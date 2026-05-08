@@ -1957,7 +1957,9 @@ async function initApp() {
                     // (Gmail, Outlook) no autolinkeen los números de Cto. en azul.
                     const tdStyle = "padding:4px 6px;border:1px solid #d1d5db;color:#111";
                     const tdR = `${tdStyle};text-align:right`;
-                    const noLink = (txt) => `<span style="color:#111">${txt || ""}</span>`;
+                    // Envolver en <a> sin href + estilos forzados evita que Gmail/Outlook
+                    // autolinkeen el contenido en azul subrayado.
+                    const noLink = (txt) => `<a style="color:#111 !important;text-decoration:none !important;cursor:default;pointer-events:none" tabindex="-1">${txt || ""}</a>`;
                     const rowsPart = filas.map(f => {
                         const decl = Number(f.kgDeclarados) || 0;
                         return `<tr>

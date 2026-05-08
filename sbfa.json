@@ -129,9 +129,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1128817,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1",
+          "medic": "21",
+          "kgResultantes": 500
         },
         {
           "solPart": "864",
@@ -323,7 +323,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T20:13:14.044Z"
+      "actualizadoTs": "2026-05-08T22:29:15.348Z"
     }
   ]
 }

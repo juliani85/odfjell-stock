@@ -3906,16 +3906,17 @@ async function initApp() {
 
     function sbfaFmtKgInput(n) {
         if (n === null || n === undefined || n === "") return "";
-        const num = Number(n);
+        const num = Math.round(Number(n));
         if (isNaN(num)) return "";
         return num.toLocaleString("es-AR");
     }
 
     function sbfaParseKg(str) {
+        // Acepta solo enteros: descarta cualquier caracter que no sea dígito o signo
         if (str === null || str === undefined || str === "") return null;
         const limpio = String(str).replace(/[^\d-]/g, "");
         if (limpio === "" || limpio === "-") return null;
-        const n = Number(limpio);
+        const n = parseInt(limpio, 10);
         return isNaN(n) ? null : n;
     }
 
@@ -3934,6 +3935,13 @@ async function initApp() {
             <td class="dif-pct" data-difpct>0,00%</td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
+    }
+
+    function sbfaBloquearDecimales(e) {
+        // Los Kg son enteros: bloquear coma, punto, "e" (notación científica)
+        if (e.key === "," || e.key === "." || e.key === "e" || e.key === "E") {
+            e.preventDefault();
+        }
     }
 
     function sbfaFormatearInputKg(inp) {
@@ -3960,6 +3968,7 @@ async function initApp() {
     function sbfaBindFilaEvents() {
         document.querySelectorAll("#sbfaTablaFilas tbody input").forEach(inp => {
             if (inp.dataset.kg !== undefined) {
+                inp.addEventListener("keydown", sbfaBloquearDecimales);
                 inp.addEventListener("input", () => {
                     sbfaFormatearInputKg(inp);
                     sbfaRecalcularTotales();
@@ -4094,6 +4103,7 @@ async function initApp() {
     function sbfaBindDapEvents() {
         document.querySelectorAll("#sbfaTablaDap tbody input").forEach(inp => {
             if (inp.dataset.kg !== undefined) {
+                inp.addEventListener("keydown", sbfaBloquearDecimales);
                 inp.addEventListener("input", () => {
                     sbfaFormatearInputKg(inp);
                     sbfaRecalcularTotales();

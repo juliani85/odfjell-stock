@@ -3519,6 +3519,28 @@ async function initApp() {
     // --- HELPERS ---
     function formatKg(n) { return n.toLocaleString("es-AR"); }
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
+
+    // Modal de aviso centrado (reemplazo de alert() nativo que aparece arriba de la pantalla)
+    function mostrarModalInfo(mensaje, titulo) {
+        const modal = document.getElementById("modalInfo");
+        if (!modal) { alert(mensaje); return; }
+        document.getElementById("modalInfoTitulo").textContent = titulo || "Aviso";
+        document.getElementById("modalInfoBody").innerHTML = `<p style="margin:0;line-height:1.5">${mensaje}</p>`;
+        modal.classList.remove("hidden");
+        const btn = document.getElementById("btnModalInfoOk");
+        btn.focus();
+        const cerrar = () => {
+            modal.classList.add("hidden");
+            btn.removeEventListener("click", cerrar);
+            modal.removeEventListener("click", overlay);
+            document.removeEventListener("keydown", esc);
+        };
+        const overlay = (e) => { if (e.target === modal) cerrar(); };
+        const esc = (e) => { if (e.key === "Escape" || e.key === "Enter") cerrar(); };
+        btn.addEventListener("click", cerrar);
+        modal.addEventListener("click", overlay);
+        document.addEventListener("keydown", esc);
+    }
     function ocultarAlerta() { alerta.className = "alerta hidden"; }
 
     // --- BARCOS: tracking AIS ---
@@ -4396,7 +4418,7 @@ async function initApp() {
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();
             const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
-            alert(`✓ Descarga del buque ${d.buque}${manifTxt} guardada correctamente.`);
+            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
         }
     }
 

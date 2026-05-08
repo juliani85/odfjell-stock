@@ -3781,23 +3781,26 @@ async function initApp() {
     }
 
     function sbfaFmtPct(p) {
-        if (p === null || p === undefined || isNaN(p)) return "0,000%";
-        return p.toFixed(3).replace(".", ",") + "%";
+        if (p === null || p === undefined || isNaN(p)) return "0,00%";
+        return p.toFixed(2).replace(".", ",") + "%";
     }
 
     function sbfaResumen(d) {
-        let totDecl = 0, totRes = 0, fueraTol = 0;
+        let totDecl = 0, totRes = 0, fueraTol = 0, pendientes = 0, medidas = 0;
         (d.filas || []).forEach(f => {
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
             totDecl += decl;
             totRes += res;
-            if (decl > 0) {
+            if (decl > 0 && res > 0) {
+                medidas++;
                 const pct = (res - decl) / decl * 100;
                 if (Math.abs(pct) > SBFA_TOLERANCIA_PCT) fueraTol++;
+            } else if (decl > 0 && res <= 0) {
+                pendientes++;
             }
         });
-        return { totDecl, totRes, totDif: totRes - totDecl, fueraTol };
+        return { totDecl, totRes, totDif: totRes - totDecl, fueraTol, pendientes, medidas };
     }
 
     function renderSbfaLista(filtro = "") {
@@ -3816,19 +3819,33 @@ async function initApp() {
             const r = sbfaResumen(d);
             const claseFuera = r.fueraTol > 0 ? "sbfa-card fuera-tol" : "sbfa-card";
             const fechaTxt = d.fecha ? d.fecha.split("-").reverse().join("/") : "—";
-            const difPct = r.totDecl > 0 ? r.totDif / r.totDecl * 100 : 0;
+            const difPct = r.totDecl > 0 && r.totRes > 0 ? r.totDif / r.totDecl * 100 : 0;
+
+            let estado;
+            if (r.fueraTol > 0) {
+                estado = `<span style="color:#b91c1c;font-weight:700">⚠ ${r.fueraTol} fuera de tolerancia</span>`;
+            } else if (r.pendientes > 0 && r.medidas === 0) {
+                estado = `<span style="color:#1e40af;font-weight:600">⏳ Pendiente medición (${r.pendientes} fila${r.pendientes > 1 ? "s" : ""})</span>`;
+            } else if (r.pendientes > 0) {
+                estado = `<span style="color:#1e40af;font-weight:600">⏳ ${r.pendientes} pendiente${r.pendientes > 1 ? "s" : ""} · ${r.medidas} medida${r.medidas > 1 ? "s" : ""}</span>`;
+            } else if (r.medidas > 0) {
+                estado = `<span style="color:#16a34a">✓ Dentro de tolerancia</span>`;
+            } else {
+                estado = `<span style="color:var(--gray-500)">Sin filas cargadas</span>`;
+            }
+
             return `<div class="${claseFuera}" data-sbfa-id="${d.id}">
                 <div class="sbfa-card-header">
                     <div>
                         <div class="sbfa-card-titulo">${d.buque || "(sin buque)"} — MANI ${d.manifiesto || "—"}</div>
                         <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP</div>
                     </div>
-                    ${r.fueraTol > 0 ? `<span style="color:#b91c1c;font-weight:700">⚠ ${r.fueraTol} fuera de tolerancia</span>` : `<span style="color:#16a34a">Dentro de tolerancia</span>`}
+                    ${estado}
                 </div>
                 <div class="sbfa-card-totales">
                     <span><strong>Declarados:</strong> ${sbfaFmt(r.totDecl)} kg</span>
                     <span><strong>Resultantes:</strong> ${sbfaFmt(r.totRes)} kg</span>
-                    <span><strong>Dif:</strong> ${sbfaFmt(r.totDif)} kg (${sbfaFmtPct(difPct)})</span>
+                    ${r.totRes > 0 ? `<span><strong>Dif:</strong> ${sbfaFmt(r.totDif)} kg (${sbfaFmtPct(difPct)})</span>` : ""}
                 </div>
             </div>`;
         }).join("");
@@ -3898,7 +3915,7 @@ async function initApp() {
             <td class="col-post"><input data-k="medic" value="${f.medic || ""}"></td>
             <td class="col-post col-num"><input data-k="kgResultantes" type="number" step="1" value="${f.kgResultantes ?? ""}"></td>
             <td class="dif-kg" data-difkg>0</td>
-            <td class="dif-pct" data-difpct>0,000%</td>
+            <td class="dif-pct" data-difpct>0,00%</td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar fila">×</button></td>
         </tr>`;
     }
@@ -3936,42 +3953,76 @@ async function initApp() {
             const res = Number(tr.querySelector('[data-k="kgResultantes"]').value) || 0;
             totDecl += decl;
             totRes += res;
-            const { dif, pct } = sbfaCalcDif(decl, res);
             const tdKg = tr.querySelector("[data-difkg]");
             const tdPct = tr.querySelector("[data-difpct]");
-            tdKg.textContent = sbfaFmt(dif);
-            tdPct.textContent = sbfaFmtPct(pct);
-            const fuera = decl > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
-            tdKg.classList.toggle("fuera-tol", fuera);
-            tdPct.classList.toggle("fuera-tol", fuera);
-            tdKg.classList.toggle("dentro-tol", !fuera && decl > 0);
-            tdPct.classList.toggle("dentro-tol", !fuera && decl > 0);
+            // Solo calcular y mostrar diferencias si AMBOS valores están cargados
+            if (decl > 0 && res > 0) {
+                const { dif, pct } = sbfaCalcDif(decl, res);
+                tdKg.textContent = sbfaFmt(dif);
+                tdPct.textContent = sbfaFmtPct(pct);
+                const fuera = Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+                tdKg.classList.toggle("fuera-tol", fuera);
+                tdPct.classList.toggle("fuera-tol", fuera);
+                tdKg.classList.toggle("dentro-tol", !fuera);
+                tdPct.classList.toggle("dentro-tol", !fuera);
+                tdKg.classList.remove("pendiente-tol");
+                tdPct.classList.remove("pendiente-tol");
+            } else if (decl > 0 || res > 0) {
+                // Pendiente: una de las dos partes cargada, la otra no
+                tdKg.textContent = "—";
+                tdPct.textContent = "pendiente";
+                tdKg.classList.remove("fuera-tol", "dentro-tol");
+                tdPct.classList.remove("fuera-tol", "dentro-tol");
+                tdKg.classList.add("pendiente-tol");
+                tdPct.classList.add("pendiente-tol");
+            } else {
+                tdKg.textContent = "";
+                tdPct.textContent = "";
+                tdKg.classList.remove("fuera-tol", "dentro-tol", "pendiente-tol");
+                tdPct.classList.remove("fuera-tol", "dentro-tol", "pendiente-tol");
+            }
         });
         document.getElementById("sbfaTotalDecl").textContent = sbfaFmt(totDecl);
-        document.getElementById("sbfaTotalRes").textContent = sbfaFmt(totRes);
-        document.getElementById("sbfaTotalDif").textContent = sbfaFmt(totRes - totDecl);
-        document.getElementById("sbfaTotalDifPct").textContent = sbfaFmtPct(totDecl > 0 ? (totRes - totDecl) / totDecl * 100 : 0);
+        document.getElementById("sbfaTotalRes").textContent = totRes > 0 ? sbfaFmt(totRes) : "—";
+        document.getElementById("sbfaTotalDif").textContent = totRes > 0 ? sbfaFmt(totRes - totDecl) : "—";
+        document.getElementById("sbfaTotalDifPct").textContent = totRes > 0 && totDecl > 0 ? sbfaFmtPct((totRes - totDecl) / totDecl * 100) : "—";
 
-        // DAP
+        // DAP — misma lógica
         let totDoc = 0, totDapRes = 0;
         document.querySelectorAll("#sbfaTablaDap tbody tr").forEach(tr => {
             const doc = Number(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
             const res = Number(tr.querySelector('[data-k="cantResult"]').value) || 0;
             totDoc += doc;
             totDapRes += res;
-            const { dif, pct } = sbfaCalcDif(doc, res);
             const tdKg = tr.querySelector("[data-difkg]");
             const tdPct = tr.querySelector("[data-difpct]");
-            tdKg.textContent = sbfaFmt(dif);
-            tdPct.textContent = sbfaFmtPct(pct);
-            const fuera = doc > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
-            tdKg.classList.toggle("fuera-tol", fuera);
-            tdPct.classList.toggle("fuera-tol", fuera);
+            if (doc > 0 && res > 0) {
+                const { dif, pct } = sbfaCalcDif(doc, res);
+                tdKg.textContent = sbfaFmt(dif);
+                tdPct.textContent = sbfaFmtPct(pct);
+                const fuera = Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+                tdKg.classList.toggle("fuera-tol", fuera);
+                tdPct.classList.toggle("fuera-tol", fuera);
+                tdKg.classList.remove("pendiente-tol");
+                tdPct.classList.remove("pendiente-tol");
+            } else if (doc > 0 || res > 0) {
+                tdKg.textContent = "—";
+                tdPct.textContent = "pendiente";
+                tdKg.classList.remove("fuera-tol");
+                tdPct.classList.remove("fuera-tol");
+                tdKg.classList.add("pendiente-tol");
+                tdPct.classList.add("pendiente-tol");
+            } else {
+                tdKg.textContent = "";
+                tdPct.textContent = "";
+                tdKg.classList.remove("fuera-tol", "pendiente-tol");
+                tdPct.classList.remove("fuera-tol", "pendiente-tol");
+            }
         });
         document.getElementById("sbfaDapTotalDoc").textContent = sbfaFmt(totDoc);
-        document.getElementById("sbfaDapTotalRes").textContent = sbfaFmt(totDapRes);
-        document.getElementById("sbfaDapTotalDif").textContent = sbfaFmt(totDapRes - totDoc);
-        document.getElementById("sbfaDapTotalDifPct").textContent = sbfaFmtPct(totDoc > 0 ? (totDapRes - totDoc) / totDoc * 100 : 0);
+        document.getElementById("sbfaDapTotalRes").textContent = totDapRes > 0 ? sbfaFmt(totDapRes) : "—";
+        document.getElementById("sbfaDapTotalDif").textContent = totDapRes > 0 ? sbfaFmt(totDapRes - totDoc) : "—";
+        document.getElementById("sbfaDapTotalDifPct").textContent = totDapRes > 0 && totDoc > 0 ? sbfaFmtPct((totDapRes - totDoc) / totDoc * 100) : "—";
     }
 
     function renderSbfaTablaDap(items) {
@@ -3988,7 +4039,7 @@ async function initApp() {
             <td class="col-num"><input data-k="cantDoctada" type="number" step="1" value="${d.cantDoctada ?? ""}"></td>
             <td class="col-num"><input data-k="cantResult" type="number" step="1" value="${d.cantResult ?? ""}"></td>
             <td class="dif-kg" data-difkg>0</td>
-            <td class="dif-pct" data-difpct>0,000%</td>
+            <td class="dif-pct" data-difpct>0,00%</td>
             <td><input data-k="obs" value="${d.obs || ""}"></td>
             <td><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
         </tr>`;
@@ -4093,7 +4144,7 @@ async function initApp() {
         const fechaDescarga = sbfaFmtFechaCorta(d.fecha);
 
         const fmt = n => (n === null || n === undefined || isNaN(n)) ? "" : Math.round(Number(n)).toLocaleString("es-AR");
-        const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(3).replace(".", ",") + "%");
+        const fmtPct = p => (p === null || p === undefined || isNaN(p)) ? "" : (p.toFixed(2).replace(".", ",") + "%");
 
         // Totales
         let totDecl = 0, totRes = 0;

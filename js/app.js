@@ -3612,7 +3612,9 @@ async function initApp() {
             </div>`;
         }).join("");
 
-        // Eventos de los botones SB/FA
+        c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno abajo.</p>`;
+
+        // Eventos de los botones SB/FA (después de setear innerHTML)
         c.querySelectorAll("[data-sbfa-buque]").forEach(btn => {
             btn.addEventListener("click", e => {
                 e.stopPropagation();
@@ -3625,8 +3627,6 @@ async function initApp() {
                 verDescargasSbfaDeBarco(btn.dataset.sbfaVer);
             });
         });
-
-        c.innerHTML = filas || `<p style="color:var(--gray-500)">No hay barcos en seguimiento. Agregá uno abajo.</p>`;
 
         // badge en la pestaña: cantidad de barcos en alerta
         const cerca = (barcosConfig.barcos || []).filter(b => {

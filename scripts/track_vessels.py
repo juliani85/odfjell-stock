@@ -194,18 +194,94 @@ def fetch_imo(imo: str) -> dict[str, Any]:
     return {"fuente": None, "error": last_err or "fuentes agotadas"}
 
 
+def buscar_imo_por_nombre(nombre: str) -> str | None:
+    """Busca en VesselFinder el IMO correspondiente al nombre. Si hay
+    varios resultados, prioriza los que tengan destino que contenga
+    "Campana" o "Argentina"."""
+    if not nombre:
+        return None
+    url = f"https://www.vesselfinder.com/vessels?name={quote(nombre)}"
+    html = fetch(url)
+    if not html:
+        return None
+
+    # Cada fila de resultado tiene un link a /vessels/details/IMO y
+    # las columnas de la fila incluyen Destination/ETA. Extraemos por
+    # filas <tr> y dentro cada IMO + texto de la fila para priorizar.
+    candidatos: list[tuple[str, str]] = []
+    for fila in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.DOTALL):
+        m = re.search(r"/vessels/details/(\d{7})", fila)
+        if not m:
+            continue
+        # Validar que el nombre del barco coincida con el buscado.
+        # El nombre suele aparecer como <a ...>NOMBRE</a> dentro de la
+        # primera celda. Permitimos coincidencia case-insensitive y
+        # match parcial al inicio para tolerar sufijos tipo "(IMO ...)".
+        m_nom = re.search(r">\s*([A-Z][A-Z0-9 \-/.]{2,40})\s*<", fila)
+        nombre_fila = m_nom.group(1).strip() if m_nom else ""
+        if nombre_fila and nombre_fila.upper() != nombre.strip().upper():
+            # tolerar variaciones leves (espacios o guiones)
+            if nombre.strip().upper() not in nombre_fila.upper():
+                continue
+        candidatos.append((m.group(1), fila))
+
+    if not candidatos:
+        # fallback: cualquier match en todo el HTML
+        m = re.search(r"/vessels/details/(\d{7})", html)
+        return m.group(1) if m else None
+
+    # Priorizar los que mencionen Campana o Argentina en la fila.
+    for imo, fila in candidatos:
+        txt = fila.lower()
+        if "campana" in txt:
+            return imo
+    for imo, fila in candidatos:
+        txt = fila.lower()
+        if "argentina" in txt:
+            return imo
+    return candidatos[0][0]
+
+
 def main() -> int:
     config = json.loads(BARCOS_JSON.read_text(encoding="utf-8"))
     barcos = config.get("barcos", [])
     print(f"Trackeando {len(barcos)} barcos...")
+
+    config_modificado = False
+    # Primero resolver IMOs faltantes por nombre
+    for b in barcos:
+        if not str(b.get("imo") or "").strip():
+            nombre = b.get("nombre", "").strip()
+            if not nombre:
+                continue
+            print(f"  Buscando IMO de '{nombre}'...", end=" ", flush=True)
+            imo = buscar_imo_por_nombre(nombre)
+            if imo:
+                b["imo"] = imo
+                config_modificado = True
+                print(f"encontrado: {imo}")
+            else:
+                print("no encontrado (queda pendiente)")
+
+    if config_modificado:
+        BARCOS_JSON.write_text(
+            json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"  barcos.json actualizado con IMOs resueltos.")
 
     salida: dict[str, Any] = {
         "actualizado": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "barcos": {},
     }
     for b in barcos:
-        imo = str(b.get("imo", "")).strip()
+        imo = str(b.get("imo") or "").strip()
         if not imo:
+            # entrada que aún no resolvió IMO; la representamos en tracking
+            # con error para que la UI sepa el estado
+            salida["barcos"][b.get("nombre", "?")] = {
+                "imo": None, "nombre": b.get("nombre", ""),
+                "fuente": None, "error": "IMO no resuelto",
+            }
             continue
         nombre = b.get("nombre", "")
         print(f"  {nombre} (IMO {imo})...", end=" ", flush=True)

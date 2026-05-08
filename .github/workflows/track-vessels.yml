@@ -30,21 +30,20 @@ jobs:
       - name: Run tracker
         run: python scripts/track_vessels.py
 
-      - name: Commit tracking.json if changed
+      - name: Commit cambios si hay
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet -- tracking.json; then
-            git pull --rebase origin master || true
-            git add tracking.json
-            git commit -m "chore(track): actualizar tracking.json $(date -u +%Y-%m-%dT%H:%MZ)"
-            for i in 1 2 3; do
-              if git push origin master; then
-                exit 0
-              fi
-              echo "push falló, reintentando con rebase ($i/3)"
-              git pull --rebase origin master
-            done
-            exit 1
+          if git diff --quiet -- tracking.json barcos.json; then
+            echo "sin cambios"
+            exit 0
           fi
-          echo "sin cambios en tracking.json"
+          git pull --rebase origin master || true
+          git add tracking.json barcos.json
+          git commit -m "chore(track): actualizar tracking $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            if git push origin master; then exit 0; fi
+            echo "push falló, reintentando con rebase ($i/3)"
+            git pull --rebase origin master
+          done
+          exit 1

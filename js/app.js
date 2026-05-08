@@ -3546,13 +3546,15 @@ async function initApp() {
 
         const umbral = umbralAlertaHs();
         const filas = (barcosConfig.barcos || []).map(b => {
-            const t = (barcosTracking.barcos || {})[b.imo] || {};
+            const t = b.imo ? ((barcosTracking.barcos || {})[b.imo] || {}) : {};
             const hs = horasHasta(t.eta);
             const acerca = hs !== null && hs >= 0 && hs <= umbral;
             const cls = acerca ? "barco-card alerta" : (t.estado === "en_route" ? "barco-card en-ruta" : "barco-card");
 
             let estadoTxt = "";
-            if (t.estado === "en_route") {
+            if (!b.imo) {
+                estadoTxt = `<span style="color:var(--warning)">⏳ Buscando IMO por nombre… aparecerá en la próxima corrida del tracking.</span>`;
+            } else if (t.estado === "en_route") {
                 const hsTxt = hs === null ? "" : (hs < 0 ? `<span style="color:#b91c1c">demorado ${Math.round(-hs)} hs</span>` : `en ${hs.toFixed(1)} hs`);
                 estadoTxt = `🚢 En ruta a <strong>${t.destino || "—"}</strong> · ETA <strong>${fmtFechaCorta(t.eta)}</strong> ${hsTxt}`;
             } else if (t.estado === "en_puerto") {
@@ -3571,13 +3573,20 @@ async function initApp() {
             if (t.calado_m != null) detalles.push(`calado ${t.calado_m} m`);
             if (t.bandera) detalles.push(t.bandera);
 
+            const linkVF = b.imo
+                ? `<a href="https://www.vesselfinder.com/vessels/details/${b.imo}" target="_blank" rel="noopener" style="font-size:0.8rem">VesselFinder ↗</a>`
+                : "";
+            const imoTxt = b.imo
+                ? `IMO ${b.imo}`
+                : `<span style="color:var(--warning)">IMO pendiente</span>`;
+
             return `<div class="${cls}" style="padding:1rem;border-radius:10px;border:2px solid ${acerca ? '#dc2626' : (t.estado === "en_route" ? '#1a56db' : 'var(--gray-200)')};margin-bottom:0.75rem;background:white">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
                     <div>
                         <div style="font-weight:700;font-size:1.05rem">${b.nombre} ${acerca ? '<span style="color:#dc2626">⚠</span>' : ''}</div>
-                        <div style="font-size:0.8rem;color:var(--gray-500);font-family:monospace">IMO ${b.imo}</div>
+                        <div style="font-size:0.8rem;color:var(--gray-500);font-family:monospace">${imoTxt}</div>
                     </div>
-                    <a href="https://www.vesselfinder.com/vessels/details/${b.imo}" target="_blank" rel="noopener" style="font-size:0.8rem">VesselFinder ↗</a>
+                    ${linkVF}
                 </div>
                 <div style="margin-top:0.5rem;font-size:0.95rem">${estadoTxt}</div>
                 ${detalles.length ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--gray-500)">${detalles.join(" · ")}</div>` : ""}
@@ -3609,12 +3618,16 @@ async function initApp() {
             return;
         }
         lista.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:0.5rem">` +
-            barcosConfig.barcos.map(b => `<span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.6rem;background:white;border:1px solid var(--gray-300);border-radius:14px;font-size:0.8rem">
-                ${b.nombre} <code style="color:var(--gray-500)">${b.imo}</code>
-                <button data-quitar-imo="${b.imo}" type="button" style="border:none;background:none;cursor:pointer;color:#dc2626;font-weight:700">×</button>
-            </span>`).join("") + `</div>`;
-        lista.querySelectorAll("[data-quitar-imo]").forEach(b => {
-            b.addEventListener("click", () => quitarBarco(b.dataset.quitarImo));
+            barcosConfig.barcos.map(b => {
+                const clave = b.imo || b.nombre;
+                const imoTxt = b.imo ? `<code style="color:var(--gray-500)">${b.imo}</code>` : `<span style="color:var(--warning);font-size:0.75rem">IMO pendiente</span>`;
+                return `<span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.6rem;background:white;border:1px solid var(--gray-300);border-radius:14px;font-size:0.8rem">
+                    ${b.nombre} ${imoTxt}
+                    <button data-quitar="${clave}" type="button" style="border:none;background:none;cursor:pointer;color:#dc2626;font-weight:700">×</button>
+                </span>`;
+            }).join("") + `</div>`;
+        lista.querySelectorAll("[data-quitar]").forEach(b => {
+            b.addEventListener("click", () => quitarBarco(b.dataset.quitar));
         });
     }
 
@@ -3646,24 +3659,27 @@ async function initApp() {
     }
 
     async function agregarBarco() {
-        const imo = document.getElementById("barcoIMO").value.trim();
         const nombre = document.getElementById("barcoNombre").value.trim().toUpperCase();
-        if (!/^\d{7}$/.test(imo)) { alert("IMO inválido (7 dígitos)."); return; }
         if (!nombre) { alert("Falta el nombre del barco."); return; }
-        if ((barcosConfig.barcos || []).some(b => b.imo === imo)) { alert("Ese IMO ya está en la lista."); return; }
+        const yaExiste = (barcosConfig.barcos || []).some(b =>
+            (b.nombre || "").toUpperCase() === nombre
+        );
+        if (yaExiste) { alert(`"${nombre}" ya está en la lista.`); return; }
         barcosConfig.barcos = barcosConfig.barcos || [];
-        barcosConfig.barcos.push({ imo, nombre });
+        // imo: null → el script Python lo resuelve por nombre en la próxima corrida.
+        barcosConfig.barcos.push({ nombre, imo: null });
         if (await guardarBarcosCfg()) {
-            document.getElementById("barcoIMO").value = "";
             document.getElementById("barcoNombre").value = "";
             renderBarcos();
-            mostrarAlerta(`${nombre} agregado. El tracking aparecerá en la próxima corrida del workflow (≤30 min).`, "info");
+            mostrarAlerta(`${nombre} agregado. Buscando IMO y datos en la próxima corrida del tracking (≤30 min).`, "info");
         }
     }
 
-    async function quitarBarco(imo) {
+    async function quitarBarco(clave) {
         if (!confirm("¿Quitar este barco del seguimiento?")) return;
-        barcosConfig.barcos = (barcosConfig.barcos || []).filter(b => b.imo !== imo);
+        barcosConfig.barcos = (barcosConfig.barcos || []).filter(b =>
+            (b.imo || b.nombre) !== clave
+        );
         if (await guardarBarcosCfg()) renderBarcos();
     }
 

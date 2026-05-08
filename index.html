@@ -521,21 +521,15 @@
 
                 <div style="padding:1rem;background:var(--gray-50);border-radius:8px;margin-bottom:1.25rem;border:1px solid var(--gray-200)">
                     <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-700)">Agregar barco al seguimiento</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="barcoIMO">IMO (7 dígitos)</label>
-                            <input type="text" id="barcoIMO" placeholder="Ej: 9367554" maxlength="7" inputmode="numeric">
-                        </div>
-                        <div class="form-group">
-                            <label for="barcoNombre">Nombre</label>
-                            <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
-                        </div>
+                    <div class="form-group">
+                        <label for="barcoNombre">Nombre del barco</label>
+                        <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions" style="margin-top:0.75rem">
                         <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
                     </div>
                     <div id="barcosLista" style="margin-top:0.75rem"></div>
-                    <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.5rem">Los datos se actualizan cada 30 minutos. Después de agregar un barco, va a aparecer en la próxima corrida.</p>
+                    <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.5rem">El IMO se resuelve automáticamente. Si hay barcos con el mismo nombre, prioriza el que tenga destino <strong>Campana, Argentina</strong>. Los datos aparecen en la próxima corrida del tracking (≤30 min).</p>
                 </div>
 
                 <div id="barcosCards"></div>

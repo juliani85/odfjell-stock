@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-09T16:08:09.908770Z",
+  "actualizado": "2026-05-09T17:11:09.166064Z",
   "barcos": {
     "9367554": {
       "estado": "en_route",
@@ -34,9 +34,6 @@
       "nombre": "BOW FIRDA"
     },
     "9143219": {
-      "estado": "en_puerto",
-      "puerto_actual": "Houston Anch., United States (USA)",
-      "arribo": "2026-05-09T08:29:00Z",
       "calado_m": 9.3,
       "fuente": "vesselfinder",
       "error": null,

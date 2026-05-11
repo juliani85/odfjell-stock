@@ -47,6 +47,7 @@
                 <div class="header-user">
                     <span id="syncEstado" class="sync-pill sync-sincronizado" title="Sincronizado con el servidor"></span>
                     <span id="usuarioLogueado"></span>
+                    <button class="btn btn-secondary btn-sm hidden" id="btnInstalarApp" title="Instalar como app en el celular">📲 Instalar app</button>
                     <button class="btn btn-secondary btn-sm" id="btnLogout">Salir</button>
                 </div>
             </div>
@@ -826,6 +827,38 @@
           navigator.serviceWorker.register("sw.js").catch((e) => console.warn("[pwa] SW no registrado:", e));
         });
       }
+
+      // Botón "Instalar app" dentro de la propia app (en vez de depender del menú del navegador).
+      (function () {
+        var btn = document.getElementById("btnInstalarApp");
+        if (!btn) return;
+        var standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+        if (standalone) { btn.remove(); return; } // ya está instalada
+        btn.classList.remove("hidden");
+
+        var deferred = null;
+        var ua = navigator.userAgent || "";
+        var esIOS = /iphone|ipad|ipod/i.test(ua) && !window.MSStream;
+
+        window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; });
+        window.addEventListener("appinstalled", function () { deferred = null; btn.classList.add("hidden"); });
+
+        btn.addEventListener("click", function () {
+          if (deferred) {
+            deferred.prompt();
+            (deferred.userChoice || Promise.resolve()).then(function (r) {
+              if (r && r.outcome === "accepted") btn.classList.add("hidden");
+              deferred = null;
+            }).catch(function () {});
+            return;
+          }
+          if (esIOS) {
+            alert("Para instalar la app en el iPhone:\n\n1. Abrila en Safari (tiene que ser Safari, no Chrome).\n2. Tocá el botón Compartir (el cuadrado con la flecha hacia arriba).\n3. Bajá y tocá \"Agregar a pantalla de inicio\".\n4. Tocá \"Agregar\".\n\nQueda el ícono en tu pantalla de inicio.");
+          } else {
+            alert("Para instalar la app:\n\nAbrí el menú del navegador (los 3 puntitos ⋮ arriba a la derecha) y tocá \"Instalar app\" o \"Agregar a pantalla de inicio\".\n\nSi no aparece la opción o te da error, actualizá Chrome y los \"Servicios de Google Play\" desde la Play Store y reintentá.");
+          }
+        });
+      })();
     </script>
 </body>
 </html>

@@ -4206,9 +4206,9 @@ async function initApp() {
     // de GitHub Pages). Devuelve { content, sha } o null.
     async function cargarSbfaRemoto() {
         try {
-            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json`;
-            const r = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
-            if (!r.ok) return null;
+            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json?nocache=${Date.now()}`;
+            const r = await fetch(url, { cache: "no-store", headers: { Authorization: `token ${GH.token}` } });
+            if (!r.ok) { console.warn("[sbfa] cargarSbfaRemoto HTTP", r.status); return null; }
             const data = await r.json();
             return { content: GH._b64ToJson(data.content), sha: data.sha };
         } catch (e) {
@@ -4839,25 +4839,50 @@ async function initApp() {
     }
 
     async function guardarSbfaDescarga() {
-        const d = sbfaArmarDescarga();
-        if (!d.buque) { alert("Falta el buque."); return; }
+        const btn = document.getElementById("btnSbfaGuardar");
+        let d;
+        try {
+            d = sbfaArmarDescarga();
+        } catch (e) {
+            console.error("[sbfa] error armando la descarga:", e);
+            mostrarModalInfo("No se pudo leer la descarga del formulario: " + e.message, "Error al guardar");
+            return;
+        }
+        if (!d.buque) { mostrarModalInfo("Falta el nombre del buque.", "No se puede guardar"); return; }
         const i = sbfaConfig.descargas.findIndex(x => x.id === d.id);
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
-        if (await guardarSbfaCfg()) {
-            // Limpiar borradores de AMBAS keys posibles (la nueva y la del id)
-            sbfaLimpiarBorrador(sbfaEditandoId);
-            sbfaLimpiarBorrador(null);  // por si era nueva descarga, limpiar "sbfaBorrador_nuevo"
-            sbfaEditandoId = d.id;
-            // Reset del timer del auto-save: que la próxima ejecución sea 30s desde ahora,
-            // no inmediata, y así no se genere un borrador idéntico al guardado.
-            sbfaIniciarAutoSave();
+        const txtPrev = btn ? btn.textContent : "";
+        if (btn) { btn.disabled = true; btn.textContent = "⏳ Guardando…"; }
+        let ok = false;
+        try {
+            ok = await guardarSbfaCfg();
+        } catch (e) {
+            console.error("[sbfa] guardarSbfaCfg lanzó:", e);
+            ok = false;
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = txtPrev; }
+        }
+        if (!ok) {
+            mostrarModalInfo("No se pudo guardar la descarga en GitHub. Revisá la conexión y volvé a intentar. Si sigue, abrí la consola (F12) y mandá el error.", "Error al guardar");
+            return;
+        }
+        // Limpiar borradores de AMBAS keys posibles (la nueva y la del id)
+        sbfaLimpiarBorrador(sbfaEditandoId);
+        sbfaLimpiarBorrador(null);  // por si era nueva descarga, limpiar "sbfaBorrador_nuevo"
+        sbfaEditandoId = d.id;
+        // Reset del timer del auto-save: que la próxima ejecución sea 30s desde ahora,
+        // no inmediata, y así no se genere un borrador idéntico al guardado.
+        sbfaIniciarAutoSave();
+        try {
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
             renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
             if (typeof renderBarcos === "function") renderBarcos();
-            const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
-            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
+        } catch (e) {
+            console.error("[sbfa] error re-renderizando tras guardar (la descarga SÍ se guardó):", e);
         }
+        const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
+        mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
     }
 
     async function eliminarSbfaDescarga() {

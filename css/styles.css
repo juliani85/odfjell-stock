@@ -837,6 +837,10 @@ tbody tr:hover { background: var(--gray-50); }
     .header-left { gap: 0.75rem; }
     .header-content h1 { font-size: 1.1rem; }
     .logo-arca { height: 30px; }
+    /* En celular: "Control de Salidas" se oculta; Julian + luz verde + Salir van pegados a la derecha; Salir más chico */
+    .subtitle .subtitle-lbl { display: none; }
+    .header-user { align-self: flex-end; gap: 0.5rem; font-size: 0.82rem; }
+    .header-user .btn-sm { min-height: 30px; padding: 0.28rem 0.65rem; font-size: 0.75rem; }
     .remito-bar, .remito-bar-2col { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
     .resumen-cards { grid-template-columns: 1fr; }

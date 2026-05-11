@@ -833,14 +833,14 @@ tbody tr:hover { background: var(--gray-50); }
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }
-    /* En celular: encabezado compacto en una fila — logo + título a la izquierda, "Salir" a la derecha.
-       Sin "Control de Salidas", sin nombre de usuario, sin luz verde. */
+    /* En celular: encabezado mínimo — solo logo + título. Sin "Control de Salidas",
+       sin nombre de usuario, sin luz verde y sin botón "Salir". */
     .header-top { gap: 0.5rem; align-items: flex-start; }
     .header-left { gap: 0.6rem; flex: 1; min-width: 0; }
     .header-content h1 { font-size: 1.05rem; line-height: 1.2; }
     .logo-arca { height: 30px; }
     .subtitle .subtitle-lbl { display: none; }
-    #syncEstado, #usuarioLogueado { display: none; }
+    #syncEstado, #usuarioLogueado, #btnLogout { display: none; }
     .header-user { gap: 0.4rem; font-size: 0.82rem; flex-shrink: 0; }
     .header-user .btn-sm { min-height: 30px; padding: 0.28rem 0.65rem; font-size: 0.75rem; }
     .remito-bar, .remito-bar-2col { grid-template-columns: 1fr; }

@@ -3,7 +3,7 @@ name: Backup diario a Drive
 on:
   schedule:
     - cron: "0 6 * * *"   # 06:00 UTC = 03:00 hora Argentina
-  workflow_dispatch:       # también se puede correr a mano
+  workflow_dispatch:       # también se puede correr a mano (Actions → Run workflow)
 
 permissions:
   contents: read
@@ -14,17 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Armar zip y subirlo a Drive
-        env:
-          URL: ${{ secrets.GDRIVE_WEBAPP_URL }}
-          TOKEN: ${{ secrets.GDRIVE_WEBAPP_TOKEN }}
+      - name: Instalar rclone
+        run: |
+          if ! command -v rclone >/dev/null 2>&1; then
+            curl -fsSL https://rclone.org/install.sh | sudo bash
+          fi
+          rclone version
+
+      - name: Armar el zip del backup
         run: |
           set -euo pipefail
-          if [ -z "${URL:-}" ] || [ -z "${TOKEN:-}" ]; then
-            echo "Faltan los secrets GDRIVE_WEBAPP_URL / GDRIVE_WEBAPP_TOKEN."
-            echo "Cargalos en: repo → Settings → Secrets and variables → Actions → New repository secret."
-            exit 1
-          fi
           FECHA=$(TZ=America/Argentina/Buenos_Aires date +%F)
           NOMBRE="backup_aduana_${FECHA}.zip"
           LISTA=""
@@ -33,12 +32,28 @@ jobs:
           done
           if [ -z "$LISTA" ]; then echo "No hay archivos JSON para respaldar."; exit 1; fi
           zip -q "$NOMBRE" $LISTA
-          echo "Backup: $NOMBRE ($(stat -c%s "$NOMBRE") bytes) — incluye:$LISTA"
-          base64 -w0 "$NOMBRE" > body.b64
-          RESP=$(curl -sS -L --max-time 120 -X POST \
-            "${URL}?token=${TOKEN}&name=${NOMBRE}" \
-            -H "Content-Type: text/plain" \
-            --data-binary @body.b64)
-          echo "Respuesta de Drive: $RESP"
-          echo "$RESP" | grep -q '"ok":true' || { echo "ERROR: Drive no confirmó OK."; exit 1; }
-          echo "✓ Backup del $FECHA subido a Drive."
+          echo "NOMBRE=$NOMBRE" >> "$GITHUB_ENV"
+          echo "Backup armado: $NOMBRE ($(stat -c%s "$NOMBRE") bytes) — incluye:$LISTA"
+
+      - name: Subir a Google Drive con rclone
+        env:
+          RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+          RCLONE_DEST: ${{ secrets.RCLONE_DEST }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RCLONE_CONF:-}" ] || [ -z "${RCLONE_DEST:-}" ]; then
+            echo "Faltan los secrets RCLONE_CONF (config de rclone) y/o RCLONE_DEST (ej: gdrive:Backups/Aduana)."
+            echo "Cargalos en: repo → Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+          umask 077
+          printf '%s\n' "$RCLONE_CONF" > rclone.conf
+          rclone --config rclone.conf copy "$NOMBRE" "$RCLONE_DEST/" --no-traverse
+          echo "✓ Subido $NOMBRE a $RCLONE_DEST"
+          # Conservar solo los últimos 30 días: borrar los backups más viejos.
+          rclone --config rclone.conf delete "$RCLONE_DEST/" --include "backup_aduana_*.zip" --min-age 30d || true
+          echo "Backups de más de 30 días eliminados (si había)."
+
+      - name: Limpiar
+        if: always()
+        run: rm -f rclone.conf

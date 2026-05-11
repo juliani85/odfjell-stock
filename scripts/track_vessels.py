@@ -167,10 +167,38 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
     if m:
         out["calado_m"] = float(m.group(1))
 
-    # Estado de navegación AIS (ej: "At anchor", "Moored", "Under way using engine")
-    m = re.search(r"Navigation status</td>\s*<td[^>]*>\s*([^<]+?)\s*</td>", html, re.IGNORECASE)
+    # Estado de navegación AIS (ej: "At anchor", "Moored", "Under way using engine").
+    # En VesselFinder el valor va dentro de <span data-title="Moored">Moored</span>.
+    m = re.search(r"Navigation Status</td>[\s\S]{0,200}?data-title=\"([^\"]+)\"", html, re.IGNORECASE)
+    if not m:
+        m = re.search(r"Navigation Status</td>[\s\S]{0,200}?>\s*([A-Za-z][A-Za-z /]+?)\s*</span>", html, re.IGNORECASE)
     if m:
         out["nav_status"] = m.group(1).strip()
+
+    # Zona AIS general: "<NAME> is at <ZONA> reported X ago by AIS." (ej: "South America Inland",
+    # "South America East Coast"). Sirve para distinguir "fondeado en el río cerca de Campana"
+    # de "fondeado mar afuera esperando".
+    m = re.search(r"</strong>\s*is\s*at\s+([A-Za-z][A-Za-z ,/()\-]{2,60}?)\s+reported\b", html, re.IGNORECASE)
+    if m:
+        out["zona"] = m.group(1).strip()
+
+    # Heurística de "arribó a Campana" para cuando VesselFinder NO escribe el "arrived at the
+    # port of Campana on DATE" (pasa cuando el barco está amarrado/fondeado en el río: sigue
+    # mostrándolo "en route to Campana" pero con Navigation Status = Moored / At anchor).
+    # Era el bug por el que no llegó la notificación del BOW CARDINAL.
+    if out.get("estado") != "en_puerto":
+        nav = (out.get("nav_status") or "").lower()
+        zona = (out.get("zona") or "").lower()
+        dest = (out.get("destino") or "").lower()
+        parado = any(s in nav for s in ("moored", "at anchor", "aground"))
+        cerca_campana = ("campana" in zona) or ("inland" in zona and "campana" in dest)
+        if parado and cerca_campana:
+            out["estado"] = "en_puerto"
+            out["puerto_actual"] = out.get("destino") or "Campana, Argentina"
+            # No hay hora de arribo real; usamos la ETA como estimación.
+            if out.get("eta") and not out.get("arribo"):
+                out["arribo"] = out["eta"]
+            out["arribo_estimado"] = True
 
     # Tipo / flag (descripción del header)
     m = re.search(
@@ -290,6 +318,7 @@ def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
             "nombre": datos.get("nombre") or imo,
             "puerto": datos.get("puerto_actual") or "Campana",
             "arribo": datos.get("arribo") or datos.get("ultimo_reporte"),
+            "estimado": bool(datos.get("arribo_estimado")),
         })
     return arribos
 
@@ -316,6 +345,8 @@ def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
         nombre = arr["nombre"]
         puerto = arr["puerto"]
         arribo = arr.get("arribo") or "ahora"
+        if arr.get("estimado") and arr.get("arribo"):
+            arribo = f"{arribo} (aprox.)"
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"🚢 Arribo a Campana — {nombre}"
         msg["From"] = f"TAGSA Aduana <{user}>"

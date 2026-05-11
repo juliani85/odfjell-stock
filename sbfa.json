@@ -320,9 +320,22 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T22:43:09.413Z"
+      "dap": [
+        {
+          "documento": "26008IC65000022N",
+          "cto": "4201",
+          "cantDoctada": 687104,
+          "cantResult": null
+        },
+        {
+          "documento": "26008IC65000021M",
+          "cto": "4301",
+          "cantDoctada": 299998,
+          "cantResult": null
+        }
+      ],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-05-11T12:57:37.662Z"
     }
   ]
 }

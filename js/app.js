@@ -3303,7 +3303,7 @@ async function initApp() {
             const { porFecha, descartados } = await obtenerPlanesDesdeGmail(token);
 
             const fechaSeleccionada = getFechaPlan();
-            const resumenPorFecha = [];
+            const resumenPorFecha = {};
 
             for (const [fecha, info] of Object.entries(porFecha)) {
                 // 1. Aplicar anulaciones sobre filas existentes no cumplidas.
@@ -3353,7 +3353,7 @@ async function initApp() {
                 if (anuladasAplicadas > 0) detalles.push(`-${anuladasAplicadas} anuladas`);
                 if (anuladasIgnoradas > 0) detalles.push(`⚠ ${anuladasIgnoradas} anuladas ignoradas (ya cumplidas)`);
                 const sufijo = detalles.length > 0 ? ` (${detalles.join(", ")})` : "";
-                resumenPorFecha.push(`${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${sufijo}`);
+                resumenPorFecha[fecha] = `${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${sufijo}`;
             }
 
             GH.guardarPlan(planes);
@@ -3361,19 +3361,21 @@ async function initApp() {
             renderPlan();
 
             if (!esAuto) localStorage.setItem("planGmailConsentio", "1");
-            const msg = resumenPorFecha.join(" · ");
+            const fechaSelDDMM = fechaSeleccionada.split("-").reverse().join("/");
+            const msg = resumenPorFecha[fechaSeleccionada] || "";
             const falta = !porFecha[fechaSeleccionada];
             let avisoFalta = "";
             if (falta) {
                 const descPorFecha = descartados.filter(d => d.fecha === fechaSeleccionada);
                 if (descPorFecha.length > 0) {
-                    avisoFalta = ` ⚠️ Para ${fechaSeleccionada.split("-").reverse().join("/")}: ${descPorFecha.map(d => `"${d.subject}" descartado (${d.motivo})`).join("; ")}`;
+                    avisoFalta = `⚠️ Para ${fechaSelDDMM}: ${descPorFecha.map(d => `"${d.subject}" descartado (${d.motivo})`).join("; ")}`;
                 } else {
-                    avisoFalta = ` ⚠️ No llegó plan para ${fechaSeleccionada.split("-").reverse().join("/")}.`;
+                    avisoFalta = `⚠️ No llegó plan para ${fechaSelDDMM}.`;
                 }
             }
-            if (!esAuto) mostrarEstadoPlan(`Sincronizado. ${msg}${avisoFalta}`, falta ? "info" : "success");
-            else console.log("[plan] auto-sync OK:", msg, avisoFalta);
+            const textoEstado = falta ? avisoFalta : `Sincronizado · ${msg}`;
+            if (!esAuto) mostrarEstadoPlan(textoEstado, falta ? "info" : "success");
+            else console.log("[plan] auto-sync OK:", resumenPorFecha[fechaSeleccionada] || "(sin cambios para fecha seleccionada)");
         } catch (e) {
             if (esAuto) {
                 console.log("[plan] auto-sync falló (se ignora):", e.message);

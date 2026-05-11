@@ -121,21 +121,27 @@ def parsear_myshiptracking(html: str) -> dict[str, Any]:
 def parsear_vesselfinder(html: str) -> dict[str, Any]:
     out: dict[str, Any] = {}
 
-    # Frase principal con destino + velocidad + ETA. Ejemplo:
-    # "en route to the port of <strong>Campana, Argentina</strong>,
-    #   sailing at a speed of 9.8 knots
-    #   and expected to arrive there on <strong>May 10, 06:00</strong>."
+    # Frase principal con destino + (velocidad) + ETA. Ejemplos:
+    #   "en route to the port of <strong>Campana, Argentina</strong>,
+    #     sailing at a speed of 9.8 knots
+    #     and expected to arrive there on <strong>May 10, 06:00</strong>."
+    #   Si el barco está fondeado/parado, VesselFinder OMITE el "sailing at a speed of …":
+    #     "en route to the port of <strong>Campana, Argentina</strong> , and
+    #      expected to arrive there on <strong>May 8, 20:00</strong>."
+    #   → por eso la cláusula de velocidad es opcional (era el bug del BOW CAROLINE: fondeado,
+    #     sin línea de velocidad, no matcheaba y quedaba sin estado).
     m = re.search(
-        r"en route to the port of\s*<strong>([^<]+)</strong>[^<]*"
-        r"sailing at a speed of\s*([\d.]+)\s*knots[^<]*"
-        r"expected to arrive[^<]*<strong>([^<]+)</strong>",
+        r"en route to the port of\s*<strong>([^<]+)</strong>"
+        r"(?:[\s\S]{0,300}?sailing at a speed of\s*([\d.]+)\s*knots)?"
+        r"[\s\S]{0,300}?expected to arrive[\s\S]{0,40}?<strong>([^<]+)</strong>",
         html,
         re.IGNORECASE | re.DOTALL,
     )
     if m:
         out["estado"] = "en_route"
         out["destino"] = m.group(1).strip()
-        out["velocidad_nudos"] = float(m.group(2))
+        if m.group(2):
+            out["velocidad_nudos"] = float(m.group(2))
         out["eta"] = _to_iso(m.group(3).strip())
     else:
         m = re.search(
@@ -160,6 +166,11 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
     m = re.search(r"draught</td>\s*<td[^>]*>\s*([\d.]+)\s*m", html, re.IGNORECASE)
     if m:
         out["calado_m"] = float(m.group(1))
+
+    # Estado de navegación AIS (ej: "At anchor", "Moored", "Under way using engine")
+    m = re.search(r"Navigation status</td>\s*<td[^>]*>\s*([^<]+?)\s*</td>", html, re.IGNORECASE)
+    if m:
+        out["nav_status"] = m.group(1).strip()
 
     # Tipo / flag (descripción del header)
     m = re.search(

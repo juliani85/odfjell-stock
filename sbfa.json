@@ -6,8 +6,7 @@
       "manifiesto": "1",
       "agencia": "BYM",
       "cuit": "3071631346",
-      "fecha": "2026-05-09",
-      "notas": "MEDICIONES INICIALES REALIZADAS, SE AUTORIZA EL INICIO DE OPERACIONES.",
+      "fecha": "2026-05-12",
       "filas": [
         {
           "solPart": "870",
@@ -111,7 +110,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-08T18:11:41.913Z"
+      "actualizadoTs": "2026-05-11T13:53:23.110Z"
     },
     {
       "id": 1778268143140,

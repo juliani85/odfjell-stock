@@ -32,7 +32,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -195,10 +195,8 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
         if parado and cerca_campana:
             out["estado"] = "en_puerto"
             out["puerto_actual"] = out.get("destino") or "Campana, Argentina"
-            # No hay hora de arribo real; usamos la ETA como estimación.
-            if out.get("eta") and not out.get("arribo"):
-                out["arribo"] = out["eta"]
-            out["arribo_estimado"] = True
+            # La hora de arribo NO sale de la ETA: la fija main() = el momento en que
+            # detectamos al barco amarrado/fondeado (transición a este estado).
 
     # Tipo / flag (descripción del header)
     m = re.search(
@@ -318,9 +316,22 @@ def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
             "nombre": datos.get("nombre") or imo,
             "puerto": datos.get("puerto_actual") or "Campana",
             "arribo": datos.get("arribo") or datos.get("ultimo_reporte"),
-            "estimado": bool(datos.get("arribo_estimado")),
         })
     return arribos
+
+
+def _fmt_fecha_hora_local(iso: str | None) -> str:
+    """Convierte un ISO (UTC) a 'DD/MM/AAAA HH:MM hs' en hora de Argentina (UTC-3)."""
+    if not iso:
+        return "—"
+    try:
+        dt = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        loc = dt.astimezone(timezone(timedelta(hours=-3)))
+        return loc.strftime("%d/%m/%Y %H:%M") + " hs"
+    except Exception:
+        return str(iso)
 
 
 def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
@@ -344,27 +355,25 @@ def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
     for arr in arribos:
         nombre = arr["nombre"]
         puerto = arr["puerto"]
-        arribo = arr.get("arribo") or "ahora"
-        if arr.get("estimado") and arr.get("arribo"):
-            arribo = f"{arribo} (aprox.)"
+        arribo = _fmt_fecha_hora_local(arr.get("arribo"))
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"🚢 Arribo a Campana — {nombre}"
         msg["From"] = f"TAGSA Aduana <{user}>"
         msg["To"] = ", ".join(destinatarios)
 
         texto = (
-            f"El buque {nombre} (IMO {arr['imo']}) acaba de arribar al puerto.\n\n"
+            f"El buque {nombre} (IMO {arr['imo']}) arribó al puerto.\n\n"
             f"Puerto: {puerto}\n"
-            f"Hora de arribo: {arribo}\n\n"
+            f"Fecha y hora de arribo: {arribo}\n\n"
             f"Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.\n"
         )
         html = f"""
         <html><body style="font-family:Arial,sans-serif;font-size:14px;color:#111">
         <h2 style="color:#1e3a8a">🚢 Arribo a Campana — {nombre}</h2>
-        <p>El buque <strong>{nombre}</strong> (IMO {arr['imo']}) acaba de arribar al puerto.</p>
+        <p>El buque <strong>{nombre}</strong> (IMO {arr['imo']}) arribó al puerto.</p>
         <table style="border-collapse:collapse;margin:1em 0">
             <tr><td style="padding:4px 12px;color:#6b7280">Puerto</td><td style="padding:4px 12px"><strong>{puerto}</strong></td></tr>
-            <tr><td style="padding:4px 12px;color:#6b7280">Hora de arribo</td><td style="padding:4px 12px"><strong>{arribo}</strong></td></tr>
+            <tr><td style="padding:4px 12px;color:#6b7280">Fecha y hora de arribo</td><td style="padding:4px 12px"><strong>{arribo}</strong></td></tr>
         </table>
         <p style="color:#6b7280;font-size:12px">Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.</p>
         </body></html>
@@ -433,6 +442,19 @@ def main() -> int:
         datos["imo"] = imo
         datos["nombre"] = nombre
         salida["barcos"][imo] = datos
+
+        # Hora de arribo a Campana = el momento en que detectamos al barco en puerto/amarrado.
+        # Si VesselFinder reportó una hora real de arribo, la dejamos. Si ya lo veníamos viendo
+        # en puerto en la corrida anterior, arrastramos esa hora (no la pisamos cada 15 min).
+        est = (datos.get("estado") or "").lower()
+        pa = (datos.get("puerto_actual") or "").lower()
+        if est == "en_puerto" and "campana" in pa:
+            prev = (tracking_previo.get("barcos") or {}).get(imo) or {}
+            prev_ok = isinstance(prev, dict) and (prev.get("estado") or "").lower() == "en_puerto" \
+                and "campana" in (prev.get("puerto_actual") or "").lower()
+            if not datos.get("arribo"):
+                datos["arribo"] = prev.get("arribo") if (prev_ok and prev.get("arribo")) else salida["actualizado"]
+
         if datos.get("eta"):
             print(f"ok ({datos['fuente']}, ETA {datos['eta']})")
         elif datos.get("error"):

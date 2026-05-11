@@ -833,13 +833,15 @@ tbody tr:hover { background: var(--gray-50); }
 /* Responsive */
 @media (max-width: 768px) {
     main { padding: 1rem; }
-    .header-top { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
-    .header-left { gap: 0.75rem; }
-    .header-content h1 { font-size: 1.1rem; }
+    /* En celular: encabezado compacto en una fila — logo + título a la izquierda, "Salir" a la derecha.
+       Sin "Control de Salidas", sin nombre de usuario, sin luz verde. */
+    .header-top { gap: 0.5rem; align-items: flex-start; }
+    .header-left { gap: 0.6rem; flex: 1; min-width: 0; }
+    .header-content h1 { font-size: 1.05rem; line-height: 1.2; }
     .logo-arca { height: 30px; }
-    /* En celular: "Control de Salidas" se oculta; Julian + luz verde + Salir van pegados a la derecha; Salir más chico */
     .subtitle .subtitle-lbl { display: none; }
-    .header-user { align-self: flex-end; gap: 0.5rem; font-size: 0.82rem; }
+    #syncEstado, #usuarioLogueado { display: none; }
+    .header-user { gap: 0.4rem; font-size: 0.82rem; flex-shrink: 0; }
     .header-user .btn-sm { min-height: 30px; padding: 0.28rem 0.65rem; font-size: 0.75rem; }
     .remito-bar, .remito-bar-2col { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }

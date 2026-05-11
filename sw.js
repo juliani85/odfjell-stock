@@ -9,7 +9,7 @@
 // Google GSI) son cross-origin → el SW NO las intercepta: van directo a la red. Si no hay
 // red, fallan, que es lo correcto (no queremos servir datos de stock viejos cacheados).
 
-const CACHE = "stock-tagsa-v1";
+const CACHE = "stock-tagsa-v2";
 const SHELL = [
   "./",
   "./index.html",
@@ -46,8 +46,12 @@ self.addEventListener("fetch", (event) => {
   try { url = new URL(req.url); } catch (_) { return; }
   if (url.origin !== self.location.origin) return; // no tocar cross-origin (proxy, CDNs, OAuth)
 
+  // cache:"reload" → ignora la cache HTTP del navegador y va siempre a la red.
+  // Así, online, SIEMPRE se sirve la última versión del código (sin esperar el
+  // TTL de GitHub Pages ni hacer Ctrl+Shift+R). Offline cae a la cache del SW.
+  const fresco = new Request(req.url, { cache: "reload", credentials: "same-origin" });
   event.respondWith(
-    fetch(req)
+    fetch(fresco)
       .then((res) => {
         if (res && res.ok && res.type === "basic") {
           const copy = res.clone();

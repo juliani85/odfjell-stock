@@ -1,11 +1,7 @@
 {
-  "actualizado": "2026-05-11T08:05:18.038678Z",
+  "actualizado": "2026-05-11T11:35:33.794242Z",
   "barcos": {
     "9367554": {
-      "estado": "en_route",
-      "destino": "Campana, Argentina",
-      "velocidad_nudos": 11.5,
-      "eta": "2026-05-08T20:00:00Z",
       "calado_m": 7.4,
       "fuente": "vesselfinder",
       "error": null,
@@ -15,7 +11,7 @@
     "9114244": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 12.4,
+      "velocidad_nudos": 11.0,
       "eta": "2026-05-10T10:00:00Z",
       "calado_m": 9.0,
       "fuente": "vesselfinder",

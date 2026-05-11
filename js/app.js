@@ -4246,49 +4246,49 @@ async function initApp() {
         if (!sbfaConfig.descargas) sbfaConfig.descargas = [];
     }
 
+    let sbfaUltimoErrorGuardado = "";
+
     async function guardarSbfaCfg() {
-        try {
-            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json`;
-            // Releer remoto fresco y mergear: así no pisamos descargas que otro usuario
-            // (ej. Claudia) cargó/editó mientras esta sesión tenía una copia vieja.
-            const remoto = await cargarSbfaRemoto();
-            let sha = null;
-            if (remoto) {
-                sha = remoto.sha;
-                if (remoto.content && Array.isArray(remoto.content.descargas)) {
-                    sbfaConfig.descargas = sbfaMergeDescargas(remoto.content.descargas, sbfaConfig.descargas);
-                }
-            }
+        sbfaUltimoErrorGuardado = "";
+        const putSbfa = async (sha) => {
             const contenido = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
             const body = { message: `chore: actualizar sbfa.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
             if (sha) body.sha = sha;
-            const put = await fetch(url, {
+            const r = await fetch(`https://api.github.com/repos/${GH.repo}/contents/sbfa.json`, {
                 method: "PUT",
+                cache: "no-store",
                 headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
-            if (put.status === 409 || put.status === 422) {
-                // sha quedó viejo (otro guardó en el medio): reintentar una vez con remoto fresco.
-                const r2 = await cargarSbfaRemoto();
-                if (r2) {
-                    if (r2.content && Array.isArray(r2.content.descargas)) {
-                        sbfaConfig.descargas = sbfaMergeDescargas(r2.content.descargas, sbfaConfig.descargas);
-                    }
-                    const contenido2 = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
-                    const put2 = await fetch(url, {
-                        method: "PUT",
-                        headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ message: body.message, content: contenido2, sha: r2.sha }),
-                    });
-                    if (!put2.ok) throw new Error(`GitHub ${put2.status}`);
-                    return true;
-                }
+            let detalle = "";
+            if (!r.ok) { try { const j = await r.json(); detalle = j && j.message ? ` — ${j.message}` : ""; } catch (_) {} }
+            return { ok: r.ok, status: r.status, detalle };
+        };
+        try {
+            // Releer remoto fresco y mergear: así no pisamos descargas que otro usuario
+            // (ej. Claudia) cargó/editó mientras esta sesión tenía una copia vieja.
+            const remoto = await cargarSbfaRemoto();
+            if (remoto && remoto.content && Array.isArray(remoto.content.descargas)) {
+                sbfaConfig.descargas = sbfaMergeDescargas(remoto.content.descargas, sbfaConfig.descargas);
             }
-            if (!put.ok) throw new Error(`GitHub ${put.status}`);
+            let res = await putSbfa(remoto ? remoto.sha : null);
+            if (!res.ok && (res.status === 409 || res.status === 422)) {
+                // sha viejo (otro guardó en el medio, o no se pudo leer el sha): reintentar con remoto fresco.
+                const r2 = await cargarSbfaRemoto();
+                if (r2 && r2.content && Array.isArray(r2.content.descargas)) {
+                    sbfaConfig.descargas = sbfaMergeDescargas(r2.content.descargas, sbfaConfig.descargas);
+                }
+                res = await putSbfa(r2 ? r2.sha : null);
+            }
+            if (!res.ok) {
+                sbfaUltimoErrorGuardado = `GitHub ${res.status}${res.detalle}`;
+                throw new Error(sbfaUltimoErrorGuardado);
+            }
             return true;
         } catch (e) {
-            console.error("[sbfa] error guardando:", e);
-            mostrarAlerta(`Error guardando sbfa.json: ${e.message}`, "error");
+            if (!sbfaUltimoErrorGuardado) sbfaUltimoErrorGuardado = e.message || String(e);
+            console.error("[sbfa] error guardando sbfa.json:", e);
+            mostrarAlerta(`Error guardando sbfa.json: ${sbfaUltimoErrorGuardado}`, "error");
             return false;
         }
     }
@@ -4864,7 +4864,8 @@ async function initApp() {
             if (btn) { btn.disabled = false; btn.textContent = txtPrev; }
         }
         if (!ok) {
-            mostrarModalInfo("No se pudo guardar la descarga en GitHub. Revisá la conexión y volvé a intentar. Si sigue, abrí la consola (F12) y mandá el error.", "Error al guardar");
+            const det = sbfaUltimoErrorGuardado ? `<br><br><strong>Detalle:</strong> ${sbfaUltimoErrorGuardado}` : "";
+            mostrarModalInfo(`No se pudo guardar la descarga en GitHub. Revisá la conexión y volvé a intentar.${det}`, "Error al guardar");
             return;
         }
         // Limpiar borradores de AMBAS keys posibles (la nueva y la del id)

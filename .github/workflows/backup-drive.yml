@@ -1,0 +1,44 @@
+name: Backup diario a Drive
+
+on:
+  schedule:
+    - cron: "0 6 * * *"   # 06:00 UTC = 03:00 hora Argentina
+  workflow_dispatch:       # también se puede correr a mano
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Armar zip y subirlo a Drive
+        env:
+          URL: ${{ secrets.GDRIVE_WEBAPP_URL }}
+          TOKEN: ${{ secrets.GDRIVE_WEBAPP_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${URL:-}" ] || [ -z "${TOKEN:-}" ]; then
+            echo "Faltan los secrets GDRIVE_WEBAPP_URL / GDRIVE_WEBAPP_TOKEN."
+            echo "Cargalos en: repo → Settings → Secrets and variables → Actions → New repository secret."
+            exit 1
+          fi
+          FECHA=$(TZ=America/Argentina/Buenos_Aires date +%F)
+          NOMBRE="backup_aduana_${FECHA}.zip"
+          LISTA=""
+          for f in datos.json vistas.json plan.json sbfa.json barcos.json tracking.json; do
+            if [ -f "$f" ]; then LISTA="$LISTA $f"; fi
+          done
+          if [ -z "$LISTA" ]; then echo "No hay archivos JSON para respaldar."; exit 1; fi
+          zip -q "$NOMBRE" $LISTA
+          echo "Backup: $NOMBRE ($(stat -c%s "$NOMBRE") bytes) — incluye:$LISTA"
+          base64 -w0 "$NOMBRE" > body.b64
+          RESP=$(curl -sS -L --max-time 120 -X POST \
+            "${URL}?token=${TOKEN}&name=${NOMBRE}" \
+            -H "Content-Type: text/plain" \
+            --data-binary @body.b64)
+          echo "Respuesta de Drive: $RESP"
+          echo "$RESP" | grep -q '"ok":true' || { echo "ERROR: Drive no confirmó OK."; exit 1; }
+          echo "✓ Backup del $FECHA subido a Drive."

@@ -376,6 +376,85 @@ function parsearSalidasDesdeBody(bodyText) {
     return filas;
 }
 
+// Parser para mails informales que agregan / retiran cargas sueltas escritas en prosa, ej:
+//   "se agrega una carga de MDI de PBB POLISUR del tk 76 ( despacho DI26IC04002547U )"
+//   "favor retirar la carga del tanque 12 ( despacho DI26IC04001234X )"
+// La única señal confiable es el par tanque + despacho; el verbo decide la acción (default: agregar).
+function parsearMovimientosInformales(bodyText) {
+    const vacio = { agregar: [], anular: [] };
+    if (!bodyText) return vacio;
+    const cortado = bodyText
+        .split(/\n\s*(?:De:|From:|-----+\s*Original|Enviado (?:el|por):)/i)[0]
+        .split(/\n\s*>/)[0];
+    const agregar = [];
+    const anular = [];
+    const vistos = new Set();
+    const re = /\b(?:tk|tq|tanque|tanq)\.?\s*[:\-#°º]?\s*(\d{1,3})\b[\s\S]{0,90}?\bdespacho\b\s*(?:n[°ºo.:]*|[:\-(#.])*\s*([A-Z0-9]{8,22})/gi;
+    let m;
+    while ((m = re.exec(cortado)) !== null) {
+        const tanque = m[1].padStart(3, "0");
+        const despacho = m[2].trim().toUpperCase().replace(/\)+$/, "");
+        // Un despacho real tiene letras y números mezclados; descarta falsos positivos (todo dígitos / todo letras).
+        if (!/[A-Z]/.test(despacho) || !/[0-9]/.test(despacho)) continue;
+        const key = `${tanque}|${despacho}`;
+        if (vistos.has(key)) continue;
+        vistos.add(key);
+        const ctxIni = Math.max(0, m.index - 140);
+        const ctxAmplio = cortado.slice(ctxIni, m.index + m[0].length + 140);
+        const ctx = ctxAmplio.toLowerCase();
+        const esAnular = /\b(anul|cancel|retir|quit|baja|dar de baja|elimin|saca)/i.test(ctx)
+            && !/\b(agreg|sum[ao]|incorpor|a[ñn]ad|adicion)/i.test(ctx);
+        let producto = "", cliente = "";
+        const pm = cortado.slice(ctxIni, m.index + 5)
+            .match(/carga\s+de\s+([A-Za-zÁÉÍÓÚÜÑ0-9.\-]+(?:\s+[A-Za-zÁÉÍÓÚÜÑ0-9.\-]+)?)\s+(?:de|para|del?)\s+([A-Za-zÁÉÍÓÚÜÑ0-9.\-&]+(?:\s+[A-Za-zÁÉÍÓÚÜÑ0-9.\-&]+){0,3}?)\s+del?\s+(?:tk|tq|tanque|tanq)\b/i);
+        if (pm) { producto = pm[1].trim().toUpperCase(); cliente = pm[2].trim().toUpperCase(); }
+        let horaCarga = "";
+        const hm = ctx.match(/\b(\d{1,2})(?:[:.](\d{2}))?\s*(?:hs?\b|horas?\b)/);
+        if (hm) {
+            const hh = parseInt(hm[1], 10);
+            if (hh >= 0 && hh <= 23) horaCarga = String(hh).padStart(2, "0") + ":" + (hm[2] || "00");
+        } else if (/\bmediod[ií]a\b/.test(ctx)) {
+            horaCarga = "12:00";
+        }
+        if (esAnular) {
+            anular.push({ tanque, despacho });
+        } else {
+            agregar.push({
+                id: Date.now() + "-inf-" + (agregar.length) + "-" + Math.random().toString(36).slice(2, 7),
+                tanque,
+                producto,
+                cliente,
+                buque: "",
+                viaje: "",
+                subCliente: "",
+                conoc: "",
+                despacho,
+                exLegal: "",
+                fechaOrig: "",
+                horaCarga,
+                observaciones: "(agregado por mail)",
+                cumplido: false,
+                salidaId: null,
+                cumplidoAt: null,
+                fuente: "body",
+            });
+        }
+    }
+    return { agregar, anular };
+}
+
+// Fecha (YYYY-MM-DD, zona local) del mail, a partir de internalDate o el header Date.
+function fechaDelMail(msg) {
+    let d = null;
+    if (msg && msg.internalDate) { const t = parseInt(msg.internalDate, 10); if (!isNaN(t)) d = new Date(t); }
+    if (!d || isNaN(d.getTime())) {
+        const hd = ((msg && msg.payload && msg.payload.headers) || []).find(h => h.name.toLowerCase() === "date");
+        if (hd && hd.value) { const dd = new Date(hd.value); if (!isNaN(dd.getTime())) d = dd; }
+    }
+    if (!d || isNaN(d.getTime())) return null;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function listarAdjuntos(part) {
     const out = [];
     function recorrer(p) {
@@ -463,20 +542,29 @@ async function obtenerPlanesDesdeGmail(token) {
         profileEmail = p.emailAddress || "?";
     } catch (_) {}
 
-    const runQuery = async (q) => {
-        const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=30`;
+    const runQuery = async (q, maxResults = 30) => {
+        const url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?q=${encodeURIComponent(q)}&maxResults=${maxResults}`;
         const r = await gmailGet(url, token);
         return r.messages || [];
     };
 
-    const qA = await runQuery('subject:"plan de cargas" newer_than:60d');
-    const qB = await runQuery('subject:"plan de carga" newer_than:60d');
-    const qC = await runQuery('subject:plan newer_than:60d');
+    const queries = [
+        ['subject:"plan de cargas" newer_than:60d', 30],
+        ['subject:"plan de carga" newer_than:60d', 30],
+        ['subject:plan newer_than:60d', 30],
+        // Mails informales que agregan / retiran una carga suelta (asunto libre, sin "plan").
+        // Ventana corta: estos mails son del día ("al día de hoy se agrega una carga…").
+        ['subject:carga newer_than:15d', 20],
+        ['carga despacho newer_than:15d', 20],
+    ];
     const mapa = new Map();
-    [...qA, ...qB, ...qC].forEach(m => { if (!mapa.has(m.id)) mapa.set(m.id, m); });
+    for (const [q, max] of queries) {
+        const res = await runQuery(q, max);
+        res.forEach(m => { if (!mapa.has(m.id)) mapa.set(m.id, m); });
+    }
     const candidates = [...mapa.values()];
     if (candidates.length === 0) {
-        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" en el asunto. ¿Te loggeaste con tagsaaduana@gmail.com?`);
+        throw new Error(`Cuenta ${profileEmail}: no encontré mails con "plan" ni "carga" en el asunto. ¿Te loggeaste con tagsaaduana@gmail.com?`);
     }
 
     // Extrae fecha del asunto. 2-digit year -> +2000.
@@ -497,34 +585,54 @@ async function obtenerPlanesDesdeGmail(token) {
     for (const msgRef of candidates) {
         const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
-        if (!/plan\s+de\s+cargas?/i.test(subject)) {
-            console.log(`[plan] descartado (no contiene "plan de carga(s)"): "${subject}"`);
-            descartados.push({ subject, motivo: "asunto no matchea" });
-            continue;
-        }
-        const fecha = extraerFecha(subject);
-        if (!fecha) {
-            console.log(`[plan] descartado (no se pudo extraer fecha del asunto): "${subject}"`);
-            descartados.push({ subject, motivo: "fecha no parseable" });
-            continue;
-        }
-
-        const att = buscarAdjuntoExcel(msg.payload);
-        let filasExcel = [];
-        let filename = "";
-        if (att) {
-            filename = att.filename;
-            try {
-                filasExcel = await parsearFilasExcel(msgRef, att, token);
-            } catch (e) {
-                console.warn(`[plan] error parseando Excel de "${subject}":`, e);
-            }
-        }
+        const esPlanFormal = /plan\s+de\s+cargas?/i.test(subject);
 
         const cuerpo = extraerCuerpoMail(msg.payload);
         let bloques = parsearBloquesDesdeHTML(cuerpo.html);
         if (bloques.length === 0) bloques = parsearBloquesDesdeTexto(cuerpo.plain);
-        const filasProsa = bloques.length === 0 ? parsearSalidasDesdeBody(cuerpoATexto(cuerpo)) : [];
+        const textoCuerpo = cuerpoATexto(cuerpo);
+        const filasProsa = bloques.length === 0 ? parsearSalidasDesdeBody(textoCuerpo) : [];
+        const movInf = bloques.length === 0 ? parsearMovimientosInformales(textoCuerpo) : { agregar: [], anular: [] };
+        // Evitar duplicar lo que ya capturó el parser de prosa "TK N - CLIENTE DESPACHO".
+        const yaEnProsa = (f) => filasProsa.some(p => p.tanque === f.tanque && normDespacho(p.despacho) === normDespacho(f.despacho));
+        const movInfAgregar = movInf.agregar.filter(f => !yaEnProsa(f));
+
+        if (!esPlanFormal && movInfAgregar.length === 0 && movInf.anular.length === 0) {
+            console.log(`[plan] descartado (asunto no es "plan de carga(s)" y sin movimientos en el cuerpo): "${subject}"`);
+            descartados.push({ subject, motivo: "asunto no matchea y sin movimientos en el cuerpo" });
+            continue;
+        }
+
+        let fecha;
+        if (esPlanFormal) {
+            fecha = extraerFecha(subject);
+            if (!fecha) {
+                console.log(`[plan] descartado (no se pudo extraer fecha del asunto): "${subject}"`);
+                descartados.push({ subject, motivo: "fecha no parseable" });
+                continue;
+            }
+        } else {
+            fecha = fechaDelMail(msg);
+            if (!fecha) {
+                console.log(`[plan] descartado (mail informal sin fecha): "${subject}"`);
+                descartados.push({ subject, motivo: "mail informal sin fecha" });
+                continue;
+            }
+        }
+
+        let filasExcel = [];
+        let filename = "";
+        if (esPlanFormal) {
+            const att = buscarAdjuntoExcel(msg.payload);
+            if (att) {
+                filename = att.filename;
+                try {
+                    filasExcel = await parsearFilasExcel(msgRef, att, token);
+                } catch (e) {
+                    console.warn(`[plan] error parseando Excel de "${subject}":`, e);
+                }
+            }
+        }
 
         const filasAgregar = [];
         const filasAnular = [];
@@ -532,9 +640,10 @@ async function obtenerPlanesDesdeGmail(token) {
             if (b.accion === "anular") filasAnular.push(...b.filas);
             else filasAgregar.push(...b.filas);
         }
-        filasAgregar.push(...filasProsa);
+        filasAgregar.push(...filasProsa, ...movInfAgregar);
+        filasAnular.push(...movInf.anular);
 
-        console.log(`[plan] "${subject}" → fecha=${fecha}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, agregar=${filasAgregar.length}, anular=${filasAnular.length}`);
+        console.log(`[plan] "${subject}" → fecha=${fecha}, formal=${esPlanFormal}, adjunto=${filename || "(ninguno)"}, filasExcel=${filasExcel.length}, agregar=${filasAgregar.length}, anular=${filasAnular.length}`);
 
         if (filasExcel.length === 0 && filasAgregar.length === 0 && filasAnular.length === 0) {
             console.warn(`[plan] sin filas. Primeros 800 chars del cuerpo plain del mail "${subject}":\n`, (cuerpo.plain || "").slice(0, 800));

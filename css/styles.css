@@ -956,6 +956,12 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-table .pendiente-tol { color: #6b7280; font-style: italic; font-size: 0.78rem; }
 .sbfa-table .btn-borrar-fila { background: none; border: none; color: #b91c1c; cursor: pointer; font-weight: 700; font-size: 1rem; padding: 0; }
 
+/* Editor de descarga SB/FA: que las tablas no se compriman en pantallas medianas.
+   Ancho mínimo legible para las 12/7 columnas; si el card es más angosto, se
+   desliza horizontal adentro del card en vez de aplastar las celdas. */
+#sbfaEditor .table-container { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+#sbfaEditor .sbfa-table { min-width: 1180px; }
+
 .sbfa-card { padding: 1rem; border: 2px solid var(--gray-200); border-radius: 10px; background: white; margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.15s; }
 .sbfa-card:hover { border-color: var(--primary); }
 .sbfa-card.requiere-acta { border-color: #d97706; background: #fffbeb; }

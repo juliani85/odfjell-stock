@@ -313,7 +313,7 @@
           "mercaderia": "ISOPAR L",
           "receptor": "BRENNTAG",
           "kgDeclarados": 149262,
-          "tkDestino": "",
+          "tkDestino": "81",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
@@ -333,8 +333,8 @@
           "cantResult": null
         }
       ],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-05-11T12:57:37.662Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-11T13:54:34.702Z"
     }
   ]
 }

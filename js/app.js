@@ -4201,20 +4201,63 @@ async function initApp() {
     }
 
     // --- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE ---
+
+    // Lee sbfa.json directo de la API de GitHub (siempre fresco, sin esperar el rebuild
+    // de GitHub Pages). Devuelve { content, sha } o null.
+    async function cargarSbfaRemoto() {
+        try {
+            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json`;
+            const r = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
+            if (!r.ok) return null;
+            const data = await r.json();
+            return { content: GH._b64ToJson(data.content), sha: data.sha };
+        } catch (e) {
+            console.warn("[sbfa] cargarSbfaRemoto falló:", e.message);
+            return null;
+        }
+    }
+
+    // Merge de descargas por id con last-write-wins. La descarga que un usuario tocó
+    // recién tiene un actualizadoTs (o anuladaTs) más nuevo y gana; las que tocó otro
+    // usuario quedan con el ts más nuevo y no se pisan.
+    function sbfaTsDescarga(d) {
+        return d.anuladaTs && d.anuladaTs > (d.actualizadoTs || "") ? d.anuladaTs : (d.actualizadoTs || d.anuladaTs || "");
+    }
+    function sbfaMergeDescargas(base, otras) {
+        const porId = new Map();
+        (base || []).forEach(d => porId.set(d.id, d));
+        (otras || []).forEach(d => {
+            const ex = porId.get(d.id);
+            if (!ex) { porId.set(d.id, d); return; }
+            porId.set(d.id, sbfaTsDescarga(d) >= sbfaTsDescarga(ex) ? d : ex);
+        });
+        return [...porId.values()];
+    }
+
     async function cargarSbfaCfg() {
-        const cfg = await fetchJSON("sbfa.json");
-        if (cfg) sbfaConfig = cfg;
+        const remoto = await cargarSbfaRemoto();
+        if (remoto && remoto.content) {
+            sbfaConfig = remoto.content;
+        } else {
+            // Fallback: copia servida por GitHub Pages (puede estar atrasada respecto al repo).
+            const cfg = await fetchJSON("sbfa.json");
+            if (cfg) sbfaConfig = cfg;
+        }
         if (!sbfaConfig.descargas) sbfaConfig.descargas = [];
     }
 
     async function guardarSbfaCfg() {
         try {
             const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json`;
-            const get = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
+            // Releer remoto fresco y mergear: así no pisamos descargas que otro usuario
+            // (ej. Claudia) cargó/editó mientras esta sesión tenía una copia vieja.
+            const remoto = await cargarSbfaRemoto();
             let sha = null;
-            if (get.ok) {
-                const data = await get.json();
-                sha = data.sha;
+            if (remoto) {
+                sha = remoto.sha;
+                if (remoto.content && Array.isArray(remoto.content.descargas)) {
+                    sbfaConfig.descargas = sbfaMergeDescargas(remoto.content.descargas, sbfaConfig.descargas);
+                }
             }
             const contenido = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
             const body = { message: `chore: actualizar sbfa.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
@@ -4224,6 +4267,23 @@ async function initApp() {
                 headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
+            if (put.status === 409 || put.status === 422) {
+                // sha quedó viejo (otro guardó en el medio): reintentar una vez con remoto fresco.
+                const r2 = await cargarSbfaRemoto();
+                if (r2) {
+                    if (r2.content && Array.isArray(r2.content.descargas)) {
+                        sbfaConfig.descargas = sbfaMergeDescargas(r2.content.descargas, sbfaConfig.descargas);
+                    }
+                    const contenido2 = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
+                    const put2 = await fetch(url, {
+                        method: "PUT",
+                        headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({ message: body.message, content: contenido2, sha: r2.sha }),
+                    });
+                    if (!put2.ok) throw new Error(`GitHub ${put2.status}`);
+                    return true;
+                }
+            }
             if (!put.ok) throw new Error(`GitHub ${put.status}`);
             return true;
         } catch (e) {
@@ -4231,6 +4291,20 @@ async function initApp() {
             mostrarAlerta(`Error guardando sbfa.json: ${e.message}`, "error");
             return false;
         }
+    }
+
+    // Trae cambios de sbfa.json que cargó otro usuario y refresca la lista,
+    // siempre que no haya un editor abierto (para no pisar lo que se está editando).
+    async function sincronizarSbfaDesdeRemoto() {
+        if (!document.getElementById("sbfaEditor").classList.contains("hidden")) return;
+        const remoto = await cargarSbfaRemoto();
+        if (!remoto || !remoto.content || !Array.isArray(remoto.content.descargas)) return;
+        const antes = JSON.stringify(sbfaConfig.descargas);
+        sbfaConfig.descargas = sbfaMergeDescargas(sbfaConfig.descargas, remoto.content.descargas);
+        if (JSON.stringify(sbfaConfig.descargas) === antes) return;
+        renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "");
+        if (typeof renderBarcos === "function") renderBarcos();
+        console.log("[sbfa] sincronizado con cambios remotos");
     }
 
     function sbfaCalcDif(decl, res) {
@@ -5375,6 +5449,12 @@ ${fueraTol.length ? `
         });
         document.getElementById("btnSbfaImprimir").addEventListener("click", imprimirInformeSbfa);
         document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value));
+
+        // Polling: traer descargas SB/FA cargadas por otro usuario cada 45s.
+        setInterval(sincronizarSbfaDesdeRemoto, 45000);
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") sincronizarSbfaDesdeRemoto();
+        });
     }
 
     // --- INIT ---

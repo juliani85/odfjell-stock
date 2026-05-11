@@ -674,10 +674,14 @@ async function obtenerPlanesDesdeGmail(token) {
     return { porFecha, descartados };
 }
 
-// --- GITHUB STORAGE ---
+// --- GITHUB STORAGE (vía proxy Cloudflare Worker) ---
+// El token de GitHub ya NO vive acá: lo guarda el Worker como secret. Esto evita
+// que GitHub secret-scanning lo revoque (pasaba con el token embebido en repo público).
+// Ver public/cloudflare-worker/.
 const GH = {
-    _p: ["Z2hwX1lFS0k4","d1FLRmtobEtW","YlE1ODNpcU00","cks3WUpzazJi","YjYxag=="],
-    get token() { return atob(this._p.join("")); },
+    _base: "https://odfjell-stock-proxy.cam-el-juli.workers.dev",
+    _s: ["d19SUV92UWV","IcmQxTlRuNn","J0RnVNUjNNR","U1SenV6R0p0","OThtTDZEazF","SazNoRnR5"],
+    get _secret() { return atob(this._s.join("")); },
     repo: "juliani85/odfjell-stock",
     file: "datos.json",
     fileVistas: "vistas.json",
@@ -718,34 +722,77 @@ const GH = {
         return JSON.parse(new TextDecoder("utf-8").decode(bytes));
     },
 
+    // --- helpers de bajo nivel contra el proxy ---
+    // _ghLeer(archivo) -> { sha, texto } | null (null = el archivo no existe / 404).
+    //                    Lanza si hay otro error (network, 5xx, 401, etc.).
+    async _ghLeer(archivo) {
+        const r = await fetch(`${this._base}/gh/${archivo}?t=${Date.now()}`, { cache: "no-store" });
+        if (r.status === 404) return null;
+        if (!r.ok) {
+            let det = ""; try { const j = await r.json(); det = j && (j.error || j.message) ? ` ${j.error || j.message}` : ""; } catch (_) {}
+            throw new Error(`proxy ${r.status}${det}`);
+        }
+        const data = await r.json();
+        return { sha: data.sha || null, texto: typeof data.content === "string" ? data.content : "" };
+    },
+    _parseTexto(res) {
+        if (!res) return null;
+        try { return JSON.parse(res.texto); } catch (_) { return null; }
+    },
+    // _ghEscribir(archivo, contenidoTexto, sha, mensaje) -> { ok, status, detalle, nuevoSha }
+    async _ghEscribir(archivo, contenidoTexto, sha, mensaje) {
+        try {
+            const r = await fetch(`${this._base}/gh/${archivo}`, {
+                method: "PUT",
+                cache: "no-store",
+                headers: { "Content-Type": "application/json", "X-App-Secret": this._secret },
+                body: JSON.stringify({ content: contenidoTexto, sha: sha || undefined, message: mensaje || `chore: actualizar ${archivo}` }),
+            });
+            let payload = null;
+            try { payload = await r.json(); } catch (_) {}
+            if (!r.ok) {
+                const det = payload && (payload.message || payload.error) ? ` — ${payload.message || payload.error}` : "";
+                return { ok: false, status: r.status, detalle: det };
+            }
+            return { ok: true, status: r.status, nuevoSha: (payload && payload.content && payload.content.sha) || null };
+        } catch (e) {
+            return { ok: false, status: 0, detalle: " — " + (e.message || e) };
+        }
+    },
+    // _ghDispatch(workflow, ref, inputs) -> { ok, status }
+    async _ghDispatch(workflow, ref, inputs) {
+        try {
+            const r = await fetch(`${this._base}/dispatch/${workflow}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-App-Secret": this._secret },
+                body: JSON.stringify({ ref: ref || "master", inputs: inputs || {} }),
+            });
+            let det = "";
+            if (!r.ok) { try { const j = await r.json(); det = j && (j.message || j.error) ? ` — ${j.message || j.error}` : ""; } catch (_) {} }
+            return { ok: r.ok, status: r.status, detalle: det };
+        } catch (e) {
+            return { ok: false, status: 0, detalle: " — " + (e.message || e) };
+        }
+    },
+
     async cargar() {
         try {
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (!res.ok) return null;
-            const data = await res.json();
-            this.sha = data.sha;
-            const contenido = this._b64ToJson(data.content);
-            return contenido;
+            const res = await this._ghLeer(this.file);
+            if (!res) return null;
+            this.sha = res.sha;
+            return this._parseTexto(res);
         } catch (e) {
+            console.warn('[GH cargar]', e.message || e);
             return null;
         }
     },
 
     async refrescarSha() {
         try {
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                this.sha = data.sha;
-            } else if (res.status !== 404) {
-                console.warn('[GH refrescarSha]', res.status);
-            }
+            const res = await this._ghLeer(this.file);
+            if (res) this.sha = res.sha;
         } catch (e) {
-            console.error('[GH refrescarSha]', e);
+            console.warn('[GH refrescarSha]', e.message || e);
         }
     },
 
@@ -768,52 +815,24 @@ const GH = {
         while (this._pendiente) {
             const merger = this._pendiente;
             try {
-                // Leer remoto fresco (actualiza this.sha).
+                // Leer remoto fresco (actualiza this.sha). _ghLeer lanza si hay error real
+                // (network/5xx/auth); devuelve null solo si el archivo no existe (404).
+                const res = await this._ghLeer(this.file);
                 let remoto = null;
-                try {
-                    const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
-                        headers: { Authorization: `token ${this.token}` }
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        this.sha = data.sha;
-                        remoto = this._b64ToJson(data.content);
-                    } else if (res.status !== 404) {
-                        throw new Error(`GitHub GET ${res.status}`);
-                    }
-                } catch (e) {
-                    throw e;
-                }
+                if (res) { this.sha = res.sha; remoto = this._parseTexto(res); }
+                else { this.sha = null; }
 
                 const merged = merger(remoto);
 
                 const datos = { ...merged, actualizado: new Date().toISOString() };
-                const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
-                const body = {
-                    message: `Actualizar datos ${new Date().toISOString().slice(0, 16)}`,
-                    content: contenido
-                };
-                if (this.sha) body.sha = this.sha;
+                const out = await this._ghEscribir(this.file, JSON.stringify(datos), this.sha, `Actualizar datos ${new Date().toISOString().slice(0, 16)}`);
 
-                const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.file}`, {
-                    method: "PUT",
-                    headers: {
-                        Authorization: `token ${this.token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (res.status === 409 || res.status === 422) {
+                if (out.status === 409 || out.status === 422) {
                     console.warn('[GH sync stock] conflict, reintentando con remoto fresco');
                     continue;
                 }
-                if (!res.ok) {
-                    const text = await res.text().catch(() => '');
-                    throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
-                }
-                const data = await res.json();
-                this.sha = data.content.sha;
+                if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
+                if (out.nuevoSha) this.sha = out.nuevoSha;
                 if (this._pendiente === merger) this._pendiente = null;
             } catch (e) {
                 console.error('[GH sync stock]', e);
@@ -831,19 +850,13 @@ const GH = {
 
     async cargarVistas() {
         try {
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (!res.ok) {
-                if (res.status !== 404) console.warn('[GH cargarVistas]', res.status);
-                return null;
-            }
-            const data = await res.json();
-            this.shaVistas = data.sha;
-            const contenido = this._b64ToJson(data.content);
-            return { vistas: contenido.vistas || [], sim: contenido.sim || {} };
+            const res = await this._ghLeer(this.fileVistas);
+            if (!res) return null;
+            this.shaVistas = res.sha;
+            const c = this._parseTexto(res) || {};
+            return { vistas: c.vistas || [], sim: c.sim || {} };
         } catch (e) {
-            console.error('[GH cargarVistas]', e);
+            console.warn('[GH cargarVistas]', e.message || e);
             return null;
         }
     },
@@ -860,40 +873,13 @@ const GH = {
         const { vistas, sim } = this._pendienteVistas;
 
         try {
-            const r = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (r.ok) {
-                const d = await r.json();
-                this.shaVistas = d.sha;
-            } else if (r.status === 404) {
-                this.shaVistas = null;
-            } else {
-                throw new Error(`GitHub ${r.status} al refrescar sha de vistas`);
-            }
+            const res = await this._ghLeer(this.fileVistas);
+            this.shaVistas = res ? res.sha : null;
 
             const datos = { vistas, sim, actualizado: new Date().toISOString() };
-            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
-            const body = {
-                message: `Actualizar vistas ${new Date().toISOString().slice(0, 16)}`,
-                content: contenido
-            };
-            if (this.shaVistas) body.sha = this.shaVistas;
-
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.fileVistas}`, {
-                method: "PUT",
-                headers: {
-                    Authorization: `token ${this.token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-            if (!res.ok) {
-                const text = await res.text().catch(() => '');
-                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
-            }
-            const data = await res.json();
-            this.shaVistas = data.content.sha;
+            const out = await this._ghEscribir(this.fileVistas, JSON.stringify(datos), this.shaVistas, `Actualizar vistas ${new Date().toISOString().slice(0, 16)}`);
+            if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
+            if (out.nuevoSha) this.shaVistas = out.nuevoSha;
             if (this._pendienteVistas && this._pendienteVistas.vistas === vistas && this._pendienteVistas.sim === sim) {
                 this._pendienteVistas = null;
             }
@@ -908,19 +894,13 @@ const GH = {
 
     async cargarPlan() {
         try {
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (!res.ok) {
-                if (res.status !== 404) console.warn('[GH cargarPlan]', res.status);
-                return null;
-            }
-            const data = await res.json();
-            this.shaPlan = data.sha;
-            const contenido = this._b64ToJson(data.content);
-            return contenido.planes || {};
+            const res = await this._ghLeer(this.filePlan);
+            if (!res) return null;
+            this.shaPlan = res.sha;
+            const c = this._parseTexto(res) || {};
+            return c.planes || {};
         } catch (e) {
-            console.error('[GH cargarPlan]', e);
+            console.warn('[GH cargarPlan]', e.message || e);
             return null;
         }
     },
@@ -936,40 +916,13 @@ const GH = {
         this._enviandoPlan = true;
         const planes = this._pendientePlan;
         try {
-            const r = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
-                headers: { Authorization: `token ${this.token}` }
-            });
-            if (r.ok) {
-                const d = await r.json();
-                this.shaPlan = d.sha;
-            } else if (r.status === 404) {
-                this.shaPlan = null;
-            } else {
-                throw new Error(`GitHub ${r.status} al refrescar sha de plan`);
-            }
+            const res = await this._ghLeer(this.filePlan);
+            this.shaPlan = res ? res.sha : null;
 
             const datos = { planes, actualizado: new Date().toISOString() };
-            const contenido = btoa(new TextEncoder().encode(JSON.stringify(datos)).reduce((s, b) => s + String.fromCharCode(b), ""));
-            const body = {
-                message: `Actualizar plan ${new Date().toISOString().slice(0, 16)}`,
-                content: contenido
-            };
-            if (this.shaPlan) body.sha = this.shaPlan;
-
-            const res = await fetch(`https://api.github.com/repos/${this.repo}/contents/${this.filePlan}`, {
-                method: "PUT",
-                headers: {
-                    Authorization: `token ${this.token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-            if (!res.ok) {
-                const text = await res.text().catch(() => '');
-                throw new Error(`GitHub ${res.status}: ${text.slice(0, 200)}`);
-            }
-            const data = await res.json();
-            this.shaPlan = data.content.sha;
+            const out = await this._ghEscribir(this.filePlan, JSON.stringify(datos), this.shaPlan, `Actualizar plan ${new Date().toISOString().slice(0, 16)}`);
+            if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
+            if (out.nuevoSha) this.shaPlan = out.nuevoSha;
             if (this._pendientePlan === planes) this._pendientePlan = null;
         } catch (e) {
             console.error('[GH sync plan]', e);
@@ -2203,23 +2156,11 @@ async function initApp() {
             estado.style.color = "var(--gray-500)";
             estado.textContent = "Disparando workflow…";
             try {
-                const url = `https://api.github.com/repos/${GH.repo}/actions/workflows/reporte-supervisor.yml/dispatches`;
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `token ${GH.token}`,
-                        Accept: "application/vnd.github+json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        ref: "master",
-                        inputs: { destinatarios: lista.join(","), fecha: repSupFechaISO() },
-                    }),
+                const res = await GH._ghDispatch("reporte-supervisor.yml", "master", {
+                    destinatarios: lista.join(","),
+                    fecha: repSupFechaISO(),
                 });
-                if (!res.ok) {
-                    const txt = await res.text();
-                    throw new Error(`GitHub ${res.status}: ${txt}`);
-                }
+                if (!res.ok) throw new Error(`proxy ${res.status}${res.detalle || ""}`);
                 estado.style.color = "#16a34a";
                 estado.innerHTML = `✓ Reporte del ${fecha} disparado. Se envía a ${lista.length} destinatario(s) en ~30 segundos. <a href="https://github.com/${GH.repo}/actions/workflows/reporte-supervisor.yml" target="_blank" rel="noopener">Ver progreso ↗</a>`;
             } catch (e) {
@@ -3944,13 +3885,17 @@ async function initApp() {
     }
 
     async function cargarBarcosCfg() {
-        const cfg = await fetchJSON("barcos.json");
-        if (cfg) barcosConfig = cfg;
+        try {
+            const obj = GH._parseTexto(await GH._ghLeer("barcos.json"));
+            if (obj) barcosConfig = obj;
+        } catch (e) { console.warn("[barcos] cargar:", e.message || e); }
     }
 
     async function cargarTracking() {
-        const trk = await fetchJSON("tracking.json");
-        if (trk) barcosTracking = trk;
+        try {
+            const obj = GH._parseTexto(await GH._ghLeer("tracking.json"));
+            if (obj) barcosTracking = obj;
+        } catch (e) { console.warn("[tracking] cargar:", e.message || e); }
     }
 
     function renderBarcos() {
@@ -4083,28 +4028,21 @@ async function initApp() {
     }
 
     async function guardarBarcosCfg() {
-        // Igual que GH._enviar pero para barcos.json — read-modify-write con sha.
+        // read-modify-write con sha, vía el proxy.
+        const msg = `chore: actualizar barcos.json ${new Date().toISOString().slice(0, 16)}`;
+        const cuerpo = JSON.stringify(barcosConfig, null, 2);
         try {
-            const url = `https://api.github.com/repos/${GH.repo}/contents/barcos.json`;
-            const get = await fetch(url, { headers: { Authorization: `token ${GH.token}` } });
-            let sha = null;
-            if (get.ok) {
-                const data = await get.json();
-                sha = data.sha;
+            const cur = await GH._ghLeer("barcos.json");
+            let out = await GH._ghEscribir("barcos.json", cuerpo, cur ? cur.sha : null, msg);
+            if (!out.ok && (out.status === 409 || out.status === 422)) {
+                const cur2 = await GH._ghLeer("barcos.json");
+                out = await GH._ghEscribir("barcos.json", cuerpo, cur2 ? cur2.sha : null, msg);
             }
-            const contenido = btoa(new TextEncoder().encode(JSON.stringify(barcosConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
-            const body = { message: `chore: actualizar barcos.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
-            if (sha) body.sha = sha;
-            const put = await fetch(url, {
-                method: "PUT",
-                headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-            if (!put.ok) throw new Error(`GitHub ${put.status}`);
+            if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
             return true;
         } catch (e) {
             console.error("[barcos] error guardando:", e);
-            mostrarAlerta(`Error guardando barcos.json: ${e.message}`, "error");
+            mostrarAlerta(`Error guardando barcos.json: ${e.message || e}`, "error");
             return false;
         }
     }
@@ -4202,17 +4140,16 @@ async function initApp() {
 
     // --- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE ---
 
-    // Lee sbfa.json directo de la API de GitHub (siempre fresco, sin esperar el rebuild
-    // de GitHub Pages). Devuelve { content, sha } o null.
+    // Lee sbfa.json fresco vía el proxy. Devuelve { content, sha } o null.
     async function cargarSbfaRemoto() {
         try {
-            const url = `https://api.github.com/repos/${GH.repo}/contents/sbfa.json?nocache=${Date.now()}`;
-            const r = await fetch(url, { cache: "no-store", headers: { Authorization: `token ${GH.token}` } });
-            if (!r.ok) { console.warn("[sbfa] cargarSbfaRemoto HTTP", r.status); return null; }
-            const data = await r.json();
-            return { content: GH._b64ToJson(data.content), sha: data.sha };
+            const res = await GH._ghLeer("sbfa.json");
+            if (!res) return null;
+            const obj = GH._parseTexto(res);
+            if (!obj) return null;
+            return { content: obj, sha: res.sha };
         } catch (e) {
-            console.warn("[sbfa] cargarSbfaRemoto falló:", e.message);
+            console.warn("[sbfa] cargarSbfaRemoto falló:", e.message || e);
             return null;
         }
     }
@@ -4236,13 +4173,7 @@ async function initApp() {
 
     async function cargarSbfaCfg() {
         const remoto = await cargarSbfaRemoto();
-        if (remoto && remoto.content) {
-            sbfaConfig = remoto.content;
-        } else {
-            // Fallback: copia servida por GitHub Pages (puede estar atrasada respecto al repo).
-            const cfg = await fetchJSON("sbfa.json");
-            if (cfg) sbfaConfig = cfg;
-        }
+        if (remoto && remoto.content) sbfaConfig = remoto.content;
         if (!sbfaConfig.descargas) sbfaConfig.descargas = [];
     }
 
@@ -4250,20 +4181,8 @@ async function initApp() {
 
     async function guardarSbfaCfg() {
         sbfaUltimoErrorGuardado = "";
-        const putSbfa = async (sha) => {
-            const contenido = btoa(new TextEncoder().encode(JSON.stringify(sbfaConfig, null, 2)).reduce((s, b) => s + String.fromCharCode(b), ""));
-            const body = { message: `chore: actualizar sbfa.json ${new Date().toISOString().slice(0, 16)}`, content: contenido };
-            if (sha) body.sha = sha;
-            const r = await fetch(`https://api.github.com/repos/${GH.repo}/contents/sbfa.json`, {
-                method: "PUT",
-                cache: "no-store",
-                headers: { Authorization: `token ${GH.token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
-            let detalle = "";
-            if (!r.ok) { try { const j = await r.json(); detalle = j && j.message ? ` — ${j.message}` : ""; } catch (_) {} }
-            return { ok: r.ok, status: r.status, detalle };
-        };
+        const cuerpo = () => JSON.stringify(sbfaConfig, null, 2);
+        const msg = () => `chore: actualizar sbfa.json ${new Date().toISOString().slice(0, 16)}`;
         try {
             // Releer remoto fresco y mergear: así no pisamos descargas que otro usuario
             // (ej. Claudia) cargó/editó mientras esta sesión tenía una copia vieja.
@@ -4271,17 +4190,17 @@ async function initApp() {
             if (remoto && remoto.content && Array.isArray(remoto.content.descargas)) {
                 sbfaConfig.descargas = sbfaMergeDescargas(remoto.content.descargas, sbfaConfig.descargas);
             }
-            let res = await putSbfa(remoto ? remoto.sha : null);
-            if (!res.ok && (res.status === 409 || res.status === 422)) {
-                // sha viejo (otro guardó en el medio, o no se pudo leer el sha): reintentar con remoto fresco.
+            let out = await GH._ghEscribir("sbfa.json", cuerpo(), remoto ? remoto.sha : null, msg());
+            if (!out.ok && (out.status === 409 || out.status === 422)) {
+                // sha viejo (otro guardó en el medio): reintentar con remoto fresco.
                 const r2 = await cargarSbfaRemoto();
                 if (r2 && r2.content && Array.isArray(r2.content.descargas)) {
                     sbfaConfig.descargas = sbfaMergeDescargas(r2.content.descargas, sbfaConfig.descargas);
                 }
-                res = await putSbfa(r2 ? r2.sha : null);
+                out = await GH._ghEscribir("sbfa.json", cuerpo(), r2 ? r2.sha : null, msg());
             }
-            if (!res.ok) {
-                sbfaUltimoErrorGuardado = `GitHub ${res.status}${res.detalle}`;
+            if (!out.ok) {
+                sbfaUltimoErrorGuardado = `proxy ${out.status}${out.detalle}`;
                 throw new Error(sbfaUltimoErrorGuardado);
             }
             return true;

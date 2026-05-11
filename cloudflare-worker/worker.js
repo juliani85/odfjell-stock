@@ -5,24 +5,24 @@
 //  POR QUÉ EXISTE: la app es un sitio estático público (GitHub Pages). No puede
 //  guardar el token de GitHub en el JS — GitHub lo detecta (secret scanning) y lo
 //  revoca solo. Este Worker guarda el token en su entorno (nunca en el repo ni en
-//  el navegador) y hace de intermediario para leer/escribir los .json del repo.
+//  el navegador) y hace de intermediario para leer/escribir los .json del repo y
+//  disparar el workflow del reporte a supervisores.
 //
-//  SECRETS a configurar en el Worker (Settings → Variables and Secrets → Add → Secret):
-//    GITHUB_TOKEN  → Personal Access Token de GitHub.
-//                    Classic: scope "repo", SIN expiración. (Recomendado: set-and-forget.)
-//                    Fine-grained: solo repo juliani85/odfjell-stock, permiso "Contents: Read and write".
-//    APP_SECRET    → string compartido con la app (el que está en js/app.js, codificado).
-//                    Si lo rotás, cambialo acá Y en la app.
+//  SECRETS a configurar (Settings → Variables and Secrets → Add → Secret):
+//    GITHUB_TOKEN  → PAT de GitHub. Classic: scope "repo", SIN expiración (recomendado).
+//                    Fine-grained: solo repo juliani85/odfjell-stock, "Contents: Read and write"
+//                    + "Actions: Read and write" (para el dispatch).
+//    APP_SECRET    → string compartido con la app (el que está ofuscado en js/app.js).
 //
-//  VARIABLE opcional (Settings → Variables and Secrets → Add → Text):
-//    REPO          → "juliani85/odfjell-stock"  (si no se setea, usa ese por default).
-//    ORIGEN        → "https://juliani85.github.io"  (origen permitido para CORS; default ese).
+//  VARIABLES opcionales (Add → Text):
+//    REPO          → "juliani85/odfjell-stock"      (default si no se setea)
+//    ORIGEN        → "https://juliani85.github.io"  (origen permitido para CORS)
 //
 //  RUTAS:
-//    GET  /gh/<archivo.json>     → devuelve { sha, content }  (content = JSON como texto)
-//    PUT  /gh/<archivo.json>     → body { content, sha?, message? }  (content = JSON como texto)
-//                                  requiere header  X-App-Secret: <APP_SECRET>
-//    GET  /                      → "ok" (health check)
+//    GET  /                          → "ok" (health check)
+//    GET  /gh/<archivo.json>         → { sha, content }   (content = JSON como texto)
+//    PUT  /gh/<archivo.json>         → body { content, sha?, message? }   + header X-App-Secret
+//    POST /dispatch/<workflow.yml>   → body { ref?, inputs? }            + header X-App-Secret
 // ============================================================================
 
 const ARCHIVOS_PERMITIDOS = new Set([
@@ -34,11 +34,15 @@ const ARCHIVOS_PERMITIDOS = new Set([
   "tracking.json",
 ]);
 
+const WORKFLOWS_PERMITIDOS = new Set([
+  "reporte-supervisor.yml",
+]);
+
 function corsHeaders(env, origin) {
   const permitido = env.ORIGEN || "https://juliani85.github.io";
   return {
     "Access-Control-Allow-Origin": origin === permitido ? origin : permitido,
-    "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, PUT, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-App-Secret",
     "Access-Control-Max-Age": "86400",
   };
@@ -68,6 +72,10 @@ function utf8ToB64(str) {
   return btoa(bin);
 }
 
+function autorizado(request, env) {
+  return !!env.APP_SECRET && request.headers.get("X-App-Secret") === env.APP_SECRET;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -82,61 +90,81 @@ export default {
       return new Response("ok", { status: 200, headers: cors });
     }
 
-    const m = url.pathname.match(/^\/gh\/([A-Za-z0-9._-]+)$/);
-    if (!m) return jsonResp({ error: "ruta inválida" }, 404, cors);
-    const archivo = m[1];
-    if (!ARCHIVOS_PERMITIDOS.has(archivo)) {
-      return jsonResp({ error: "archivo no permitido" }, 403, cors);
-    }
-
     const repo = env.REPO || "juliani85/odfjell-stock";
-    const ghUrl = `https://api.github.com/repos/${repo}/contents/${archivo}`;
     const ghHeaders = {
       Authorization: `token ${env.GITHUB_TOKEN}`,
       Accept: "application/vnd.github+json",
       "User-Agent": "odfjell-stock-worker",
     };
 
-    if (request.method === "GET") {
-      const r = await fetch(ghUrl + "?t=" + Date.now(), { headers: ghHeaders });
-      if (!r.ok) {
-        const t = await r.text().catch(() => "");
-        return jsonResp({ error: `GitHub ${r.status}`, detalle: t.slice(0, 300) }, r.status, cors);
+    // ---- /gh/<archivo.json> ----
+    const mFile = url.pathname.match(/^\/gh\/([A-Za-z0-9._-]+)$/);
+    if (mFile) {
+      const archivo = mFile[1];
+      if (!ARCHIVOS_PERMITIDOS.has(archivo)) {
+        return jsonResp({ error: "archivo no permitido" }, 403, cors);
       }
-      const data = await r.json();
-      let contentTexto = "";
-      try { contentTexto = b64ToUtf8(data.content); } catch (e) { contentTexto = ""; }
-      return jsonResp({ sha: data.sha, content: contentTexto }, 200, cors);
+      const ghUrl = `https://api.github.com/repos/${repo}/contents/${archivo}`;
+
+      if (request.method === "GET") {
+        const r = await fetch(ghUrl + "?t=" + Date.now(), { headers: ghHeaders });
+        if (!r.ok) {
+          const t = await r.text().catch(() => "");
+          return jsonResp({ error: `GitHub ${r.status}`, detalle: t.slice(0, 300) }, r.status, cors);
+        }
+        const data = await r.json();
+        let contentTexto = "";
+        try { contentTexto = b64ToUtf8(data.content); } catch (e) { contentTexto = ""; }
+        return jsonResp({ sha: data.sha, content: contentTexto }, 200, cors);
+      }
+
+      if (request.method === "PUT") {
+        if (!autorizado(request, env)) return jsonResp({ error: "no autorizado" }, 401, cors);
+        let body;
+        try { body = await request.json(); } catch (e) { return jsonResp({ error: "body invalido" }, 400, cors); }
+        if (typeof body.content !== "string") return jsonResp({ error: "falta content (string)" }, 400, cors);
+        try { JSON.parse(body.content); } catch (e) { return jsonResp({ error: "content no es JSON valido" }, 400, cors); }
+
+        const ghBody = {
+          message: (typeof body.message === "string" && body.message) ? body.message.slice(0, 200) : `chore: actualizar ${archivo}`,
+          content: utf8ToB64(body.content),
+        };
+        if (body.sha) ghBody.sha = body.sha;
+
+        const r = await fetch(ghUrl, {
+          method: "PUT",
+          headers: { ...ghHeaders, "Content-Type": "application/json" },
+          body: JSON.stringify(ghBody),
+        });
+        const txt = await r.text();
+        return new Response(txt, {
+          status: r.status,
+          headers: { ...cors, "Content-Type": "application/json; charset=utf-8" },
+        });
+      }
+
+      return jsonResp({ error: "metodo no permitido" }, 405, cors);
     }
 
-    if (request.method === "PUT") {
-      if (!env.APP_SECRET || request.headers.get("X-App-Secret") !== env.APP_SECRET) {
-        return jsonResp({ error: "no autorizado" }, 401, cors);
-      }
+    // ---- /dispatch/<workflow.yml> ----
+    const mWf = url.pathname.match(/^\/dispatch\/([A-Za-z0-9._-]+\.ya?ml)$/);
+    if (mWf) {
+      if (request.method !== "POST") return jsonResp({ error: "metodo no permitido" }, 405, cors);
+      if (!autorizado(request, env)) return jsonResp({ error: "no autorizado" }, 401, cors);
+      const wf = mWf[1];
+      if (!WORKFLOWS_PERMITIDOS.has(wf)) return jsonResp({ error: "workflow no permitido" }, 403, cors);
       let body;
-      try { body = await request.json(); } catch (e) { return jsonResp({ error: "body inválido" }, 400, cors); }
-      if (typeof body.content !== "string") return jsonResp({ error: "falta 'content' (string)" }, 400, cors);
-      // Validar que el content sea JSON parseable (defensa básica contra basura).
-      try { JSON.parse(body.content); } catch (e) { return jsonResp({ error: "'content' no es JSON válido" }, 400, cors); }
-
-      const ghBody = {
-        message: (typeof body.message === "string" && body.message) ? body.message.slice(0, 200) : `chore: actualizar ${archivo}`,
-        content: utf8ToB64(body.content),
-      };
-      if (body.sha) ghBody.sha = body.sha;
-
-      const r = await fetch(ghUrl, {
-        method: "PUT",
+      try { body = await request.json(); } catch (e) { body = {}; }
+      const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/${wf}/dispatches`, {
+        method: "POST",
         headers: { ...ghHeaders, "Content-Type": "application/json" },
-        body: JSON.stringify(ghBody),
+        body: JSON.stringify({ ref: body.ref || "master", inputs: body.inputs || {} }),
       });
-      const txt = await r.text();
-      return new Response(txt, {
-        status: r.status,
-        headers: { ...cors, "Content-Type": "application/json; charset=utf-8" },
-      });
+      if (r.status === 204) return jsonResp({ ok: true }, 200, cors);
+      const t = await r.text().catch(() => "");
+      return jsonResp({ error: `GitHub ${r.status}`, detalle: t.slice(0, 300) }, r.status, cors);
     }
 
-    return jsonResp({ error: "método no permitido" }, 405, cors);
+    return jsonResp({ error: "ruta invalida" }, 404, cors);
   },
 };

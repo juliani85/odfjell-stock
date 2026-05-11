@@ -16,7 +16,7 @@ Hay que hacerlo **una sola vez**. Después no se toca nunca.
    - **Expiration: No expiration**.
    - Scope: marcá solo **`repo`**.
    - "Generate token". **Copialo** (empieza con `ghp_…`). Lo vas a pegar en el Paso 3.
-   - *(Alternativa fine-grained: Repository access → Only select repositories → `juliani85/odfjell-stock`; Permissions → Repository permissions → Contents → **Read and write**. Caduca máximo en 1 año.)*
+   - *(Alternativa fine-grained: Repository access → Only select repositories → `juliani85/odfjell-stock`; Permissions → Repository permissions → Contents → **Read and write** Y Actions → **Read and write** (esto último para disparar el reporte a supervisores). Caduca máximo en 1 año.)*
 
 ## Paso 2 — Crear el Worker en Cloudflare
 

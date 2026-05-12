@@ -77,19 +77,20 @@ def diferencias_pendientes(datos: dict) -> list[dict]:
     return [x for x in arr if isinstance(x, dict) and not x.get("eliminada") and x.get("estado") != "resuelto"]
 
 
-def tk_y_producto(datos: dict, despacho) -> tuple[str, str]:
-    """Fallback: busca en datos['stock'] qué tanque(s)/producto tiene ese despacho."""
+def info_sistema(datos: dict, despacho) -> tuple[str, str, str]:
+    """Fallback: busca en datos['stock'] qué tanque(s)/producto/cliente tiene ese despacho."""
     nd = _norm_desp(despacho)
-    tks, prods = [], []
+    tks, prods, clis = [], [], []
     for t in (datos.get("stock") or []):
         if any(_norm_desp(x.get("despacho")) == nd for x in (t.get("despachos") or [])):
-            tk = t.get("tanque")
-            pr = t.get("producto")
+            tk, pr, cl = t.get("tanque"), t.get("producto"), t.get("cliente")
             if tk and tk not in tks:
                 tks.append(tk)
             if pr and pr not in prods:
                 prods.append(pr)
-    return "-".join(tks), " / ".join(prods)
+            if cl and cl not in clis:
+                clis.append(cl)
+    return "-".join(tks), " / ".join(prods), " / ".join(clis)
 
 
 def armar_html(items: list[dict], datos: dict) -> tuple[str, str]:
@@ -114,13 +115,15 @@ def armar_html(items: list[dict], datos: dict) -> tuple[str, str]:
             signo = "+" if dif > 0 else ""
             tk = x.get("tanque") or ""
             prod = x.get("producto") or ""
-            if not tk and not prod:
-                tk, prod = tk_y_producto(datos, x.get("despacho"))
+            cli = x.get("cliente") or ""
+            if not tk and not prod and not cli:
+                tk, prod, cli = info_sistema(datos, x.get("despacho"))
             filas.append(
                 f"<tr>"
                 f"<td style='{td}'>{nolink(x.get('despacho') or '')}</td>"
                 f"<td style='{td}'>{nolink(tk or '—')}</td>"
                 f"<td style='{td}'>{nolink(prod or '—')}</td>"
+                f"<td style='{td}'>{nolink(cli or '—')}</td>"
                 f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_st))}</td>"
                 f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_si))}</td>"
                 f"<td style='{td};text-align:right;color:{color_dif};font-weight:700'>{nolink(signo + fmt_kg(dif))}</td>"
@@ -132,11 +135,12 @@ def armar_html(items: list[dict], datos: dict) -> tuple[str, str]:
         cuerpo = (
             f"<p>Hay <strong>{n}</strong> despacho{'s' if n != 1 else ''} con diferencia entre stock y SIM sin resolver:</p>"
             "<div style='overflow-x:auto'>"
-            "<table style='border-collapse:collapse;font-size:13px;min-width:640px'>"
+            "<table style='border-collapse:collapse;font-size:13px;min-width:720px'>"
             "<thead><tr style='background:#f3f4f6'>"
             f"<th style='{th}'>Despacho</th>"
             f"<th style='{th}'>TK (sistema)</th>"
             f"<th style='{th}'>Producto (sistema)</th>"
+            f"<th style='{th}'>Cliente (sistema)</th>"
             f"<th style='{thr}'>Kg. Stock</th>"
             f"<th style='{thr}'>Kg. SIM</th>"
             f"<th style='{thr}'>Diferencia</th>"

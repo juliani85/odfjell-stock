@@ -1988,23 +1988,26 @@ async function initApp() {
     function _escHtml(s) {
         return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
+    function _escAttr(s) {
+        return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    }
     function _fmtNumDif(n) {
         const x = Number(n);
         return (n === null || n === undefined || isNaN(x)) ? "0" : Math.round(x).toLocaleString("es-AR");
     }
 
-    // Busca en el stock del sistema qué tanque(s) tienen ese despacho y con qué producto.
-    function tkYProductoDeDespacho(despacho) {
+    // Busca en el stock del sistema qué tanque(s)/producto/cliente tiene ese despacho.
+    function infoSistemaDeDespacho(despacho) {
         const nd = normDespacho(despacho);
-        const tks = [];
-        const prods = [];
+        const tks = [], prods = [], clis = [];
         for (const t of stock) {
             if ((t.despachos || []).some(x => normDespacho(x.despacho) === nd)) {
                 if (t.tanque && !tks.includes(t.tanque)) tks.push(t.tanque);
                 if (t.producto && !prods.includes(t.producto)) prods.push(t.producto);
+                if (t.cliente && !clis.includes(t.cliente)) clis.push(t.cliente);
             }
         }
-        return { tanque: tks.join("-"), producto: prods.join(" / ") };
+        return { tanque: tks.join("-"), producto: prods.join(" / "), cliente: clis.join(" / ") };
     }
 
     function actualizarBadgeDiferencias() {
@@ -2026,7 +2029,7 @@ async function initApp() {
         // Solo se muestran las activas; al resolver/borrar una, desaparece de la lista.
         const filas = diferenciasActivas().slice().sort((a, b) => String(b.ts || "").localeCompare(String(a.ts || "")));
         if (filas.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="11">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
             actualizarBadgeDiferencias();
             return;
         }
@@ -2034,15 +2037,18 @@ async function initApp() {
             const dif = Number(d.dif) || 0;
             const cls = dif > 0 ? "dif-pos" : (dif < 0 ? "dif-neg" : "dif-cero");
             const cargado = `${fmtFechaCorta(d.agregadoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.agregadoPor || "?")}</small>`;
-            // TK/producto: lo guardado al cargar; si no, lo busco en vivo en el stock actual.
-            const live = tkYProductoDeDespacho(d.despacho);
-            const tk = d.tanque || live.tanque || "—";
-            const prod = d.producto || live.producto || "—";
-            return `<tr class="dif-pendiente">
+            // TK/producto/cliente: lo guardado; si está vacío, lo busco en vivo en el stock actual.
+            // Los 3 son inputs editables: si el sistema no los tiene, el usuario los carga a mano acá.
+            const live = infoSistemaDeDespacho(d.despacho);
+            const tk = d.tanque || live.tanque || "";
+            const prod = d.producto || live.producto || "";
+            const cli = d.cliente || live.cliente || "";
+            return `<tr class="dif-pendiente" data-dif-id="${d.id}">
                 <td style="text-align:center"><span class="luz-titila" title="Pendiente de resolver"></span></td>
                 <td class="dif-despacho">${_escHtml(d.despacho)}</td>
-                <td>${_escHtml(tk)}</td>
-                <td>${_escHtml(prod)}</td>
+                <td><input class="dif-edit" data-f="tanque" value="${_escAttr(tk)}" placeholder="TK…" autocomplete="off"></td>
+                <td><input class="dif-edit" data-f="producto" value="${_escAttr(prod)}" placeholder="Producto…" autocomplete="off"></td>
+                <td><input class="dif-edit" data-f="cliente" value="${_escAttr(cli)}" placeholder="Cliente…" autocomplete="off"></td>
                 <td class="dif-valor">${_fmtNumDif(d.kgStock)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
@@ -2051,6 +2057,25 @@ async function initApp() {
                 <td><button class="btn btn-danger btn-sm" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-sm" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
             </tr>`;
         }).join("");
+        // Guardado de los campos editables (TK / Producto / Cliente) al perder el foco.
+        tbody.querySelectorAll("tr[data-dif-id]").forEach(tr => {
+            const id = tr.dataset.difId;
+            const guardarCelda = () => {
+                const d = diferencias.find(x => x.id === id && !x.eliminada);
+                if (!d) return;
+                const nt = (tr.querySelector('[data-f="tanque"]').value || "").trim();
+                const np = (tr.querySelector('[data-f="producto"]').value || "").trim();
+                const nc = (tr.querySelector('[data-f="cliente"]').value || "").trim();
+                if ((d.tanque || "") === nt && (d.producto || "") === np && (d.cliente || "") === nc) return;
+                d.tanque = nt; d.producto = np; d.cliente = nc;
+                d.ts = new Date().toISOString();
+                guardarDatos();
+            };
+            tr.querySelectorAll("input.dif-edit").forEach(inp => {
+                inp.addEventListener("blur", guardarCelda);
+                inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); inp.blur(); } });
+            });
+        });
         tbody.querySelectorAll("[data-resolver-dif]").forEach(b => {
             b.addEventListener("click", () => resolverDiferencia(b.dataset.resolverDif));
         });
@@ -2068,13 +2093,14 @@ async function initApp() {
         if (!despacho) { mostrarModalInfo("Falta el despacho.", "No se puede agregar"); inpD.focus(); return; }
         const kgStock = sbfaParseKg(inpS.value) || 0;
         const kgSim = sbfaParseKg(inpM.value) || 0;
-        const tp = tkYProductoDeDespacho(despacho);
+        const tp = infoSistemaDeDespacho(despacho);
         const ts = new Date().toISOString();
         diferencias.push({
             id: "dif-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
             despacho,
             tanque: tp.tanque,
             producto: tp.producto,
+            cliente: tp.cliente,
             kgStock,
             kgSim,
             dif: kgSim - kgStock,

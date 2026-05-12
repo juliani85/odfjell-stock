@@ -844,6 +844,13 @@ tbody tr:hover { background: var(--gray-50); }
 .dif-pos { color: #166534; font-weight: 600; }
 .dif-neg { color: #b91c1c; font-weight: 600; }
 .dif-cero { color: var(--gray-500); }
+/* Campos editables (TK / producto / cliente) — si el sistema no los tiene, se cargan a mano acá */
+#tablaDiferencias input.dif-edit {
+    width: 100%; min-width: 90px; box-sizing: border-box;
+    padding: 0.25rem 0.35rem; border: 1px solid var(--gray-300); border-radius: 4px;
+    font-size: 0.85rem; background: white;
+}
+#tablaDiferencias input.dif-edit:placeholder-shown { background: #fef9c3; border-color: #fcd34d; }
 
 /* Plan de Cargas */
 #tablaPlan tr.plan-cumplido {

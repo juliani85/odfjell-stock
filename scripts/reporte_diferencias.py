@@ -58,19 +58,41 @@ def nolink(txt) -> str:
             f'cursor:default;pointer-events:none">{t}</a>')
 
 
-def cargar_diferencias() -> list[dict]:
+def _norm_desp(d) -> str:
+    return "".join(ch for ch in str(d or "").upper() if ch.isalnum())
+
+
+def cargar_datos() -> dict:
     if not DATOS_JSON.exists():
-        return []
+        return {}
     try:
-        d = json.loads(DATOS_JSON.read_text(encoding="utf-8"))
+        return json.loads(DATOS_JSON.read_text(encoding="utf-8"))
     except Exception as e:
         print(f"Error leyendo datos.json: {e}")
-        return []
-    arr = d.get("diferencias") or []
+        return {}
+
+
+def diferencias_pendientes(datos: dict) -> list[dict]:
+    arr = datos.get("diferencias") or []
     return [x for x in arr if isinstance(x, dict) and not x.get("eliminada") and x.get("estado") != "resuelto"]
 
 
-def armar_html(items: list[dict]) -> tuple[str, str]:
+def tk_y_producto(datos: dict, despacho) -> tuple[str, str]:
+    """Fallback: busca en datos['stock'] qué tanque(s)/producto tiene ese despacho."""
+    nd = _norm_desp(despacho)
+    tks, prods = [], []
+    for t in (datos.get("stock") or []):
+        if any(_norm_desp(x.get("despacho")) == nd for x in (t.get("despachos") or [])):
+            tk = t.get("tanque")
+            pr = t.get("producto")
+            if tk and tk not in tks:
+                tks.append(tk)
+            if pr and pr not in prods:
+                prods.append(pr)
+    return "-".join(tks), " / ".join(prods)
+
+
+def armar_html(items: list[dict], datos: dict) -> tuple[str, str]:
     hoy = fecha_hoy_ar()
     n = len(items)
     subject = (f"Despachos con diferencia (stock vs SIM) — {hoy} — "
@@ -79,6 +101,7 @@ def armar_html(items: list[dict]) -> tuple[str, str]:
     if not items:
         cuerpo = "<p>No hay despachos con diferencia pendientes. 🎉</p>"
     else:
+        td = "padding:6px 10px;border:1px solid #e5e7eb"
         filas = []
         for x in items:
             kg_st = x.get("kgStock") or 0
@@ -89,25 +112,35 @@ def armar_html(items: list[dict]) -> tuple[str, str]:
                 dif = x.get("dif") or 0
             color_dif = "#166534" if dif > 0 else ("#b91c1c" if dif < 0 else "#6b7280")
             signo = "+" if dif > 0 else ""
+            tk = x.get("tanque") or ""
+            prod = x.get("producto") or ""
+            if not tk and not prod:
+                tk, prod = tk_y_producto(datos, x.get("despacho"))
             filas.append(
                 f"<tr>"
-                f"<td style='padding:6px 10px;border:1px solid #e5e7eb'>{nolink(x.get('despacho') or '')}</td>"
-                f"<td style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right'>{nolink(fmt_kg(kg_st))}</td>"
-                f"<td style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right'>{nolink(fmt_kg(kg_si))}</td>"
-                f"<td style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right;color:{color_dif};font-weight:700'>{nolink(signo + fmt_kg(dif))}</td>"
-                f"<td style='padding:6px 10px;border:1px solid #e5e7eb;color:#6b7280;font-size:12px'>{nolink(fmt_ts(x.get('agregadoTs')))} · {nolink(x.get('agregadoPor') or '?')}</td>"
+                f"<td style='{td}'>{nolink(x.get('despacho') or '')}</td>"
+                f"<td style='{td}'>{nolink(tk or '—')}</td>"
+                f"<td style='{td}'>{nolink(prod or '—')}</td>"
+                f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_st))}</td>"
+                f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_si))}</td>"
+                f"<td style='{td};text-align:right;color:{color_dif};font-weight:700'>{nolink(signo + fmt_kg(dif))}</td>"
+                f"<td style='{td};color:#6b7280;font-size:12px'>{nolink(fmt_ts(x.get('agregadoTs')))} · {nolink(x.get('agregadoPor') or '?')}</td>"
                 f"</tr>"
             )
+        th = "padding:6px 10px;border:1px solid #e5e7eb;text-align:left"
+        thr = "padding:6px 10px;border:1px solid #e5e7eb;text-align:right"
         cuerpo = (
             f"<p>Hay <strong>{n}</strong> despacho{'s' if n != 1 else ''} con diferencia entre stock y SIM sin resolver:</p>"
             "<div style='overflow-x:auto'>"
-            "<table style='border-collapse:collapse;font-size:13px;min-width:520px'>"
+            "<table style='border-collapse:collapse;font-size:13px;min-width:640px'>"
             "<thead><tr style='background:#f3f4f6'>"
-            "<th style='padding:6px 10px;border:1px solid #e5e7eb;text-align:left'>Despacho</th>"
-            "<th style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right'>Kg. Stock</th>"
-            "<th style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right'>Kg. SIM</th>"
-            "<th style='padding:6px 10px;border:1px solid #e5e7eb;text-align:right'>Diferencia</th>"
-            "<th style='padding:6px 10px;border:1px solid #e5e7eb;text-align:left'>Cargado</th>"
+            f"<th style='{th}'>Despacho</th>"
+            f"<th style='{th}'>TK (sistema)</th>"
+            f"<th style='{th}'>Producto (sistema)</th>"
+            f"<th style='{thr}'>Kg. Stock</th>"
+            f"<th style='{thr}'>Kg. SIM</th>"
+            f"<th style='{thr}'>Diferencia</th>"
+            f"<th style='{th}'>Cargado</th>"
             "</tr></thead><tbody>" + "".join(filas) + "</tbody></table></div>"
         )
 
@@ -158,9 +191,10 @@ def main() -> int:
     if not destinatarios:
         print("ERROR: falta DESTINATARIOS.")
         return 1
-    items = cargar_diferencias()
+    datos = cargar_datos()
+    items = diferencias_pendientes(datos)
     print(f"{len(items)} despacho(s) con diferencia pendiente(s).")
-    subject, html = armar_html(items)
+    subject, html = armar_html(items, datos)
     return 0 if enviar(destinatarios, subject, html) else 1
 
 

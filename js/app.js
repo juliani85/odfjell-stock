@@ -1993,6 +1993,20 @@ async function initApp() {
         return (n === null || n === undefined || isNaN(x)) ? "0" : Math.round(x).toLocaleString("es-AR");
     }
 
+    // Busca en el stock del sistema qué tanque(s) tienen ese despacho y con qué producto.
+    function tkYProductoDeDespacho(despacho) {
+        const nd = normDespacho(despacho);
+        const tks = [];
+        const prods = [];
+        for (const t of stock) {
+            if ((t.despachos || []).some(x => normDespacho(x.despacho) === nd)) {
+                if (t.tanque && !tks.includes(t.tanque)) tks.push(t.tanque);
+                if (t.producto && !prods.includes(t.producto)) prods.push(t.producto);
+            }
+        }
+        return { tanque: tks.join("-"), producto: prods.join(" / ") };
+    }
+
     function actualizarBadgeDiferencias() {
         const hayPend = diferencias.some(d => !d.eliminada && d.estado !== "resuelto");
         ["badgeDiferencias", "badgeDiferenciasSub"].forEach(id => {
@@ -2012,7 +2026,7 @@ async function initApp() {
         // Solo se muestran las activas; al resolver/borrar una, desaparece de la lista.
         const filas = diferenciasActivas().slice().sort((a, b) => String(b.ts || "").localeCompare(String(a.ts || "")));
         if (filas.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="8">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
             actualizarBadgeDiferencias();
             return;
         }
@@ -2020,9 +2034,15 @@ async function initApp() {
             const dif = Number(d.dif) || 0;
             const cls = dif > 0 ? "dif-pos" : (dif < 0 ? "dif-neg" : "dif-cero");
             const cargado = `${fmtFechaCorta(d.agregadoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.agregadoPor || "?")}</small>`;
+            // TK/producto: lo guardado al cargar; si no, lo busco en vivo en el stock actual.
+            const live = tkYProductoDeDespacho(d.despacho);
+            const tk = d.tanque || live.tanque || "—";
+            const prod = d.producto || live.producto || "—";
             return `<tr class="dif-pendiente">
                 <td style="text-align:center"><span class="luz-titila" title="Pendiente de resolver"></span></td>
                 <td class="dif-despacho">${_escHtml(d.despacho)}</td>
+                <td>${_escHtml(tk)}</td>
+                <td>${_escHtml(prod)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgStock)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
@@ -2048,10 +2068,13 @@ async function initApp() {
         if (!despacho) { mostrarModalInfo("Falta el despacho.", "No se puede agregar"); inpD.focus(); return; }
         const kgStock = sbfaParseKg(inpS.value) || 0;
         const kgSim = sbfaParseKg(inpM.value) || 0;
+        const tp = tkYProductoDeDespacho(despacho);
         const ts = new Date().toISOString();
         diferencias.push({
             id: "dif-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
             despacho,
+            tanque: tp.tanque,
+            producto: tp.producto,
             kgStock,
             kgSim,
             dif: kgSim - kgStock,

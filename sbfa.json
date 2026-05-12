@@ -115,7 +115,7 @@
     {
       "id": 1778268143140,
       "buque": "BOW CARDINAL",
-      "manifiesto": "2",
+      "manifiesto": "11563-C",
       "agencia": "BYM",
       "cuit": "30-71631314-6",
       "fecha": "2026-05-11",
@@ -324,17 +324,17 @@
           "documento": "26008IC65000022N",
           "cto": "4201",
           "cantDoctada": 687104,
-          "cantResult": null
+          "cantResult": 681750
         },
         {
           "documento": "26008IC65000021M",
           "cto": "4301",
           "cantDoctada": 299998,
-          "cantResult": null
+          "cantResult": 299396
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-11T13:54:34.702Z"
+      "actualizadoTs": "2026-05-12T14:28:31.988Z"
     }
   ]
 }

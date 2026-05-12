@@ -550,24 +550,29 @@
                     </div>
                     <p id="difMailEstado" style="font-size:0.85rem;margin-bottom:1rem"></p>
                     <div class="table-container">
-                        <table id="tablaDiferencias">
+                        <table id="tablaDiferencias" class="dif-table">
+                            <colgroup>
+                                <col style="width:3%"><col style="width:13%"><col style="width:8%">
+                                <col style="width:16%"><col style="width:16%"><col style="width:8%">
+                                <col style="width:8%"><col style="width:8%"><col style="width:7%">
+                                <col style="width:13%">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th style="width:32px"></th>
+                                    <th></th>
                                     <th>Despacho</th>
-                                    <th>TK (sistema)</th>
-                                    <th>Producto (sistema)</th>
-                                    <th>Cliente (sistema)</th>
+                                    <th>TK</th>
+                                    <th>Producto</th>
+                                    <th>Cliente</th>
                                     <th>Kg. Stock</th>
                                     <th>Kg. SIM</th>
                                     <th>Diferencia</th>
                                     <th>Cargado</th>
-                                    <th>Estado</th>
-                                    <th style="width:140px"></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="empty-row"><td colspan="11">No hay despachos con diferencia cargados.</td></tr>
+                                <tr class="empty-row"><td colspan="10">No hay despachos con diferencia cargados.</td></tr>
                             </tbody>
                         </table>
                     </div>

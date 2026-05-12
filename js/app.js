@@ -2029,14 +2029,13 @@ async function initApp() {
         // Solo se muestran las activas; al resolver/borrar una, desaparece de la lista.
         const filas = diferenciasActivas().slice().sort((a, b) => String(b.ts || "").localeCompare(String(a.ts || "")));
         if (filas.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="11">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
             actualizarBadgeDiferencias();
             return;
         }
         tbody.innerHTML = filas.map(d => {
             const dif = Number(d.dif) || 0;
             const cls = dif > 0 ? "dif-pos" : (dif < 0 ? "dif-neg" : "dif-cero");
-            const cargado = `${fmtFechaCorta(d.agregadoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.agregadoPor || "?")}</small>`;
             // TK/producto/cliente: lo guardado; si está vacío, lo busco en vivo en el stock actual.
             // Los 3 son inputs editables: si el sistema no los tiene, el usuario los carga a mano acá.
             const live = infoSistemaDeDespacho(d.despacho);
@@ -2045,16 +2044,15 @@ async function initApp() {
             const cli = d.cliente || live.cliente || "";
             return `<tr class="dif-pendiente" data-dif-id="${d.id}">
                 <td style="text-align:center"><span class="luz-titila" title="Pendiente de resolver"></span></td>
-                <td class="dif-despacho">${_escHtml(d.despacho)}</td>
+                <td class="dif-despacho" title="${_escAttr(d.despacho)}">${_escHtml(d.despacho)}</td>
                 <td><input class="dif-edit" data-f="tanque" value="${_escAttr(tk)}" placeholder="TK…" autocomplete="off"></td>
                 <td><input class="dif-edit" data-f="producto" value="${_escAttr(prod)}" placeholder="Producto…" autocomplete="off"></td>
                 <td><input class="dif-edit" data-f="cliente" value="${_escAttr(cli)}" placeholder="Cliente…" autocomplete="off"></td>
                 <td class="dif-valor">${_fmtNumDif(d.kgStock)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
-                <td>${cargado}</td>
-                <td><span style="color:#b91c1c;font-weight:600">Pendiente</span></td>
-                <td style="white-space:nowrap"><button class="btn btn-primary btn-sm" data-guardar-dif="${d.id}" title="Guardar el TK / producto / cliente que cargaste">💾 Guardar</button> <button class="btn btn-danger btn-sm" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-sm" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
+                <td style="white-space:nowrap;font-size:0.75rem;color:var(--gray-500)">${fmtFechaCorta(d.agregadoTs)}</td>
+                <td style="white-space:nowrap"><button class="btn btn-primary btn-xs" data-guardar-dif="${d.id}" title="Guardar el TK / producto / cliente que cargaste">💾</button> <button class="btn btn-danger btn-xs" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-xs" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
             </tr>`;
         }).join("");
         // Guardado de los campos editables (TK / Producto / Cliente):

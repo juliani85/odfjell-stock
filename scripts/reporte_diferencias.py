@@ -127,7 +127,7 @@ def armar_html(items: list[dict], datos: dict) -> tuple[str, str]:
                 f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_st))}</td>"
                 f"<td style='{td};text-align:right'>{nolink(fmt_kg(kg_si))}</td>"
                 f"<td style='{td};text-align:right;color:{color_dif};font-weight:700'>{nolink(signo + fmt_kg(dif))}</td>"
-                f"<td style='{td};color:#6b7280;font-size:12px'>{nolink(fmt_ts(x.get('agregadoTs')))} · {nolink(x.get('agregadoPor') or '?')}</td>"
+                f"<td style='{td};color:#6b7280;font-size:12px;white-space:nowrap'>{nolink(fmt_ts(x.get('agregadoTs')))}</td>"
                 f"</tr>"
             )
         th = "padding:6px 10px;border:1px solid #e5e7eb;text-align:left"

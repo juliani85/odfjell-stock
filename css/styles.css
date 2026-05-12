@@ -810,6 +810,41 @@ tbody tr:hover { background: var(--gray-50); }
     text-align: center;
 }
 
+/* Luz que titila — despachos con diferencia sin resolver */
+@keyframes titilar {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.15; }
+}
+.luz-titila {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.7);
+    animation: titilar 1s steps(1, end) infinite;
+}
+/* Puntito titilante usado como "badge" en la pestaña Reportes y el sub-tab */
+.badge-titila {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 6px rgba(220, 38, 38, 0.7);
+    margin-left: 0.35rem;
+    vertical-align: middle;
+    animation: titilar 1s steps(1, end) infinite;
+}
+/* Filas de la tabla de diferencias */
+#tablaDiferencias tr.dif-pendiente td { background: #fffbeb; }
+#tablaDiferencias tr.dif-resuelta td { background: #f9fafb; color: var(--gray-500); }
+#tablaDiferencias tr.dif-resuelta .dif-despacho { text-decoration: line-through; }
+.dif-valor { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.dif-pos { color: #166534; font-weight: 600; }
+.dif-neg { color: #b91c1c; font-weight: 600; }
+.dif-cero { color: var(--gray-500); }
+
 /* Plan de Cargas */
 #tablaPlan tr.plan-cumplido {
     background: #f0fdf4;

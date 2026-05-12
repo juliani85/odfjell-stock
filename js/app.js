@@ -995,18 +995,21 @@ async function initLogin() {
 async function initApp() {
     // Cargar datos desde GitHub, fallback a localStorage, fallback a stock inicial
     const ghData = await GH.cargar();
-    let stock, historial, anulados;
+    let stock, historial, anulados, diferencias;
     if (ghData && ghData.stock) {
         stock = ghData.stock;
         historial = ghData.historial || [];
         anulados = ghData.anulados || [];
+        diferencias = Array.isArray(ghData.diferencias) ? ghData.diferencias : [];
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
         localStorage.setItem("anuladosV3", JSON.stringify(anulados));
+        localStorage.setItem("diferenciasV1", JSON.stringify(diferencias));
     } else {
         stock = JSON.parse(localStorage.getItem("stockTanquesV3")) || JSON.parse(JSON.stringify(stockInicial));
         historial = JSON.parse(localStorage.getItem("historialSalidasV3")) || [];
         anulados = JSON.parse(localStorage.getItem("anuladosV3") || "[]");
+        diferencias = JSON.parse(localStorage.getItem("diferenciasV1") || "[]");
     }
 
     // Fecha dinámica en subtítulo
@@ -1144,6 +1147,24 @@ async function initApp() {
             cambios += nuevas.length + renombrados;
         }
 
+        // 3. Despachos con diferencia: union por id, last-write-wins por ts.
+        if (Array.isArray(remoto.diferencias)) {
+            const porId = new Map();
+            diferencias.forEach(d => porId.set(d.id, d));
+            let nd = 0;
+            for (const dR of remoto.diferencias) {
+                const local = porId.get(dR.id);
+                if (!local) { porId.set(dR.id, dR); nd++; }
+                else if ((dR.ts || "") > (local.ts || "")) { porId.set(dR.id, dR); nd++; }
+            }
+            const merged = [...porId.values()];
+            if (nd > 0 || merged.length !== diferencias.length) {
+                diferencias.length = 0;
+                diferencias.push(...merged);
+            }
+            cambios += nd;
+        }
+
         return cambios;
     }
 
@@ -1151,6 +1172,7 @@ async function initApp() {
         renderStock();
         renderHistorial();
         renderPlan();
+        renderDiferencias();
         if (document.getElementById("reporteDiario")?.classList.contains("active")) {
             renderReporteDiario();
         }
@@ -1160,16 +1182,18 @@ async function initApp() {
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
         localStorage.setItem("anuladosV3", JSON.stringify(anulados));
+        localStorage.setItem("diferenciasV1", JSON.stringify(diferencias));
         GH.guardar((remoto) => {
             const cambios = mergearEntradasRemotas(remoto);
             if (cambios > 0) {
                 localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
                 localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
                 localStorage.setItem("anuladosV3", JSON.stringify(anulados));
+                localStorage.setItem("diferenciasV1", JSON.stringify(diferencias));
                 rerenderAfterMerge();
                 mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
             }
-            return { stock, historial, anulados };
+            return { stock, historial, anulados, diferencias };
         });
     }
 
@@ -1956,8 +1980,145 @@ async function initApp() {
             if (st.dataset.subtab === "histPorTanque") { volverListaHistTanque(); renderHistTanqueLista(); }
             if (st.dataset.subtab === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
             if (st.dataset.subtab === "repSupervisor") inicializarReporteSupervisor();
+            if (st.dataset.subtab === "repDiferencias") renderDiferencias();
         });
     });
+
+    // --- DESPACHOS CON DIFERENCIA (stock vs SIM) ---
+    function _escHtml(s) {
+        return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+    function _fmtNumDif(n) {
+        const x = Number(n);
+        return (n === null || n === undefined || isNaN(x)) ? "0" : Math.round(x).toLocaleString("es-AR");
+    }
+
+    function actualizarBadgeDiferencias() {
+        const hayPend = diferencias.some(d => !d.eliminada && d.estado !== "resuelto");
+        ["badgeDiferencias", "badgeDiferenciasSub"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle("hidden", !hayPend);
+        });
+    }
+
+    function renderDiferencias() {
+        const tbody = document.querySelector("#tablaDiferencias tbody");
+        if (!tbody) { actualizarBadgeDiferencias(); return; }
+        const filas = diferencias.filter(d => !d.eliminada);
+        // Pendientes primero; dentro de cada grupo, las más nuevas arriba.
+        filas.sort((a, b) => {
+            const pa = a.estado === "resuelto" ? 1 : 0;
+            const pb = b.estado === "resuelto" ? 1 : 0;
+            if (pa !== pb) return pa - pb;
+            return String(b.ts || "").localeCompare(String(a.ts || ""));
+        });
+        if (filas.length === 0) {
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="8">No hay despachos con diferencia cargados.</td></tr>`;
+            actualizarBadgeDiferencias();
+            return;
+        }
+        tbody.innerHTML = filas.map(d => {
+            const resuelta = d.estado === "resuelto";
+            const dif = Number(d.dif) || 0;
+            const cls = dif > 0 ? "dif-pos" : (dif < 0 ? "dif-neg" : "dif-cero");
+            const luz = resuelta ? "✅" : `<span class="luz-titila" title="Pendiente de resolver"></span>`;
+            const cargado = `${fmtFechaCorta(d.agregadoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.agregadoPor || "?")}</small>`;
+            const estadoCol = resuelta
+                ? `Resuelto · ${fmtFechaCorta(d.resueltoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.resueltoPor || "?")}</small>${d.nota ? `<br><small>📝 ${_escHtml(d.nota)}</small>` : ""}`
+                : `<span style="color:#b91c1c;font-weight:600">Pendiente</span>`;
+            const acciones = resuelta
+                ? `<button class="btn btn-danger btn-sm" data-borrar-dif="${d.id}" title="Borrar">✕</button>`
+                : `<button class="btn btn-secondary btn-sm" data-resolver-dif="${d.id}">Resolver</button> <button class="btn btn-danger btn-sm" data-borrar-dif="${d.id}" title="Borrar">✕</button>`;
+            return `<tr class="${resuelta ? "dif-resuelta" : "dif-pendiente"}">
+                <td style="text-align:center">${luz}</td>
+                <td class="dif-despacho">${_escHtml(d.despacho)}</td>
+                <td class="dif-valor">${_fmtNumDif(d.kgStock)}</td>
+                <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
+                <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
+                <td>${cargado}</td>
+                <td>${estadoCol}</td>
+                <td>${acciones}</td>
+            </tr>`;
+        }).join("");
+        tbody.querySelectorAll("[data-resolver-dif]").forEach(b => {
+            b.addEventListener("click", () => resolverDiferencia(b.dataset.resolverDif));
+        });
+        tbody.querySelectorAll("[data-borrar-dif]").forEach(b => {
+            b.addEventListener("click", () => borrarDiferencia(b.dataset.borrarDif));
+        });
+        actualizarBadgeDiferencias();
+    }
+
+    function agregarDiferencia() {
+        const inpD = document.getElementById("difDespacho");
+        const inpS = document.getElementById("difKgStock");
+        const inpM = document.getElementById("difKgSim");
+        const despacho = (inpD.value || "").trim().toUpperCase();
+        if (!despacho) { mostrarModalInfo("Falta el despacho.", "No se puede agregar"); inpD.focus(); return; }
+        const kgStock = sbfaParseKg(inpS.value) || 0;
+        const kgSim = sbfaParseKg(inpM.value) || 0;
+        const ts = new Date().toISOString();
+        diferencias.push({
+            id: "dif-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+            despacho,
+            kgStock,
+            kgSim,
+            dif: kgSim - kgStock,
+            estado: "pendiente",
+            nota: "",
+            agregadoPor: usuarioActual,
+            agregadoTs: ts,
+            resueltoPor: null,
+            resueltoTs: null,
+            eliminada: false,
+            ts,
+        });
+        guardarDatos();
+        inpD.value = ""; inpS.value = ""; inpM.value = "";
+        inpD.focus();
+        renderDiferencias();
+        mostrarAlerta(`Despacho ${despacho} agregado a la lista de diferencias.`, "info");
+    }
+
+    function resolverDiferencia(id) {
+        const d = diferencias.find(x => x.id === id && !x.eliminada);
+        if (!d) return;
+        const nota = prompt(`Resolver el despacho ${d.despacho}.\nNota / observación (opcional):`, "");
+        if (nota === null) return; // canceló
+        d.estado = "resuelto";
+        d.nota = nota.trim();
+        d.resueltoPor = usuarioActual;
+        d.resueltoTs = new Date().toISOString();
+        d.ts = d.resueltoTs;
+        guardarDatos();
+        renderDiferencias();
+        mostrarAlerta(`Despacho ${d.despacho} marcado como resuelto.`, "info");
+    }
+
+    function borrarDiferencia(id) {
+        const d = diferencias.find(x => x.id === id && !x.eliminada);
+        if (!d) return;
+        if (!confirm(`¿Borrar el registro de diferencia del despacho ${d.despacho}?`)) return;
+        d.eliminada = true;
+        d.ts = new Date().toISOString();
+        guardarDatos();
+        renderDiferencias();
+    }
+
+    (function wireDiferencias() {
+        const btn = document.getElementById("btnDifAgregar");
+        if (btn) btn.addEventListener("click", agregarDiferencia);
+        const inpD = document.getElementById("difDespacho");
+        if (inpD) inpD.addEventListener("keydown", e => { if (e.key === "Enter") agregarDiferencia(); });
+        ["difKgStock", "difKgSim"].forEach(idInp => {
+            const inp = document.getElementById(idInp);
+            if (!inp) return;
+            inp.addEventListener("keydown", sbfaBloquearDecimales);
+            inp.addEventListener("input", () => sbfaFormatearInputKg(inp));
+            inp.addEventListener("keydown", e => { if (e.key === "Enter") agregarDiferencia(); });
+        });
+        renderDiferencias();
+    })();
 
     // --- REPORTE PARA SUPERVISORES ---
     let _repSupInicializado = false;

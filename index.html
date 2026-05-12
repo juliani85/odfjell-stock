@@ -62,7 +62,7 @@
             <button class="tab" data-tab="transferencia" data-rol="admin">Transferencia</button>
             <button class="tab" data-tab="stock" data-rol="admin">Stock x TK</button>
             <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
-            <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes</button>
+            <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes <span id="badgeDiferencias" class="badge-titila hidden" title="Hay despachos con diferencia sin resolver"></span></button>
             <button class="tab" data-tab="barcos" data-rol="admin">Barcos <span id="badgeBarcosCerca" class="badge-nuevas hidden">0</span></button>
             <button class="tab" data-tab="sbfa" data-rol="admin">SB/FA</button>
             <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
@@ -420,6 +420,7 @@
                 <button class="sub-tab active" data-subtab="repDia">Reporte del Día</button>
                 <button class="sub-tab" data-subtab="repMensual">Reporte de Stock Mensual</button>
                 <button class="sub-tab" data-subtab="repSupervisor">Para Supervisores</button>
+                <button class="sub-tab" data-subtab="repDiferencias">Despachos con diferencia <span id="badgeDiferenciasSub" class="badge-titila hidden"></span></button>
             </nav>
 
             <!-- SUB: REPORTE DEL DIA -->
@@ -513,6 +514,52 @@
 
                     <p id="repSupEstado" style="font-size:0.85rem;margin-bottom:0.5rem"></p>
                     <div id="repSupVistaPrevia" style="border:1px solid var(--gray-200);border-radius:8px;padding:1rem;background:#fafafa;display:none"></div>
+                </div>
+            </div>
+
+            <!-- SUB: DESPACHOS CON DIFERENCIA -->
+            <div id="repDiferencias" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Despachos con diferencia</h2>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Anotá los despachos donde no coinciden los <strong>kilos de stock</strong> con los <strong>kilos del SIM</strong>. Quedan con una <span class="luz-titila" style="vertical-align:middle"></span> titilando hasta que los marques como resueltos.
+                    </p>
+                    <div style="display:flex;gap:0.6rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
+                            <label for="difDespacho">Despacho</label>
+                            <input type="text" id="difDespacho" placeholder="Ej: DI26IC04002547U" autocomplete="off">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:150px">
+                            <label for="difKgStock">Kg. Stock</label>
+                            <input type="text" id="difKgStock" inputmode="numeric" placeholder="0" autocomplete="off">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:150px">
+                            <label for="difKgSim">Kg. SIM</label>
+                            <input type="text" id="difKgSim" inputmode="numeric" placeholder="0" autocomplete="off">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnDifAgregar" type="button">Agregar</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="tablaDiferencias">
+                            <thead>
+                                <tr>
+                                    <th style="width:32px"></th>
+                                    <th>Despacho</th>
+                                    <th>Kg. Stock</th>
+                                    <th>Kg. SIM</th>
+                                    <th>Diferencia</th>
+                                    <th>Cargado</th>
+                                    <th>Estado</th>
+                                    <th style="width:140px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="8">No hay despachos con diferencia cargados.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>

@@ -2054,26 +2054,33 @@ async function initApp() {
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
                 <td>${cargado}</td>
                 <td><span style="color:#b91c1c;font-weight:600">Pendiente</span></td>
-                <td><button class="btn btn-danger btn-sm" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-sm" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
+                <td style="white-space:nowrap"><button class="btn btn-primary btn-sm" data-guardar-dif="${d.id}" title="Guardar el TK / producto / cliente que cargaste">💾 Guardar</button> <button class="btn btn-danger btn-sm" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-sm" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
             </tr>`;
         }).join("");
-        // Guardado de los campos editables (TK / Producto / Cliente) al perder el foco.
+        // Guardado de los campos editables (TK / Producto / Cliente):
+        // por botón "💾 Guardar" (con confirmación) o automático al salir del campo.
         tbody.querySelectorAll("tr[data-dif-id]").forEach(tr => {
             const id = tr.dataset.difId;
-            const guardarCelda = () => {
+            const guardarFila = (avisar) => {
                 const d = diferencias.find(x => x.id === id && !x.eliminada);
                 if (!d) return;
                 const nt = (tr.querySelector('[data-f="tanque"]').value || "").trim();
                 const np = (tr.querySelector('[data-f="producto"]').value || "").trim();
                 const nc = (tr.querySelector('[data-f="cliente"]').value || "").trim();
-                if ((d.tanque || "") === nt && (d.producto || "") === np && (d.cliente || "") === nc) return;
+                if ((d.tanque || "") === nt && (d.producto || "") === np && (d.cliente || "") === nc) {
+                    if (avisar) mostrarAlerta(`No hay cambios para guardar en ${d.despacho}.`, "info");
+                    return;
+                }
                 d.tanque = nt; d.producto = np; d.cliente = nc;
                 d.ts = new Date().toISOString();
                 guardarDatos();
+                if (avisar) mostrarAlerta(`✓ TK / producto / cliente del despacho ${d.despacho} guardados.`, "info");
             };
+            const btnG = tr.querySelector("[data-guardar-dif]");
+            if (btnG) btnG.addEventListener("click", () => guardarFila(true));
             tr.querySelectorAll("input.dif-edit").forEach(inp => {
-                inp.addEventListener("blur", guardarCelda);
-                inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); inp.blur(); } });
+                inp.addEventListener("blur", () => guardarFila(false));
+                inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); guardarFila(true); inp.blur(); } });
             });
         });
         tbody.querySelectorAll("[data-resolver-dif]").forEach(b => {

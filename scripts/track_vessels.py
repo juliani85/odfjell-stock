@@ -1,6 +1,6 @@
 """Scrapea posicion/ETA/velocidad de los barcos en barcos.json y escribe
 tracking.json en la raiz del frontend. Se ejecuta desde GitHub Actions
-cada 30 minutos.
+cada 10 minutos.
 
 Uso local:
     python scripts/track_vessels.py
@@ -445,7 +445,7 @@ def main() -> int:
 
         # Hora de arribo a Campana = el momento en que detectamos al barco en puerto/amarrado.
         # Si VesselFinder reportó una hora real de arribo, la dejamos. Si ya lo veníamos viendo
-        # en puerto en la corrida anterior, arrastramos esa hora (no la pisamos cada 15 min).
+        # en puerto en la corrida anterior, arrastramos esa hora (no la pisamos cada 10 min).
         est = (datos.get("estado") or "").lower()
         pa = (datos.get("puerto_actual") or "").lower()
         if est == "en_puerto" and "campana" in pa:

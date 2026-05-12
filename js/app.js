@@ -3926,7 +3926,7 @@ async function initApp() {
             } else if (t.error) {
                 estadoTxt = `<span style="color:var(--gray-500)">Sin datos: ${t.error}</span>`;
             } else {
-                estadoTxt = `<span style="color:var(--gray-500)">Sin datos de tracking aún. Esperar próxima corrida (cada 15 min).</span>`;
+                estadoTxt = `<span style="color:var(--gray-500)">Sin datos de tracking aún. Esperar próxima corrida (cada 10 min).</span>`;
             }
 
             const detalles = [];
@@ -4060,7 +4060,7 @@ async function initApp() {
         if (await guardarBarcosCfg()) {
             document.getElementById("barcoNombre").value = "";
             renderBarcos();
-            mostrarAlerta(`${nombre} agregado. Buscando IMO y datos en la próxima corrida del tracking (≤15 min).`, "info");
+            mostrarAlerta(`${nombre} agregado. Buscando IMO y datos en la próxima corrida del tracking (≤10 min).`, "info");
         }
     }
 

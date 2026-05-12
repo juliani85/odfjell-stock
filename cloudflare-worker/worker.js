@@ -36,6 +36,7 @@ const ARCHIVOS_PERMITIDOS = new Set([
 
 const WORKFLOWS_PERMITIDOS = new Set([
   "reporte-supervisor.yml",
+  "reporte-diferencias.yml",
 ]);
 
 function corsHeaders(env, origin) {

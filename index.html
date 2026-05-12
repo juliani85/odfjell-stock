@@ -524,7 +524,7 @@
                         <h2>Despachos con diferencia</h2>
                     </div>
                     <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
-                        Anotá los despachos donde no coinciden los <strong>kilos de stock</strong> con los <strong>kilos del SIM</strong>. Quedan con una <span class="luz-titila" style="vertical-align:middle"></span> titilando hasta que los marques como resueltos.
+                        Anotá los despachos donde no coinciden los <strong>kilos de stock</strong> con los <strong>kilos del SIM</strong>. Cada uno queda con una <span class="luz-titila" style="vertical-align:middle"></span> titilando. Cuando se soluciona, tocás <strong>✓ Resuelto</strong> y desaparece de la lista (no entra en próximos mails). El botón <strong>"📧 Enviar mail"</strong> manda el listado de los pendientes.
                     </p>
                     <div style="display:flex;gap:0.6rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
                         <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
@@ -541,6 +541,14 @@
                         </div>
                         <button class="btn btn-primary btn-sm" id="btnDifAgregar" type="button">Agregar</button>
                     </div>
+                    <div style="display:flex;gap:0.6rem;align-items:end;flex-wrap:wrap;margin-bottom:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200)">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:260px">
+                            <label for="difMail">Enviar el listado de pendientes a — separá con coma para varios</label>
+                            <input type="text" id="difMail" placeholder="destinatario@empresa.com, otro@empresa.com" autocomplete="off">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnDifMail" type="button">📧 Enviar mail</button>
+                    </div>
+                    <p id="difMailEstado" style="font-size:0.85rem;margin-bottom:1rem"></p>
                     <div class="table-container">
                         <table id="tablaDiferencias">
                             <thead>

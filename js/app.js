@@ -2001,43 +2001,34 @@ async function initApp() {
         });
     }
 
+    // Diferencias "activas" = las que están en rojo (titilando): pendientes, no resueltas, no borradas.
+    function diferenciasActivas() {
+        return diferencias.filter(d => !d.eliminada && d.estado !== "resuelto");
+    }
+
     function renderDiferencias() {
         const tbody = document.querySelector("#tablaDiferencias tbody");
         if (!tbody) { actualizarBadgeDiferencias(); return; }
-        const filas = diferencias.filter(d => !d.eliminada);
-        // Pendientes primero; dentro de cada grupo, las más nuevas arriba.
-        filas.sort((a, b) => {
-            const pa = a.estado === "resuelto" ? 1 : 0;
-            const pb = b.estado === "resuelto" ? 1 : 0;
-            if (pa !== pb) return pa - pb;
-            return String(b.ts || "").localeCompare(String(a.ts || ""));
-        });
+        // Solo se muestran las activas; al resolver/borrar una, desaparece de la lista.
+        const filas = diferenciasActivas().slice().sort((a, b) => String(b.ts || "").localeCompare(String(a.ts || "")));
         if (filas.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="8">No hay despachos con diferencia cargados.</td></tr>`;
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="8">No hay despachos con diferencia pendientes. 🎉</td></tr>`;
             actualizarBadgeDiferencias();
             return;
         }
         tbody.innerHTML = filas.map(d => {
-            const resuelta = d.estado === "resuelto";
             const dif = Number(d.dif) || 0;
             const cls = dif > 0 ? "dif-pos" : (dif < 0 ? "dif-neg" : "dif-cero");
-            const luz = resuelta ? "✅" : `<span class="luz-titila" title="Pendiente de resolver"></span>`;
             const cargado = `${fmtFechaCorta(d.agregadoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.agregadoPor || "?")}</small>`;
-            const estadoCol = resuelta
-                ? `Resuelto · ${fmtFechaCorta(d.resueltoTs)}<br><small style="color:var(--gray-500)">${_escHtml(d.resueltoPor || "?")}</small>${d.nota ? `<br><small>📝 ${_escHtml(d.nota)}</small>` : ""}`
-                : `<span style="color:#b91c1c;font-weight:600">Pendiente</span>`;
-            const acciones = resuelta
-                ? `<button class="btn btn-danger btn-sm" data-borrar-dif="${d.id}" title="Borrar">✕</button>`
-                : `<button class="btn btn-secondary btn-sm" data-resolver-dif="${d.id}">Resolver</button> <button class="btn btn-danger btn-sm" data-borrar-dif="${d.id}" title="Borrar">✕</button>`;
-            return `<tr class="${resuelta ? "dif-resuelta" : "dif-pendiente"}">
-                <td style="text-align:center">${luz}</td>
+            return `<tr class="dif-pendiente">
+                <td style="text-align:center"><span class="luz-titila" title="Pendiente de resolver"></span></td>
                 <td class="dif-despacho">${_escHtml(d.despacho)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgStock)}</td>
                 <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
                 <td>${cargado}</td>
-                <td>${estadoCol}</td>
-                <td>${acciones}</td>
+                <td><span style="color:#b91c1c;font-weight:600">Pendiente</span></td>
+                <td><button class="btn btn-danger btn-sm" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-sm" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
             </tr>`;
         }).join("");
         tbody.querySelectorAll("[data-resolver-dif]").forEach(b => {
@@ -2083,26 +2074,51 @@ async function initApp() {
     function resolverDiferencia(id) {
         const d = diferencias.find(x => x.id === id && !x.eliminada);
         if (!d) return;
-        const nota = prompt(`Resolver el despacho ${d.despacho}.\nNota / observación (opcional):`, "");
-        if (nota === null) return; // canceló
+        if (!confirm(`¿El despacho ${d.despacho} quedó resuelto?\n\nVa a desaparecer de la lista y no se incluirá en los próximos mails.`)) return;
         d.estado = "resuelto";
-        d.nota = nota.trim();
         d.resueltoPor = usuarioActual;
         d.resueltoTs = new Date().toISOString();
         d.ts = d.resueltoTs;
         guardarDatos();
         renderDiferencias();
-        mostrarAlerta(`Despacho ${d.despacho} marcado como resuelto.`, "info");
+        mostrarAlerta(`Despacho ${d.despacho} resuelto — sale de la lista.`, "info");
     }
 
     function borrarDiferencia(id) {
         const d = diferencias.find(x => x.id === id && !x.eliminada);
         if (!d) return;
-        if (!confirm(`¿Borrar el registro de diferencia del despacho ${d.despacho}?`)) return;
+        if (!confirm(`¿Borrar el registro del despacho ${d.despacho}? (usá esto si lo cargaste por error)`)) return;
         d.eliminada = true;
         d.ts = new Date().toISOString();
         guardarDatos();
         renderDiferencias();
+    }
+
+    function enviarMailDiferencias() {
+        const inp = document.getElementById("difMail");
+        const estado = document.getElementById("difMailEstado");
+        const setEstado = (txt, color) => { if (estado) { estado.textContent = txt; estado.style.color = color || "var(--gray-500)"; } };
+        const mails = (inp.value || "").trim();
+        if (!mails) { mostrarModalInfo("Cargá al menos un mail destinatario.", "Falta destinatario"); inp.focus(); return; }
+        const lista = mails.split(",").map(m => m.trim()).filter(Boolean);
+        const invalido = lista.find(m => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m));
+        if (invalido) { mostrarModalInfo(`Mail inválido: "${invalido}"`, "Error"); return; }
+        const n = diferenciasActivas().length;
+        if (n === 0) { mostrarModalInfo("No hay despachos con diferencia pendientes para enviar.", "Nada para enviar"); return; }
+        mostrarModalConfirm(
+            `Enviar el listado de ${n} despacho(s) con diferencia a:\n\n${lista.join("\n")}`,
+            "Confirmar envío",
+            async () => {
+                setEstado("Disparando workflow…", "var(--gray-500)");
+                try {
+                    const res = await GH._ghDispatch("reporte-diferencias.yml", "master", { destinatarios: lista.join(",") });
+                    if (!res.ok) throw new Error(`proxy ${res.status}${res.detalle || ""}`);
+                    setEstado(`✓ Mail con ${n} despacho(s) disparado a ${lista.length} destinatario(s). Llega en ~30 segundos.`, "#16a34a");
+                } catch (e) {
+                    setEstado(`Error: ${e.message}`, "#b91c1c");
+                }
+            }
+        );
     }
 
     (function wireDiferencias() {
@@ -2117,6 +2133,10 @@ async function initApp() {
             inp.addEventListener("input", () => sbfaFormatearInputKg(inp));
             inp.addEventListener("keydown", e => { if (e.key === "Enter") agregarDiferencia(); });
         });
+        const btnMail = document.getElementById("btnDifMail");
+        if (btnMail) btnMail.addEventListener("click", enviarMailDiferencias);
+        const inpMail = document.getElementById("difMail");
+        if (inpMail) inpMail.addEventListener("keydown", e => { if (e.key === "Enter") enviarMailDiferencias(); });
         renderDiferencias();
     })();
 

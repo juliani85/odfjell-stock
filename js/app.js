@@ -1173,6 +1173,7 @@ async function initApp() {
         renderHistorial();
         renderPlan();
         renderDiferencias();
+        renderPrecintos(document.getElementById("filtroPrecintos")?.value || "");
         if (document.getElementById("reporteDiario")?.classList.contains("active")) {
             renderReporteDiario();
         }
@@ -1608,6 +1609,10 @@ async function initApp() {
     }
 
     // --- REGISTRAR ---
+    function esDespachoTR06(desp) {
+        return (desp || "").toUpperCase().includes("TR06");
+    }
+
     btnRegistrar.addEventListener("click", () => {
         if (!tanqueActual || !despachoActual) return;
 
@@ -1617,10 +1622,23 @@ async function initApp() {
         if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
-        abrirConfirmacionSalida();
+        // Salida TR06: el N° de precinto es obligatorio (se insiste hasta cargarlo).
+        let precinto = "";
+        if (esDespachoTR06(despachoActual.despacho)) {
+            while (true) {
+                const r = prompt(`Salida TR06 — despacho ${despachoActual.despacho}\n\nIngresá el N° de precinto (obligatorio):`, "");
+                if (r === null) { mostrarAlerta("No se registró: una salida TR06 necesita el N° de precinto.", "error"); return; }
+                precinto = r.trim();
+                if (precinto) break;
+                alert("El N° de precinto es obligatorio para las salidas TR06. Cargalo.");
+            }
+        }
+
+        abrirConfirmacionSalida(precinto);
     });
 
-    function abrirConfirmacionSalida() {
+    function abrirConfirmacionSalida(precinto) {
+        precinto = (precinto || "").trim();
         const kilos = parseInt(kilosInput.value) || 0;
         const remito = remitoInput.value.trim();
         const restante = despachoActual.stock - kilos;
@@ -1632,6 +1650,7 @@ async function initApp() {
             <p><strong>Producto:</strong> ${tanqueActual.producto}</p>
             <p><strong>Cliente:</strong> ${clienteSalida}</p>
             <p><strong>Despacho:</strong> <code>${despachoActual.despacho}</code></p>
+            ${precinto ? `<p><strong>Precinto:</strong> <code>${precinto}</code></p>` : ""}
             <p><strong>Remito:</strong> ${remito || "Sin remito"}</p>
             <p><strong>Kilos a retirar:</strong> ${formatKg(kilos)} kg</p>
             <p><strong>Stock restante despacho:</strong> ${formatKg(restante)} kg</p>
@@ -1652,6 +1671,7 @@ async function initApp() {
                 kilos: kilos,
                 usuario: usuarioActual,
             };
+            if (precinto) salida.precinto = precinto;
 
             despachoActual.stock -= kilos;
             const restante2 = despachoActual.stock;
@@ -1665,9 +1685,11 @@ async function initApp() {
             renderStock();
             renderHistorial();
             renderPlan();
+            if (salida.precinto) renderPrecintos(document.getElementById("filtroPrecintos")?.value || "");
 
+            const sufijoPrec = salida.precinto ? ` · Precinto ${salida.precinto} registrado` : "";
             const sufijoPlan = matchPlan ? " · ✓ Plan del día actualizado" : "";
-            mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg${sufijoPlan}`, "success");
+            mostrarAlerta(`Salida registrada: ${formatKg(kilos)} kg del TK ${salida.tanque} - Despacho ${salida.despacho}. Saldo restante: ${formatKg(restante2)} kg${sufijoPrec}${sufijoPlan}`, "success");
             paso1.className = "paso active";
 
             // Listo para cargar el siguiente remito
@@ -1981,6 +2003,7 @@ async function initApp() {
             if (st.dataset.subtab === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
             if (st.dataset.subtab === "repSupervisor") inicializarReporteSupervisor();
             if (st.dataset.subtab === "repDiferencias") renderDiferencias();
+            if (st.dataset.subtab === "repPrecintos") renderPrecintos(document.getElementById("filtroPrecintos")?.value || "");
         });
     });
 
@@ -2192,6 +2215,93 @@ async function initApp() {
         const inpMail = document.getElementById("difMail");
         if (inpMail) inpMail.addEventListener("keydown", e => { if (e.key === "Enter") enviarMailDiferencias(); });
         renderDiferencias();
+    })();
+
+    // --- PRECINTOS USADOS (salidas TR06) ---
+    function precintosUsados() {
+        return historial.filter(h => (h.tipo || "SALIDA") === "SALIDA" && h.precinto);
+    }
+    function _conteoPrecintos() {
+        const c = {};
+        precintosUsados().forEach(h => { const p = String(h.precinto).trim(); c[p] = (c[p] || 0) + 1; });
+        return c;
+    }
+    function _ordenarPrecintos(arr) {
+        return arr.slice().sort((a, b) => {
+            const c = String(a.precinto).localeCompare(String(b.precinto), undefined, { numeric: true });
+            return c !== 0 ? c : (`${a.fecha || ""} ${a.hora || ""}`).localeCompare(`${b.fecha || ""} ${b.hora || ""}`);
+        });
+    }
+
+    function renderPrecintos(filtro) {
+        const tbody = document.querySelector("#tablaPrecintos tbody");
+        if (!tbody) return;
+        const f = (filtro || "").trim().toLowerCase();
+        const conteo = _conteoPrecintos();
+        let usos = precintosUsados();
+        if (f) usos = usos.filter(h => `${h.precinto} ${h.despacho || ""} ${h.tanque || ""} ${h.producto || ""} ${h.cliente || ""} ${h.remito || ""} ${h.usuario || ""}`.toLowerCase().includes(f));
+        usos = _ordenarPrecintos(usos);
+
+        const resumen = document.getElementById("precintosResumen");
+        if (resumen) {
+            const totalUsos = precintosUsados().length;
+            const distintos = Object.keys(conteo).length;
+            const repetidos = Object.values(conteo).filter(n => n > 1).length;
+            resumen.textContent = `${totalUsos} uso(s) de precinto · ${distintos} precinto(s) distinto(s)`
+                + (repetidos ? ` · ${repetidos} usado(s) en más de un TR06` : "")
+                + (f ? ` — mostrando ${usos.length}` : "");
+        }
+        if (usos.length === 0) {
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">${f ? "Ningún precinto coincide con la búsqueda." : "No hay precintos registrados todavía. Se cargan al registrar una salida cuyo despacho sea TR06."}</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = usos.map(h => {
+            const p = String(h.precinto).trim();
+            const rep = (conteo[p] || 0) > 1;
+            return `<tr${rep ? ' style="background:#fffbeb"' : ''}>
+                <td><strong>${_escHtml(p)}</strong>${rep ? ` <span style="color:#92400e;font-size:0.75rem;white-space:nowrap">(×${conteo[p]})</span>` : ""}</td>
+                <td><code>${_escHtml(h.despacho || "")}</code></td>
+                <td>${_escHtml(h.tanque || "")}</td>
+                <td>${_escHtml(h.producto || "")}</td>
+                <td>${_escHtml(h.cliente || "")}</td>
+                <td style="white-space:nowrap">${_escHtml(h.fecha || "")}</td>
+                <td>${_escHtml(h.hora || "")}</td>
+                <td>${_escHtml(h.remito || "")}</td>
+                <td style="text-align:right;font-variant-numeric:tabular-nums">${formatKg(h.kilos || 0)}</td>
+                <td>${_escHtml(h.usuario || "")}</td>
+            </tr>`;
+        }).join("");
+    }
+
+    function imprimirPrecintos() {
+        const usos = _ordenarPrecintos(precintosUsados());
+        const conteo = _conteoPrecintos();
+        const filas = usos.map(h => {
+            const p = String(h.precinto).trim();
+            const rep = (conteo[p] || 0) > 1;
+            return `<tr${rep ? ' style="background:#fff3cd"' : ''}><td>${_escHtml(p)}${rep ? ` (×${conteo[p]})` : ""}</td><td>${_escHtml(h.despacho || "")}</td><td>${_escHtml(h.tanque || "")}</td><td>${_escHtml(h.producto || "")}</td><td>${_escHtml(h.cliente || "")}</td><td>${_escHtml(h.fecha || "")}</td><td>${_escHtml(h.hora || "")}</td><td>${_escHtml(h.remito || "")}</td><td style="text-align:right">${formatKg(h.kilos || 0)}</td><td>${_escHtml(h.usuario || "")}</td></tr>`;
+        }).join("");
+        const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Precintos usados</title>
+<style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#111} h1{font-size:16px;margin:0 0 4px} .sub{color:#666;margin:0 0 14px;font-size:11px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #999;padding:4px 8px;text-align:left} th{background:#eee} .total{margin-top:12px;font-weight:700}</style>
+</head><body>
+<h1>Precintos usados — Odfjell Terminals Tagsa SA — Campana</h1>
+<p class="sub">Salidas TR06 · ${new Date().toLocaleString("es-AR")}</p>
+<table><thead><tr><th>Precinto N°</th><th>Despacho</th><th>TK</th><th>Producto</th><th>Cliente</th><th>Fecha</th><th>Hora</th><th>Remito</th><th>Kg.</th><th>Usuario</th></tr></thead><tbody>${filas || '<tr><td colspan="10">Sin precintos registrados.</td></tr>'}</tbody></table>
+<div class="total">Total: ${usos.length} uso(s) de precinto · ${Object.keys(conteo).length} precinto(s) distinto(s).</div>
+</body></html>`;
+        const win = window.open("", "_blank");
+        if (!win) { mostrarAlerta("Habilitá las ventanas emergentes para imprimir.", "error"); return; }
+        win.document.write(html);
+        win.document.close();
+        win.print();
+    }
+
+    (function wirePrecintos() {
+        const inp = document.getElementById("filtroPrecintos");
+        if (inp) inp.addEventListener("input", e => renderPrecintos(e.target.value));
+        const btn = document.getElementById("btnImprimirPrecintos");
+        if (btn) btn.addEventListener("click", imprimirPrecintos);
+        renderPrecintos("");
     })();
 
     // --- REPORTE PARA SUPERVISORES ---

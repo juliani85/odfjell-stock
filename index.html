@@ -421,6 +421,7 @@
                 <button class="sub-tab" data-subtab="repMensual">Reporte de Stock Mensual</button>
                 <button class="sub-tab" data-subtab="repSupervisor">Para Supervisores</button>
                 <button class="sub-tab" data-subtab="repDiferencias">Despachos con diferencia <span id="badgeDiferenciasSub" class="badge-titila hidden"></span></button>
+                <button class="sub-tab" data-subtab="repPrecintos">Precintos usados</button>
             </nav>
 
             <!-- SUB: REPORTE DEL DIA -->
@@ -573,6 +574,44 @@
                             </thead>
                             <tbody>
                                 <tr class="empty-row"><td colspan="10">No hay despachos con diferencia cargados.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: PRECINTOS USADOS -->
+            <div id="repPrecintos" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Precintos usados</h2>
+                        <div class="filtros">
+                            <input type="text" id="filtroPrecintos" placeholder="Buscar precinto, despacho, tanque, producto, remito...">
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirPrecintos" type="button">Imprimir</button>
+                        </div>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Lista de precintos cargados al registrar salidas <strong>TR06</strong>. Ordenada por número de precinto — si un precinto se usó en 2 TR06 distintos, las dos filas quedan juntas y se marca <span style="background:#fef3c7;padding:0 4px;border-radius:3px">en amarillo</span>.
+                    </p>
+                    <p id="precintosResumen" style="font-size:0.9rem;margin-bottom:0.75rem;color:var(--gray-700)"></p>
+                    <div class="table-container">
+                        <table id="tablaPrecintos">
+                            <thead>
+                                <tr>
+                                    <th>Precinto N°</th>
+                                    <th>Despacho</th>
+                                    <th>TK</th>
+                                    <th>Producto</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Remito</th>
+                                    <th>Kg.</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="10">No hay precintos registrados todavía. Se cargan al registrar una salida cuyo despacho sea TR06.</td></tr>
                             </tbody>
                         </table>
                     </div>

@@ -1,24 +1,22 @@
 {
-  "actualizado": "2026-05-13T01:30:05.004840Z",
+  "actualizado": "2026-05-13T05:27:49.746425Z",
   "barcos": {
     "9367554": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
+      "velocidad_nudos": 9.3,
       "eta": "2026-05-08T20:00:00Z",
       "calado_m": 6.6,
-      "nav_status": "At anchor",
-      "zona": "South America East Coast",
+      "nav_status": "Under way using engine",
+      "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9367554",
       "nombre": "BOW CAROLINE"
     },
     "9114244": {
-      "estado": "en_puerto",
-      "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-05-11T23:11:00Z",
       "calado_m": 9.0,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
@@ -28,7 +26,7 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Rio de Janeiro, Brazil",
-      "velocidad_nudos": 6.5,
+      "velocidad_nudos": 5.6,
       "eta": "2026-05-13T11:00:00Z",
       "calado_m": 9.0,
       "nav_status": "Under way using engine",

@@ -127,9 +127,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1128817,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA808Z",
+          "medic": "102",
+          "kgResultantes": 1129295
         },
         {
           "solPart": "864",
@@ -138,9 +138,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 749954,
           "tkDestino": "80-85",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA790Z",
+          "medic": "98",
+          "kgResultantes": 746598
         },
         {
           "solPart": "856",
@@ -334,7 +334,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-12T14:28:31.988Z"
+      "actualizadoTs": "2026-05-13T15:17:32.060Z"
     }
   ]
 }

@@ -1249,16 +1249,25 @@ async function initApp() {
         }
     }
 
-    function renombrarDespachoEnStock(tanqueObj, despachoViejo, despachoNuevo) {
-        const desp = tanqueObj.despachos.find(d => d.despacho === despachoViejo);
-        if (desp) desp.despacho = despachoNuevo;
-        historial.forEach(h => {
-            if (h.despacho === despachoViejo && h.tanque === tanqueObj.tanque) {
-                h.despacho = despachoNuevo;
+    // Renombra el despacho en TODOS los tanques donde aparece (no solo en uno).
+    // Devuelve la lista de tanques afectados.
+    function renombrarDespachoEnStock(_tanqueObj, despachoViejo, despachoNuevo) {
+        const tanquesAfectados = [];
+        stock.forEach(t => {
+            const desp = (t.despachos || []).find(d => d.despacho === despachoViejo);
+            if (desp) {
+                desp.despacho = despachoNuevo;
+                tanquesAfectados.push(t.tanque);
             }
         });
-        renombrarDespachoEnPlan(tanqueObj.tanque, despachoViejo, despachoNuevo);
+        // Renombrar TODAS las entradas del historial con ese despacho (independiente del tanque)
+        historial.forEach(h => {
+            if (h.despacho === despachoViejo) h.despacho = despachoNuevo;
+        });
+        // Renombrar las filas del plan de los tanques afectados
+        tanquesAfectados.forEach(tq => renombrarDespachoEnPlan(tq, despachoViejo, despachoNuevo));
         guardarDatos();
+        return tanquesAfectados;
     }
 
     function lanzarRenombrarDespacho(despachoObj) {
@@ -1279,7 +1288,7 @@ async function initApp() {
                 <input type="number" id="${inputKilosId}" min="1" max="${stockViejo}" step="1" value="${stockViejo}" placeholder="Cantidad en kg">
             </div>
             <div id="${errorId}" class="alerta error hidden" style="margin-top:0.5rem"></div>
-            <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.75rem">Si migrás <strong>todos</strong> los kilos, el despacho viejo desaparece y los movimientos previos del mismo tanque quedan renombrados. Si migrás <strong>una parte</strong>, se crea un despacho nuevo con esos kilos y el viejo queda con el saldo restante (útil cuando un despacho viejo representa varios despachos chicos).</p>
+            <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.75rem">Si migrás <strong>todos</strong> los kilos, el despacho viejo desaparece y se renombra en <strong>todos los tanques que lo tengan</strong> (más los movimientos del historial y las filas del plan). Si migrás <strong>una parte</strong>, se crea un despacho nuevo con esos kilos solo en este tanque y el viejo queda con el saldo restante (útil cuando un despacho viejo representa varios despachos chicos).</p>
         `;
         document.getElementById("modalTitulo").textContent = "Renombrar despacho";
         document.getElementById("btnConfirmar").textContent = "Renombrar";
@@ -1302,12 +1311,32 @@ async function initApp() {
             if (nuevo === viejo) { mostrarError("El nuevo nombre es igual al actual."); return; }
             if (kilos <= 0) { mostrarError("Los kilos deben ser mayores a cero."); return; }
             if (kilos > stockViejo) { mostrarError(`Los kilos no pueden superar el stock disponible (${formatKg(stockViejo)} kg).`); return; }
-            if (tanqueActual.despachos.some(d => d.despacho === nuevo)) {
-                mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque.`);
-                return;
+            // Para split: solo importa el tanque actual (no se propaga).
+            // Para rename completo: chequear conflicto en CUALQUIER tanque que tenga el despacho viejo,
+            // y avisar al usuario si está replicado en más de un tanque (se renombra en todos).
+            const esSplit = kilos < stockViejo;
+            if (esSplit) {
+                if (tanqueActual.despachos.some(d => d.despacho === nuevo)) {
+                    mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque.`);
+                    return;
+                }
+            } else {
+                const tanquesConViejo = stock.filter(t => (t.despachos || []).some(d => d.despacho === viejo));
+                const conflicto = tanquesConViejo.find(t => t.despachos.some(d => d.despacho === nuevo));
+                if (conflicto) {
+                    mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en el TK ${conflicto.tanque}.`);
+                    return;
+                }
+                if (tanquesConViejo.length > 1) {
+                    const otros = tanquesConViejo.map(t => `TK ${t.tanque}`).join(", ");
+                    if (!confirm(`Atención: este despacho está en ${tanquesConViejo.length} tanques (${otros}).\n\nSe va a renombrar en TODOS ellos:\n"${viejo}" → "${nuevo}"\n\n¿Confirmás?`)) {
+                        // mantener el modal abierto por si quiere cancelar/editar
+                        window._confirmarAccion = confirmarRenombrar;
+                        return;
+                    }
+                }
             }
 
-            const esSplit = kilos < stockViejo;
             modal.classList.add("hidden");
             document.getElementById("btnConfirmar").textContent = "Confirmar";
 
@@ -1317,10 +1346,11 @@ async function initApp() {
                 if (despachoObj.cliente) nuevoDesp.cliente = despachoObj.cliente;
                 tanqueActual.despachos.push(nuevoDesp);
                 guardarDatos();
-                mostrarAlerta(`Despacho dividido: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");
+                mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");
             } else {
-                renombrarDespachoEnStock(tanqueActual, viejo, nuevo);
-                mostrarAlerta(`Despacho renombrado: "${viejo}" → "${nuevo}"`, "success");
+                const tks = renombrarDespachoEnStock(tanqueActual, viejo, nuevo);
+                const dondeTxt = tks.length > 1 ? ` en ${tks.length} tanques (TK ${tks.join(", TK ")})` : ` en TK ${tks[0] || tanqueActual.tanque}`;
+                mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"`, "success");
             }
 
             addDespachoConsultado(nuevo);

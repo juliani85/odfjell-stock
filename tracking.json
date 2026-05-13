@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-13T21:05:55.533450Z",
+  "actualizado": "2026-05-13T22:22:24.318310Z",
   "barcos": {
     "9367554": {
       "estado": "en_puerto",
@@ -40,7 +40,7 @@
     },
     "9143219": {
       "calado_m": 9.3,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,

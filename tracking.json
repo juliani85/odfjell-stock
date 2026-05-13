@@ -1,13 +1,12 @@
 {
-  "actualizado": "2026-05-13T08:19:22.187234Z",
+  "actualizado": "2026-05-13T10:46:41.498353Z",
   "barcos": {
     "9367554": {
-      "estado": "en_route",
-      "destino": "Campana, Argentina",
-      "velocidad_nudos": 1.7,
-      "eta": "2026-05-08T20:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-05-13T08:36:00Z",
       "calado_m": 6.6,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
@@ -17,7 +16,7 @@
     "9114244": {
       "estado": "en_route",
       "destino": "Rosario, Argentina",
-      "velocidad_nudos": 10.3,
+      "velocidad_nudos": 10.6,
       "eta": "2026-05-13T20:00:00Z",
       "calado_m": 7.6,
       "nav_status": "Under way using engine",
@@ -30,7 +29,7 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Rio de Janeiro, Brazil",
-      "velocidad_nudos": 5.2,
+      "velocidad_nudos": 0.9,
       "eta": "2026-05-13T11:00:00Z",
       "calado_m": 9.0,
       "nav_status": "Under way using engine",

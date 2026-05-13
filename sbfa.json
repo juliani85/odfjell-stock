@@ -126,7 +126,7 @@
           "mercaderia": "VORANOL",
           "receptor": "PBB",
           "kgDeclarados": 1128817,
-          "tkDestino": "27-28-29-31-32",
+          "tkDestino": "27-28-31-32",
           "sbfa": "26008SBFA808Z",
           "medic": "102",
           "kgResultantes": 1129295
@@ -148,10 +148,10 @@
           "mercaderia": "2ETILHEXA",
           "receptor": "EXAR",
           "kgDeclarados": 104000,
-          "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA820K/821L822M/823N",
+          "medic": "101",
+          "kgResultantes": 104035
         },
         {
           "solPart": "855",
@@ -159,10 +159,10 @@
           "mercaderia": "2ETILHEXA",
           "receptor": "CHEMOTECNICA",
           "kgDeclarados": 200000,
-          "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA818R/819S",
+          "medic": "101",
+          "kgResultantes": 200066
         },
         {
           "solPart": "854",
@@ -170,10 +170,10 @@
           "mercaderia": "2ETILHEXA",
           "receptor": "FARMCHEM",
           "kgDeclarados": 16000,
-          "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA824Y",
+          "medic": "101",
+          "kgResultantes": 16005
         },
         {
           "solPart": "842",
@@ -181,65 +181,65 @@
           "mercaderia": "2ETILHEXA",
           "receptor": "VARTECO",
           "kgDeclarados": 100000,
-          "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA817Z",
+          "medic": "101",
+          "kgResultantes": 100033
         },
         {
           "solPart": "731",
-          "cto": "2600",
+          "cto": "2602-2600",
           "mercaderia": "EXX60",
           "receptor": "BRENNTAG",
           "kgDeclarados": 351360,
-          "tkDestino": "23",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "48",
+          "sbfa": "26008SBFA813M",
+          "medic": "95",
+          "kgResultantes": 349316
         },
         {
           "solPart": "774",
-          "cto": "402-403",
+          "cto": "2602-402-403",
           "mercaderia": "BUTYL ACRYLATE",
           "receptor": "INQUIBA",
           "kgDeclarados": 56000,
-          "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "67",
+          "sbfa": "26008SBFA809R/810J",
+          "medic": "103",
+          "kgResultantes": 55920
         },
         {
           "solPart": "776",
-          "cto": "1102",
+          "cto": "2602-1102",
           "mercaderia": "ACETATO DE VINILO",
           "receptor": "DALGAR",
           "kgDeclarados": 205814,
           "tkDestino": "65-25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA828S",
+          "medic": "104",
+          "kgResultantes": 203483
         },
         {
           "solPart": "775",
-          "cto": "401-405",
+          "cto": "2602-401-405",
           "mercaderia": "BUTYL ACRYLATE",
           "receptor": "DALGAR",
           "kgDeclarados": 303648,
-          "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "67",
+          "sbfa": "26008SBFA807P/812L",
+          "medic": "103",
+          "kgResultantes": 303219
         },
         {
           "solPart": "747",
-          "cto": "2602-360",
+          "cto": "2602-3600",
           "mercaderia": "2ETILHEXA",
           "receptor": "ATANOR",
           "kgDeclarados": 320000,
-          "tkDestino": "44-58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA816P",
+          "medic": "101",
+          "kgResultantes": 320105
         },
         {
           "solPart": "734",
@@ -248,9 +248,9 @@
           "receptor": "CRILEN",
           "kgDeclarados": 56000,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA827R",
+          "medic": "104",
+          "kgResultantes": 55366
         },
         {
           "solPart": "733",
@@ -258,10 +258,10 @@
           "mercaderia": "ACRILATO DE BUTILO",
           "receptor": "CRILEN",
           "kgDeclarados": 112000,
-          "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "67",
+          "sbfa": "26008SBFA811K",
+          "medic": "103",
+          "kgResultantes": 111842
         },
         {
           "solPart": "728",
@@ -270,9 +270,9 @@
           "receptor": "PBB",
           "kgDeclarados": 148156,
           "tkDestino": "96",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA825P",
+          "medic": "99",
+          "kgResultantes": 144795
         },
         {
           "solPart": "730",
@@ -281,9 +281,9 @@
           "receptor": "PBB",
           "kgDeclarados": 262258,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA829T",
+          "medic": "97",
+          "kgResultantes": 266082
         },
         {
           "solPart": "729",
@@ -292,9 +292,9 @@
           "receptor": "PBB",
           "kgDeclarados": 198947,
           "tkDestino": "41",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA826Z",
+          "medic": "100",
+          "kgResultantes": 198787
         },
         {
           "solPart": "685",
@@ -303,9 +303,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 100000,
           "tkDestino": "33",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA815Y",
+          "medic": "96",
+          "kgResultantes": 102996
         },
         {
           "solPart": "681",
@@ -314,9 +314,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 149262,
           "tkDestino": "81",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA814N",
+          "medic": "94",
+          "kgResultantes": 150130
         }
       ],
       "dap": [
@@ -334,7 +334,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-13T15:17:32.060Z"
+      "actualizadoTs": "2026-05-13T15:50:47.758Z"
     }
   ]
 }

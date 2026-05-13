@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-13T15:29:53.423439Z",
+  "actualizado": "2026-05-13T17:36:02.765998Z",
   "barcos": {
     "9367554": {
       "estado": "en_puerto",
@@ -16,7 +16,7 @@
     "9114244": {
       "estado": "en_route",
       "destino": "Rosario, Argentina",
-      "velocidad_nudos": 11.0,
+      "velocidad_nudos": 10.6,
       "eta": "2026-05-13T20:00:00Z",
       "calado_m": 7.6,
       "nav_status": "Under way using engine",
@@ -27,8 +27,11 @@
       "nombre": "BOW CARDINAL"
     },
     "9250751": {
+      "estado": "en_puerto",
+      "puerto_actual": "Rio de Janeiro, Brazil",
+      "arribo": "2026-05-13T15:27:00Z",
       "calado_m": 9.0,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
@@ -36,11 +39,8 @@
       "nombre": "BOW FIRDA"
     },
     "9143219": {
-      "estado": "en_puerto",
-      "puerto_actual": "Houston Anch., United States (USA)",
-      "arribo": "2026-05-12T06:44:00Z",
       "calado_m": 9.3,
-      "nav_status": "At anchor",
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,

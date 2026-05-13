@@ -620,37 +620,49 @@ tbody tr:hover { background: var(--gray-50); }
 .modal-content strong { color: var(--gray-700); }
 .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
 
-/* Login */
-.login-overlay {
+/* Login (formato copiado de obras-tracker: gradiente vertical de fondo + card centrado) */
+.auth-screen {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(135deg, #1e3a5f, #1a56db);
+    min-height: 100vh; min-height: 100dvh;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    padding: 24px;
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
     z-index: 2000;
 }
-
-.login-box {
+.auth-card {
     background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
-    width: 360px;
-    max-width: 90%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 32px 24px;
+    border-radius: 14px;
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
-
-.login-box h2 { font-size: 1.3rem; color: var(--gray-900); margin-bottom: 0.25rem; }
-.login-subtitle { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 1.5rem; }
-
-.login-error {
+.auth-card h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+.auth-card .subtitle {
+    color: var(--gray-500);
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+}
+.auth-card .form-group { margin-bottom: 12px; }
+.auth-card .btn-block { width: 100%; margin-top: 1rem; }
+.btn-block { width: 100%; }
+.auth-error {
     background: #fef2f2;
     color: var(--danger);
-    padding: 0.6rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
     text-align: center;
-    margin-top: 0.5rem;
+    margin: 0.5rem 0 0;
 }
 
 /* Header user */

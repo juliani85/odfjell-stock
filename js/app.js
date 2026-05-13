@@ -953,7 +953,7 @@ async function initLogin() {
     const sesion = sessionStorage.getItem("usuarioStock");
     if (sesion && USUARIOS[sesion]) {
         usuarioActual = sesion;
-        loginScreen.querySelector(".login-box").innerHTML = '<h2>Cargando datos...</h2><p class="login-subtitle">Conectando con el servidor</p>';
+        loginScreen.querySelector(".auth-card").innerHTML = '<h1>Cargando datos…</h1><p class="subtitle">Conectando con el servidor</p>';
         document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();
         await initApp();
         loginScreen.classList.add("hidden");

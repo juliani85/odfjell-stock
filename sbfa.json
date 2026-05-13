@@ -6,7 +6,7 @@
       "manifiesto": "11559-H",
       "agencia": "BYM",
       "cuit": "3071631346",
-      "fecha": "2026-05-12",
+      "fecha": "2026-05-13",
       "filas": [
         {
           "solPart": "870",
@@ -109,8 +109,8 @@
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-05-13T12:55:49.971Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-13T22:15:27.811Z"
     },
     {
       "id": 1778268143140,

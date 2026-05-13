@@ -2075,7 +2075,7 @@ async function initApp() {
                 <td class="dif-valor">${_fmtNumDif(d.kgSim)}</td>
                 <td class="dif-valor ${cls}">${dif > 0 ? "+" : ""}${_fmtNumDif(dif)}</td>
                 <td style="white-space:nowrap;font-size:0.75rem;color:var(--gray-500)">${fmtFechaCorta(d.agregadoTs)}</td>
-                <td style="white-space:nowrap"><button class="btn btn-primary btn-xs" data-guardar-dif="${d.id}" title="Guardar el TK / producto / cliente que cargaste">💾</button> <button class="btn btn-danger btn-xs" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-xs" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
+                <td style="white-space:nowrap"><button class="btn btn-primary btn-xs" data-guardar-dif="${d.id}" title="Guardar el TK / producto / cliente que cargaste">💾</button> <button class="btn btn-secondary btn-xs" data-informe-dif="${d.id}" title="Generar informe (PDF) para firma del depositario">📄</button> <button class="btn btn-danger btn-xs" data-resolver-dif="${d.id}" title="Marcar resuelto: desaparece de la lista y no se incluye en próximos mails">✓ Resuelto</button> <button class="btn btn-secondary btn-xs" data-borrar-dif="${d.id}" title="Borrar (cargado por error)">✕</button></td>
             </tr>`;
         }).join("");
         // Guardado de los campos editables (TK / Producto / Cliente):
@@ -2103,6 +2103,9 @@ async function initApp() {
                 inp.addEventListener("blur", () => guardarFila(false));
                 inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); guardarFila(true); inp.blur(); } });
             });
+        });
+        tbody.querySelectorAll("[data-informe-dif]").forEach(b => {
+            b.addEventListener("click", () => imprimirInformeDiferencia(b.dataset.informeDif));
         });
         tbody.querySelectorAll("[data-resolver-dif]").forEach(b => {
             b.addEventListener("click", () => resolverDiferencia(b.dataset.resolverDif));
@@ -2169,6 +2172,75 @@ async function initApp() {
         d.ts = new Date().toISOString();
         guardarDatos();
         renderDiferencias();
+    }
+
+    function imprimirInformeDiferencia(id) {
+        const d = diferencias.find(x => x.id === id && !x.eliminada);
+        if (!d) return;
+        // TK/producto/cliente: lo guardado o lo que esté en stock ahora
+        const live = infoSistemaDeDespacho(d.despacho);
+        const tk = d.tanque || live.tanque || "—";
+        const prod = d.producto || live.producto || "";
+        const cli = d.cliente || live.cliente || "";
+        const dif = (Number(d.kgSim) || 0) - (Number(d.kgStock) || 0);
+        const hoy = new Date();
+        const fechaTxt = hoy.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+        const productoCliente = [prod, cli].filter(Boolean).join(" — ");
+        const detalleProdCli = productoCliente ? ` (${_escHtml(productoCliente)})` : "";
+
+        const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<title>Informe de diferencia — ${_escHtml(d.despacho)}</title>
+<style>
+@page { size: A4; margin: 2.5cm; }
+* { box-sizing: border-box; }
+body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 12pt; line-height: 1.55; margin: 0; }
+header { text-align: center; border-bottom: 2px solid #1a56db; padding-bottom: 14px; margin-bottom: 28px; }
+header h1 { margin: 0; font-size: 16pt; color: #1a56db; }
+header .sub { font-size: 11pt; color: #555; margin-top: 4px; }
+.lugar-fecha { text-align: right; margin: 26px 0 24px; font-style: italic; }
+h2 { font-size: 14pt; text-align: center; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 22px; }
+p { text-align: justify; margin: 0 0 14px; }
+table.detalle { border-collapse: collapse; margin: 18px auto; min-width: 70%; }
+table.detalle td { padding: 9px 18px; border: 1px solid #c9c9c9; }
+table.detalle td:first-child { background: #f5f7fa; font-weight: 600; }
+table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-nums; min-width: 130px; }
+.firma { margin-top: 90px; display: flex; justify-content: center; }
+.firma-box { text-align: center; width: 62%; }
+.firma-linea { border-top: 1px solid #111; padding-top: 6px; font-size: 11pt; color: #444; }
+.pie { margin-top: 60px; font-size: 9pt; color: #888; text-align: center; }
+.no-print { text-align: center; padding: 18px; background: #eef4ff; border-bottom: 1px solid #cdddef; }
+.no-print button { padding: 10px 22px; font-size: 14px; background: #1a56db; color: white; border: none; border-radius: 6px; cursor: pointer; font-family: sans-serif; }
+.no-print button:hover { background: #1244b0; }
+@media print { .no-print { display: none; } body { margin: 0; } }
+</style>
+</head><body>
+<div class="no-print">
+  <button onclick="window.print()">🖨 Imprimir / Guardar como PDF</button>
+</div>
+<header>
+  <h1>Odfjell Terminals Tagsa SA</h1>
+  <div class="sub">Terminal Campana — Provincia de Buenos Aires</div>
+</header>
+<div class="lugar-fecha">Campana, ${fechaTxt}.</div>
+<h2>Informe de diferencia de stock</h2>
+<p>Por el presente se informa que, respecto del <strong>Tanque ${_escHtml(tk)}</strong> y el despacho <strong>${_escHtml(d.despacho)}</strong>${detalleProdCli}, se constatan las siguientes cantidades:</p>
+<table class="detalle">
+  <tr><td>Kilos por stock físico (en tanque)</td><td>${_fmtNumDif(d.kgStock)} kg</td></tr>
+  <tr><td>Kilos por stock documental (sistema SIM)</td><td>${_fmtNumDif(d.kgSim)} kg</td></tr>
+  <tr><td>Diferencia</td><td><strong>${dif >= 0 ? "+" : ""}${_fmtNumDif(dif)} kg</strong></td></tr>
+</table>
+<p>Dichas diferencias se corresponden tanto a las <strong>tolerancias propias de la medición inicial</strong> como a la <strong>merma natural del producto</strong> durante su almacenamiento.</p>
+<p>A los efectos correspondientes, se solicita la firma del depositario al pie del presente informe.</p>
+<div class="firma"><div class="firma-box"><div class="firma-linea">Firma y aclaración del depositario</div></div></div>
+<div class="pie">Documento generado por el sistema de Control de Stock de Odfjell Terminals Tagsa SA.</div>
+</body></html>`;
+
+        const win = window.open("", "_blank");
+        if (!win) { mostrarAlerta("Habilitá las ventanas emergentes para generar el informe.", "error"); return; }
+        win.document.write(html);
+        win.document.close();
+        // pequeña pausa para que cargue el HTML antes de abrir el diálogo de impresión
+        setTimeout(() => { try { win.focus(); win.print(); } catch (_) {} }, 200);
     }
 
     function enviarMailDiferencias() {

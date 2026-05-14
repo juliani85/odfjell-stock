@@ -3746,10 +3746,25 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     function autoMatchearPlan(fecha) {
         const plan = planes[fecha];
         if (!plan || !plan.filas) return false;
+        let cambio = false;
+
+        // Limpieza: si una carga está marcada cumplida pero su salidaId ya no apunta a una salida
+        // de esta fecha (borrada o editada a otro día), la desmarcamos. Evita que una carga del plan
+        // del 14 quede colgada por una salida que terminó siendo del 13.
+        plan.filas.forEach(fila => {
+            if (!fila.cumplido || !fila.salidaId) return;
+            const sal = historial.find(h => h.id === fila.salidaId);
+            if (!sal || sal.fecha !== fecha) {
+                fila.cumplido = false;
+                fila.salidaId = null;
+                fila.cumplidoAt = null;
+                cambio = true;
+            }
+        });
+
         const salidasDia = historial.filter(h => (h.tipo || "SALIDA") === "SALIDA" && h.fecha === fecha);
         const yaMatcheadas = new Set();
         plan.filas.forEach(f => { if (f.salidaId) yaMatcheadas.add(f.salidaId); });
-        let cambio = false;
         plan.filas.forEach(fila => {
             if (fila.cumplido) return;
             const despFila = normDespacho(fila.despacho);

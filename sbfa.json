@@ -301,7 +301,7 @@
           "cto": "2602-3001",
           "mercaderia": "SOLVENT NAPTHTHA L",
           "receptor": "BRENNTAG",
-          "kgDeclarados": 100000,
+          "kgDeclarados": 102388,
           "tkDestino": "33",
           "sbfa": "26008SBFA815Y",
           "medic": "96",
@@ -334,7 +334,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-14T11:24:41.287Z"
+      "actualizadoTs": "2026-05-14T13:34:17.142Z"
     }
   ]
 }

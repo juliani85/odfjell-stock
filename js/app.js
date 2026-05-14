@@ -949,23 +949,67 @@ const GH = {
     async _enviarPlan() {
         if (!this._pendientePlan || this._enviandoPlan) return;
         this._enviandoPlan = true;
-        const planes = this._pendientePlan;
-        try {
-            const res = await this._ghLeer(this.filePlan);
-            this.shaPlan = res ? res.sha : null;
 
-            const datos = { planes, actualizado: new Date().toISOString() };
-            const out = await this._ghEscribir(this.filePlan, JSON.stringify(datos), this.shaPlan, `Actualizar plan ${new Date().toISOString().slice(0, 16)}`);
-            if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
-            if (out.nuevoSha) this.shaPlan = out.nuevoSha;
-            if (this._pendientePlan === planes) this._pendientePlan = null;
-        } catch (e) {
-            console.error('[GH sync plan]', e);
-            if (this._timerPlan) clearTimeout(this._timerPlan);
-            this._timerPlan = setTimeout(() => this._enviarPlan(), 5000);
-        } finally {
-            this._enviandoPlan = false;
+        // Merge-on-write con tombstones por fila. Sin esto, dos clientes con plan
+        // distinto en memoria se pisan en cada PUT. Caso real (2026-05-14): cleanup
+        // manual del proxy se revivía cuando otro cliente con plan stale guardaba.
+        //
+        // Cada fila tiene `modificadoTs` y, si fue eliminada, `eliminada:true` +
+        // `eliminadaTs`. El render filtra las eliminadas; al mergear, gana el ts
+        // más nuevo por key (tanque|despacho|horaCarga).
+        while (this._pendientePlan) {
+            const planes = this._pendientePlan;
+            try {
+                const res = await this._ghLeer(this.filePlan);
+                this.shaPlan = res ? res.sha : null;
+                const remoto = res ? (this._parseTexto(res) || {}) : {};
+                const planesRemoto = remoto.planes || {};
+
+                const keyFila = (f) => `${f.tanque || ""}|${(f.despacho || "").trim().toUpperCase().replace(/\s+/g, "")}|${f.horaCarga || ""}`;
+                const tsFila = (f) => f.eliminadaTs || f.modificadoTs || "";
+                const merged = {};
+                const fechas = new Set([...Object.keys(planesRemoto), ...Object.keys(planes)]);
+                for (const fecha of fechas) {
+                    const local = planes[fecha];
+                    const rem = planesRemoto[fecha];
+                    if (!local) { merged[fecha] = rem; continue; }
+                    if (!rem) { merged[fecha] = local; continue; }
+                    const byKey = new Map();
+                    const colocar = (fila) => {
+                        const k = keyFila(fila);
+                        const ex = byKey.get(k);
+                        if (!ex || tsFila(fila) > tsFila(ex)) byKey.set(k, fila);
+                    };
+                    (rem.filas || []).forEach(colocar);
+                    (local.filas || []).forEach(colocar);
+                    const localMod = local.modificadoTs || "";
+                    const remMod = rem.modificadoTs || "";
+                    const meta = remMod > localMod ? rem : local;
+                    merged[fecha] = { ...meta, filas: Array.from(byKey.values()) };
+                }
+
+                const datos = { ...remoto, planes: merged, actualizado: new Date().toISOString() };
+                const out = await this._ghEscribir(this.filePlan, JSON.stringify(datos), this.shaPlan, `Actualizar plan ${new Date().toISOString().slice(0, 16)}`);
+
+                if (out.status === 409 || out.status === 422) {
+                    console.warn('[GH sync plan] conflict, reintentando con remoto fresco');
+                    continue;
+                }
+                if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
+                if (out.nuevoSha) this.shaPlan = out.nuevoSha;
+                // El plan local en memoria se actualiza con el merged para que el cliente vea
+                // tombstones y cargas remotas que no tenía.
+                for (const f of Object.keys(merged)) planes[f] = merged[f];
+                if (this._pendientePlan === planes) this._pendientePlan = null;
+            } catch (e) {
+                console.error('[GH sync plan]', e);
+                this._enviandoPlan = false;
+                if (this._timerPlan) clearTimeout(this._timerPlan);
+                this._timerPlan = setTimeout(() => this._enviarPlan(), 5000);
+                return;
+            }
         }
+        this._enviandoPlan = false;
     }
 };
 
@@ -2564,7 +2608,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         }
 
         // Plan del día (estructura: planes[fechaISO].filas[])
-        const planDia = (typeof planes !== "undefined" && planes && planes[isoHoy] && planes[isoHoy].filas) || [];
+        const planDia = filasVisiblesPlan(typeof planes !== "undefined" && planes && planes[isoHoy]);
         let planHtml;
         if (!planDia.length) {
             planHtml = `<p style="color:#6b7280;font-style:italic">Sin plan de cargas para hoy.</p>`;
@@ -3598,14 +3642,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const badge = document.getElementById("badgePlanPendientes");
         if (!badge) return;
         const plan = planes[hoyISO()];
-        if (plan && plan.filas) {
-            const pend = plan.filas.filter(f => !f.cumplido).length;
-            if (pend > 0) {
-                badge.textContent = pend;
-                badge.classList.remove("hidden");
-            } else {
-                badge.classList.add("hidden");
-            }
+        const visibles = filasVisiblesPlan(plan);
+        const pend = visibles.filter(f => !f.cumplido).length;
+        if (pend > 0) {
+            badge.textContent = pend;
+            badge.classList.remove("hidden");
         } else {
             badge.classList.add("hidden");
         }
@@ -3616,9 +3657,12 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         let persistir = false;
         Object.values(planes).forEach(p => {
             if (!p || !p.filas) return;
-            const antes = p.filas.length;
-            p.filas = p.filas.filter(f => !despachoExcluidoDelPlan(f.despacho));
-            if (p.filas.length !== antes) persistir = true;
+            p.filas.forEach(f => {
+                if (!f.eliminada && despachoExcluidoDelPlan(f.despacho)) {
+                    eliminarFilaPlan(f);
+                    persistir = true;
+                }
+            });
         });
         if (autoMatchearPlan(fecha)) persistir = true;
         if (persistir) GH.guardarPlan(planes);
@@ -3627,22 +3671,23 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const resumen = document.getElementById("planResumen");
         if (!tbody) return;
 
-        if (!plan || !plan.filas || plan.filas.length === 0) {
+        const visibles = filasVisiblesPlan(plan);
+        if (visibles.length === 0) {
             tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>';
             if (resumen) resumen.classList.add("hidden");
             actualizarBadgePlan();
             return;
         }
 
-        const pendientes = plan.filas.filter(f => !f.cumplido).length;
-        const cumplidos = plan.filas.length - pendientes;
+        const pendientes = visibles.filter(f => !f.cumplido).length;
+        const cumplidos = visibles.length - pendientes;
 
         if (resumen) resumen.classList.remove("hidden");
-        document.getElementById("planTotalFilas").textContent = plan.filas.length;
+        document.getElementById("planTotalFilas").textContent = visibles.length;
         document.getElementById("planPendientes").textContent = pendientes;
         document.getElementById("planCumplidos").textContent = cumplidos;
 
-        const filasOrdenadas = [...plan.filas].sort((a, b) =>
+        const filasOrdenadas = [...visibles].sort((a, b) =>
             (a.horaCarga || "99:99").localeCompare(b.horaCarga || "99:99")
         );
 
@@ -3685,6 +3730,23 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return s;
     }
 
+    // Helpers de tombstones para sync multi-cliente del plan (ver _enviarPlan).
+    // Cualquier modificación a una fila debe marcarse con modificadoTs para que el merge
+    // last-write-wins funcione. Las "eliminaciones" son soft: se setea eliminada:true en
+    // lugar de sacar del array, así otros clientes con plan stale no las reviven.
+    function marcarFilaPlan(f) {
+        if (f) f.modificadoTs = new Date().toISOString();
+    }
+    function eliminarFilaPlan(f) {
+        if (!f) return;
+        f.eliminada = true;
+        f.eliminadaTs = new Date().toISOString();
+    }
+    function filasVisiblesPlan(plan) {
+        if (!plan || !plan.filas) return [];
+        return plan.filas.filter(f => !f.eliminada);
+    }
+
     // Despachos excluidos del plan de cargas a pedido de Julian.
     function despachoExcluidoDelPlan(desp) {
         return /REMO/i.test(String(desp || ""));
@@ -3697,6 +3759,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const plan = planes[f];
             if (!plan || !plan.filas) continue;
             const match = plan.filas.find(fi =>
+                !fi.eliminada &&
                 !fi.cumplido &&
                 fi.tanque === salida.tanque &&
                 (fi.producto || "").toUpperCase() === (salida.producto || "").toUpperCase() &&
@@ -3706,6 +3769,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 match.cumplido = true;
                 match.salidaId = salida.id;
                 match.cumplidoAt = new Date().toISOString();
+                marcarFilaPlan(match);
                 GH.guardarPlan(planes);
                 return match;
             }
@@ -3722,6 +3786,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     f.cumplido = false;
                     f.salidaId = null;
                     f.cumplidoAt = null;
+                    marcarFilaPlan(f);
                     cambio = true;
                 }
             });
@@ -3736,6 +3801,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             plan.filas.forEach(f => {
                 if (f.tanque === tanqueNum && f.despacho === despachoViejo) {
                     f.despacho = despachoNuevo;
+                    marcarFilaPlan(f);
                     cambio = true;
                 }
             });
@@ -3752,21 +3818,23 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         // de esta fecha (borrada o editada a otro día), la desmarcamos. Evita que una carga del plan
         // del 14 quede colgada por una salida que terminó siendo del 13.
         plan.filas.forEach(fila => {
+            if (fila.eliminada) return;
             if (!fila.cumplido || !fila.salidaId) return;
             const sal = historial.find(h => h.id === fila.salidaId);
             if (!sal || sal.fecha !== fecha) {
                 fila.cumplido = false;
                 fila.salidaId = null;
                 fila.cumplidoAt = null;
+                marcarFilaPlan(fila);
                 cambio = true;
             }
         });
 
         const salidasDia = historial.filter(h => (h.tipo || "SALIDA") === "SALIDA" && h.fecha === fecha);
         const yaMatcheadas = new Set();
-        plan.filas.forEach(f => { if (f.salidaId) yaMatcheadas.add(f.salidaId); });
+        plan.filas.forEach(f => { if (!f.eliminada && f.salidaId) yaMatcheadas.add(f.salidaId); });
         plan.filas.forEach(fila => {
-            if (fila.cumplido) return;
+            if (fila.eliminada || fila.cumplido) return;
             const despFila = normDespacho(fila.despacho);
             const match = salidasDia.find(s =>
                 !yaMatcheadas.has(s.id) &&
@@ -3778,6 +3846,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 fila.cumplido = true;
                 fila.salidaId = match.id;
                 fila.cumplidoAt = new Date().toISOString();
+                marcarFilaPlan(fila);
                 yaMatcheadas.add(match.id);
                 cambio = true;
             }
@@ -3792,8 +3861,10 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         // filasExistentes puede tener filas ya marcadas como cumplidas; transferimos ese estado
         // a filasNuevas por match 1-a-1 (tanque+despacho+horaCarga).
         filasNuevas = filasNuevas.filter(f => !despachoExcluidoDelPlan(f.despacho));
-        const existentesCumplidas = filasExistentes.filter(p => p.cumplido);
-        const existentesPendientes = filasExistentes.filter(p => !p.cumplido);
+        // Ignorar eliminadas para los matcheos (siguen como tombstones en el array final).
+        const existentesActivas = filasExistentes.filter(p => !p.eliminada);
+        const existentesCumplidas = existentesActivas.filter(p => p.cumplido);
+        const existentesPendientes = existentesActivas.filter(p => !p.cumplido);
         const usadas = new Set();
 
         for (const nueva of filasNuevas) {
@@ -3853,53 +3924,68 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const resumenPorFecha = {};
 
             for (const [fecha, info] of Object.entries(porFecha)) {
-                // 1. Aplicar anulaciones sobre filas existentes no cumplidas.
+                const filasActuales = (planes[fecha] && planes[fecha].filas) ? planes[fecha].filas : [];
+                const activas = filasActuales.filter(f => !f.eliminada);
+                const tombstonesPrevias = filasActuales.filter(f => f.eliminada);
+                const keyNorm = (f) => `${f.tanque}|${normDespacho(f.despacho)}|${f.horaCarga || ""}`;
+
+                // 1. Aplicar anulaciones explícitas del mail como tombstones (soft-delete in-place).
                 let anuladasAplicadas = 0;
                 let anuladasIgnoradas = 0;
-                let existentes = (planes[fecha] && planes[fecha].filas) ? planes[fecha].filas : [];
                 if (info.anuladas && info.anuladas.length > 0) {
-                    const restantes = [];
-                    for (const f of existentes) {
-                        const match = info.anuladas.find(a =>
-                            a.tanque === f.tanque &&
-                            normDespacho(a.despacho) === normDespacho(f.despacho)
+                    for (const a of info.anuladas) {
+                        const target = activas.find(f =>
+                            !f.eliminada &&
+                            f.tanque === a.tanque &&
+                            normDespacho(f.despacho) === normDespacho(a.despacho)
                         );
-                        if (match) {
-                            if (f.cumplido) {
-                                anuladasIgnoradas++;
-                                restantes.push(f);
-                            } else {
-                                anuladasAplicadas++;
-                            }
-                        } else {
-                            restantes.push(f);
-                        }
+                        if (!target) continue;
+                        if (target.cumplido) { anuladasIgnoradas++; continue; }
+                        eliminarFilaPlan(target);
+                        anuladasAplicadas++;
                     }
-                    existentes = restantes;
                 }
 
-                // 2. Merge de las filas a agregar.
-                let mergadas = mergearFilasPlan(existentes, info.filas);
+                // 2. Merge de las filas a agregar (Excel + incrementales).
+                const activasNoEliminadas = activas.filter(f => !f.eliminada);
+                let mergadas = mergearFilasPlan(activasNoEliminadas, info.filas);
 
-                // Si vino un Excel actualizado (reemplazo total), preservamos las CUMPLIDAS que ya
-                // no figuran en el Excel nuevo, para no perder el histórico del día.
+                // 3. Reconciliación con el Excel actualizado:
+                //    - Cumplidas existentes que no figuran en el Excel: se preservan.
+                //    - Pendientes existentes que no figuran: tombstone (era el bug del 14/05).
                 let cumplidasPreservadas = 0;
                 if (info.tieneExcel) {
-                    const keyNorm = (f) => `${f.tanque}|${normDespacho(f.despacho)}|${f.horaCarga || ""}`;
-                    const yaEstan = new Set(mergadas.map(keyNorm));
-                    const cumplidasPerdidas = existentes.filter(f => f.cumplido && !yaEstan.has(keyNorm(f)));
-                    cumplidasPreservadas = cumplidasPerdidas.length;
-                    if (cumplidasPerdidas.length > 0) mergadas = [...mergadas, ...cumplidasPerdidas];
+                    const enMergadas = new Set(mergadas.map(keyNorm));
+                    for (const f of activasNoEliminadas) {
+                        if (enMergadas.has(keyNorm(f))) continue;
+                        if (f.cumplido) {
+                            cumplidasPreservadas++;
+                            mergadas.push(f);
+                        } else {
+                            eliminarFilaPlan(f);
+                            mergadas.push(f); // queda como tombstone para que el merge multi-cliente lo respete
+                        }
+                    }
+                } else {
+                    // Sync incremental sin Excel: preservar todo lo activo que no matcheó.
+                    const enMergadas = new Set(mergadas.map(keyNorm));
+                    for (const f of activasNoEliminadas) {
+                        if (!enMergadas.has(keyNorm(f))) mergadas.push(f);
+                    }
                 }
 
+                // Mantener tombstones previas para que sigan propagándose.
+                mergadas.push(...tombstonesPrevias);
+
+                // Marcar modificadoTs en todas las filas activas (sin él el merge no las propaga).
                 mergadas.forEach(f => {
+                    if (!f.eliminada) marcarFilaPlan(f);
                     const tq = stock.find(t => t.tanque === f.tanque);
-                    if (tq && tq.producto) f.producto = tq.producto;
+                    if (tq && tq.producto && !f.eliminada) f.producto = tq.producto;
                 });
 
-                // Computar diff antes de sobreescribir planes[fecha].
-                const pendientesAntes = existentes.filter(f => !f.cumplido).length;
-                const pendientesAhora = mergadas.filter(f => !f.cumplido).length;
+                const pendientesAntes = activasNoEliminadas.filter(f => !f.cumplido).length;
+                const pendientesAhora = mergadas.filter(f => !f.eliminada && !f.cumplido).length;
 
                 planes[fecha] = {
                     filas: mergadas,
@@ -3907,8 +3993,10 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     filename: info.fuentes.map(s => s.filename).join(" | "),
                     importadoAt: new Date().toISOString(),
                     importadoPor: usuarioActual,
+                    modificadoTs: new Date().toISOString(),
                 };
                 autoMatchearPlan(fecha);
+                const totalActivas = mergadas.filter(f => !f.eliminada).length;
                 const detalles = [];
                 if (info.tieneExcel) {
                     const delta = pendientesAhora - pendientesAntes;
@@ -3916,13 +4004,13 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     detalles.push(`Excel actualizado · pendientes: ${signo}`);
                     if (cumplidasPreservadas > 0) detalles.push(`${cumplidasPreservadas} cumplidas preservadas`);
                 } else {
-                    const agregadas = mergadas.length - existentes.length;
+                    const agregadas = totalActivas - activasNoEliminadas.length;
                     if (agregadas > 0) detalles.push(`+${agregadas} nuevas`);
                 }
                 if (anuladasAplicadas > 0) detalles.push(`-${anuladasAplicadas} anuladas`);
                 if (anuladasIgnoradas > 0) detalles.push(`⚠ ${anuladasIgnoradas} anuladas ignoradas (ya cumplidas)`);
                 const sufijo = detalles.length > 0 ? ` (${detalles.join(", ")})` : "";
-                resumenPorFecha[fecha] = `${fecha.split("-").reverse().join("/")}: ${mergadas.length} total${sufijo}`;
+                resumenPorFecha[fecha] = `${fecha.split("-").reverse().join("/")}: ${totalActivas} total${sufijo}`;
             }
 
             GH.guardarPlan(planes);
@@ -3985,11 +4073,12 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     if (btnPlanImp) btnPlanImp.addEventListener("click", () => {
         const fecha = getFechaPlan();
         const plan = planes[fecha];
-        if (!plan || !plan.filas || plan.filas.length === 0) {
+        const visibles = filasVisiblesPlan(plan);
+        if (visibles.length === 0) {
             alert("No hay plan para imprimir en esta fecha.");
             return;
         }
-        const filasOrden = [...plan.filas].sort((a, b) =>
+        const filasOrden = [...visibles].sort((a, b) =>
             (a.horaCarga || "99:99").localeCompare(b.horaCarga || "99:99")
         );
         const filas = filasOrden.map(f => {
@@ -4009,7 +4098,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         <style>body{font-family:Arial,sans-serif;padding:2rem}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;font-size:0.85rem}th{background:#f0f0f0;text-align:left}</style>
         </head><body>
         <h2>Odfjell Terminals Tagsa SA - Campana</h2>
-        <p>Plan de Cargas del ${fecha.split("-").reverse().join("/")} — ${plan.filas.length} cargas</p>
+        <p>Plan de Cargas del ${fecha.split("-").reverse().join("/")} — ${visibles.length} cargas</p>
         <table><thead><tr><th></th><th>Hora</th><th>Tanque</th><th>Producto</th><th>Cliente</th><th>Despacho</th><th>Buque/Viaje</th></tr></thead>
         <tbody>${filas}</tbody></table>
         </body></html>`;

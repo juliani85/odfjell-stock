@@ -1485,10 +1485,27 @@ async function initApp() {
                 }
                 if (tanquesConViejo.length > 1) {
                     const otrosTks = tanquesConViejo.filter(t => t.tanque !== tanqueActual.tanque).map(t => `TK ${t.tanque}`).join(", ");
-                    const propagar = confirm(`Este despacho también está en ${otrosTks}.\n\n"${viejo}" → "${nuevo}"\n\n¿Renombrarlo también en los demás tanques?\n\n• Aceptar = renombrar en TODOS\n• Cancelar = renombrar SOLO en TK ${tanqueActual.tanque}`);
-                    window._renombrarSoloEnEste = !propagar;
+                    elegirAlcanceRenombrar(viejo, nuevo, otrosTks, tanqueActual.tanque, (alcance) => {
+                        // alcance: "todos" | "soloEste" | "cancelar"
+                        if (alcance === "cancelar") {
+                            window._confirmarAccion = confirmarRenombrar;
+                            return;
+                        }
+                        ejecutarRenombrar(alcance === "soloEste");
+                    });
+                    return;
                 }
             }
+
+            ejecutarRenombrar(false);
+        };
+
+        const ejecutarRenombrar = (soloEnEste) => {
+            const inpN = document.getElementById(inputNombreId);
+            const inpK = document.getElementById(inputKilosId);
+            const nuevo = (inpN.value || "").trim().toUpperCase();
+            const kilos = parseInt(inpK.value) || 0;
+            const esSplit = kilos < stockViejo;
 
             modal.classList.add("hidden");
             document.getElementById("btnConfirmar").textContent = "Confirmar";
@@ -1501,8 +1518,6 @@ async function initApp() {
                 guardarDatos();
                 mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");
             } else {
-                const soloEnEste = window._renombrarSoloEnEste === true;
-                window._renombrarSoloEnEste = false;
                 const tks = renombrarDespachoEnStock(tanqueActual, viejo, nuevo, soloEnEste ? tanqueActual.tanque : null);
                 const dondeTxt = tks.length > 1 ? ` en ${tks.length} tanques (TK ${tks.join(", TK ")})` : ` en TK ${tks[0] || tanqueActual.tanque}`;
                 mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"`, "success");
@@ -4514,6 +4529,41 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     function mostrarAlerta(msg, tipo) { alerta.textContent = msg; alerta.className = `alerta ${tipo}`; }
 
     // Modal de confirmación centrado (reemplazo de confirm() nativo)
+    function elegirAlcanceRenombrar(viejo, nuevo, otrosTks, tkActual, callback) {
+        const modal = document.getElementById("modalInfo");
+        if (!modal) {
+            const ok = confirm(`Este despacho también está en ${otrosTks}.\n"${viejo}" → "${nuevo}"\n\nAceptar = todos, Cancelar = solo TK ${tkActual}`);
+            callback(ok ? "todos" : "soloEste");
+            return;
+        }
+        document.getElementById("modalInfoTitulo").textContent = "Renombrar despacho";
+        document.getElementById("modalInfoBody").innerHTML = `
+            <p style="margin:0 0 0.6rem;line-height:1.5">Este despacho también está en <strong>${otrosTks}</strong>.</p>
+            <p style="margin:0;line-height:1.5">"<code>${viejo}</code>" → "<code>${nuevo}</code>"</p>
+            <p style="margin:0.6rem 0 0;line-height:1.5">¿Dónde querés aplicar el cambio?</p>
+        `;
+        const actions = modal.querySelector(".modal-actions");
+        const accionesPrev = actions.innerHTML;
+        actions.innerHTML = `
+            <button class="btn btn-primary" id="btnRenAlcTodos">Renombrar en TODOS</button>
+            <button class="btn btn-secondary" id="btnRenAlcSolo">Solo en TK ${tkActual}</button>
+            <button class="btn btn-danger" id="btnRenAlcCancel">Cancelar</button>
+        `;
+        modal.classList.remove("hidden");
+        const cerrar = (alcance) => {
+            modal.classList.add("hidden");
+            actions.innerHTML = accionesPrev;
+            document.removeEventListener("keydown", esc);
+            callback(alcance);
+        };
+        const esc = (e) => { if (e.key === "Escape") cerrar("cancelar"); };
+        document.getElementById("btnRenAlcTodos").addEventListener("click", () => cerrar("todos"));
+        document.getElementById("btnRenAlcSolo").addEventListener("click", () => cerrar("soloEste"));
+        document.getElementById("btnRenAlcCancel").addEventListener("click", () => cerrar("cancelar"));
+        document.addEventListener("keydown", esc);
+        document.getElementById("btnRenAlcTodos").focus();
+    }
+
     function mostrarModalConfirm(mensaje, titulo, onConfirm) {
         const modal = document.getElementById("modalInfo");
         if (!modal) { if (window.confirm(mensaje)) onConfirm(); return; }

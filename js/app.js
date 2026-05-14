@@ -5421,8 +5421,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
             const dif = res - decl;
-            return `${f.cto || f.solPart || "—"} (${f.mercaderia || "s/d"}, dif. ${dif > 0 ? "+" : ""}${fmt(dif)} kg)`;
-        }).join("; ");
+            return `<li>${f.cto || f.solPart || "—"} (${f.mercaderia || "s/d"}, dif. ${dif > 0 ? "+" : ""}${fmt(dif)} kg)</li>`;
+        }).join("");
 
         const html = `<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><title>Informe SBFA — ${d.buque} — MANI ${d.manifiesto}</title>
@@ -5740,7 +5740,8 @@ FIRMA DENUNCIANTE/S:
 <p>Finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T del asunto (MANI N° ${d.manifiesto}, descargado el ${sbfaFmtFechaLarga(d.fecha)}), resultó como se detalla en hoja adjunta.</p>
 
 ${fueraTol.length ? `
-<p>Tal como se puede observar del citado detalle, <strong>${fueraTol.length} conocimiento(s) se hallan fuera de la tolerancia de ley</strong> establecida por el punto 12.1, Anexo II de la Resolución 2220/1990: ${listaFueras}.</p>` : `
+<p>Tal como se puede observar del citado detalle, <strong>${fueraTol.length} conocimiento(s) se hallan fuera de la tolerancia de ley</strong> establecida por el punto 12.1, Anexo II de la Resolución 2220/1990:</p>
+<ul style="margin:0.3rem 0 0.6rem 1.4rem;padding:0">${listaFueras}</ul>` : `
 <p>Tal como se puede observar del citado detalle, los conocimientos se hallan dentro de la tolerancia de ley establecida por el punto 12.1, Anexo II de la Resolución 2220/1990.</p>`}
 
 <p>Respecto a los conocimientos que se hallan dentro de la tolerancia indicada, de acuerdo a instrucciones emanadas verbalmente por esa jefatura, se procedió a justificar y presentar, respectivamente en el SIM, los SB/FA generadas por la permisionaria.</p>

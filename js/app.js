@@ -5348,7 +5348,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     <th class="num">${fmt(subRes)}</th>
                     <th class="num">${fmt(subDif)}</th>
                     <th class="num">${fmtPct(subPct)}</th>
-                </tr>`;
+                </tr>
+                <tr class="separador"><td colspan="11"></td></tr>`;
             }
             subDecl = 0; subRes = 0; subCount = 0;
         };
@@ -5450,6 +5451,7 @@ table tr.fuera td { background: #fee2e2; }
 table tr.fuera td.num { color: #b91c1c; font-weight: bold; }
 table tr.subtotal th { background: #fef3c7; font-weight: bold; font-size: 8pt; border-top: 1.5px solid #000; }
 table tr.subtotal th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table tr.separador td { border: none; height: 10px; padding: 0; background: #fff; }
 .recuadro { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; }
 .recuadro > div { padding: 4px 8px; border-right: 1px solid #000; }
 .recuadro > div:last-child { border-right: none; }
@@ -5589,7 +5591,7 @@ Sobrante / Faltante a la descarga.
 </thead>
 <tbody>
 <tr>
-<td>B/T ${d.buque || ""}</td>
+<td>Ribera del Río Paraná km. 93,4</td>
 <td>Campana</td>
 <td>Buenos Aires</td>
 <td style="text-align:center"></td>
@@ -5633,8 +5635,8 @@ RATIFICA DENUNCIA: SI <span class="ch-box checked" style="margin:0 4px">X</span>
 <thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
 <tbody>
 <tr><td>IGLESIAS, JULIAN</td><td>DNI L30388-7</td><td>Luis Costa 651 — Campana</td></tr>
-<tr><td>ESCALANTE, CESAR</td><td>DNI 25929-2</td><td></td></tr>
-<tr><td>ROMANO, CLAUDIA</td><td>DNI 25549-1</td><td></td></tr>
+<tr><td>ESCALANTE, CESAR</td><td>DNI 25929-2</td><td>Luis Costa 651 — Campana</td></tr>
+<tr><td>ROMANO, CLAUDIA</td><td>DNI 25549-1</td><td>Luis Costa 651 — Campana</td></tr>
 </tbody>
 </table>
 

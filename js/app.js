@@ -3970,6 +3970,15 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 const tombstonesPrevias = filasActuales.filter(f => f.eliminada);
                 const keyNorm = (f) => `${f.tanque}|${normDespacho(f.despacho)}|${f.horaCarga || ""}`;
 
+                // Descartar del Excel/incrementales las filas cuya key ya está tombstoneada
+                // localmente. Esto evita oscilación cuando un mail viejo trae cargas que se
+                // anularon explícitamente (ej: el primer Excel del día con cargas FISCAL que
+                // el Excel actualizado reemplazó).
+                const tombKeys = new Set(tombstonesPrevias.map(keyNorm));
+                if (tombKeys.size > 0) {
+                    info.filas = info.filas.filter(f => !tombKeys.has(keyNorm(f)));
+                }
+
                 // 1. Aplicar anulaciones explícitas del mail como tombstones (soft-delete in-place).
                 let anuladasAplicadas = 0;
                 let anuladasIgnoradas = 0;

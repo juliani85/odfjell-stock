@@ -3689,7 +3689,13 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     function actualizarBadgePlan() {
         const badge = document.getElementById("badgePlanPendientes");
         if (!badge) return;
-        const plan = planes[hoyISO()];
+        const fecha = hoyISO();
+        // Auto-match antes de contar para que el badge no muestre pendientes que ya tienen
+        // salida hecha (evita el "blink" inicial: badge dice 4, abrís el plan y muestra 3).
+        if (planes[fecha] && autoMatchearPlan(fecha)) {
+            GH.guardarPlan(planes);
+        }
+        const plan = planes[fecha];
         const visibles = filasVisiblesPlan(plan);
         const pend = visibles.filter(f => !f.cumplido).length;
         if (pend > 0) {

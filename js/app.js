@@ -5329,17 +5329,45 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const totDapDif = totDapRes - totDoc;
         const totDapPct = totDoc > 0 ? totDapDif / totDoc * 100 : 0;
 
-        const filasHtml = filas.map(f => {
+        // Planilla agrupada por producto: ordena alfabéticamente por mercaderia y
+        // agrega un subtotal por grupo (kg declarados / resultantes / dif / %).
+        const filasOrdenadas = filas.slice().sort((a, b) =>
+            String(a.mercaderia || "").localeCompare(String(b.mercaderia || ""))
+        );
+        let filasHtml = "";
+        let grupoActual = null;
+        let subDecl = 0, subRes = 0, subCount = 0;
+        const cerrarGrupo = () => {
+            if (subCount > 0) {
+                const subDif = subRes - subDecl;
+                const subPct = subDecl > 0 ? subDif / subDecl * 100 : 0;
+                filasHtml += `<tr class="subtotal">
+                    <th colspan="4" style="text-align:right">SUBTOTAL ${grupoActual || ""}</th>
+                    <th class="num">${fmt(subDecl)}</th>
+                    <th colspan="3"></th>
+                    <th class="num">${fmt(subRes)}</th>
+                    <th class="num">${fmt(subDif)}</th>
+                    <th class="num">${fmtPct(subPct)}</th>
+                </tr>`;
+            }
+            subDecl = 0; subRes = 0; subCount = 0;
+        };
+        filasOrdenadas.forEach(f => {
+            const prod = (f.mercaderia || "").trim();
+            if (prod !== grupoActual) {
+                cerrarGrupo();
+                grupoActual = prod;
+            }
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
             const dif = res - decl;
             const pct = decl > 0 ? dif / decl * 100 : 0;
             const fuera = decl > 0 && res > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
-            const cls = fuera ? "fuera" : "";
-            return `<tr class="${cls}">
+            subDecl += decl; subRes += res; subCount++;
+            filasHtml += `<tr class="${fuera ? "fuera" : ""}">
                 <td>${f.solPart || ""}</td>
                 <td>${f.cto || ""}</td>
-                <td>${f.mercaderia || ""}</td>
+                <td>${prod}</td>
                 <td>${f.receptor || ""}</td>
                 <td class="num">${fmt(decl)}</td>
                 <td>${f.tkDestino || ""}</td>
@@ -5349,7 +5377,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 <td class="num">${fmt(dif)}</td>
                 <td class="num">${fmtPct(pct)}</td>
             </tr>`;
-        }).join("");
+        });
+        cerrarGrupo();
 
         const dapHtml = dap.map(x => {
             const doc = Number(x.cantDoctada) || 0;
@@ -5419,6 +5448,8 @@ table tfoot th { background: #f3f4f6; font-weight: bold; text-align: right; }
 table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 table tr.fuera td { background: #fee2e2; }
 table tr.fuera td.num { color: #b91c1c; font-weight: bold; }
+table tr.subtotal th { background: #fef3c7; font-weight: bold; font-size: 8pt; border-top: 1.5px solid #000; }
+table tr.subtotal th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .recuadro { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; }
 .recuadro > div { padding: 4px 8px; border-right: 1px solid #000; }
 .recuadro > div:last-child { border-right: none; }
@@ -5530,9 +5561,9 @@ ${actaHeaderHtml(numeroNota, anioNota)}
 </div>
 
 <div class="acta-checks">
-<div class="ch"><span class="ch-box"></span> COMPARENDO PERSONAL</div>
+<div class="ch"><span class="ch-box checked">X</span> COMPARENDO PERSONAL</div>
 <div class="ch"><span class="ch-box"></span> TELEFÓNICA</div>
-<div class="ch"><span class="ch-box checked">X</span> DE OFICIO</div>
+<div class="ch"><span class="ch-box"></span> DE OFICIO</div>
 <div class="ch"><span class="ch-box"></span> SE AGREGA</div>
 <div class="ch"><span class="ch-box"></span> ANÓNIMA</div>
 <div class="ch"><span class="ch-box"></span> POSTAL</div>
@@ -5542,9 +5573,7 @@ ${actaHeaderHtml(numeroNota, anioNota)}
 
 <div class="acta-section-title">RELACIÓN DEL/LOS HECHO/S DENUNCIADO/S:</div>
 <div class="acta-relacion">
-Quien suscribe, agente <strong>IGLESIAS, JULIAN</strong> — Legajo 30388-7, destacado como medidor en el Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA, Campana — denuncia que: finalizada la descarga e ingreso a depósito fiscal de la mercadería arribada en el B/T <strong>${d.buque}</strong>, MANI N° <strong>${d.manifiesto || "(pendiente)"}</strong>, fecha de descarga <strong>${fechaDescarga}</strong>, se constataron diferencias entre los kilos declarados y los kilos resultantes de la medición en tanque que <strong>exceden la tolerancia legal de ±${fmtPct(SBFA_TOLERANCIA_PCT)}</strong> establecida en el punto 12.1, Anexo II de la Resolución 2220/1990, conforme detalle adjunto.
-${fueraTol.length ? `<br><br>Conocimientos fuera de tolerancia (${fueraTol.length}): ${listaFueras}.` : ""}
-<br><br>Se invoca el art. 956 y ss. del Código Aduanero (Ley 22.415) a fin de que se disponga el curso de acción correspondiente.
+Sobrante / Faltante a la descarga.
 </div>
 
 <div class="acta-section-title">LUGAR EN QUE OCURREN:</div>
@@ -5560,13 +5589,12 @@ ${fueraTol.length ? `<br><br>Conocimientos fuera de tolerancia (${fueraTol.lengt
 </thead>
 <tbody>
 <tr>
-<td>Depósito Fiscal TAGSA — Odfjell Terminals Tagsa SA</td>
+<td>B/T ${d.buque || ""}</td>
 <td>Campana</td>
 <td>Buenos Aires</td>
 <td style="text-align:center"></td>
 <td style="text-align:center">X</td>
 </tr>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
 </tbody>
 </table>
 
@@ -5574,9 +5602,7 @@ ${fueraTol.length ? `<br><br>Conocimientos fuera de tolerancia (${fueraTol.lengt
 <table class="acta-tabla">
 <thead><tr><th style="width:35%">APELLIDOS Y NOMBRES O RAZÓN SOCIAL</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
 <tbody>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td>Agencia ${d.agencia || ""}</td><td>CUIT ${d.cuit || ""}</td><td></td></tr>
 </tbody>
 </table>
 
@@ -5584,7 +5610,6 @@ ${fueraTol.length ? `<br><br>Conocimientos fuera de tolerancia (${fueraTol.lengt
 <table class="acta-tabla">
 <thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
 <tbody>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
 <tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
 </tbody>
 </table>
@@ -5607,8 +5632,9 @@ RATIFICA DENUNCIA: SI <span class="ch-box checked" style="margin:0 4px">X</span>
 <table class="acta-tabla" style="margin-top:0.4rem">
 <thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
 <tbody>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
-<tr><td class="vacio"></td><td class="vacio"></td><td class="vacio"></td></tr>
+<tr><td>IGLESIAS, JULIAN</td><td>DNI L30388-7</td><td>Luis Costa 651 — Campana</td></tr>
+<tr><td>ESCALANTE, CESAR</td><td>DNI 25929-2</td><td></td></tr>
+<tr><td>ROMANO, CLAUDIA</td><td>DNI 25549-1</td><td></td></tr>
 </tbody>
 </table>
 

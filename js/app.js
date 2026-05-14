@@ -672,12 +672,19 @@ async function obtenerPlanesDesdeGmail(token) {
             tieneExcel: false,
         };
 
-        // filasAgregar de un mail formal con Excel ya están dentro de filasExcel (los bloques del cuerpo de mails con Excel
-        // suelen repetir lo del adjunto). Para no duplicar, si este mail trajo Excel, sólo guardamos filasExcel y descartamos
-        // las filasAgregar del cuerpo (el Excel es la verdad). Si NO trajo Excel, las filasAgregar son agregados reales.
-        if (filasExcel.length > 0) {
-            // Nuevo Excel: pisa al anterior y resetea las incrementales previas (el plan actualizado las contempla).
-            porFecha[fecha].filasExcel = filasExcel;
+        // Detectar si este mail trae un "plan completo" (Excel adjunto o tabla pegada con
+        // muchas filas) vs. agregados incrementales sueltos ("se agrega una carga…"):
+        //   - Excel adjunto → siempre reemplazo total.
+        //   - Mail formal sin adjunto pero con >= 3 filas en cuerpo → reemplazo total
+        //     (caso: "Reenviamos el plan actualizado" con la tabla pegada).
+        //   - Mail formal con < 3 filas en cuerpo, o mail informal → incremental.
+        const UMBRAL_REEMPLAZO_TOTAL = 3;
+        const esReemplazoTotal = filasExcel.length > 0
+            || (esPlanFormal && filasAgregar.length >= UMBRAL_REEMPLAZO_TOTAL);
+
+        if (esReemplazoTotal) {
+            const fuenteFilas = filasExcel.length > 0 ? filasExcel : filasAgregar;
+            porFecha[fecha].filasExcel = fuenteFilas;
             porFecha[fecha].filasIncrementales = [];
             porFecha[fecha].tieneExcel = true;
         } else {

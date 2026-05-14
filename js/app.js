@@ -967,6 +967,32 @@ const GH = {
 
                 const keyFila = (f) => `${f.tanque || ""}|${(f.despacho || "").trim().toUpperCase().replace(/\s+/g, "")}|${f.horaCarga || ""}`;
                 const tsFila = (f) => f.eliminadaTs || f.modificadoTs || "";
+                // Multiset merge por key: si la misma (tanque, despacho, hora) aparece N veces en
+                // un lado y M en el otro, se conservan max(N, M) filas (no colapsamos duplicados;
+                // dos camiones del mismo slot son válidos).
+                const mergeFilas = (locales, remotas) => {
+                    const mapL = new Map(), mapR = new Map();
+                    for (const f of locales) {
+                        const k = keyFila(f); if (!mapL.has(k)) mapL.set(k, []); mapL.get(k).push(f);
+                    }
+                    for (const f of remotas) {
+                        const k = keyFila(f); if (!mapR.has(k)) mapR.set(k, []); mapR.get(k).push(f);
+                    }
+                    const allKeys = new Set([...mapL.keys(), ...mapR.keys()]);
+                    const out = [];
+                    for (const k of allKeys) {
+                        const arrL = (mapL.get(k) || []).slice().sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
+                        const arrR = (mapR.get(k) || []).slice().sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
+                        const n = Math.max(arrL.length, arrR.length);
+                        for (let i = 0; i < n; i++) {
+                            const cL = arrL[i], cR = arrR[i];
+                            if (!cL) { out.push(cR); continue; }
+                            if (!cR) { out.push(cL); continue; }
+                            out.push(tsFila(cL) > tsFila(cR) ? cL : cR);
+                        }
+                    }
+                    return out;
+                };
                 const merged = {};
                 const fechas = new Set([...Object.keys(planesRemoto), ...Object.keys(planes)]);
                 for (const fecha of fechas) {
@@ -974,18 +1000,10 @@ const GH = {
                     const rem = planesRemoto[fecha];
                     if (!local) { merged[fecha] = rem; continue; }
                     if (!rem) { merged[fecha] = local; continue; }
-                    const byKey = new Map();
-                    const colocar = (fila) => {
-                        const k = keyFila(fila);
-                        const ex = byKey.get(k);
-                        if (!ex || tsFila(fila) > tsFila(ex)) byKey.set(k, fila);
-                    };
-                    (rem.filas || []).forEach(colocar);
-                    (local.filas || []).forEach(colocar);
                     const localMod = local.modificadoTs || "";
                     const remMod = rem.modificadoTs || "";
                     const meta = remMod > localMod ? rem : local;
-                    merged[fecha] = { ...meta, filas: Array.from(byKey.values()) };
+                    merged[fecha] = { ...meta, filas: mergeFilas(local.filas || [], rem.filas || []) };
                 }
 
                 const datos = { ...remoto, planes: merged, actualizado: new Date().toISOString() };

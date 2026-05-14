@@ -981,11 +981,34 @@ const GH = {
                     const allKeys = new Set([...mapL.keys(), ...mapR.keys()]);
                     const out = [];
                     for (const k of allKeys) {
-                        const arrL = (mapL.get(k) || []).slice().sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
-                        const arrR = (mapR.get(k) || []).slice().sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
-                        const n = Math.max(arrL.length, arrR.length);
+                        const arrL = mapL.get(k) || [];
+                        const arrR = mapR.get(k) || [];
+                        const todas = [...arrL, ...arrR];
+                        // Si para esta key hay alguna eliminada cuyo eliminadaTs es > todos los modificadoTs
+                        // activos, la key entera está "eliminada": guardo UN solo tombstone canónico.
+                        const elimMax = todas
+                            .filter(f => f.eliminada)
+                            .map(f => f.eliminadaTs || "")
+                            .sort()
+                            .pop() || "";
+                        const modMax = todas
+                            .filter(f => !f.eliminada)
+                            .map(f => f.modificadoTs || "")
+                            .sort()
+                            .pop() || "";
+                        if (elimMax && elimMax > modMax) {
+                            const canon = todas.find(f => f.eliminada && (f.eliminadaTs || "") === elimMax);
+                            out.push(canon);
+                            continue;
+                        }
+                        // Activa: multiset merge — conservamos max(N, M) ocurrencias (sin contar
+                        // tombstones), ganador por modificadoTs. Si alguna tombstone tiene ts viejo,
+                        // se descarta (la key ahora está reactivada por una activa más nueva).
+                        const actL = arrL.filter(f => !f.eliminada).sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
+                        const actR = arrR.filter(f => !f.eliminada).sort((a, b) => tsFila(b).localeCompare(tsFila(a)));
+                        const n = Math.max(actL.length, actR.length);
                         for (let i = 0; i < n; i++) {
-                            const cL = arrL[i], cR = arrR[i];
+                            const cL = actL[i], cR = actR[i];
                             if (!cL) { out.push(cR); continue; }
                             if (!cR) { out.push(cL); continue; }
                             out.push(tsFila(cL) > tsFila(cR) ? cL : cR);

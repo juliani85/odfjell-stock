@@ -4171,6 +4171,24 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             }
         }, 30000);
 
+        // Polling del plan remoto cada 30s: si otro cliente (o un cleanup manual)
+        // modifica plan.json en el server, traemos esa versión y reemplazamos la local.
+        // Evita que el cliente quede con un plan stale en memoria mientras el server tiene
+        // tombstones para esas filas (caso del 14/05 cuando el cliente seguía mostrando
+        // 19 cargas activas aunque el server las descartaba al subir).
+        setInterval(async () => {
+            if (GH._enviandoPlan || GH._pendientePlan) return;
+            const remoto = await GH.cargarPlan();
+            if (!remoto) return;
+            const fechaSel = getFechaPlan ? getFechaPlan() : null;
+            const filasAntes = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
+            planes = remoto;
+            const filasDespues = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
+            if (filasAntes !== filasDespues) {
+                renderPlan();
+            }
+        }, 30000);
+
         // --- BARCOS: tracking AIS ---
         inicializarBarcos();
 

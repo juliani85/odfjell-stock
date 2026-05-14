@@ -678,7 +678,7 @@ async function obtenerPlanesDesdeGmail(token) {
         //   - Mail formal sin adjunto pero con >= 3 filas en cuerpo → reemplazo total
         //     (caso: "Reenviamos el plan actualizado" con la tabla pegada).
         //   - Mail formal con < 3 filas en cuerpo, o mail informal → incremental.
-        const UMBRAL_REEMPLAZO_TOTAL = 3;
+        const UMBRAL_REEMPLAZO_TOTAL = 2;
         const esReemplazoTotal = filasExcel.length > 0
             || (esPlanFormal && filasAgregar.length >= UMBRAL_REEMPLAZO_TOTAL);
 
@@ -704,6 +704,31 @@ async function obtenerPlanesDesdeGmail(token) {
     for (const fecha of Object.keys(porFecha)) {
         const p = porFecha[fecha];
         p.filas = [...p.filasExcel, ...p.filasIncrementales];
+
+        // Defensa anti-duplicación FISCAL: si para una misma fecha y mismo tanque hay cargas
+        // con despacho real Y cargas con despacho "FISCAL", descartamos las FISCAL — son del
+        // Excel viejo del día (cuando aún no había despacho asignado) que el Excel actualizado
+        // reemplazó. Excepción: tanques que solo tienen FISCAL en el sync se respetan
+        // (ej: TK 025 DALGAR siempre carga FISCAL).
+        const tanquesConDespachoReal = new Set();
+        for (const f of p.filas) {
+            const desp = (f.despacho || "").toUpperCase().trim();
+            if (desp && desp !== "FISCAL" && !despachoExcluidoDelPlan(desp)) {
+                tanquesConDespachoReal.add(f.tanque);
+            }
+        }
+        if (tanquesConDespachoReal.size > 0) {
+            const antes = p.filas.length;
+            p.filas = p.filas.filter(f => {
+                const desp = (f.despacho || "").toUpperCase().trim();
+                if (desp === "FISCAL" && tanquesConDespachoReal.has(f.tanque)) {
+                    return false;
+                }
+                return true;
+            });
+            const removidas = antes - p.filas.length;
+            if (removidas > 0) console.log(`[plan] ${fecha}: descartadas ${removidas} carga(s) FISCAL en tanques con despacho real`);
+        }
     }
 
     if (Object.keys(porFecha).length === 0) {

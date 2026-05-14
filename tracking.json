@@ -1,30 +1,6 @@
 {
-  "actualizado": "2026-05-14T12:11:30.923075Z",
+  "actualizado": "2026-05-14T14:43:48.984470Z",
   "barcos": {
-    "9367554": {
-      "estado": "en_puerto",
-      "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-05-13T08:36:00Z",
-      "calado_m": 6.6,
-      "nav_status": "Moored",
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9367554",
-      "nombre": "BOW CAROLINE"
-    },
-    "9114244": {
-      "estado": "en_route",
-      "destino": "Rosario, Argentina",
-      "velocidad_nudos": 9.7,
-      "eta": "2026-05-13T20:00:00Z",
-      "calado_m": 7.6,
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9114244",
-      "nombre": "BOW CARDINAL"
-    },
     "9250751": {
       "estado": "en_puerto",
       "puerto_actual": "Rio de Janeiro, Brazil",

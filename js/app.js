@@ -582,8 +582,20 @@ async function obtenerPlanesDesdeGmail(token) {
     const porFecha = {};
     const descartados = [];
     console.log(`[plan] ${candidates.length} candidatos encontrados en Gmail (cuenta: ${profileEmail})`);
+
+    // Bajamos los mails completos y los ordenamos por internalDate ASCENDENTE.
+    // Así, si para una misma fecha llegan varios mails con Excel, el último (cronológicamente
+    // más nuevo) pisa al anterior — es el "plan actualizado/reenvío". Los mails "se agrega/retira"
+    // sin Excel que vinieron DESPUÉS del último Excel se suman; los previos se descartan porque
+    // el Excel actualizado ya los contempla.
+    const mailsFull = [];
     for (const msgRef of candidates) {
-        const msg = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
+        const m = await gmailGet(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${msgRef.id}?format=full`, token);
+        mailsFull.push({ ref: msgRef, msg: m });
+    }
+    mailsFull.sort((a, b) => parseInt(a.msg.internalDate || "0", 10) - parseInt(b.msg.internalDate || "0", 10));
+
+    for (const { ref: msgRef, msg } of mailsFull) {
         const subject = ((msg.payload.headers || []).find(h => h.name.toLowerCase() === "subject")?.value || "").trim();
         const esPlanFormal = /plan\s+de\s+cargas?/i.test(subject);
 
@@ -652,8 +664,25 @@ async function obtenerPlanesDesdeGmail(token) {
             continue;
         }
 
-        if (!porFecha[fecha]) porFecha[fecha] = { filas: [], anuladas: [], fuentes: [] };
-        porFecha[fecha].filas.push(...filasExcel, ...filasAgregar);
+        if (!porFecha[fecha]) porFecha[fecha] = {
+            filasExcel: [],          // siempre = filas del ÚLTIMO mail con Excel (pisa al anterior)
+            filasIncrementales: [],  // mails informales ("se agrega…") posteriores al último Excel
+            anuladas: [],
+            fuentes: [],
+            tieneExcel: false,
+        };
+
+        // filasAgregar de un mail formal con Excel ya están dentro de filasExcel (los bloques del cuerpo de mails con Excel
+        // suelen repetir lo del adjunto). Para no duplicar, si este mail trajo Excel, sólo guardamos filasExcel y descartamos
+        // las filasAgregar del cuerpo (el Excel es la verdad). Si NO trajo Excel, las filasAgregar son agregados reales.
+        if (filasExcel.length > 0) {
+            // Nuevo Excel: pisa al anterior y resetea las incrementales previas (el plan actualizado las contempla).
+            porFecha[fecha].filasExcel = filasExcel;
+            porFecha[fecha].filasIncrementales = [];
+            porFecha[fecha].tieneExcel = true;
+        } else {
+            porFecha[fecha].filasIncrementales.push(...filasAgregar);
+        }
         porFecha[fecha].anuladas.push(...filasAnular);
         porFecha[fecha].fuentes.push({
             asunto: subject,
@@ -662,6 +691,12 @@ async function obtenerPlanesDesdeGmail(token) {
             agregarRows: filasAgregar.length,
             anularRows: filasAnular.length,
         });
+    }
+
+    // Consolidación final: para cada fecha, info.filas = último Excel + incrementales posteriores.
+    for (const fecha of Object.keys(porFecha)) {
+        const p = porFecha[fecha];
+        p.filas = [...p.filasExcel, ...p.filasIncrementales];
     }
 
     if (Object.keys(porFecha).length === 0) {
@@ -3829,12 +3864,27 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 }
 
                 // 2. Merge de las filas a agregar.
-                const mergadas = mergearFilasPlan(existentes, info.filas);
+                let mergadas = mergearFilasPlan(existentes, info.filas);
+
+                // Si vino un Excel actualizado (reemplazo total), preservamos las CUMPLIDAS que ya
+                // no figuran en el Excel nuevo, para no perder el histórico del día.
+                let cumplidasPreservadas = 0;
+                if (info.tieneExcel) {
+                    const keyNorm = (f) => `${f.tanque}|${normDespacho(f.despacho)}|${f.horaCarga || ""}`;
+                    const yaEstan = new Set(mergadas.map(keyNorm));
+                    const cumplidasPerdidas = existentes.filter(f => f.cumplido && !yaEstan.has(keyNorm(f)));
+                    cumplidasPreservadas = cumplidasPerdidas.length;
+                    if (cumplidasPerdidas.length > 0) mergadas = [...mergadas, ...cumplidasPerdidas];
+                }
 
                 mergadas.forEach(f => {
                     const tq = stock.find(t => t.tanque === f.tanque);
                     if (tq && tq.producto) f.producto = tq.producto;
                 });
+
+                // Computar diff antes de sobreescribir planes[fecha].
+                const pendientesAntes = existentes.filter(f => !f.cumplido).length;
+                const pendientesAhora = mergadas.filter(f => !f.cumplido).length;
 
                 planes[fecha] = {
                     filas: mergadas,
@@ -3844,9 +3894,16 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     importadoPor: usuarioActual,
                 };
                 autoMatchearPlan(fecha);
-                const agregadas = mergadas.length - existentes.length;
                 const detalles = [];
-                if (agregadas > 0) detalles.push(`+${agregadas} nuevas`);
+                if (info.tieneExcel) {
+                    const delta = pendientesAhora - pendientesAntes;
+                    const signo = delta >= 0 ? `+${delta}` : `${delta}`;
+                    detalles.push(`Excel actualizado · pendientes: ${signo}`);
+                    if (cumplidasPreservadas > 0) detalles.push(`${cumplidasPreservadas} cumplidas preservadas`);
+                } else {
+                    const agregadas = mergadas.length - existentes.length;
+                    if (agregadas > 0) detalles.push(`+${agregadas} nuevas`);
+                }
                 if (anuladasAplicadas > 0) detalles.push(`-${anuladasAplicadas} anuladas`);
                 if (anuladasIgnoradas > 0) detalles.push(`⚠ ${anuladasIgnoradas} anuladas ignoradas (ya cumplidas)`);
                 const sufijo = detalles.length > 0 ? ` (${detalles.join(", ")})` : "";

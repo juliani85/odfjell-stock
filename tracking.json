@@ -1,12 +1,12 @@
 {
-  "actualizado": "2026-05-15T14:44:53.190863Z",
+  "actualizado": "2026-05-15T16:32:17.358933Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.4,
+      "velocidad_nudos": 10.9,
       "eta": "2026-05-19T12:00:00Z",
-      "calado_m": 9.0,
+      "calado_m": 8.0,
       "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
@@ -16,7 +16,7 @@
     },
     "9143219": {
       "calado_m": 9.3,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,

@@ -1484,18 +1484,19 @@ async function initApp() {
             // Para rename completo: chequear conflicto en CUALQUIER tanque que tenga el despacho viejo,
             // y avisar al usuario si está replicado en más de un tanque (se renombra en todos).
             const esSplit = kilos < stockViejo;
-            if (esSplit) {
-                if (tanqueActual.despachos.some(d => d.despacho === nuevo)) {
-                    mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque.`);
-                    return;
-                }
-            } else {
+            // Validamos solo dentro del tanque actual (el único que SIEMPRE se modifica).
+            // Permitimos que el mismo nombre exista en otros tanques — dos camiones con el
+            // mismo despacho pueden estar en TK distintos sin conflicto. La validación de
+            // conflictos en otros tanques (caso de propagación) se hace en ejecutarRenombrar
+            // según el alcance que elija el usuario.
+            const conflictoEnEste = tanqueActual.despachos.some(d => d.despacho === nuevo && d !== despachoObj);
+            if (conflictoEnEste) {
+                mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque (TK ${tanqueActual.tanque}).`);
+                return;
+            }
+
+            if (!esSplit) {
                 const tanquesConViejo = stock.filter(t => (t.despachos || []).some(d => d.despacho === viejo));
-                const conflicto = tanquesConViejo.find(t => t.despachos.some(d => d.despacho === nuevo));
-                if (conflicto) {
-                    mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en el TK ${conflicto.tanque}.`);
-                    return;
-                }
                 if (tanquesConViejo.length > 1) {
                     const otrosTks = tanquesConViejo.filter(t => t.tanque !== tanqueActual.tanque).map(t => `TK ${t.tanque}`).join(", ");
                     elegirAlcanceRenombrar(viejo, nuevo, otrosTks, tanqueActual.tanque, (alcance) => {
@@ -1519,6 +1520,24 @@ async function initApp() {
             const nuevo = (inpN.value || "").trim().toUpperCase();
             const kilos = parseInt(inpK.value) || 0;
             const esSplit = kilos < stockViejo;
+
+            // Si propaga a todos: validar que ningún otro tanque con el despacho viejo
+            // tenga ya el nombre nuevo en su lista (eso generaría 2 despachos iguales en
+            // ese tanque — único caso realmente prohibido).
+            if (!esSplit && !soloEnEste) {
+                const tanquesConViejo = stock.filter(t => (t.despachos || []).some(d => d.despacho === viejo));
+                const conflictoOtro = tanquesConViejo.find(t =>
+                    t.tanque !== tanqueActual.tanque &&
+                    t.despachos.some(d => d.despacho === nuevo)
+                );
+                if (conflictoOtro) {
+                    document.getElementById(errorId).textContent =
+                        `No se puede propagar a TK ${conflictoOtro.tanque} porque ya tiene un despacho "${nuevo}". Renombrá solo en TK ${tanqueActual.tanque}.`;
+                    document.getElementById(errorId).classList.remove("hidden");
+                    window._confirmarAccion = confirmarRenombrar;
+                    return;
+                }
+            }
 
             modal.classList.add("hidden");
             document.getElementById("btnConfirmar").textContent = "Confirmar";

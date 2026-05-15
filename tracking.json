@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-15T05:10:26.304303Z",
+  "actualizado": "2026-05-15T08:17:49.757061Z",
   "barcos": {
     "9250751": {
-      "estado": "en_puerto",
-      "puerto_actual": "Rio de Janeiro, Brazil",
-      "arribo": "2026-05-13T15:27:00Z",
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "eta": "2026-05-19T12:00:00Z",
       "calado_m": 9.0,
       "nav_status": "Moored",
       "zona": "South America East Coast",

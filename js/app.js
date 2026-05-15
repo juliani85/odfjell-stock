@@ -19,8 +19,18 @@ let usuarioActual = null;
 // --- GMAIL OAUTH ---
 const GMAIL_CLIENT_ID = "933883889395-ofaj2ikjfgk227so46qm06o65htra0hm.apps.googleusercontent.com";
 let gmailTokenClient = null;
+// Cache del access_token: los tokens de Google duran 1h. Cacheamos por 55 min para no
+// pedir un token nuevo cada sync (eso disparaba demasiadas llamadas al OAuth de Google
+// con la cuenta tagsaaduana, contribuyendo al baneo del 15/05/2026).
+let _gmailTokenCache = { token: null, expiresAt: 0 };
 
 function requestGmailToken(opts = {}) {
+    // Si hay un token vigente (con al menos 60s de margen) y no se está forzando un
+    // prompt explícito, reusar el cacheado.
+    const forzar = opts && opts.prompt && opts.prompt !== "none";
+    if (!forzar && _gmailTokenCache.token && _gmailTokenCache.expiresAt > Date.now() + 60000) {
+        return Promise.resolve(_gmailTokenCache.token);
+    }
     return new Promise((resolve, reject) => {
         if (!gmailTokenClient) {
             try {
@@ -37,8 +47,11 @@ function requestGmailToken(opts = {}) {
             }
         }
         gmailTokenClient.callback = (resp) => {
-            if (resp.error) reject(new Error(resp.error_description || resp.error));
-            else resolve(resp.access_token);
+            if (resp.error) { _gmailTokenCache = { token: null, expiresAt: 0 }; reject(new Error(resp.error_description || resp.error)); }
+            else {
+                _gmailTokenCache = { token: resp.access_token, expiresAt: Date.now() + 55 * 60 * 1000 };
+                resolve(resp.access_token);
+            }
         };
         try {
             gmailTokenClient.requestAccessToken(opts);
@@ -4151,12 +4164,17 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         }
     }
 
-    let ultimoAutoSync = 0;
+    // Cooldown del auto-sync: persistido en localStorage para compartir entre sesiones
+    // del mismo navegador. Tras el baneo de tagsaaduana@gmail.com el 15/05/2026 (Google
+    // detectó "actividad inusual"), bajamos drásticamente la frecuencia: solo se permite
+    // un auto-sync cada 30 min, y el intervalo de chequeo pasó de 10 min a 60 min.
+    const AUTO_SYNC_COOLDOWN_MS = 30 * 60 * 1000;
     function intentarAutoSync() {
         if (localStorage.getItem("planGmailConsentio") !== "1") return;
         const ahora = Date.now();
-        if (ahora - ultimoAutoSync < 2 * 60 * 1000) return;
-        ultimoAutoSync = ahora;
+        const ultimo = parseInt(localStorage.getItem("planUltimoAutoSync") || "0", 10) || 0;
+        if (ahora - ultimo < AUTO_SYNC_COOLDOWN_MS) return;
+        localStorage.setItem("planUltimoAutoSync", String(ahora));
         sincronizarPlanDesdeGmail("auto");
     }
 
@@ -4214,11 +4232,12 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
 
     actualizarBadgePlan();
 
-    // Auto-sync Gmail al iniciar (si el admin ya consintió alguna vez)
-    // y reintento cada 10 minutos.
+    // Auto-sync Gmail al iniciar (si el admin ya consintió alguna vez) y reintento cada 60 min.
+    // Intencionalmente conservador post-baneo 15/05/2026: el cooldown de 30 min en
+    // intentarAutoSync filtra dispares redundantes entre sesiones.
     if (rolActual === "admin") {
-        setTimeout(intentarAutoSync, 2000);
-        setInterval(intentarAutoSync, 10 * 60 * 1000);
+        setTimeout(intentarAutoSync, 5000);
+        setInterval(intentarAutoSync, 60 * 60 * 1000);
 
         // Polling del historial remoto cada 30s: trae movimientos cargados por
         // otro admin y los aplica al stock local.

@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-15T12:23:10.067570Z",
+  "actualizado": "2026-05-15T14:44:53.190863Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.9,
+      "velocidad_nudos": 10.4,
       "eta": "2026-05-19T12:00:00Z",
       "calado_m": 9.0,
       "nav_status": "Under way using engine",

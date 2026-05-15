@@ -15,9 +15,9 @@
           "receptor": "AUTOVENTURES",
           "kgDeclarados": 81000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA835Z",
+          "medic": "105",
+          "kgResultantes": 81291
         },
         {
           "solPart": "871",
@@ -26,9 +26,9 @@
           "receptor": "CICLOQUIMICA",
           "kgDeclarados": 27000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA856T",
+          "medic": "105",
+          "kgResultantes": 27097
         },
         {
           "solPart": "872",
@@ -37,9 +37,9 @@
           "receptor": "FARLOC",
           "kgDeclarados": 81000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA853Z/854R/855S",
+          "medic": "105",
+          "kgResultantes": 81291
         },
         {
           "solPart": "873",
@@ -48,9 +48,9 @@
           "receptor": "LARING",
           "kgDeclarados": 27000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA857U",
+          "medic": "105",
+          "kgResultantes": 27097
         },
         {
           "solPart": "874",
@@ -59,9 +59,9 @@
           "receptor": "FEBEL",
           "kgDeclarados": 135000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA843P/858V/859W/860Y/861P",
+          "medic": "105",
+          "kgResultantes": 135485
         },
         {
           "solPart": "875",
@@ -70,9 +70,9 @@
           "receptor": "MILBERG",
           "kgDeclarados": 135000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA848U/849V/850N/851Y/852P",
+          "medic": "105",
+          "kgResultantes": 135485
         },
         {
           "solPart": "876",
@@ -81,9 +81,9 @@
           "receptor": "CALLEGARI",
           "kgDeclarados": 27000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA844Z",
+          "medic": "105",
+          "kgResultantes": 27097
         },
         {
           "solPart": "877",
@@ -92,9 +92,9 @@
           "receptor": "TRUE",
           "kgDeclarados": 347000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA834P/836R/841N/842Y/845R846S847T",
+          "medic": "105",
+          "kgResultantes": 348246
         },
         {
           "solPart": "878",
@@ -103,14 +103,14 @@
           "receptor": "TOTAL",
           "kgDeclarados": 240000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "26008SBFA837S/838T839U/840M862Z",
+          "medic": "105",
+          "kgResultantes": 240861
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-13T22:15:27.811Z"
+      "actualizadoTs": "2026-05-15T11:54:52.563Z"
     },
     {
       "id": 1778268143140,

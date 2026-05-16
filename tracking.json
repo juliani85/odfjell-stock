@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-16T04:48:27.780095Z",
+  "actualizado": "2026-05-16T07:07:30.079174Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -7,7 +7,6 @@
       "velocidad_nudos": 9.4,
       "eta": "2026-05-19T09:00:00Z",
       "calado_m": 8.0,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,

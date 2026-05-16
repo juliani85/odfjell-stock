@@ -1,15 +1,24 @@
 {
-  "actualizado": "2026-05-16T15:10:29.652625Z",
+  "actualizado": "2026-05-16T16:11:26.829086Z",
   "barcos": {
     "9250751": {
-      "fuente": null,
-      "error": "sin respuesta de vesselfinder",
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 9.4,
+      "eta": "2026-05-19T09:00:00Z",
+      "calado_m": 8.0,
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA"
     },
     "9143219": {
-      "fuente": null,
-      "error": "sin respuesta de vesselfinder",
+      "calado_m": 9.3,
+      "nav_status": "At anchor",
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL"
     }

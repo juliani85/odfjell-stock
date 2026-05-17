@@ -17,7 +17,19 @@ const ROLES = {
 let usuarioActual = null;
 
 // --- GMAIL OAUTH ---
-const GMAIL_CLIENT_ID = "933883889395-ofaj2ikjfgk227so46qm06o65htra0hm.apps.googleusercontent.com";
+// Default hardcoded del project actual de Google Cloud (cuenta tagsaaduana@gmail.com).
+// Se puede sobreescribir guardando `localStorage.gmailClientIdOverride` ó setteando
+// `datos.json.config.gmailClientId` (lo lee al cargar). Esto permite cambiar a otro
+// project de Google Cloud sin tocar código (útil si la cuenta de Google cambia tras un
+// baneo, ver project_gmail_baneo.md).
+const GMAIL_CLIENT_ID_DEFAULT = "933883889395-ofaj2ikjfgk227so46qm06o65htra0hm.apps.googleusercontent.com";
+function getGmailClientId() {
+    try {
+        const fromStorage = localStorage.getItem("gmailClientIdOverride");
+        if (fromStorage) return fromStorage;
+    } catch (_) {}
+    return (window.__gmailClientIdFromDatos) || GMAIL_CLIENT_ID_DEFAULT;
+}
 let gmailTokenClient = null;
 // Cache del access_token: los tokens de Google duran 1h. Cacheamos por 55 min para no
 // pedir un token nuevo cada sync (eso disparaba demasiadas llamadas al OAuth de Google
@@ -38,7 +50,7 @@ function requestGmailToken(opts = {}) {
                     return reject(new Error("Google Identity Services no cargó todavía. Refrescá la página (Ctrl+Shift+R) y probá de nuevo."));
                 }
                 gmailTokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: GMAIL_CLIENT_ID,
+                    client_id: getGmailClientId(),
                     scope: "https://www.googleapis.com/auth/gmail.readonly",
                     callback: () => {},
                 });
@@ -1183,6 +1195,7 @@ async function initApp() {
         historial = ghData.historial || [];
         anulados = ghData.anulados || [];
         diferencias = Array.isArray(ghData.diferencias) ? ghData.diferencias : [];
+        if (ghData.config && ghData.config.gmailClientId) window.__gmailClientIdFromDatos = ghData.config.gmailClientId;
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
         localStorage.setItem("anuladosV3", JSON.stringify(anulados));
@@ -3801,8 +3814,22 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     function renderPlan() {
         const fecha = getFechaPlan();
         let persistir = false;
+        // Cleanup automático: tombstones cuya eliminadaTs es >30 días vieja se eliminan
+        // físicamente del array. Las que tienen eliminadaTs futura (lock permanente, ej 2099)
+        // se mantienen siempre. Sin este cleanup plan.json crecía sin tope.
+        const cutoff = new Date(Date.now() - 30 * 86400 * 1000).toISOString();
+        const ahora = new Date().toISOString();
         Object.values(planes).forEach(p => {
             if (!p || !p.filas) return;
+            const antes = p.filas.length;
+            p.filas = p.filas.filter(f => {
+                if (!f.eliminada) return true;
+                const ts = f.eliminadaTs || "";
+                if (ts > ahora) return true; // tombstone futura (lock permanente): mantener
+                if (ts < cutoff) return false; // tombstone vieja: descartar
+                return true;
+            });
+            if (p.filas.length !== antes) persistir = true;
             p.filas.forEach(f => {
                 if (!f.eliminada && despachoExcluidoDelPlan(f.despacho)) {
                     eliminarFilaPlan(f);
@@ -4275,37 +4302,34 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         setTimeout(intentarAutoSync, 5000);
         setInterval(intentarAutoSync, 60 * 60 * 1000);
 
-        // Polling del historial remoto cada 30s: trae movimientos cargados por
-        // otro admin y los aplica al stock local.
+        // Polling unificado cada 30s: trae cambios remotos de stock/historial Y del plan
+        // en el mismo tick. Antes había dos setIntervals independientes; ahora un solo timer
+        // los dispara en paralelo y reduce a la mitad las llamadas al Worker.
         setInterval(async () => {
-            if (GH._enviando || GH._pendiente) return;
-            const remoto = await GH.cargar();
-            if (!remoto) return;
-            const cambios = mergearEntradasRemotas(remoto);
-            if (cambios > 0) {
-                localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
-                localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
-                localStorage.setItem("anuladosV3", JSON.stringify(anulados));
-                rerenderAfterMerge();
-                mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
+            // 1) Stock/historial
+            if (!(GH._enviando || GH._pendiente)) {
+                const remoto = await GH.cargar();
+                if (remoto) {
+                    const cambios = mergearEntradasRemotas(remoto);
+                    if (cambios > 0) {
+                        localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
+                        localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
+                        localStorage.setItem("anuladosV3", JSON.stringify(anulados));
+                        rerenderAfterMerge();
+                        mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
+                    }
+                }
             }
-        }, 30000);
-
-        // Polling del plan remoto cada 30s: si otro cliente (o un cleanup manual)
-        // modifica plan.json en el server, traemos esa versión y reemplazamos la local.
-        // Evita que el cliente quede con un plan stale en memoria mientras el server tiene
-        // tombstones para esas filas (caso del 14/05 cuando el cliente seguía mostrando
-        // 19 cargas activas aunque el server las descartaba al subir).
-        setInterval(async () => {
-            if (GH._enviandoPlan || GH._pendientePlan) return;
-            const remoto = await GH.cargarPlan();
-            if (!remoto) return;
-            const fechaSel = getFechaPlan ? getFechaPlan() : null;
-            const filasAntes = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
-            planes = remoto;
-            const filasDespues = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
-            if (filasAntes !== filasDespues) {
-                renderPlan();
+            // 2) Plan: si otro cliente o un cleanup manual modificó plan.json, traer.
+            if (!(GH._enviandoPlan || GH._pendientePlan)) {
+                const remoto = await GH.cargarPlan();
+                if (remoto) {
+                    const fechaSel = getFechaPlan ? getFechaPlan() : null;
+                    const filasAntes = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
+                    planes = remoto;
+                    const filasDespues = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
+                    if (filasAntes !== filasDespues) renderPlan();
+                }
             }
         }, 30000);
 

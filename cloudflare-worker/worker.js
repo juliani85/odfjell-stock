@@ -74,7 +74,16 @@ function utf8ToB64(str) {
 }
 
 function autorizado(request, env) {
-  return !!env.APP_SECRET && request.headers.get("X-App-Secret") === env.APP_SECRET;
+  if (!env.APP_SECRET) return false;
+  if (request.headers.get("X-App-Secret") !== env.APP_SECRET) return false;
+  // Doble candado: además del secret (que vive en el bundle público y cualquiera con
+  // DevTools puede leer), exigimos que el Origin sea el de la app. Eso bloquea PUTs/POSTs
+  // hechos desde otro sitio (CORS preflight no alcanza para esto — un script local puede
+  // mandar el header X-App-Secret sin pasar por CORS).
+  const permitido = env.ORIGEN || "https://juliani85.github.io";
+  const origin = request.headers.get("Origin") || "";
+  if (origin !== permitido) return false;
+  return true;
 }
 
 export default {

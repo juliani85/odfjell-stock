@@ -1107,12 +1107,24 @@ async function initLogin() {
     const loginError = document.getElementById("loginError");
     const loginUser = document.getElementById("loginUser");
     const loginPass = document.getElementById("loginPass");
+    const loginRecordar = document.getElementById("loginRecordar");
 
-    // Logout (registrar siempre, antes de cualquier return)
+    // Logout: borra la sesión, pero conserva las credenciales recordadas
+    // (el usuario puso un check explícito para guardarlas en este dispositivo).
     document.getElementById("btnLogout").addEventListener("click", () => {
         sessionStorage.removeItem("usuarioStock");
         location.reload();
     });
+
+    // Pre-completar usuario/contraseña si están guardadas en este dispositivo.
+    try {
+        const guardado = JSON.parse(localStorage.getItem("loginRecordado") || "null");
+        if (guardado && guardado.user) {
+            loginUser.value = guardado.user;
+            if (guardado.pass) loginPass.value = guardado.pass;
+            if (loginRecordar) loginRecordar.checked = true;
+        }
+    } catch (_) {}
 
     // Verificar sesión guardada
     const sesion = sessionStorage.getItem("usuarioStock");
@@ -1133,6 +1145,11 @@ async function initLogin() {
         if (USUARIOS[user] && USUARIOS[user] === pass) {
             usuarioActual = user;
             sessionStorage.setItem("usuarioStock", user);
+            if (loginRecordar && loginRecordar.checked) {
+                try { localStorage.setItem("loginRecordado", JSON.stringify({ user, pass })); } catch (_) {}
+            } else {
+                try { localStorage.removeItem("loginRecordado"); } catch (_) {}
+            }
             btnLogin.textContent = "Cargando datos...";
             btnLogin.disabled = true;
             document.getElementById("usuarioLogueado").textContent = usuarioActual.toUpperCase();

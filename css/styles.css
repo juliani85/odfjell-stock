@@ -655,6 +655,22 @@ tbody tr:hover { background: var(--gray-50); }
 .auth-card .form-group { margin-bottom: 12px; }
 .auth-card .btn-block { width: 100%; margin-top: 1rem; }
 .btn-block { width: 100%; }
+.auth-remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0.6rem 0 0.2rem;
+    font-size: 0.88rem;
+    color: var(--gray-600, #475569);
+    cursor: pointer;
+    user-select: none;
+}
+.auth-remember input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--primary, #1e3a8a);
+}
 .auth-error {
     background: #fef2f2;
     color: var(--danger);

@@ -726,7 +726,7 @@ async function obtenerPlanesDesdeGmail(token) {
         const tanquesConDespachoReal = new Set();
         for (const f of p.filas) {
             const desp = (f.despacho || "").toUpperCase().trim();
-            if (desp && desp !== "FISCAL" && !despachoExcluidoDelPlan(desp)) {
+            if (desp && desp !== "FISCAL" && !/REMO/i.test(desp)) {
                 tanquesConDespachoReal.add(f.tanque);
             }
         }

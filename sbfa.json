@@ -347,8 +347,8 @@
         {
           "solPart": "973",
           "cto": "3301",
-          "mercaderia": "alkonat l 70",
-          "receptor": "unilever",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
           "kgDeclarados": 549318,
           "tkDestino": "10",
           "sbfa": "",
@@ -358,8 +358,8 @@
         {
           "solPart": "972",
           "cto": "3401",
-          "mercaderia": "alkonat l 10",
-          "receptor": "unilever",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
           "kgDeclarados": 629103,
           "tkDestino": "74-82",
           "sbfa": "",
@@ -369,7 +369,7 @@
         {
           "solPart": "974",
           "cto": "3601",
-          "mercaderia": "voranol",
+          "mercaderia": "VORANOL",
           "receptor": "pbb",
           "kgDeclarados": 900341,
           "tkDestino": "27-28-29-31-32",
@@ -402,8 +402,8 @@
         {
           "solPart": "826",
           "cto": "OTUS2602 2101",
-          "mercaderia": "PBB",
-          "receptor": "PAPI",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
           "kgDeclarados": 206775,
           "tkDestino": "75-76",
           "sbfa": "",
@@ -413,8 +413,8 @@
         {
           "solPart": "827",
           "cto": "OTUS2602 2501",
-          "mercaderia": "PBB",
-          "receptor": "ACIDO PROPIONICO",
+          "mercaderia": "ACIDO PROPIONICO",
+          "receptor": "PBB",
           "kgDeclarados": 248431,
           "tkDestino": "41",
           "sbfa": "",
@@ -424,8 +424,8 @@
         {
           "solPart": "980",
           "cto": "otus2602 1901-02-03-04-05",
-          "mercaderia": "dalgar",
-          "receptor": "butyl acrilato",
+          "mercaderia": "BUTYL ACRILATO",
+          "receptor": "DALGAR",
           "kgDeclarados": 207573,
           "tkDestino": "34-67",
           "sbfa": "",
@@ -434,8 +434,8 @@
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-05-18T12:54:08.080Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-18T16:22:33.903Z"
     }
   ]
 }

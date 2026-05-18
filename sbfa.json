@@ -340,8 +340,8 @@
       "id": 1779107436331,
       "buque": "BOW FIRDA",
       "manifiesto": "3",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-05-18",
       "filas": [
         {
@@ -376,11 +376,55 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "964",
+          "cto": "OTUS2602 1101",
+          "mercaderia": "SOLVENT NAFTA",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 101448,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "778",
+          "cto": "OTUS2602",
+          "mercaderia": "EXXSOL D 60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 150000,
+          "tkDestino": "19-48",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "826",
+          "cto": "OTUS2602 2101",
+          "mercaderia": "PBB",
+          "receptor": "PAPI",
+          "kgDeclarados": 206775,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "827",
+          "cto": "OTUS2602 2501",
+          "mercaderia": "PBB",
+          "receptor": "ACIDO PROPIONICO",
+          "kgDeclarados": 248431,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-05-18T12:30:36.331Z"
+      "actualizadoTs": "2026-05-18T12:41:27.676Z"
     }
   ]
 }

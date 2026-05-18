@@ -420,11 +420,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "980",
+          "cto": "otus2602 1901-02-03-04-05",
+          "mercaderia": "dalgar",
+          "receptor": "butyl acrilato",
+          "kgDeclarados": 207573,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-05-18T12:41:27.676Z"
+      "actualizadoTs": "2026-05-18T12:54:08.080Z"
     }
   ]
 }

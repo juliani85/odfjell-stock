@@ -370,7 +370,7 @@
           "solPart": "974",
           "cto": "3601",
           "mercaderia": "VORANOL",
-          "receptor": "pbb",
+          "receptor": "PBB",
           "kgDeclarados": 900341,
           "tkDestino": "27-28-29-31-32",
           "sbfa": "",
@@ -435,7 +435,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-18T16:22:33.903Z"
+      "actualizadoTs": "2026-05-18T16:22:43.398Z"
     }
   ]
 }

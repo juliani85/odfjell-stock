@@ -335,6 +335,52 @@
       ],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-05-14T13:34:17.142Z"
+    },
+    {
+      "id": 1779107436331,
+      "buque": "BOW FIRDA",
+      "manifiesto": "3",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-05-18",
+      "filas": [
+        {
+          "solPart": "973",
+          "cto": "3301",
+          "mercaderia": "alkonat l 70",
+          "receptor": "unilever",
+          "kgDeclarados": 549318,
+          "tkDestino": "10",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "972",
+          "cto": "3401",
+          "mercaderia": "alkonat l 10",
+          "receptor": "unilever",
+          "kgDeclarados": 629103,
+          "tkDestino": "74-82",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "974",
+          "cto": "3601",
+          "mercaderia": "voranol",
+          "receptor": "pbb",
+          "kgDeclarados": 900341,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-05-18T12:30:36.331Z"
     }
   ]
 }

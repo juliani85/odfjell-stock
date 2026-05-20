@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-20T14:59:30.675000Z",
+  "actualizado": "2026-05-20T15:21:04.609912Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -29,7 +29,7 @@
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 10.2,
+      "velocidad_nudos": 10.3,
       "eta": "2026-05-24T07:00:00Z",
       "calado_m": 4.1,
       "nav_status": "Under way using engine",

@@ -27,7 +27,9 @@
 //  CRON TRIGGER: este Worker tiene un handler scheduled() que dispara el workflow
 //  track-vessels.yml. El cron de GitHub Actions es poco confiable para intervalos
 //  cortos, así que el tracking de barcos lo agenda Cloudflare. Configurar el
-//  intervalo en: Worker → Settings → Triggers → Cron Triggers → Add ("*/10 * * * *").
+//  intervalo en: Worker → Settings → Cron Triggers → Add ("*/30 * * * *").
+//  NO bajar de 30 min: cada corrida hace ~1-2 pedidos por barco a VesselFinder y
+//  un intervalo corto puede hacer que VesselFinder bloquee la IP.
 // ============================================================================
 
 const ARCHIVOS_PERMITIDOS = new Set([

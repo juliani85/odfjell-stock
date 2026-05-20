@@ -68,16 +68,6 @@
       "nombre": "TIVOLI PARK",
       "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
-    "9143219": {
-      "calado_m": 9.3,
-      "nav_status": "Moored",
-      "zona": "Gulf of Mexico",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9143219",
-      "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
-    },
     "9168635": {
       "estado": "en_route",
       "destino": "Port Arthur, United States (USA)",

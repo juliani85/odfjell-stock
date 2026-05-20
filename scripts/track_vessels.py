@@ -1,6 +1,6 @@
 """Scrapea posicion/ETA/velocidad de los barcos en barcos.json y escribe
-tracking.json en la raiz del frontend. Se ejecuta desde GitHub Actions
-cada 10 minutos.
+tracking.json en la raiz del frontend. Lo dispara el Cron Trigger del
+Cloudflare Worker (y la app al agregar un barco), via workflow_dispatch.
 
 Uso local:
     python scripts/track_vessels.py
@@ -400,21 +400,39 @@ def main() -> int:
     # Cargar tracking previo para detectar transiciones
     tracking_previo = cargar_tracking_previo()
 
+    # Mapa nombre->IMO del tracking previo. La busqueda por nombre en VesselFinder
+    # (endpoint /vessels?name=) es la request que mas se parece a scraping; el
+    # detalle por IMO (/vessels/details/IMO) es una vista de pagina normal. Por eso
+    # solo se busca por nombre UNA vez por barco: si ya se resolvio el IMO en una
+    # corrida anterior, se reusa y no se toca el buscador.
+    imo_conocido: dict[str, str] = {}
+    for v in (tracking_previo.get("barcos") or {}).values():
+        if isinstance(v, dict) and v.get("imo") and v.get("nombre"):
+            imo_conocido[str(v["nombre"]).strip().upper()] = str(v["imo"]).strip()
+
     config_modificado = False
-    # Primero resolver IMOs faltantes por nombre
+    # Resolver IMOs faltantes: primero del tracking previo; solo si el barco
+    # nunca se vio antes se busca por nombre en VesselFinder.
     for b in barcos:
-        if not str(b.get("imo") or "").strip():
-            nombre = b.get("nombre", "").strip()
-            if not nombre:
-                continue
-            print(f"  Buscando IMO de '{nombre}'...", end=" ", flush=True)
-            imo = buscar_imo_por_nombre(nombre)
-            if imo:
-                b["imo"] = imo
-                config_modificado = True
-                print(f"encontrado: {imo}")
-            else:
-                print("no encontrado (queda pendiente)")
+        if str(b.get("imo") or "").strip():
+            continue
+        nombre = b.get("nombre", "").strip()
+        if not nombre:
+            continue
+        prev_imo = imo_conocido.get(nombre.upper())
+        if prev_imo:
+            b["imo"] = prev_imo
+            config_modificado = True
+            print(f"  IMO de '{nombre}' reusado del tracking previo: {prev_imo}")
+            continue
+        print(f"  Buscando IMO de '{nombre}'...", end=" ", flush=True)
+        imo = buscar_imo_por_nombre(nombre)
+        if imo:
+            b["imo"] = imo
+            config_modificado = True
+            print(f"encontrado: {imo}")
+        else:
+            print("no encontrado (queda pendiente)")
 
     if config_modificado:
         BARCOS_JSON.write_text(

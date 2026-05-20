@@ -23,6 +23,11 @@
 //    GET  /gh/<archivo.json>         → { sha, content }   (content = JSON como texto)
 //    PUT  /gh/<archivo.json>         → body { content, sha?, message? }   + header X-App-Secret
 //    POST /dispatch/<workflow.yml>   → body { ref?, inputs? }            + header X-App-Secret
+//
+//  CRON TRIGGER: este Worker tiene un handler scheduled() que dispara el workflow
+//  track-vessels.yml. El cron de GitHub Actions es poco confiable para intervalos
+//  cortos, así que el tracking de barcos lo agenda Cloudflare. Configurar el
+//  intervalo en: Worker → Settings → Triggers → Cron Triggers → Add ("*/10 * * * *").
 // ============================================================================
 
 const ARCHIVOS_PERMITIDOS = new Set([
@@ -37,6 +42,7 @@ const ARCHIVOS_PERMITIDOS = new Set([
 const WORKFLOWS_PERMITIDOS = new Set([
   "reporte-supervisor.yml",
   "reporte-diferencias.yml",
+  "track-vessels.yml",
 ]);
 
 function corsHeaders(env, origin) {
@@ -176,5 +182,23 @@ export default {
     }
 
     return jsonResp({ error: "ruta invalida" }, 404, cors);
+  },
+
+  // Cron Trigger de Cloudflare: dispara el workflow de tracking de barcos.
+  // Solo corre si hay un Cron Trigger configurado en el dashboard del Worker.
+  async scheduled(event, env, ctx) {
+    const repo = env.REPO || "juliani85/odfjell-stock";
+    ctx.waitUntil(
+      fetch(`https://api.github.com/repos/${repo}/actions/workflows/track-vessels.yml/dispatches`, {
+        method: "POST",
+        headers: {
+          Authorization: `token ${env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+          "User-Agent": "odfjell-stock-worker",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ref: "master", inputs: {} }),
+      }).catch(() => {})
+    );
   },
 };

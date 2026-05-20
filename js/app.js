@@ -4914,7 +4914,14 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         if (await guardarBarcosCfg()) {
             document.getElementById("barcoNombre").value = "";
             renderBarcos();
-            mostrarAlerta(`${nombre} agregado. Buscando IMO y datos en la próxima corrida del tracking (≤10 min).`, "info");
+            // Disparar el tracking ahora mismo: el barco resuelve su IMO y datos
+            // en ~30 s, sin esperar al cron.
+            const disp = await GH._ghDispatch("track-vessels.yml", "master", {});
+            if (disp.ok) {
+                mostrarAlerta(`${nombre} agregado. Buscando IMO y datos ahora — refrescá la pestaña en ~1 minuto.`, "info");
+            } else {
+                mostrarAlerta(`${nombre} agregado. Se buscará el IMO en la próxima corrida del tracking.`, "info");
+            }
         }
     }
 

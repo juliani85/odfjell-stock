@@ -1,8 +1,9 @@
 name: Track vessels
 
+# El cron lo agenda el Cloudflare Worker (scheduled handler) porque el cron de
+# GitHub Actions es poco confiable para intervalos cortos. El Worker y la app
+# disparan este workflow vía workflow_dispatch.
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:

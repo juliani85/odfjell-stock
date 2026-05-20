@@ -264,9 +264,11 @@ def buscar_imo_por_nombre(nombre: str) -> str | None:
         candidatos.append((m.group(1), fila))
 
     if not candidatos:
-        # fallback: cualquier match en todo el HTML
-        m = re.search(r"/vessels/details/(\d{7})", html)
-        return m.group(1) if m else None
+        # Sin fila que matchee el nombre. NO usar un fallback ciego (agarrar el
+        # primer /vessels/details/NNN del HTML): eso asigna IMOs de barcos
+        # equivocados — fue el caso de BOCHEM BRISBANE, que matcheo 6360231 (un
+        # barco viejo) en vez de su IMO real 9973315. Mejor dejarlo pendiente.
+        return None
 
     # Priorizar los que mencionen Campana o Argentina en la fila.
     for imo, fila in candidatos:
@@ -406,24 +408,37 @@ def _horas_hasta(eta_iso: str | None) -> float | None:
         return None
 
 
+def _es_campana(texto: str | None) -> bool:
+    return "campana" in (texto or "").lower()
+
+
 def intervalo_refresco_min(entry: dict[str, Any]) -> int:
     """Cada cuantos minutos conviene volver a consultar VesselFinder por este
-    barco, segun cuan cerca esta de arribar. Cuanto mas lejos, menos seguido:
-    asi no se golpea VesselFinder por barcos que llegan recien en dias.
+    barco. Las frecuencias rapidas por ETA solo aplican si el DESTINO es
+    Campana: la ETA de VesselFinder es al destino actual del barco, que puede
+    ser OTRO puerto antes de venir aca — esa ETA no es a Campana.
     Solo afecta a VesselFinder — nada que ver con Gmail."""
     estado = (entry.get("estado") or "").lower()
     if estado == "en_puerto":
-        return 120  # ya arribo: chequear de a ratos por si zarpa
-    horas = _horas_hasta(entry.get("eta"))
-    if horas is None:
-        return 120  # sin ETA conocida
-    if horas <= 8:
-        return 0    # inminente (o ETA vencida): cada corrida
-    if horas <= 24:
-        return 20
-    if horas <= 72:
-        return 60
-    return 240      # mas de 3 dias
+        # En Campana: chequear de a ratos por si zarpa. En otro puerto: todavia
+        # no vino, baja frecuencia (cuando salga hacia aca cambia a en_route).
+        return 120 if _es_campana(entry.get("puerto_actual")) else 240
+    if estado == "en_route":
+        if not _es_campana(entry.get("destino")):
+            return 240  # va a otro puerto: su ETA no es a Campana
+        horas = _horas_hasta(entry.get("eta"))
+        if horas is None:
+            return 120  # viene a Campana pero sin ETA conocida
+        if horas <= 8:
+            return 0    # arribo inminente (o ETA vencida): cada corrida
+        if horas <= 24:
+            return 20
+        if horas <= 72:
+            return 60
+        return 240      # a Campana pero faltan mas de 3 dias
+    if estado == "navegando":
+        return 240      # zarpo de un puerto, sin rumbo confirmado a Campana
+    return 120          # sin datos / estado desconocido: frecuencia media
 
 
 def main() -> int:

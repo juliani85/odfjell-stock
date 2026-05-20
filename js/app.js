@@ -4761,7 +4761,28 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             : "Esperando primer tracking…";
 
         const umbral = umbralAlertaHs();
-        const filas = (barcosConfig.barcos || []).map(b => {
+        // Ordenar por llegada a Campana: primero los que ya llegaron / llegan antes.
+        // La ETA solo cuenta si el destino es Campana (la ETA de VesselFinder es al
+        // destino actual del barco, que puede ser otro puerto antes de venir acá).
+        const ordenLlegada = (b, t) => {
+            if (t.estado === "en_puerto" && /campana/i.test(t.puerto_actual || "")) {
+                const ms = Date.parse(t.arribo || "");
+                return isNaN(ms) ? -8.64e15 : ms; // ya en Campana → arriba de todo
+            }
+            if (t.estado === "en_route" && /campana/i.test(t.destino || "")) {
+                const ms = Date.parse(t.eta || "");
+                return isNaN(ms) ? 8.64e15 - 1 : ms; // viene a Campana, ETA desconocida
+            }
+            return 8.64e15; // no viene a Campana / sin datos / sin IMO → al final
+        };
+        const listaBarcos = (barcosConfig.barcos || []).slice().sort((x, y) => {
+            const tx = x.imo ? ((barcosTracking.barcos || {})[x.imo] || {}) : {};
+            const ty = y.imo ? ((barcosTracking.barcos || {})[y.imo] || {}) : {};
+            const ox = ordenLlegada(x, tx), oy = ordenLlegada(y, ty);
+            if (ox !== oy) return ox - oy;
+            return (x.nombre || "").localeCompare(y.nombre || "");
+        });
+        const filas = listaBarcos.map(b => {
             const t = b.imo ? ((barcosTracking.barcos || {})[b.imo] || {}) : {};
             const hs = horasHasta(t.eta);
             const acerca = hs !== null && hs >= 0 && hs <= umbral;

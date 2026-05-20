@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-20T16:13:47.794022Z",
+  "actualizado": "2026-05-20T16:15:08.112213Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -67,6 +67,19 @@
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
       "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+    },
+    "9143219": {
+      "estado": "en_route",
+      "destino": "T.CITY ADVARIO66",
+      "eta": "2026-05-19T22:30:00Z",
+      "calado_m": 9.3,
+      "nav_status": "Moored",
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9143219",
+      "nombre": "BOW CECIL",
+      "ultimo_fetch": "2026-05-20T16:15:08.112213Z"
     },
     "9168635": {
       "estado": "en_route",

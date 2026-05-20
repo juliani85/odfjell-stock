@@ -318,6 +318,14 @@ def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
         # Solo notificamos si es una transición (antes no estaba en puerto en Campana)
         if estado_prev == "en_puerto" and "campana" in (prev.get("puerto_actual") or "").lower():
             continue  # ya estaba ahí, no es un arribo nuevo
+        # El barco YA figuraba en el tracking previo pero sin estado conocido
+        # (VesselFinder no respondió o el HTML no se pudo parsear): no sabemos
+        # si venía en puerto. NO es un arribo: un estado vacío no significa
+        # "el barco estaba afuera". Sin esto, cuando VesselFinder se cae un rato
+        # con el barco amarrado y después se recupera, se reenviaba el mail de
+        # arribo (era el doble aviso del BOW FIRDA).
+        if imo in barcos_prev and not estado_prev:
+            continue
         arribos.append({
             "imo": imo,
             "nombre": datos.get("nombre") or imo,
@@ -534,6 +542,18 @@ def main() -> int:
                 continue
         print(f"  {nombre} (IMO {imo})...", end=" ", flush=True)
         datos = fetch_imo(imo)
+        # Si el fetch falló y no trajo estado, NO pisar el último dato bueno con
+        # un estado vacío: se conserva el último estado conocido (igual que el
+        # polling adaptativo cuando "reusa"). Perder el estado hacía que la
+        # corrida siguiente lo contara como arribo nuevo y reenviara el mail.
+        if not datos.get("estado") and isinstance(prev, dict) and prev.get("estado"):
+            conservado = dict(prev)
+            conservado["imo"] = imo
+            conservado["nombre"] = nombre
+            salida["barcos"][imo] = conservado
+            print(f"sin respuesta — se conserva el último estado conocido "
+                  f"({prev.get('estado')}, dato de {prev.get('ultimo_fetch')})")
+            continue
         datos["imo"] = imo
         datos["nombre"] = nombre
         datos["ultimo_fetch"] = salida["actualizado"]

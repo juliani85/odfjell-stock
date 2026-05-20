@@ -1018,14 +1018,39 @@
                         <ul>
                             <li>Lista todos los tanques con producto. Tiene buscador por tanque, producto o cliente.</li>
                             <li>Cada tarjeta se expande y muestra los despachos con su stock.</li>
-                            <li><strong>Renombrar un despacho:</strong> si un despacho tiene un nombre no estándar, podés renombrarlo al formato correcto (<code>IC04</code>, <code>IC06</code>, <code>TRP</code>, <code>EC01</code>, <code>REMO</code>, <code>TRM6</code>, <code>IT14</code>).</li>
-                            <li>Podés migrar <strong>todo</strong> el stock (renombra en todos los tanques que tengan ese despacho) o <strong>una parte</strong> (crea un despacho nuevo con esos kilos y deja el resto en el viejo).</li>
                         </ul>
                     </div>
                 </details>
 
                 <details>
-                    <summary>8. Historial</summary>
+                    <summary>8. Renombrar un despacho</summary>
+                    <div class="ayuda-seccion">
+                        <p><strong>¿Para qué sirve?</strong> Para corregir un despacho que llegó con un nombre no estándar o con un error de tipeo, y dejarlo en el formato correcto.</p>
+                        <p><strong>¿Cómo se hace? (paso a paso)</strong></p>
+                        <ul>
+                            <li>Si no sabés en qué tanque está el despacho, andá a <strong>Historial → Por despacho</strong> y buscá el BL: ahí ves en qué tanque está.</li>
+                            <li>Andá a la pestaña <strong>Salidas</strong>. En el Paso 1 escribí ese número de tanque.</li>
+                            <li>En el Paso 2 elegí el despacho. Debajo de sus datos aparece el botón <strong>"✎ Renombrar despacho"</strong> — tocalo.</li>
+                            <li>Si el despacho tiene formato no estándar, el cuadro de renombrar se abre solo la primera vez que lo seleccionás.</li>
+                        </ul>
+                        <p>Un despacho está en <strong>formato estándar</strong> cuando su nombre contiene <code>IC04</code>, <code>IC06</code>, <code>TRP</code>, <code>EC01</code>, <code>REMO</code>, <code>TRM6</code> o <code>IT14</code>.</p>
+                        <p><strong>En el cuadro de renombrar</strong> escribís el nombre nuevo y los kilos a migrar:</p>
+                        <ul>
+                            <li><strong>Migrás TODOS los kilos</strong> → renombrado completo: el despacho viejo desaparece y queda solo el nuevo.</li>
+                            <li><strong>Migrás una PARTE</strong> → se crea un despacho nuevo con esos kilos en este tanque y el viejo se queda con el saldo restante. Útil cuando un despacho grande en realidad junta varios despachos chicos.</li>
+                        </ul>
+                        <p><strong>Si el despacho está en varios tanques</strong>, al renombrar todo aparece un cuadro con 3 botones:</p>
+                        <ul>
+                            <li><strong>Renombrar en TODOS</strong> los tanques que tengan ese despacho.</li>
+                            <li><strong>Renombrar solo en este TK</strong> — los demás tanques no se tocan.</li>
+                            <li><strong>Cancelar.</strong></li>
+                        </ul>
+                        <p>Se puede usar el <strong>mismo nombre de despacho en tanques distintos</strong> (dos camiones del mismo despacho en TK diferentes es válido). Un despacho que quedó en 0 kg no molesta: si renombrás hacia ese nombre, el sistema lo reutiliza sin avisar conflicto.</p>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>9. Historial</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li><strong>Todas las salidas:</strong> la lista completa de movimientos (salidas, ingresos, transferencias). Tiene buscador y "Exportar CSV". Cada movimiento se puede <strong>anular</strong>.</li>
@@ -1036,7 +1061,7 @@
                 </details>
 
                 <details>
-                    <summary>9. Reportes</summary>
+                    <summary>10. Reportes</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li><strong>Reporte del Día:</strong> las salidas de una fecha, con el saldo de cada despacho. Imprimible.</li>
@@ -1049,7 +1074,7 @@
                 </details>
 
                 <details>
-                    <summary>10. Barcos</summary>
+                    <summary>11. Barcos</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li>Sigue la posición de los buques (tracking AIS) y avisa cuando uno arriba a Campana.</li>
@@ -1061,7 +1086,7 @@
                 </details>
 
                 <details>
-                    <summary>11. SB/FA — Detalle de descargas</summary>
+                    <summary>12. SB/FA — Detalle de descargas</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li>Detalle de sobrantes y faltantes por descarga de buque (reemplaza el Excel "DETALLE SBFA").</li>
@@ -1073,7 +1098,7 @@
                 </details>
 
                 <details>
-                    <summary>12. Instalar la app en el celular</summary>
+                    <summary>13. Instalar la app en el celular</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li>El botón <strong>"📲 Instalar app"</strong> (arriba) la instala como aplicación en el celular o la computadora.</li>
@@ -1084,7 +1109,7 @@
                 </details>
 
                 <details>
-                    <summary>13. Consejos y problemas comunes</summary>
+                    <summary>14. Consejos y problemas comunes</summary>
                     <div class="ayuda-seccion">
                         <ul>
                             <li>Después de una actualización del sistema, recargá con <strong>Ctrl + Shift + R</strong> para tomar la versión nueva.</li>

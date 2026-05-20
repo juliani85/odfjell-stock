@@ -433,9 +433,22 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000024P",
+          "cto": "USTXTOTU2602BFIR2401",
+          "cantDoctada": 533132,
+          "cantResult": null
+        },
+        {
+          "documento": "26008IC65000025Z",
+          "cto": "BRSSZ3501",
+          "cantDoctada": 487531,
+          "cantResult": null
+        }
+      ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-20T12:11:49.767Z"
+      "actualizadoTs": "2026-05-20T16:26:32.103Z"
     },
     {
       "id": 1779293166429,

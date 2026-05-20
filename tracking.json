@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-20T12:17:03.348955Z",
+  "actualizado": "2026-05-20T14:59:30.675000Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -13,6 +13,50 @@
       "imo": "9250751",
       "nombre": "BOW FIRDA"
     },
+    "9424039": {
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 0.2,
+      "eta": "2026-05-21T07:00:00Z",
+      "calado_m": 5.8,
+      "nav_status": "At anchor",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9424039",
+      "nombre": "CASTILLO DE HERRERA"
+    },
+    "9415636": {
+      "estado": "en_route",
+      "destino": "Las Palmas, Spain",
+      "velocidad_nudos": 10.2,
+      "eta": "2026-05-24T07:00:00Z",
+      "calado_m": 4.1,
+      "nav_status": "Under way using engine",
+      "zona": "North East Atlantic Ocean",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9415636",
+      "nombre": "SUN BIRD"
+    },
+    "6360231": {
+      "fuente": null,
+      "error": "sin respuesta de vesselfinder",
+      "imo": "6360231",
+      "nombre": "BOCHEM BRISBANE"
+    },
+    "9780536": {
+      "estado": "en_puerto",
+      "puerto_actual": "Houston Anch., United States (USA)",
+      "arribo": "2026-05-20T04:13:00Z",
+      "calado_m": 9.0,
+      "nav_status": "At anchor",
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9780536",
+      "nombre": "TIVOLI PARK"
+    },
     "9143219": {
       "calado_m": 9.3,
       "nav_status": "Moored",
@@ -21,6 +65,31 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL"
+    },
+    "9168635": {
+      "estado": "en_route",
+      "destino": "Port Arthur, United States (USA)",
+      "velocidad_nudos": 14.6,
+      "eta": "2026-05-25T08:00:00Z",
+      "calado_m": 11.6,
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9168635",
+      "nombre": "BOW FORTUNE"
+    },
+    "9986049": {
+      "estado": "en_route",
+      "destino": "Rio Grande, Brazil",
+      "velocidad_nudos": 8.7,
+      "eta": "2026-05-22T10:00:00Z",
+      "calado_m": 10.6,
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9986049",
+      "nombre": "PHEASANT"
     }
   }
 }

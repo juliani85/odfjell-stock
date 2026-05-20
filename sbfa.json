@@ -339,10 +339,10 @@
     {
       "id": 1779107436331,
       "buque": "BOW FIRDA",
-      "manifiesto": "3",
+      "manifiesto": "12530U",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-05-18",
+      "fecha": "2026-05-20",
       "filas": [
         {
           "solPart": "973",
@@ -435,7 +435,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-18T16:22:43.398Z"
+      "actualizadoTs": "2026-05-20T12:11:49.767Z"
     }
   ]
 }

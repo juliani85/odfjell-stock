@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-20T15:21:04.609912Z",
+  "actualizado": "2026-05-20T15:29:54.361922Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -11,25 +11,27 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
-      "nombre": "BOW FIRDA"
+      "nombre": "BOW FIRDA",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9424039": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 0.2,
+      "velocidad_nudos": 9.6,
       "eta": "2026-05-21T07:00:00Z",
       "calado_m": 5.8,
-      "nav_status": "At anchor",
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9424039",
-      "nombre": "CASTILLO DE HERRERA"
+      "nombre": "CASTILLO DE HERRERA",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 10.3,
+      "velocidad_nudos": 10.1,
       "eta": "2026-05-24T07:00:00Z",
       "calado_m": 4.1,
       "nav_status": "Under way using engine",
@@ -37,13 +39,21 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9415636",
-      "nombre": "SUN BIRD"
+      "nombre": "SUN BIRD",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
-    "6360231": {
-      "fuente": null,
-      "error": "sin respuesta de vesselfinder",
-      "imo": "6360231",
-      "nombre": "BOCHEM BRISBANE"
+    "9973315": {
+      "estado": "en_route",
+      "destino": "Aratu, Brazil",
+      "velocidad_nudos": 12.5,
+      "eta": "2026-05-30T15:00:00Z",
+      "calado_m": 8.8,
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9973315",
+      "nombre": "BOCHEM BRISBANE",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -55,7 +65,8 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
-      "nombre": "TIVOLI PARK"
+      "nombre": "TIVOLI PARK",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9143219": {
       "calado_m": 9.3,
@@ -64,7 +75,8 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
-      "nombre": "BOW CECIL"
+      "nombre": "BOW CECIL",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -76,7 +88,8 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
-      "nombre": "BOW FORTUNE"
+      "nombre": "BOW FORTUNE",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     },
     "9986049": {
       "estado": "en_route",
@@ -89,7 +102,8 @@
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
-      "nombre": "PHEASANT"
+      "nombre": "PHEASANT",
+      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
     }
   }
 }

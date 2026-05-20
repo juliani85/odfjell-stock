@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-20T19:21:04.437937Z",
+  "actualizado": "2026-05-20T19:31:03.343736Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -40,7 +40,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+      "ultimo_fetch": "2026-05-20T19:31:03.343736Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -53,7 +53,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+      "ultimo_fetch": "2026-05-20T19:31:03.343736Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -66,7 +66,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+      "ultimo_fetch": "2026-05-20T19:31:03.343736Z"
     },
     "9143219": {
       "estado": "en_route",
@@ -92,7 +92,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+      "ultimo_fetch": "2026-05-20T19:31:03.343736Z"
     },
     "9986049": {
       "estado": "en_route",
@@ -100,13 +100,12 @@
       "velocidad_nudos": 8.7,
       "eta": "2026-05-22T10:00:00Z",
       "calado_m": 10.6,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-20T15:29:54.361922Z"
+      "ultimo_fetch": "2026-05-20T19:31:03.343736Z"
     }
   }
 }

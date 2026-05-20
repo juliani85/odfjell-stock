@@ -436,6 +436,18 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-05-20T12:11:49.767Z"
+    },
+    {
+      "id": 1779293166429,
+      "buque": "CASTILLO DE HERRERA",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "",
+      "fecha": "2026-05-20",
+      "filas": [],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-20T16:06:06.430Z"
     }
   ]
 }

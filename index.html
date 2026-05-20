@@ -710,18 +710,40 @@
 
         <!-- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE -->
         <section id="sbfa" class="tab-content">
-            <div class="form-card">
-                <div class="stock-header">
-                    <h2>SB/FA — Detalle de descargas</h2>
-                    <div class="filtros">
-                        <input type="text" id="sbfaFiltro" placeholder="Buscar (buque, MANI, Cto, Sol Part, mercadería…)">
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="sbfaActivas">Descargas</button>
+                <button class="sub-tab" data-subtab="sbfaHistorial">Historial</button>
+            </nav>
+
+            <div id="sbfaActivas" class="sub-tab-content active">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>SB/FA — Detalle de descargas</h2>
+                        <div class="filtros">
+                            <input type="text" id="sbfaFiltro" placeholder="Buscar (buque, MANI, Cto, Sol Part, mercadería…)">
+                        </div>
                     </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Detalle resultante del ingreso de manifiesto, por solicitud particular y conocimientos DAP.
+                        Tolerancia ley: <strong>±0.6%</strong> (Resolución 2220/1990, Anexo II punto 12.1).
+                    </p>
+                    <div id="sbfaLista"></div>
                 </div>
-                <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
-                    Detalle resultante del ingreso de manifiesto, por solicitud particular y conocimientos DAP.
-                    Tolerancia ley: <strong>±0.6%</strong> (Resolución 2220/1990, Anexo II punto 12.1).
-                </p>
-                <div id="sbfaLista"></div>
+            </div>
+
+            <div id="sbfaHistorial" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Historial — descargas terminadas</h2>
+                        <div class="filtros">
+                            <input type="text" id="sbfaHistFiltro" placeholder="Buscar (buque, MANI, Cto, Sol Part, mercadería…)">
+                        </div>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Descargas con la medición completa de todas sus filas. Pasan acá solas y el buque se saca del seguimiento de la pestaña Barcos.
+                    </p>
+                    <div id="sbfaHistLista"></div>
+                </div>
             </div>
 
             <!-- Editor de descarga -->
@@ -1093,6 +1115,7 @@
                             <li>Cargás los conocimientos por solicitud particular y los DAP, con kilos declarados y medidos.</li>
                             <li>La tolerancia de ley es <strong>±0,6%</strong> (Resolución 2220/1990).</li>
                             <li><strong>🖨 Imprimir Informe</strong> saca los 3 informes (Detalle, Acta y Nota) de una sola vez.</li>
+                            <li>Sub-pestaña <strong>Historial</strong>: cuando una descarga tiene la medición completa de todas sus filas, pasa sola al Historial y el buque se saca del seguimiento de Barcos. Si después le borrás una medición, vuelve a Descargas.</li>
                         </ul>
                     </div>
                 </details>

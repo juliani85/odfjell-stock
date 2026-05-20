@@ -2274,6 +2274,8 @@ async function initApp() {
             if (st.dataset.subtab === "repSupervisor") inicializarReporteSupervisor();
             if (st.dataset.subtab === "repDiferencias") renderDiferencias();
             if (st.dataset.subtab === "repPrecintos") renderPrecintos(document.getElementById("filtroPrecintos")?.value || "");
+            if (st.dataset.subtab === "sbfaActivas") renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "", "activas");
+            if (st.dataset.subtab === "sbfaHistorial") renderSbfaLista(document.getElementById("sbfaHistFiltro")?.value || "", "historial");
         });
     });
 
@@ -4819,7 +4821,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
 
             // Resumen de descargas SB/FA asociadas a este barco (sin anuladas)
             const dx = (sbfaConfig.descargas || []).filter(d =>
-                !d.anulada && (d.buque || "").toUpperCase() === (b.nombre || "").toUpperCase()
+                !d.anulada && !d.archivada && (d.buque || "").toUpperCase() === (b.nombre || "").toUpperCase()
             );
             const sbfaInfo = dx.length
                 ? `<div style="margin-top:0.4rem;font-size:0.85rem;color:var(--primary)">📋 ${dx.length} descarga(s) SB/FA registradas</div>`
@@ -5103,7 +5105,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const antes = JSON.stringify(sbfaConfig.descargas);
         sbfaConfig.descargas = sbfaMergeDescargas(sbfaConfig.descargas, remoto.content.descargas);
         if (JSON.stringify(sbfaConfig.descargas) === antes) return;
-        renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "");
+        renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "", "activas");
+        renderSbfaLista(document.getElementById("sbfaHistFiltro")?.value || "", "historial");
         if (typeof renderBarcos === "function") renderBarcos();
         console.log("[sbfa] sincronizado con cambios remotos");
     }
@@ -5144,6 +5147,26 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return { totDecl, totRes, totDif: totRes - totDecl, fueraTol, pendientes, medidas };
     }
 
+    // Una descarga está "completa" cuando se le hizo la medición a TODO: cada fila
+    // y cada DAP con cantidad declarada tiene su resultante cargada. Las descargas
+    // completas se archivan solas (pasan al Historial) — ver guardarSbfaDescarga.
+    function sbfaDescargaCompleta(d) {
+        let medidas = 0, pendientes = 0;
+        (d.filas || []).forEach(f => {
+            const decl = Number(f.kgDeclarados) || 0;
+            const res = Number(f.kgResultantes) || 0;
+            if (decl > 0 && res > 0) medidas++;
+            else if (decl > 0) pendientes++;
+        });
+        (d.dap || []).forEach(x => {
+            const doc = Number(x.cantDoctada) || 0;
+            const res = Number(x.cantResult) || 0;
+            if (doc > 0 && res > 0) medidas++;
+            else if (doc > 0) pendientes++;
+        });
+        return medidas > 0 && pendientes === 0;
+    }
+
     function sbfaDescargaMatch(d, filtro) {
         if (!filtro) return true;
         const f = filtro.toUpperCase().trim();
@@ -5167,16 +5190,20 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return enDap;
     }
 
-    function renderSbfaLista(filtro = "") {
-        const cont = document.getElementById("sbfaLista");
+    function renderSbfaLista(filtro = "", modo = "activas") {
+        const esHist = modo === "historial";
+        const cont = document.getElementById(esHist ? "sbfaHistLista" : "sbfaLista");
         if (!cont) return;
         const items = (sbfaConfig.descargas || [])
             .filter(d => !d.anulada) // tombstones: ocultar descargas borradas
+            .filter(d => esHist ? d.archivada : !d.archivada) // historial = descargas terminadas
             .filter(d => sbfaDescargaMatch(d, filtro))
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
         if (!items.length) {
-            cont.innerHTML = `<p style="color:var(--gray-500)">No hay descargas registradas. Para crear una, andá a la pestaña <strong>Barcos</strong> y tocá <strong>📋 Cargar SB/FA</strong> en el barco que corresponda.</p>`;
+            cont.innerHTML = esHist
+                ? `<p style="color:var(--gray-500)">Todavía no hay descargas en el historial. Una descarga pasa acá sola cuando se completa la medición de todas sus filas.</p>`
+                : `<p style="color:var(--gray-500)">No hay descargas registradas. Para crear una, andá a la pestaña <strong>Barcos</strong> y tocá <strong>📋 Cargar SB/FA</strong> en el barco que corresponda.</p>`;
             return;
         }
         cont.innerHTML = items.map(d => {
@@ -5203,7 +5230,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 <div class="sbfa-card-header">
                     <div>
                         <div class="sbfa-card-titulo">${d.buque || "(sin buque)"} — MANI ${d.manifiesto || "—"}</div>
-                        <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP</div>
+                        <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP${d.archivada && d.archivadaTs ? ` · 📦 archivada ${d.archivadaTs.slice(0, 10).split("-").reverse().join("/")}` : ""}</div>
                     </div>
                     ${estado}
                 </div>
@@ -5639,6 +5666,17 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         };
     }
 
+    // Saca un buque del seguimiento de Barcos (barcos.json). Lo usa el archivado
+    // automático de SB/FA. No pide confirmación (a diferencia de quitarBarco()).
+    async function sbfaSacarBarcoDelSeguimiento(buque) {
+        const bU = (buque || "").trim().toUpperCase();
+        if (!bU) return false;
+        const antes = (barcosConfig.barcos || []).length;
+        barcosConfig.barcos = (barcosConfig.barcos || []).filter(b => (b.nombre || "").trim().toUpperCase() !== bU);
+        if (barcosConfig.barcos.length === antes) return false; // no estaba en seguimiento
+        return await guardarBarcosCfg();
+    }
+
     async function guardarSbfaDescarga() {
         const btn = document.getElementById("btnSbfaGuardar");
         let d;
@@ -5651,6 +5689,16 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         }
         if (!d.buque) { mostrarModalInfo("Falta el nombre del buque.", "No se puede guardar"); return; }
         const i = sbfaConfig.descargas.findIndex(x => x.id === d.id);
+        // Archivado automático: si la medición está completa, la descarga pasa al
+        // Historial y el buque se saca del seguimiento. Se recalcula en cada guardado:
+        // si se borra una medición y deja de estar completa, vuelve a Descargas.
+        const estabaArchivada = i >= 0 && !!sbfaConfig.descargas[i].archivada;
+        let recienArchivada = false;
+        if (sbfaDescargaCompleta(d)) {
+            d.archivada = true;
+            d.archivadaTs = (estabaArchivada && sbfaConfig.descargas[i].archivadaTs) || new Date().toISOString();
+            recienArchivada = !estabaArchivada;
+        }
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
         const txtPrev = btn ? btn.textContent : "";
@@ -5676,15 +5724,29 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         // Reset del timer del auto-save: que la próxima ejecución sea 30s desde ahora,
         // no inmediata, y así no se genere un borrador idéntico al guardado.
         sbfaIniciarAutoSave();
+
+        // Si recién se archivó (medición completa): sacar el buque del seguimiento.
+        let barcoSacado = false;
+        if (recienArchivada) {
+            try { barcoSacado = await sbfaSacarBarcoDelSeguimiento(d.buque); }
+            catch (e) { console.error("[sbfa] no se pudo sacar el barco del seguimiento:", e); }
+        }
+
         try {
             mostrarAlerta(`Descarga ${d.buque} guardada.`, "info");
-            renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+            renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "", "activas");
+            renderSbfaLista(document.getElementById("sbfaHistFiltro")?.value || "", "historial");
             if (typeof renderBarcos === "function") renderBarcos();
         } catch (e) {
             console.error("[sbfa] error re-renderizando tras guardar (la descarga SÍ se guardó):", e);
         }
         const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
-        mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
+        if (recienArchivada) {
+            const bTxt = barcoSacado ? ` y el buque se sacó del seguimiento de <strong>Barcos</strong>` : "";
+            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada.<br><br>La medición está completa, así que pasó al <strong>Historial</strong> de SB/FA${bTxt}.`, "Descarga terminada → Historial");
+        } else {
+            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
+        }
     }
 
     async function eliminarSbfaDescarga() {
@@ -5707,7 +5769,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         if (await guardarSbfaCfg()) {
             sbfaLimpiarBorrador(sbfaEditandoId);
             cerrarSbfaEditor();
-            renderSbfaLista(document.getElementById("sbfaFiltro").value || "");
+            renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "", "activas");
+            renderSbfaLista(document.getElementById("sbfaHistFiltro")?.value || "", "historial");
             if (typeof renderBarcos === "function") renderBarcos();
             mostrarAlerta("Descarga eliminada.", "info");
         }
@@ -6286,7 +6349,8 @@ ${fueraTol.length ? `
 
     async function inicializarSbfa() {
         await cargarSbfaCfg();
-        renderSbfaLista();
+        renderSbfaLista("", "activas");
+        renderSbfaLista("", "historial");
         // Re-renderizar barcos para que cada card muestre el conteo de descargas SB/FA del buque
         if (typeof renderBarcos === "function") renderBarcos();
 
@@ -6304,7 +6368,9 @@ ${fueraTol.length ? `
             renderSbfaTablaDap(items);
         });
         document.getElementById("btnSbfaImprimir").addEventListener("click", imprimirInformeSbfa);
-        document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value));
+        document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value, "activas"));
+        const sbfaHistFiltroInp = document.getElementById("sbfaHistFiltro");
+        if (sbfaHistFiltroInp) sbfaHistFiltroInp.addEventListener("input", e => renderSbfaLista(e.target.value, "historial"));
 
         // Polling: traer descargas SB/FA cargadas por otro usuario cada 45s.
         setInterval(sincronizarSbfaDesdeRemoto, 45000);

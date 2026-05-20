@@ -1871,8 +1871,9 @@ async function initApp() {
     }
 
     // --- REGISTRAR ---
-    function esDespachoTR06(desp) {
-        return (desp || "").toUpperCase().includes("TR06");
+    function esDespachoConPrecinto(desp) {
+        const u = (desp || "").toUpperCase();
+        return u.includes("TR06") || u.includes("TRM6");
     }
 
     btnRegistrar.addEventListener("click", () => {
@@ -1884,15 +1885,15 @@ async function initApp() {
         if (kilos <= 0) { mostrarAlerta("Ingresá una cantidad válida.", "error"); return; }
         if (kilos > despachoActual.stock) { mostrarAlerta("Stock insuficiente.", "error"); return; }
 
-        // Salida TR06: el N° de precinto es obligatorio (se insiste hasta cargarlo).
+        // Salida TR06/TRM6: el N° de precinto es obligatorio (se insiste hasta cargarlo).
         let precinto = "";
-        if (esDespachoTR06(despachoActual.despacho)) {
+        if (esDespachoConPrecinto(despachoActual.despacho)) {
             while (true) {
-                const r = prompt(`Salida TR06 — despacho ${despachoActual.despacho}\n\nIngresá el N° de precinto (obligatorio):`, "");
-                if (r === null) { mostrarAlerta("No se registró: una salida TR06 necesita el N° de precinto.", "error"); return; }
+                const r = prompt(`Salida con precinto — despacho ${despachoActual.despacho}\n\nIngresá el N° de precinto (obligatorio):`, "");
+                if (r === null) { mostrarAlerta("No se registró: esta salida necesita el N° de precinto.", "error"); return; }
                 precinto = r.trim();
                 if (precinto) break;
-                alert("El N° de precinto es obligatorio para las salidas TR06. Cargalo.");
+                alert("El N° de precinto es obligatorio para las salidas TR06/TRM6. Cargalo.");
             }
         }
 
@@ -2586,7 +2587,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 + (f ? ` — mostrando ${usos.length}` : "");
         }
         if (usos.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">${f ? "Ningún precinto coincide con la búsqueda." : "No hay precintos registrados todavía. Se cargan al registrar una salida cuyo despacho sea TR06."}</td></tr>`;
+            tbody.innerHTML = `<tr class="empty-row"><td colspan="10">${f ? "Ningún precinto coincide con la búsqueda." : "No hay precintos registrados todavía. Se cargan al registrar una salida cuyo despacho sea TR06 o TRM6."}</td></tr>`;
             return;
         }
         tbody.innerHTML = usos.map(h => {
@@ -2619,7 +2620,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
 <style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;color:#111} h1{font-size:16px;margin:0 0 4px} .sub{color:#666;margin:0 0 14px;font-size:11px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #999;padding:4px 8px;text-align:left} th{background:#eee} .total{margin-top:12px;font-weight:700}</style>
 </head><body>
 <h1>Precintos usados — Odfjell Terminals Tagsa SA — Campana</h1>
-<p class="sub">Salidas TR06 · ${new Date().toLocaleString("es-AR")}</p>
+<p class="sub">Salidas TR06 / TRM6 · ${new Date().toLocaleString("es-AR")}</p>
 <table><thead><tr><th>Precinto N°</th><th>Despacho</th><th>TK</th><th>Producto</th><th>Cliente</th><th>Fecha</th><th>Hora</th><th>Remito</th><th>Kg.</th><th>Usuario</th></tr></thead><tbody>${filas || '<tr><td colspan="10">Sin precintos registrados.</td></tr>'}</tbody></table>
 <div class="total">Total: ${usos.length} uso(s) de precinto · ${Object.keys(conteo).length} precinto(s) distinto(s).</div>
 </body></html>`;

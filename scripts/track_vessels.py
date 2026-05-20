@@ -131,8 +131,12 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
     #      expected to arrive there on <strong>May 8, 20:00</strong>."
     #   → por eso la cláusula de velocidad es opcional (era el bug del BOW CAROLINE: fondeado,
     #     sin línea de velocidad, no matcheaba y quedaba sin estado).
+    #   "the port of" tambien es opcional: cuando el destino NO es un puerto reconocido
+    #   sino un destino AIS crudo (ej "T.CITY ADVARIO66"), VesselFinder escribe
+    #   "en route to <strong>T.CITY ADVARIO66</strong>" sin "the port of" (era el bug
+    #   del BOW CECIL: quedaba sin estado y la UI no mostraba nada).
     m = re.search(
-        r"en route to the port of\s*<strong>([^<]+)</strong>"
+        r"en route to (?:the port of\s*)?<strong>([^<]+)</strong>"
         r"(?:[\s\S]{0,300}?sailing at a speed of\s*([\d.]+)\s*knots)?"
         r"[\s\S]{0,300}?expected to arrive[\s\S]{0,40}?<strong>([^<]+)</strong>",
         html,
@@ -146,7 +150,7 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
         out["eta"] = _to_iso(m.group(3).strip())
     else:
         m = re.search(
-            r"arrived at the port of\s*<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
+            r"arrived at (?:the port of\s*)?<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
             html, re.IGNORECASE | re.DOTALL,
         )
         if m:
@@ -155,7 +159,7 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
             out["arribo"] = _to_iso(m.group(2).strip())
         else:
             m = re.search(
-                r"departed from the port of\s*<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
+                r"departed from (?:the port of\s*)?<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
                 html, re.IGNORECASE | re.DOTALL,
             )
             if m:
@@ -549,10 +553,12 @@ def main() -> int:
 
         if datos.get("eta"):
             print(f"ok ({datos['fuente']}, ETA {datos['eta']})")
+        elif datos.get("estado"):
+            print(f"ok ({datos['fuente']}, estado {datos['estado']})")
         elif datos.get("error"):
             print(f"sin datos: {datos['error']}")
         else:
-            print(f"parcial ({datos.get('fuente')})")
+            print(f"sin estado ({datos.get('fuente')}) — no se pudo parsear el viaje")
 
     TRACKING_JSON.write_text(
         json.dumps(salida, ensure_ascii=False, indent=2), encoding="utf-8"

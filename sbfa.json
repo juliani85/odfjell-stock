@@ -442,12 +442,57 @@
       "buque": "CASTILLO DE HERRERA",
       "manifiesto": "",
       "agencia": "B&M",
-      "cuit": "",
-      "fecha": "2026-05-20",
-      "filas": [],
+      "cuit": "30-71631314-6",
+      "fecha": "2026-05-21",
+      "filas": [
+        {
+          "solPart": "997",
+          "cto": "02",
+          "mercaderia": "PROPYLENE GLYCOL USP",
+          "receptor": "PBB",
+          "kgDeclarados": 100000,
+          "tkDestino": "88",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "998",
+          "cto": "01",
+          "mercaderia": "PROPYLENE GLYCOL USP",
+          "receptor": "PBB",
+          "kgDeclarados": 1503049,
+          "tkDestino": "84-88",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "999",
+          "cto": "03",
+          "mercaderia": "DIPROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 304345,
+          "tkDestino": "17",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1000",
+          "cto": "04",
+          "mercaderia": "PROPYLENE GLYCOL IND",
+          "receptor": "PBB",
+          "kgDeclarados": 134933,
+          "tkDestino": "78",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-20T16:06:06.430Z"
+      "actualizadoTs": "2026-05-20T16:09:46.207Z"
     }
   ]
 }

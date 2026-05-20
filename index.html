@@ -51,6 +51,7 @@
                 <div class="header-user">
                     <span id="syncEstado" class="sync-pill sync-sincronizado" title="Sincronizado con el servidor"></span>
                     <span id="usuarioLogueado"></span>
+                    <button class="btn-ayuda" id="btnAyuda" type="button" title="Ayuda — manual del sistema" aria-label="Ayuda">?</button>
                     <button class="btn btn-secondary btn-sm hidden" id="btnInstalarApp" title="Instalar como app en el celular">📲 Instalar app</button>
                     <button class="btn btn-secondary btn-sm" id="btnLogout">Salir</button>
                 </div>
@@ -922,6 +923,184 @@
         </div>
     </div>
 
+    <!-- Modal de ayuda — manual del sistema -->
+    <div id="modalAyuda" class="modal hidden">
+        <div class="modal-content modal-ayuda">
+            <div class="ayuda-header">
+                <h3>📖 Manual del sistema</h3>
+                <button class="ayuda-cerrar" id="btnAyudaCerrar" type="button" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="ayuda-body">
+                <p class="ayuda-intro">
+                    Sistema de <strong>Control de Stock de Odfjell Terminals Tagsa SA</strong> — terminal Campana.
+                    Sirve para registrar salidas, ingresos y transferencias de producto de los tanques, llevar el
+                    plan de cargas, seguir los buques y generar los reportes. Tocá cada sección para ver cómo funciona.
+                </p>
+
+                <details>
+                    <summary>1. Ingresar al sistema</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Escribí tu <strong>usuario</strong> y <strong>contraseña</strong> y tocá <strong>Ingresar</strong>.</li>
+                            <li>Si tildás <strong>"Recordar usuario y contraseña en este dispositivo"</strong>, la próxima vez los campos vienen completos (igual hay que tocar Ingresar). Conviene tildarlo solo en tu computadora o celular personal.</li>
+                            <li>Hay dos tipos de acceso: <strong>Administrador</strong> (carga y edición completa) y <strong>Consulta</strong> (solo ve el tablón de salidas).</li>
+                            <li><strong>"Salir"</strong> cierra la sesión. Si tenías el usuario recordado, sigue recordado para la próxima.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2. Cómo se guardan los datos</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>No hay que apretar "Guardar": <strong>cada movimiento se sube solo</strong> al servidor.</li>
+                            <li>Al lado de tu nombre hay un puntito de color: <strong>verde</strong> = todo sincronizado, <strong>amarillo</strong> = guardando, <strong>rojo</strong> = hubo un error de conexión.</li>
+                            <li>Si el puntito queda en <strong>rojo</strong>, fijate que tengas internet y <strong>recargá la página</strong>.</li>
+                            <li>Varias personas pueden trabajar al mismo tiempo desde distintas computadoras: el sistema combina los cambios solo y se actualiza cada 30 segundos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>3. Plan de Cargas (pestaña "Cargas")</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Muestra las cargas programadas para la fecha elegida arriba.</li>
+                            <li><strong>📧 Sincronizar con Gmail</strong> trae el plan desde los mails de la casilla del sistema.</li>
+                            <li>Cada fila arranca como <strong>Pendiente</strong>. Cuando registrás la salida correspondiente, se marca sola como <strong>Cumplida</strong>.</li>
+                            <li>El número rojo en la pestaña "Cargas" indica cuántas cargas quedan <strong>pendientes</strong>.</li>
+                            <li><strong>Imprimir</strong> saca el plan en papel.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>4. Registrar Salida (pestaña "Salidas")</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Arriba cargás la <strong>fecha</strong> y los <strong>últimos 4 dígitos del remito</strong> (el remito es opcional).</li>
+                            <li><strong>Paso 1:</strong> escribí el número de tanque y tocá Buscar (o Enter).</li>
+                            <li><strong>Paso 2:</strong> elegí el despacho de la lista (podés usar las flechas ↑↓).</li>
+                            <li><strong>Paso 3:</strong> escribí los kilos a retirar y tocá <strong>Registrar Salida</strong>.</li>
+                            <li>Se puede hacer todo con el teclado: el foco va saltando paso a paso.</li>
+                            <li>Si el remito ya se cargó ese mismo día, el sistema te avisa para que no lo dupliques.</li>
+                            <li>Si el despacho es <strong>TR06</strong> o <strong>TRM6</strong>, te pide el <strong>N° de precinto</strong> (es obligatorio).</li>
+                            <li>Antes de confirmar aparece un resumen con todos los datos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>5. Ingreso a Depósito</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Suma kilos a un tanque cuando entra producto.</li>
+                            <li>Si el tanque estaba vacío, te pide elegir el <strong>producto</strong> y cargar el <strong>cliente</strong>.</li>
+                            <li>Indicá el número de despacho y los kilos que ingresan.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>6. Transferencia entre Tanques</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Mueve producto de un tanque a otro.</li>
+                            <li><strong>Paso 1:</strong> tanque de origen. <strong>Paso 2:</strong> despacho de origen. <strong>Paso 3:</strong> tanque destino y kilos.</li>
+                            <li>El sistema valida que los productos de origen y destino sean compatibles.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>7. Stock x TK</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Lista todos los tanques con producto. Tiene buscador por tanque, producto o cliente.</li>
+                            <li>Cada tarjeta se expande y muestra los despachos con su stock.</li>
+                            <li><strong>Renombrar un despacho:</strong> si un despacho tiene un nombre no estándar, podés renombrarlo al formato correcto (<code>IC04</code>, <code>IC06</code>, <code>TRP</code>, <code>EC01</code>, <code>REMO</code>, <code>TRM6</code>, <code>IT14</code>).</li>
+                            <li>Podés migrar <strong>todo</strong> el stock (renombra en todos los tanques que tengan ese despacho) o <strong>una parte</strong> (crea un despacho nuevo con esos kilos y deja el resto en el viejo).</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>8. Historial</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li><strong>Todas las salidas:</strong> la lista completa de movimientos (salidas, ingresos, transferencias). Tiene buscador y "Exportar CSV". Cada movimiento se puede <strong>anular</strong>.</li>
+                            <li><strong>Por tanque:</strong> elegí un tanque y ves todos sus movimientos.</li>
+                            <li><strong>Por despacho:</strong> elegí un despacho y ves todos sus movimientos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>9. Reportes</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li><strong>Reporte del Día:</strong> las salidas de una fecha, con el saldo de cada despacho. Imprimible.</li>
+                            <li><strong>Reporte de Stock Mensual:</strong> el stock a una fecha y hora de corte. El sistema reconstruye el stock a ese momento exacto. Imprimible.</li>
+                            <li><strong>Para Supervisores:</strong> arma y envía por mail un resumen de los buques operando y el plan de cargas del día.</li>
+                            <li><strong>Despachos con diferencia:</strong> anotá los despachos donde no coinciden los kilos de stock con los del SIM. Quedan titilando hasta que tocás "✓ Resuelto". Se pueden mandar por mail.</li>
+                            <li><strong>Precintos usados:</strong> lista de todos los precintos cargados en salidas TR06 / TRM6.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>10. Barcos</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Sigue la posición de los buques (tracking AIS) y avisa cuando uno arriba a Campana.</li>
+                            <li>En <strong>"⚙ Configurar barcos y notificaciones"</strong> agregás un barco escribiendo solo el nombre.</li>
+                            <li>Ahí mismo cargás las casillas de mail que reciben el aviso de arribo.</li>
+                            <li>El número rojo en la pestaña "Barcos" indica cuántos buques están cerca de Campana.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>11. SB/FA — Detalle de descargas</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Detalle de sobrantes y faltantes por descarga de buque (reemplaza el Excel "DETALLE SBFA").</li>
+                            <li>Cargás los conocimientos por solicitud particular y los DAP, con kilos declarados y medidos.</li>
+                            <li>La tolerancia de ley es <strong>±0,6%</strong> (Resolución 2220/1990).</li>
+                            <li><strong>🖨 Imprimir Informe</strong> saca los 3 informes (Detalle, Acta y Nota) de una sola vez.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>12. Instalar la app en el celular</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>El botón <strong>"📲 Instalar app"</strong> (arriba) la instala como aplicación en el celular o la computadora.</li>
+                            <li>Queda el ícono en la pantalla de inicio y se abre como una app común.</li>
+                            <li>En el celular el sistema funciona en modo consulta.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>13. Consejos y problemas comunes</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Después de una actualización del sistema, recargá con <strong>Ctrl + Shift + R</strong> para tomar la versión nueva.</li>
+                            <li>Si algo se ve raro o desactualizado, recargá la página.</li>
+                            <li>El puntito rojo de sincronización casi siempre se arregla recargando con internet activo.</li>
+                            <li>Un despacho que llegó a 0 kg deja de mostrarse en las listas, pero el sistema lo conserva en el historial.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnAyudaOk" type="button">Entendido</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="js/data.js"></script>
@@ -963,6 +1142,21 @@
           } else {
             alert("Para instalar la app:\n\nAbrí el menú del navegador (los 3 puntitos ⋮ arriba a la derecha) y tocá \"Instalar app\" o \"Agregar a pantalla de inicio\".\n\nSi no aparece la opción o te da error, actualizá Chrome y los \"Servicios de Google Play\" desde la Play Store y reintentá.");
           }
+        });
+      })();
+
+      // Modal de ayuda — manual del sistema
+      (function () {
+        var btn = document.getElementById("btnAyuda");
+        var modal = document.getElementById("modalAyuda");
+        if (!btn || !modal) return;
+        var cerrar = function () { modal.classList.add("hidden"); };
+        btn.addEventListener("click", function () { modal.classList.remove("hidden"); });
+        document.getElementById("btnAyudaCerrar").addEventListener("click", cerrar);
+        document.getElementById("btnAyudaOk").addEventListener("click", cerrar);
+        modal.addEventListener("click", function (e) { if (e.target === modal) cerrar(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !modal.classList.contains("hidden")) cerrar();
         });
       })();
     </script>

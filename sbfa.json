@@ -441,7 +441,7 @@
       "id": 1779293166429,
       "buque": "CASTILLO DE HERRERA",
       "manifiesto": "",
-      "agencia": "B&M",
+      "agencia": "BALZER",
       "cuit": "30-71631314-6",
       "fecha": "2026-05-21",
       "filas": [
@@ -492,7 +492,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-20T16:09:46.207Z"
+      "actualizadoTs": "2026-05-20T16:23:47.899Z"
     }
   ]
 }

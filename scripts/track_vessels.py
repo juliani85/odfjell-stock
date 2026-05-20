@@ -21,7 +21,8 @@ Salida:
                 "ultimo_puerto": "Santos, Brazil" | null,
                 "ultimo_reporte": "2026-05-07T11:07:00Z" | null,
                 "fuente": "myshiptracking" | "vesselfinder",
-                "error": null | "mensaje"
+                "error": null | "mensaje",
+                "ultimo_fetch": "2026-05-08T15:00:00Z"  # cuando se consulto por ultima vez
             }
         }
     }
@@ -392,6 +393,39 @@ def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
     return ok
 
 
+def _horas_hasta(eta_iso: str | None) -> float | None:
+    """Horas (puede dar negativo) desde ahora hasta una ETA en ISO UTC."""
+    if not eta_iso:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(eta_iso).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return (dt - datetime.now(timezone.utc)).total_seconds() / 3600
+    except Exception:
+        return None
+
+
+def intervalo_refresco_min(entry: dict[str, Any]) -> int:
+    """Cada cuantos minutos conviene volver a consultar VesselFinder por este
+    barco, segun cuan cerca esta de arribar. Cuanto mas lejos, menos seguido:
+    asi no se golpea VesselFinder por barcos que llegan recien en dias.
+    Solo afecta a VesselFinder — nada que ver con Gmail."""
+    estado = (entry.get("estado") or "").lower()
+    if estado == "en_puerto":
+        return 120  # ya arribo: chequear de a ratos por si zarpa
+    horas = _horas_hasta(entry.get("eta"))
+    if horas is None:
+        return 120  # sin ETA conocida
+    if horas <= 8:
+        return 0    # inminente (o ETA vencida): cada corrida
+    if horas <= 24:
+        return 20
+    if horas <= 72:
+        return 60
+    return 240      # mas de 3 dias
+
+
 def main() -> int:
     config = json.loads(BARCOS_JSON.read_text(encoding="utf-8"))
     barcos = config.get("barcos", [])
@@ -455,10 +489,35 @@ def main() -> int:
             }
             continue
         nombre = b.get("nombre", "")
+        prev = (tracking_previo.get("barcos") or {}).get(imo)
+        # Polling adaptativo: si el barco esta lejos de arribar, no se vuelve a
+        # consultar VesselFinder en cada corrida — se reusa el dato previo hasta
+        # que pase su intervalo de refresco (ver intervalo_refresco_min).
+        if isinstance(prev, dict):
+            intervalo = intervalo_refresco_min(prev)
+            ult = prev.get("ultimo_fetch")
+            edad_min = None
+            if ult:
+                try:
+                    dt_ult = datetime.fromisoformat(str(ult).replace("Z", "+00:00"))
+                    if dt_ult.tzinfo is None:
+                        dt_ult = dt_ult.replace(tzinfo=timezone.utc)
+                    edad_min = (datetime.now(timezone.utc) - dt_ult).total_seconds() / 60
+                except Exception:
+                    edad_min = None
+            if intervalo > 0 and edad_min is not None and edad_min < intervalo:
+                reusado = dict(prev)
+                reusado["imo"] = imo
+                reusado["nombre"] = nombre
+                salida["barcos"][imo] = reusado
+                print(f"  {nombre} (IMO {imo})... reusado "
+                      f"(dato de hace {edad_min:.0f} min, refresca a los {intervalo})")
+                continue
         print(f"  {nombre} (IMO {imo})...", end=" ", flush=True)
         datos = fetch_imo(imo)
         datos["imo"] = imo
         datos["nombre"] = nombre
+        datos["ultimo_fetch"] = salida["actualizado"]
         salida["barcos"][imo] = datos
 
         # Hora de arribo a Campana = el momento en que detectamos al barco en puerto/amarrado.

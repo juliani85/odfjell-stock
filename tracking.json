@@ -1,19 +1,17 @@
 {
-  "actualizado": "2026-05-20T01:50:42.576474Z",
+  "actualizado": "2026-05-20T06:00:38.088735Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
-      "destino": "Campana, Argentina",
-      "eta": "2026-05-20T00:00:00Z",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-05-20T01:23:00Z",
       "calado_m": 8.0,
       "nav_status": "Moored",
       "zona": "South America Inland",
-      "puerto_actual": "Campana, Argentina",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
-      "nombre": "BOW FIRDA",
-      "arribo": "2026-05-20T01:50:42.576474Z"
+      "nombre": "BOW FIRDA"
     },
     "9143219": {
       "calado_m": 9.3,

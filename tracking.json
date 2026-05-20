@@ -1,19 +1,32 @@
 {
-  "actualizado": "2026-05-20T21:41:02.957961Z",
+  "actualizado": "2026-05-20T21:51:03.902911Z",
   "barcos": {
     "9250751": {
-      "fuente": null,
-      "error": "sin respuesta de vesselfinder",
+      "estado": "en_puerto",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-05-20T01:23:00Z",
+      "calado_m": 8.0,
+      "nav_status": "Moored",
+      "zona": "South America Inland",
+      "fuente": "vesselfinder",
+      "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-05-20T19:41:04.934682Z"
+      "ultimo_fetch": "2026-05-20T21:51:03.902911Z"
     },
     "9424039": {
-      "fuente": null,
-      "error": "sin respuesta de vesselfinder",
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 12.1,
+      "eta": "2026-05-21T07:00:00Z",
+      "calado_m": 5.8,
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-20T19:41:04.934682Z"
+      "ultimo_fetch": "2026-05-20T21:51:03.902911Z"
     },
     "9415636": {
       "estado": "en_route",

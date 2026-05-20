@@ -1454,6 +1454,9 @@ async function initApp() {
             const desp = (t.despachos || []).find(d => d.despacho === despachoViejo);
             if (desp) {
                 desp.despacho = despachoNuevo;
+                // Si en el mismo tanque quedaba un "fantasma" con el nombre nuevo y 0 kg
+                // (un despacho ya despachado, oculto en la UI), se descarta para no duplicar.
+                t.despachos = t.despachos.filter(d => d === desp || d.despacho !== despachoNuevo || d.stock > 0);
                 tanquesAfectados.push(t.tanque);
             }
         });
@@ -1519,7 +1522,9 @@ async function initApp() {
             // mismo despacho pueden estar en TK distintos sin conflicto. La validación de
             // conflictos en otros tanques (caso de propagación) se hace en ejecutarRenombrar
             // según el alcance que elija el usuario.
-            const conflictoEnEste = tanqueActual.despachos.some(d => d.despacho === nuevo && d !== despachoObj);
+            // Los despachos con 0 kg son "fantasmas" (ya despachados, ocultos en la UI): no
+            // cuentan como conflicto y se descartan al renombrar.
+            const conflictoEnEste = tanqueActual.despachos.some(d => d.despacho === nuevo && d !== despachoObj && d.stock > 0);
             if (conflictoEnEste) {
                 mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque (TK ${tanqueActual.tanque}).`);
                 return;
@@ -1558,7 +1563,7 @@ async function initApp() {
                 const tanquesConViejo = stock.filter(t => (t.despachos || []).some(d => d.despacho === viejo));
                 const conflictoOtro = tanquesConViejo.find(t =>
                     t.tanque !== tanqueActual.tanque &&
-                    t.despachos.some(d => d.despacho === nuevo)
+                    t.despachos.some(d => d.despacho === nuevo && d.stock > 0)
                 );
                 if (conflictoOtro) {
                     document.getElementById(errorId).textContent =
@@ -1576,6 +1581,8 @@ async function initApp() {
                 despachoObj.stock -= kilos;
                 const nuevoDesp = { despacho: nuevo, stock: kilos };
                 if (despachoObj.cliente) nuevoDesp.cliente = despachoObj.cliente;
+                // Descartar fantasmas con el mismo nombre y 0 kg antes de agregar el nuevo.
+                tanqueActual.despachos = tanqueActual.despachos.filter(d => d.despacho !== nuevo || d.stock > 0);
                 tanqueActual.despachos.push(nuevoDesp);
                 guardarDatos();
                 mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");

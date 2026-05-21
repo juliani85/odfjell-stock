@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-21T16:31:05.416419Z",
+  "actualizado": "2026-05-21T16:41:03.759720Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -70,16 +70,16 @@
     },
     "9143219": {
       "estado": "en_route",
-      "destino": "T.CITY ADVARIO66",
-      "eta": "2026-05-19T22:30:00Z",
-      "calado_m": 9.3,
+      "destino": "Freeport, United States (USA)",
+      "eta": "2026-05-21T18:00:00Z",
+      "calado_m": 10.2,
       "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-21T12:40:59.514212Z"
+      "ultimo_fetch": "2026-05-21T16:41:03.759720Z"
     },
     "9168635": {
       "estado": "en_route",

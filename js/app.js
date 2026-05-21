@@ -1447,13 +1447,14 @@ async function initApp() {
     // Renombra el despacho. Si soloEnTanque está seteado, solo afecta a ese tanque
     // (y sus entradas del historial / plan). Si no, renombra en todos los tanques.
     // Devuelve la lista de tanques afectados.
-    function renombrarDespachoEnStock(tanqueObj, despachoViejo, despachoNuevo, soloEnTanque = null) {
+    function renombrarDespachoEnStock(tanqueObj, despachoViejo, despachoNuevo, soloEnTanque = null, clienteNuevo = null) {
         const tanquesAfectados = [];
         stock.forEach(t => {
             if (soloEnTanque && t.tanque !== soloEnTanque) return;
             const desp = (t.despachos || []).find(d => d.despacho === despachoViejo);
             if (desp) {
                 desp.despacho = despachoNuevo;
+                if (clienteNuevo) desp.cliente = clienteNuevo;
                 // Si en el mismo tanque quedaba un "fantasma" con el nombre nuevo y 0 kg
                 // (un despacho ya despachado, oculto en la UI), se descarta para no duplicar.
                 t.despachos = t.despachos.filter(d => d === desp || d.despacho !== despachoNuevo || d.stock > 0);
@@ -1477,13 +1478,20 @@ async function initApp() {
         const stockViejo = despachoObj.stock;
         const inputNombreId = "inputRenombrarDesp";
         const inputKilosId = "inputRenombrarKilos";
+        const inputClienteId = "inputRenombrarCliente";
         const errorId = "renombrarError";
+        const clienteActual = despachoObj.cliente || (tanqueActual && tanqueActual.cliente) || "";
         const html = `
             <p>El despacho <code>${viejo}</code> no cumple con el formato estándar (<strong>IC04</strong>, <strong>IC06</strong>, <strong>TRP</strong>, <strong>EC01</strong>, <strong>REMO</strong>, <strong>TRM6</strong> o <strong>IT14</strong>).</p>
             <p style="font-size:0.9rem;color:var(--gray-500);margin-bottom:0.25rem">Stock disponible: <strong>${formatKg(stockViejo)} kg</strong></p>
             <div class="form-group" style="margin-top:1rem">
                 <label for="${inputNombreId}">Nuevo nombre del despacho</label>
                 <input type="text" id="${inputNombreId}" placeholder="Ej: DI26IC04009999Z" style="font-family:monospace;text-transform:uppercase">
+            </div>
+            <div class="form-group" style="margin-top:0.75rem">
+                <label for="${inputClienteId}">Cliente / SubCliente</label>
+                <input type="text" id="${inputClienteId}" placeholder="Nombre del cliente">
+                <p style="font-size:0.78rem;color:var(--gray-500);margin-top:0.2rem">Confirmá que el cliente es el mismo, o cambialo si corresponde.</p>
             </div>
             <div class="form-group" style="margin-top:0.75rem">
                 <label for="${inputKilosId}">Kilos a migrar al nuevo nombre</label>
@@ -1495,6 +1503,7 @@ async function initApp() {
         document.getElementById("modalTitulo").textContent = "Renombrar despacho";
         document.getElementById("btnConfirmar").textContent = "Renombrar";
         modalBody.innerHTML = html;
+        document.getElementById(inputClienteId).value = clienteActual;
 
         const confirmarRenombrar = () => {
             const inpN = document.getElementById(inputNombreId);
@@ -1552,8 +1561,10 @@ async function initApp() {
         const ejecutarRenombrar = (soloEnEste) => {
             const inpN = document.getElementById(inputNombreId);
             const inpK = document.getElementById(inputKilosId);
+            const inpC = document.getElementById(inputClienteId);
             const nuevo = (inpN.value || "").trim().toUpperCase();
             const kilos = parseInt(inpK.value) || 0;
+            const clienteNuevo = (inpC.value || "").trim();
             const esSplit = kilos < stockViejo;
 
             // Si propaga a todos: validar que ningún otro tanque con el despacho viejo
@@ -1577,19 +1588,21 @@ async function initApp() {
             modal.classList.add("hidden");
             document.getElementById("btnConfirmar").textContent = "Confirmar";
 
+            const cliTxt = (clienteNuevo && clienteNuevo !== clienteActual) ? ` · Cliente: ${clienteNuevo}` : "";
             if (esSplit) {
                 despachoObj.stock -= kilos;
                 const nuevoDesp = { despacho: nuevo, stock: kilos };
-                if (despachoObj.cliente) nuevoDesp.cliente = despachoObj.cliente;
+                const cli = clienteNuevo || despachoObj.cliente;
+                if (cli) nuevoDesp.cliente = cli;
                 // Descartar fantasmas con el mismo nombre y 0 kg antes de agregar el nuevo.
                 tanqueActual.despachos = tanqueActual.despachos.filter(d => d.despacho !== nuevo || d.stock > 0);
                 tanqueActual.despachos.push(nuevoDesp);
                 guardarDatos();
-                mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg`, "success");
+                mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg${cliTxt}`, "success");
             } else {
-                const tks = renombrarDespachoEnStock(tanqueActual, viejo, nuevo, soloEnEste ? tanqueActual.tanque : null);
+                const tks = renombrarDespachoEnStock(tanqueActual, viejo, nuevo, soloEnEste ? tanqueActual.tanque : null, clienteNuevo);
                 const dondeTxt = tks.length > 1 ? ` en ${tks.length} tanques (TK ${tks.join(", TK ")})` : ` en TK ${tks[0] || tanqueActual.tanque}`;
-                mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"`, "success");
+                mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"${cliTxt}`, "success");
             }
 
             addDespachoConsultado(nuevo);

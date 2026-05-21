@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-21T03:21:03.171352Z",
+  "actualizado": "2026-05-21T03:31:01.442809Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -17,7 +17,7 @@
     "9424039": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.9,
+      "velocidad_nudos": 10.6,
       "eta": "2026-05-21T07:00:00Z",
       "calado_m": 5.8,
       "nav_status": "Under way using engine",
@@ -26,12 +26,12 @@
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-21T03:21:03.171352Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     },
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 10.5,
+      "velocidad_nudos": 10.2,
       "eta": "2026-05-24T07:00:00Z",
       "calado_m": 4.1,
       "nav_status": "Under way using engine",
@@ -40,7 +40,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-20T23:31:02.202761Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -53,20 +53,20 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-05-20T23:31:02.202761Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     },
     "9780536": {
       "estado": "en_puerto",
       "puerto_actual": "Houston Anch., United States (USA)",
       "arribo": "2026-05-20T04:13:00Z",
       "calado_m": 9.0,
-      "nav_status": "At anchor",
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-20T23:31:02.202761Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     },
     "9143219": {
       "estado": "en_route",
@@ -92,7 +92,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-20T23:31:02.202761Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     },
     "9986049": {
       "estado": "en_route",
@@ -105,7 +105,7 @@
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-20T23:31:02.202761Z"
+      "ultimo_fetch": "2026-05-21T03:31:01.442809Z"
     }
   }
 }

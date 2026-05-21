@@ -1,23 +1,24 @@
 {
-  "actualizado": "2026-05-21T03:51:04.571217Z",
+  "actualizado": "2026-05-21T04:01:02.809870Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
+      "velocidad_nudos": 12.6,
       "eta": "2026-05-22T12:00:00Z",
       "calado_m": 7.3,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-05-21T00:01:02.071606Z"
+      "ultimo_fetch": "2026-05-21T04:01:02.809870Z"
     },
     "9424039": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.4,
+      "velocidad_nudos": 12.7,
       "eta": "2026-05-21T07:00:00Z",
       "calado_m": 5.8,
       "nav_status": "Under way using engine",
@@ -26,7 +27,7 @@
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-21T03:51:04.571217Z"
+      "ultimo_fetch": "2026-05-21T04:01:02.809870Z"
     },
     "9415636": {
       "estado": "en_route",

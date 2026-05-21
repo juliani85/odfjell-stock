@@ -438,17 +438,17 @@
           "documento": "26008IC65000024P",
           "cto": "USTXTOTU2602BFIR2401",
           "cantDoctada": 533132,
-          "cantResult": null
+          "cantResult": 532636
         },
         {
           "documento": "26008IC65000025Z",
           "cto": "BRSSZ3501",
           "cantDoctada": 487531,
-          "cantResult": null
+          "cantResult": 481469
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-20T16:26:32.103Z"
+      "actualizadoTs": "2026-05-21T11:17:33.856Z"
     },
     {
       "id": 1779293166429,

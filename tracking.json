@@ -1,20 +1,6 @@
 {
-  "actualizado": "2026-05-21T21:31:02.293545Z",
+  "actualizado": "2026-05-21T21:41:06.779280Z",
   "barcos": {
-    "9250751": {
-      "estado": "en_route",
-      "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 12.3,
-      "eta": "2026-05-23T08:00:00Z",
-      "calado_m": 7.3,
-      "nav_status": "Under way using engine",
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9250751",
-      "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-05-21T20:10:59.986665Z"
-    },
     "9424039": {
       "estado": "en_puerto",
       "puerto_actual": "Campana, Argentina",

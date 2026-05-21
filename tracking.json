@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-21T01:01:04.794583Z",
+  "actualizado": "2026-05-21T01:11:03.696470Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-21T01:01:04.794583Z"
+      "ultimo_fetch": "2026-05-21T01:11:03.696470Z"
     },
     "9415636": {
       "estado": "en_route",

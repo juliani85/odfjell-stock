@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-21T10:21:02.643361Z",
+  "actualizado": "2026-05-21T10:31:02.116915Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -18,7 +18,6 @@
     "9424039": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 0.9,
       "eta": "2026-05-21T07:00:00Z",
       "calado_m": 5.8,
       "nav_status": "Under way using engine",
@@ -27,7 +26,7 @@
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-21T10:21:02.643361Z"
+      "ultimo_fetch": "2026-05-21T10:31:02.116915Z"
     },
     "9415636": {
       "estado": "en_route",

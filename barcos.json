@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "imo": "9250751",
-      "nombre": "BOW FIRDA"
-    },
-    {
       "nombre": "CASTILLO DE HERRERA",
       "imo": "9424039"
     },

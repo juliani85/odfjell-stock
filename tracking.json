@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-21T08:21:01.322201Z",
+  "actualizado": "2026-05-21T08:31:04.795792Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -18,7 +18,7 @@
     "9424039": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 7.7,
+      "velocidad_nudos": 4.8,
       "eta": "2026-05-21T07:00:00Z",
       "calado_m": 5.8,
       "nav_status": "Under way using engine",
@@ -27,7 +27,7 @@
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-21T08:21:01.322201Z"
+      "ultimo_fetch": "2026-05-21T08:31:04.795792Z"
     },
     "9415636": {
       "estado": "en_route",
@@ -80,7 +80,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-21T04:21:04.782366Z"
+      "ultimo_fetch": "2026-05-21T08:31:04.795792Z"
     },
     "9168635": {
       "estado": "en_route",

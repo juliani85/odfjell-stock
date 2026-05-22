@@ -2151,13 +2151,19 @@ async function initApp() {
     window.anularSalida = function(id) {
         const salida = historial.find(s => s.id === id);
         if (!salida) return;
-        if (!confirm(`Anular remito ${salida.remito || "sin remito"}?\nSe devuelven ${formatKg(salida.kilos)} kg al despacho ${salida.despacho} del TK ${salida.tanque}.`)) return;
+        const tipo = salida.tipo || "SALIDA";
+        const verbo = tipo === "INGRESO" ? "el ingreso" : tipo === "TRANSFERENCIA" ? "la transferencia" : "la salida";
+        const efecto = tipo === "INGRESO"
+            ? `Se quitan ${formatKg(salida.kilos)} kg del despacho ${salida.despacho} (TK ${salida.tanque}).`
+            : tipo === "TRANSFERENCIA"
+                ? `Se deshace el movimiento de ${formatKg(salida.kilos)} kg (${salida.tanque}).`
+                : `Se devuelven ${formatKg(salida.kilos)} kg al despacho ${salida.despacho} del TK ${salida.tanque}.`;
+        if (!confirm(`¿Anular ${verbo}?\n${efecto}`)) return;
 
-        const tanque = stock.find(t => t.tanque === salida.tanque);
-        if (tanque) {
-            const desp = tanque.despachos.find(d => d.despacho === salida.despacho);
-            if (desp) desp.stock += salida.kilos;
-        }
+        // Revertir el efecto sobre el stock según el TIPO de movimiento:
+        // SALIDA devuelve kg, INGRESO los quita, TRANSFERENCIA deshace ambos tanques.
+        // (Antes esta función siempre sumaba kg — bug: anular un ingreso inflaba el stock.)
+        revertirEntradaDelStock(salida);
 
         historial = historial.filter(s => s.id !== id);
         if (!anulados.includes(id)) anulados.push(id);
@@ -3163,8 +3169,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         } else {
             ingEsVacio = true;
             ingTanqueActual = tanque || { tanque: num, producto: "", cliente: "", despachos: [] };
+            const prodPrevio = ((tanque && tanque.producto) || "").trim();
             ingInfoTanque.className = "info-box warning-box";
-            ingInfoTanque.innerHTML = `<strong>Tanque ${num} vacío.</strong> Seleccioná el producto a ingresar.`;
+            ingInfoTanque.innerHTML = prodPrevio
+                ? `<strong>Tanque ${num} vacío</strong> (sin stock). Figura con producto <strong>${prodPrevio}</strong> de una carga anterior — un tanque solo puede tener <strong>un producto</strong>: asegurate de que esté realmente vacío del anterior antes de ingresar otro.`
+                : `<strong>Tanque ${num} vacío.</strong> Seleccioná el producto a ingresar.`;
             ingInfoTanque.classList.remove("hidden");
             poblarProductos();
             ingProductoNuevo.classList.remove("hidden");
@@ -3264,6 +3273,24 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             }
         }
 
+        // Un tanque solo puede tener UN producto. Verificar contra lo que hay realmente
+        // en stock antes de ingresar (puede haber cambiado por la sincronización).
+        const tanqueEnStock = stock.find(t => t.tanque === ingTanqueActual.tanque);
+        const stockActualTk = tanqueEnStock ? tanqueEnStock.despachos.reduce((s, d) => s + d.stock, 0) : 0;
+        const prodIngU = (producto || "").trim().toUpperCase();
+        const prodTkU = ((tanqueEnStock && tanqueEnStock.producto) || "").trim().toUpperCase();
+        let avisoCambioProducto = "";
+        if (prodTkU && prodTkU !== prodIngU) {
+            if (stockActualTk > 0) {
+                // Bloqueo: el tanque tiene stock de OTRO producto. No se puede mezclar.
+                ingAlerta.textContent = `El TK ${ingTanqueActual.tanque} ya tiene ${formatKg(stockActualTk)} kg de ${tanqueEnStock.producto}. Un tanque solo puede tener un producto — no se puede ingresar ${producto}. Si el tanque se vació, volvé a buscarlo.`;
+                ingAlerta.className = "alerta error";
+                return;
+            }
+            // El tanque está vacío pero figuraba con otro producto: avisar (no bloquear).
+            avisoCambioProducto = `<p style="background:#fef3c7;color:#92400e;padding:0.5rem 0.7rem;border-radius:6px;margin-top:0.5rem;font-size:0.9rem">⚠ El tanque figuraba con producto <strong>${tanqueEnStock.producto}</strong>. Lo vas a cambiar a <strong>${producto}</strong>. Un tanque solo puede tener <strong>un producto</strong> — confirmá solo si el tanque se vació del anterior.</p>`;
+        }
+
         document.getElementById("modalTitulo").textContent = "Confirmar Ingreso";
         modalBody.innerHTML = `
             <p><strong>Tanque:</strong> TK ${ingTanqueActual.tanque}</p>
@@ -3272,6 +3299,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             <p><strong>Despacho:</strong> <code>${desp}</code></p>
             <p><strong>Kilos a ingresar:</strong> ${formatKg(kilos)} kg</p>
             <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
+            ${avisoCambioProducto}
         `;
 
         // Guardar callback de confirmación

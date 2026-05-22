@@ -351,9 +351,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 549318,
           "tkDestino": "10",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "890R",
+          "medic": "110",
+          "kgResultantes": 547401
         },
         {
           "solPart": "972",
@@ -362,9 +362,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 629103,
           "tkDestino": "74-82",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "891S",
+          "medic": "111",
+          "kgResultantes": 624925
         },
         {
           "solPart": "974",
@@ -373,9 +373,9 @@
           "receptor": "PBB",
           "kgDeclarados": 900341,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "892T",
+          "medic": "115",
+          "kgResultantes": 902859
         },
         {
           "solPart": "964",
@@ -384,9 +384,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 101448,
           "tkDestino": "33",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "893U",
+          "medic": "112",
+          "kgResultantes": 102519
         },
         {
           "solPart": "778",
@@ -406,9 +406,9 @@
           "receptor": "PBB",
           "kgDeclarados": 206775,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "900J",
+          "medic": "114",
+          "kgResultantes": 208517
         },
         {
           "solPart": "827",
@@ -417,20 +417,20 @@
           "receptor": "PBB",
           "kgDeclarados": 248431,
           "tkDestino": "41",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "899D",
+          "medic": "113",
+          "kgResultantes": 246883
         },
         {
           "solPart": "980",
-          "cto": "otus2602 1901-02-03-04-05",
+          "cto": "OTUS2602 1901-02-03-04-05",
           "mercaderia": "BUTYL ACRILATO",
           "receptor": "DALGAR",
           "kgDeclarados": 207573,
           "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "894V-895W-896A-897B-898C",
+          "medic": "109",
+          "kgResultantes": 207496
         }
       ],
       "dap": [
@@ -448,7 +448,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-21T11:17:33.856Z"
+      "actualizadoTs": "2026-05-22T12:03:16.768Z"
     },
     {
       "id": 1779293166429,

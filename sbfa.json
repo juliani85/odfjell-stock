@@ -389,17 +389,6 @@
           "kgResultantes": 102519
         },
         {
-          "solPart": "778",
-          "cto": "OTUS2602",
-          "mercaderia": "EXXSOL D 60",
-          "receptor": "BRENNTAG",
-          "kgDeclarados": 150000,
-          "tkDestino": "19-48",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
-        },
-        {
           "solPart": "826",
           "cto": "OTUS2602 2101",
           "mercaderia": "PAPI",
@@ -448,7 +437,9 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-22T12:03:16.768Z"
+      "actualizadoTs": "2026-05-22T12:05:46.100Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-22T12:05:46.100Z"
     },
     {
       "id": 1779293166429,

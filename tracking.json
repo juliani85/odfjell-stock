@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-22T04:51:08.345108Z",
+  "actualizado": "2026-05-22T05:01:12.425941Z",
   "barcos": {
     "9424039": {
       "estado": "en_route",
@@ -57,9 +57,9 @@
       "ultimo_fetch": "2026-05-22T02:21:08.510697Z"
     },
     "9143219": {
-      "estado": "en_route",
-      "destino": "Freeport, United States (USA)",
-      "eta": "2026-05-21T18:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Freeport Anch., United States (USA)",
+      "arribo": "2026-05-22T00:29:00Z",
       "calado_m": 10.2,
       "nav_status": "At anchor",
       "zona": "Gulf of Mexico",
@@ -67,7 +67,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-22T01:00:59.904635Z"
+      "ultimo_fetch": "2026-05-22T05:01:12.425941Z"
     },
     "9168635": {
       "estado": "en_route",

@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "CASTILLO DE HERRERA",
-      "imo": "9424039"
-    },
-    {
       "nombre": "SUN BIRD",
       "imo": "9415636"
     },

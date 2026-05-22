@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-05-22T07:21:12.117983Z",
+  "actualizado": "2026-05-22T07:31:07.857385Z",
   "barcos": {
     "9424039": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 0.3,
+      "velocidad_nudos": 12.4,
       "eta": "2026-05-24T12:00:00Z",
       "calado_m": 5.7,
       "nav_status": "Under way using engine",
-      "zona": "South America Inland",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9424039",
       "nombre": "CASTILLO DE HERRERA",
-      "ultimo_fetch": "2026-05-22T03:31:07.143888Z"
+      "ultimo_fetch": "2026-05-22T07:31:07.857385Z"
     },
     "9415636": {
       "estado": "en_route",

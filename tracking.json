@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-23T08:20:21.323777Z",
+  "actualizado": "2026-05-23T08:30:19.534935Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 9.3,
+      "velocidad_nudos": 9.0,
       "eta": "2026-05-24T06:00:00Z",
       "calado_m": 4.1,
       "nav_status": "Under way using engine",
@@ -13,20 +13,21 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-23T04:30:18.986881Z"
+      "ultimo_fetch": "2026-05-23T08:30:19.534935Z"
     },
     "9973315": {
       "estado": "en_route",
       "destino": "Aratu, Brazil",
-      "velocidad_nudos": 13.0,
+      "velocidad_nudos": 13.3,
       "eta": "2026-05-30T15:00:00Z",
       "calado_m": 8.8,
+      "nav_status": "Under way using engine",
       "zona": "Caribbean Sea",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-05-23T04:30:18.986881Z"
+      "ultimo_fetch": "2026-05-23T08:30:19.534935Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -65,20 +66,19 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-23T04:30:18.986881Z"
+      "ultimo_fetch": "2026-05-23T08:30:19.534935Z"
     },
     "9986049": {
       "estado": "en_puerto",
       "puerto_actual": "Rio Grande, Brazil",
       "arribo": "2026-05-22T19:10:00Z",
       "calado_m": 10.6,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-23T04:30:18.986881Z"
+      "ultimo_fetch": "2026-05-23T08:30:19.534935Z"
     }
   }
 }

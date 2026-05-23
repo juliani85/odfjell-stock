@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-23T21:40:12.390150Z",
+  "actualizado": "2026-05-23T21:50:12.275436Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -30,9 +30,10 @@
       "ultimo_fetch": "2026-05-23T20:50:13.956311Z"
     },
     "9780536": {
-      "estado": "en_puerto",
-      "puerto_actual": "Houston, United States (USA)",
-      "arribo": "2026-05-21T08:14:00Z",
+      "estado": "en_route",
+      "destino": "Houston, United States (USA)",
+      "velocidad_nudos": 11.8,
+      "eta": "2026-05-23T11:00:00Z",
       "calado_m": 9.0,
       "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
@@ -40,20 +41,20 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-23T07:30:22.483681Z"
+      "ultimo_fetch": "2026-05-23T21:50:12.275436Z"
     },
     "9143219": {
-      "estado": "en_puerto",
-      "puerto_actual": "Freeport Anch., United States (USA)",
-      "arribo": "2026-05-22T00:29:00Z",
+      "estado": "en_route",
+      "destino": "VOPAK A22",
+      "eta": "2026-05-23T22:00:00Z",
       "calado_m": 10.2,
-      "nav_status": "At anchor",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-23T17:50:13.061136Z"
+      "ultimo_fetch": "2026-05-23T21:50:12.275436Z"
     },
     "9168635": {
       "estado": "en_route",

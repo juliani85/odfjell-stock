@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-23T07:20:20.652014Z",
+  "actualizado": "2026-05-23T07:30:22.483681Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -33,13 +33,13 @@
       "puerto_actual": "Houston, United States (USA)",
       "arribo": "2026-05-21T08:14:00Z",
       "calado_m": 9.0,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-23T03:20:21.941990Z"
+      "ultimo_fetch": "2026-05-23T07:30:22.483681Z"
     },
     "9143219": {
       "estado": "en_puerto",

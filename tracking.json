@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-24T10:00:58.107751Z",
+  "actualizado": "2026-05-24T10:10:56.745141Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-24T06:01:00.051342Z"
+      "ultimo_fetch": "2026-05-24T10:10:56.745141Z"
     },
     "9143219": {
       "estado": "en_route",
@@ -51,7 +51,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-24T06:01:00.051342Z"
+      "ultimo_fetch": "2026-05-24T10:10:56.745141Z"
     },
     "9168635": {
       "estado": "en_route",

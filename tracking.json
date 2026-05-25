@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-25T06:10:57.609053Z",
+  "actualizado": "2026-05-25T06:21:00.555565Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -39,13 +39,13 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-25T02:20:57.942534Z"
+      "ultimo_fetch": "2026-05-25T06:21:00.555565Z"
     },
     "9143219": {
       "estado": "en_route",
       "destino": "Geismar, United States (USA)",
       "velocidad_nudos": 12.8,
-      "eta": "2026-05-26T07:00:00Z",
+      "eta": "2026-05-26T08:00:00Z",
       "calado_m": 10.4,
       "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
@@ -53,7 +53,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-25T02:20:57.942534Z"
+      "ultimo_fetch": "2026-05-25T06:21:00.555565Z"
     },
     "9168635": {
       "estado": "en_route",

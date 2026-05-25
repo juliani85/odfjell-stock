@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-25T05:20:59.622328Z",
+  "actualizado": "2026-05-25T05:30:59.218407Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Kamsar, Guinea",
-      "velocidad_nudos": 10.7,
+      "velocidad_nudos": 10.9,
       "eta": "2026-05-29T20:00:00Z",
       "calado_m": 4.4,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-25T01:30:58.664740Z"
+      "ultimo_fetch": "2026-05-25T05:30:59.218407Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-05-25T01:30:58.664740Z"
+      "ultimo_fetch": "2026-05-25T05:30:59.218407Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -58,7 +58,7 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Port Arthur, United States (USA)",
-      "velocidad_nudos": 13.2,
+      "velocidad_nudos": 13.0,
       "eta": "2026-05-25T15:00:00Z",
       "calado_m": 11.6,
       "nav_status": "Not under command",
@@ -67,7 +67,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-25T01:30:58.664740Z"
+      "ultimo_fetch": "2026-05-25T05:30:59.218407Z"
     },
     "9986049": {
       "estado": "en_route",
@@ -75,13 +75,12 @@
       "velocidad_nudos": 11.7,
       "eta": "2026-05-25T23:59:00Z",
       "calado_m": 7.7,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-25T01:30:58.664740Z"
+      "ultimo_fetch": "2026-05-25T05:30:59.218407Z"
     }
   }
 }

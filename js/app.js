@@ -5357,6 +5357,8 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             document.getElementById("sbfaAgencia").value = d.agencia || "B&M";
             document.getElementById("sbfaCuit").value = d.cuit || "30-71631314-6";
             document.getElementById("sbfaFecha").value = d.fecha || "";
+            const notaInputE = document.getElementById("sbfaNotaNumero");
+            if (notaInputE) notaInputE.value = d.notaNumero || "";
             renderSbfaTablaFilas(d.filas || []);
             renderSbfaTablaDap(d.dap || []);
             eliminarBtn.style.display = "";
@@ -5700,6 +5702,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             agencia: document.getElementById("sbfaAgencia").value.trim(),
             cuit: document.getElementById("sbfaCuit").value.trim(),
             fecha: document.getElementById("sbfaFecha").value,
+            notaNumero: (document.getElementById("sbfaNotaNumero")?.value || "").trim(),
             filas: sbfaLeerFilas().filter(f => Object.values(f).some(v => v !== "" && v !== null)),
             dap: sbfaLeerDap().filter(d => Object.values(d).some(v => v !== "" && v !== null)),
             actualizadoPor: usuarioActual,
@@ -5735,10 +5738,16 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         // si se borra una medición y deja de estar completa, vuelve a Descargas.
         const estabaArchivada = i >= 0 && !!sbfaConfig.descargas[i].archivada;
         let recienArchivada = false;
-        if (sbfaDescargaCompleta(d)) {
+        let motivoArchivado = "";
+        const completa = sbfaDescargaCompleta(d);
+        const tieneNota = !!(d.notaNumero && String(d.notaNumero).trim());
+        if (completa || tieneNota) {
             d.archivada = true;
             d.archivadaTs = (estabaArchivada && sbfaConfig.descargas[i].archivadaTs) || new Date().toISOString();
             recienArchivada = !estabaArchivada;
+            motivoArchivado = tieneNota
+                ? `tiene N° de Nota <strong>${d.notaNumero}</strong> asignado`
+                : "la medición está completa";
         }
         if (i >= 0) sbfaConfig.descargas[i] = d;
         else sbfaConfig.descargas.push(d);
@@ -5784,7 +5793,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const manifTxt = d.manifiesto ? ` (MANI ${d.manifiesto})` : " (manifiesto pendiente)";
         if (recienArchivada) {
             const bTxt = barcoSacado ? ` y el buque se sacó del seguimiento de <strong>Barcos</strong>` : "";
-            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada.<br><br>La medición está completa, así que pasó al <strong>Historial</strong> de SB/FA${bTxt}.`, "Descarga terminada → Historial");
+            mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada.<br><br>Como ${motivoArchivado}, pasó al <strong>Historial</strong> de SB/FA${bTxt}.`, "Descarga terminada → Historial");
         } else {
             mostrarModalInfo(`✓ Descarga del buque <strong>${d.buque}</strong>${manifTxt} guardada correctamente.`, "Descarga guardada");
         }

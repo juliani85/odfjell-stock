@@ -444,7 +444,7 @@
     {
       "id": 1779293166429,
       "buque": "CASTILLO DE HERRERA",
-      "manifiesto": "",
+      "manifiesto": "12817F",
       "agencia": "BALZER",
       "cuit": "30-71631314-6",
       "fecha": "2026-05-21",
@@ -456,9 +456,9 @@
           "receptor": "PBB",
           "kgDeclarados": 100000,
           "tkDestino": "88",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "902L",
+          "medic": "118",
+          "kgResultantes": 99837
         },
         {
           "solPart": "998",
@@ -467,9 +467,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1503049,
           "tkDestino": "84-88",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "901K",
+          "medic": "118",
+          "kgResultantes": 1500595
         },
         {
           "solPart": "999",
@@ -478,9 +478,9 @@
           "receptor": "PBB",
           "kgDeclarados": 304345,
           "tkDestino": "17",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "903M",
+          "medic": "117",
+          "kgResultantes": 300243
         },
         {
           "solPart": "1000",
@@ -489,14 +489,16 @@
           "receptor": "PBB",
           "kgDeclarados": 134933,
           "tkDestino": "78",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "904N",
+          "medic": "116",
+          "kgResultantes": 135188
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-20T16:23:47.899Z"
+      "actualizadoTs": "2026-05-26T10:32:51.221Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-26T10:32:51.221Z"
     }
   ]
 }

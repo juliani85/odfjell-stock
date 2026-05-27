@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-27T00:50:49.347408Z",
+  "actualizado": "2026-05-27T01:00:49.162388Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -29,24 +29,23 @@
       "ultimo_fetch": "2026-05-26T22:10:51.552819Z"
     },
     "9780536": {
-      "estado": "en_route",
-      "destino": "Houston, United States (USA)",
-      "velocidad_nudos": 11.9,
-      "eta": "2026-05-26T10:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Houston, United States (USA)",
+      "arribo": "2026-05-26T23:44:00Z",
       "calado_m": 6.3,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-26T20:50:56.665672Z"
+      "ultimo_fetch": "2026-05-27T01:00:49.162388Z"
     },
     "9143219": {
       "estado": "en_route",
       "destino": "Geismar, United States (USA)",
-      "velocidad_nudos": 0.3,
-      "eta": "2026-05-26T08:00:00Z",
+      "velocidad_nudos": 10.0,
+      "eta": "2026-05-27T03:30:00Z",
       "calado_m": 10.4,
       "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
@@ -54,7 +53,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-05-26T20:50:56.665672Z"
+      "ultimo_fetch": "2026-05-27T01:00:49.162388Z"
     },
     "9168635": {
       "estado": "en_puerto",

@@ -508,9 +508,10 @@
       "id": 1779884351014,
       "buque": "PHEASANT",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-05-28",
+      "notaNumero": "",
       "filas": [
         {
           "solPart": "",
@@ -533,11 +534,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1073",
+          "cto": "06",
+          "mercaderia": "2 HETILHEXANOL",
+          "receptor": "MINERA EXAR",
+          "kgDeclarados": 106000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-27T12:19:11.014Z"
+      "actualizadoTs": "2026-05-27T17:28:13.266Z"
     }
   ]
 }

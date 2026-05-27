@@ -1,1 +1,543 @@
-{"descargas":[{"id":1778259966032,"buque":"BOW CAROLINE","manifiesto":"11559-H","agencia":"BYM","cuit":"3071631346","fecha":"2026-05-13","filas":[{"solPart":"870","cto":"105","mercaderia":"MONOETILENGLICOL","receptor":"AUTOVENTURES","kgDeclarados":81000,"tkDestino":"5-36","sbfa":"26008SBFA835Z","medic":"105","kgResultantes":81291},{"solPart":"871","cto":"126","mercaderia":"MONOETILENGLICOL","receptor":"CICLOQUIMICA","kgDeclarados":27000,"tkDestino":"5-36","sbfa":"26008SBFA856T","medic":"105","kgResultantes":27097},{"solPart":"872","cto":"123-124-125","mercaderia":"MONOETILENGLICOL","receptor":"FARLOC","kgDeclarados":81000,"tkDestino":"5-36","sbfa":"26008SBFA853Z/854R/855S","medic":"105","kgResultantes":81291},{"solPart":"873","cto":"127","mercaderia":"MONOETILENGLICOL","receptor":"LARING","kgDeclarados":27000,"tkDestino":"5-36","sbfa":"26008SBFA857U","medic":"105","kgResultantes":27097},{"solPart":"874","cto":"113-128-129-130-131","mercaderia":"MONOETILENGLICOL","receptor":"FEBEL","kgDeclarados":135000,"tkDestino":"5-36","sbfa":"26008SBFA843P/858V/859W/860Y/861P","medic":"105","kgResultantes":135485},{"solPart":"875","cto":"118-119-120-121-122","mercaderia":"MONOETIGLENGLICOL","receptor":"MILBERG","kgDeclarados":135000,"tkDestino":"5-36","sbfa":"26008SBFA848U/849V/850N/851Y/852P","medic":"105","kgResultantes":135485},{"solPart":"876","cto":"114","mercaderia":"MONOETILENGLICOL","receptor":"CALLEGARI","kgDeclarados":27000,"tkDestino":"5-36","sbfa":"26008SBFA844Z","medic":"105","kgResultantes":27097},{"solPart":"877","cto":"104-106-111-112-115-116-117","mercaderia":"MONOETILENGLICOL","receptor":"TRUE","kgDeclarados":347000,"tkDestino":"5-36","sbfa":"26008SBFA834P/836R/841N/842Y/845R846S847T","medic":"105","kgResultantes":348246},{"solPart":"878","cto":"107-108-109-110-132","mercaderia":"MONOETILENGLICOL","receptor":"TOTAL","kgDeclarados":240000,"tkDestino":"5-36","sbfa":"26008SBFA837S/838T839U/840M862Z","medic":"105","kgResultantes":240861}],"dap":[],"actualizadoPor":"julian","actualizadoTs":"2026-05-26T10:43:16.377175Z","archivada":true,"archivadaTs":"2026-05-26T10:43:16.377175Z"},{"id":1778268143140,"buque":"BOW CARDINAL","manifiesto":"11563-C","agencia":"BYM","cuit":"30-71631314-6","fecha":"2026-05-11","filas":[{"solPart":"879","cto":"4401","mercaderia":"VORANOL","receptor":"PBB","kgDeclarados":1128817,"tkDestino":"27-28-31-32","sbfa":"26008SBFA808Z","medic":"102","kgResultantes":1129295},{"solPart":"864","cto":"4101","mercaderia":"FENOL","receptor":"ATANOR","kgDeclarados":749954,"tkDestino":"80-85","sbfa":"26008SBFA790Z","medic":"98","kgResultantes":746598},{"solPart":"856","cto":"3604-3605-3606-3607","mercaderia":"2ETILHEXA","receptor":"EXAR","kgDeclarados":104000,"tkDestino":"58-63","sbfa":"26008SBFA820K/821L822M/823N","medic":"101","kgResultantes":104035},{"solPart":"855","cto":"3602-3603","mercaderia":"2ETILHEXA","receptor":"CHEMOTECNICA","kgDeclarados":200000,"tkDestino":"58-63","sbfa":"26008SBFA818R/819S","medic":"101","kgResultantes":200066},{"solPart":"854","cto":"3608","mercaderia":"2ETILHEXA","receptor":"FARMCHEM","kgDeclarados":16000,"tkDestino":"58-63","sbfa":"26008SBFA824Y","medic":"101","kgResultantes":16005},{"solPart":"842","cto":"3601","mercaderia":"2ETILHEXA","receptor":"VARTECO","kgDeclarados":100000,"tkDestino":"58-63","sbfa":"26008SBFA817Z","medic":"101","kgResultantes":100033},{"solPart":"731","cto":"2602-2600","mercaderia":"EXX60","receptor":"BRENNTAG","kgDeclarados":351360,"tkDestino":"48","sbfa":"26008SBFA813M","medic":"95","kgResultantes":349316},{"solPart":"774","cto":"2602-402-403","mercaderia":"BUTYL ACRYLATE","receptor":"INQUIBA","kgDeclarados":56000,"tkDestino":"67","sbfa":"26008SBFA809R/810J","medic":"103","kgResultantes":55920},{"solPart":"776","cto":"2602-1102","mercaderia":"ACETATO DE VINILO","receptor":"DALGAR","kgDeclarados":205814,"tkDestino":"65-25","sbfa":"26008SBFA828S","medic":"104","kgResultantes":203483},{"solPart":"775","cto":"2602-401-405","mercaderia":"BUTYL ACRYLATE","receptor":"DALGAR","kgDeclarados":303648,"tkDestino":"67","sbfa":"26008SBFA807P/812L","medic":"103","kgResultantes":303219},{"solPart":"747","cto":"2602-3600","mercaderia":"2ETILHEXA","receptor":"ATANOR","kgDeclarados":320000,"tkDestino":"58-63","sbfa":"26008SBFA816P","medic":"101","kgResultantes":320105},{"solPart":"734","cto":"2602-1101","mercaderia":"ACETATO DE VINILO","receptor":"CRILEN","kgDeclarados":56000,"tkDestino":"25","sbfa":"26008SBFA827R","medic":"104","kgResultantes":55366},{"solPart":"733","cto":"2602-0404","mercaderia":"ACRILATO DE BUTILO","receptor":"CRILEN","kgDeclarados":112000,"tkDestino":"67","sbfa":"26008SBFA811K","medic":"103","kgResultantes":111842},{"solPart":"728","cto":"2602-0801","mercaderia":"BUTYL CELLOSOLVE","receptor":"PBB","kgDeclarados":148156,"tkDestino":"96","sbfa":"26008SBFA825P","medic":"99","kgResultantes":144795},{"solPart":"730","cto":"2602-0501","mercaderia":"PAPI","receptor":"PBB","kgDeclarados":262258,"tkDestino":"75-76","sbfa":"26008SBFA829T","medic":"97","kgResultantes":266082},{"solPart":"729","cto":"2602-1001","mercaderia":"PROPIONIC ACID","receptor":"PBB","kgDeclarados":198947,"tkDestino":"41","sbfa":"26008SBFA826Z","medic":"100","kgResultantes":198787},{"solPart":"685","cto":"2602-3001","mercaderia":"SOLVENT NAPTHTHA L","receptor":"BRENNTAG","kgDeclarados":102388,"tkDestino":"33","sbfa":"26008SBFA815Y","medic":"96","kgResultantes":102996},{"solPart":"681","cto":"2602-2901","mercaderia":"ISOPAR L","receptor":"BRENNTAG","kgDeclarados":149262,"tkDestino":"81","sbfa":"26008SBFA814N","medic":"94","kgResultantes":150130}],"dap":[{"documento":"26008IC65000022N","cto":"4201","cantDoctada":687104,"cantResult":681750},{"documento":"26008IC65000021M","cto":"4301","cantDoctada":299998,"cantResult":299396}],"actualizadoPor":"julian","actualizadoTs":"2026-05-26T10:43:16.377175Z","archivada":true,"archivadaTs":"2026-05-26T10:43:16.377175Z"},{"id":1779107436331,"buque":"BOW FIRDA","manifiesto":"12530U","agencia":"B&M","cuit":"30-71631314-6","fecha":"2026-05-20","filas":[{"solPart":"973","cto":"3301","mercaderia":"ALKONAT L70","receptor":"UNILEVER","kgDeclarados":549318,"tkDestino":"10","sbfa":"890R","medic":"110","kgResultantes":547401},{"solPart":"972","cto":"3401","mercaderia":"ALKONAT L10","receptor":"UNILEVER","kgDeclarados":629103,"tkDestino":"74-82","sbfa":"891S","medic":"111","kgResultantes":624925},{"solPart":"974","cto":"3601","mercaderia":"VORANOL","receptor":"PBB","kgDeclarados":900341,"tkDestino":"27-28-29-31-32","sbfa":"892T","medic":"115","kgResultantes":902859},{"solPart":"964","cto":"OTUS2602 1101","mercaderia":"SOLVENT NAFTA","receptor":"BRENNTAG","kgDeclarados":101448,"tkDestino":"33","sbfa":"893U","medic":"112","kgResultantes":102519},{"solPart":"826","cto":"OTUS2602 2101","mercaderia":"PAPI","receptor":"PBB","kgDeclarados":206775,"tkDestino":"75-76","sbfa":"900J","medic":"114","kgResultantes":208517},{"solPart":"827","cto":"OTUS2602 2501","mercaderia":"ACIDO PROPIONICO","receptor":"PBB","kgDeclarados":248431,"tkDestino":"41","sbfa":"899D","medic":"113","kgResultantes":246883},{"solPart":"980","cto":"OTUS2602 1901-02-03-04-05","mercaderia":"BUTYL ACRILATO","receptor":"DALGAR","kgDeclarados":207573,"tkDestino":"34-67","sbfa":"894V-895W-896A-897B-898C","medic":"109","kgResultantes":207496}],"dap":[{"documento":"26008IC65000024P","cto":"USTXTOTU2602BFIR2401","cantDoctada":533132,"cantResult":532636},{"documento":"26008IC65000025Z","cto":"BRSSZ3501","cantDoctada":487531,"cantResult":481469}],"actualizadoPor":"julian","actualizadoTs":"2026-05-22T12:27:13.056Z","archivada":true,"archivadaTs":"2026-05-22T12:05:46.100Z"},{"id":1779293166429,"buque":"CASTILLO DE HERRERA","manifiesto":"12817F","agencia":"BALZER","cuit":"30-71631314-6","fecha":"2026-05-21","filas":[{"solPart":"997","cto":"02","mercaderia":"PROPYLENE GLYCOL USP","receptor":"PBB","kgDeclarados":100000,"tkDestino":"88","sbfa":"902L","medic":"118","kgResultantes":99837},{"solPart":"998","cto":"01","mercaderia":"PROPYLENE GLYCOL USP","receptor":"PBB","kgDeclarados":1503049,"tkDestino":"84-88","sbfa":"901K","medic":"118","kgResultantes":1500595},{"solPart":"999","cto":"03","mercaderia":"DIPROPYLENE GLYCOL","receptor":"PBB","kgDeclarados":304345,"tkDestino":"17","sbfa":"903M","medic":"117","kgResultantes":300243},{"solPart":"1000","cto":"04","mercaderia":"PROPYLENE GLYCOL IND","receptor":"PBB","kgDeclarados":134933,"tkDestino":"78","sbfa":"904N","medic":"116","kgResultantes":135188}],"dap":[],"actualizadoPor":"julian","actualizadoTs":"2026-05-26T10:32:51.221Z","archivada":true,"archivadaTs":"2026-05-26T10:32:51.221Z"}]}
+{
+  "descargas": [
+    {
+      "id": 1778259966032,
+      "buque": "BOW CAROLINE",
+      "manifiesto": "11559-H",
+      "agencia": "BYM",
+      "cuit": "3071631346",
+      "fecha": "2026-05-13",
+      "filas": [
+        {
+          "solPart": "870",
+          "cto": "105",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "AUTOVENTURES",
+          "kgDeclarados": 81000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA835Z",
+          "medic": "105",
+          "kgResultantes": 81291
+        },
+        {
+          "solPart": "871",
+          "cto": "126",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "CICLOQUIMICA",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA856T",
+          "medic": "105",
+          "kgResultantes": 27097
+        },
+        {
+          "solPart": "872",
+          "cto": "123-124-125",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FARLOC",
+          "kgDeclarados": 81000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA853Z/854R/855S",
+          "medic": "105",
+          "kgResultantes": 81291
+        },
+        {
+          "solPart": "873",
+          "cto": "127",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "LARING",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA857U",
+          "medic": "105",
+          "kgResultantes": 27097
+        },
+        {
+          "solPart": "874",
+          "cto": "113-128-129-130-131",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FEBEL",
+          "kgDeclarados": 135000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA843P/858V/859W/860Y/861P",
+          "medic": "105",
+          "kgResultantes": 135485
+        },
+        {
+          "solPart": "875",
+          "cto": "118-119-120-121-122",
+          "mercaderia": "MONOETIGLENGLICOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 135000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA848U/849V/850N/851Y/852P",
+          "medic": "105",
+          "kgResultantes": 135485
+        },
+        {
+          "solPart": "876",
+          "cto": "114",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "CALLEGARI",
+          "kgDeclarados": 27000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA844Z",
+          "medic": "105",
+          "kgResultantes": 27097
+        },
+        {
+          "solPart": "877",
+          "cto": "104-106-111-112-115-116-117",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "TRUE",
+          "kgDeclarados": 347000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA834P/836R/841N/842Y/845R846S847T",
+          "medic": "105",
+          "kgResultantes": 348246
+        },
+        {
+          "solPart": "878",
+          "cto": "107-108-109-110-132",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "TOTAL",
+          "kgDeclarados": 240000,
+          "tkDestino": "5-36",
+          "sbfa": "26008SBFA837S/838T839U/840M862Z",
+          "medic": "105",
+          "kgResultantes": 240861
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-26T10:43:16.377175Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-26T10:43:16.377175Z"
+    },
+    {
+      "id": 1778268143140,
+      "buque": "BOW CARDINAL",
+      "manifiesto": "11563-C",
+      "agencia": "BYM",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-05-11",
+      "filas": [
+        {
+          "solPart": "879",
+          "cto": "4401",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": 1128817,
+          "tkDestino": "27-28-31-32",
+          "sbfa": "26008SBFA808Z",
+          "medic": "102",
+          "kgResultantes": 1129295
+        },
+        {
+          "solPart": "864",
+          "cto": "4101",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 749954,
+          "tkDestino": "80-85",
+          "sbfa": "26008SBFA790Z",
+          "medic": "98",
+          "kgResultantes": 746598
+        },
+        {
+          "solPart": "856",
+          "cto": "3604-3605-3606-3607",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "EXAR",
+          "kgDeclarados": 104000,
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA820K/821L822M/823N",
+          "medic": "101",
+          "kgResultantes": 104035
+        },
+        {
+          "solPart": "855",
+          "cto": "3602-3603",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "CHEMOTECNICA",
+          "kgDeclarados": 200000,
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA818R/819S",
+          "medic": "101",
+          "kgResultantes": 200066
+        },
+        {
+          "solPart": "854",
+          "cto": "3608",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "FARMCHEM",
+          "kgDeclarados": 16000,
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA824Y",
+          "medic": "101",
+          "kgResultantes": 16005
+        },
+        {
+          "solPart": "842",
+          "cto": "3601",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "VARTECO",
+          "kgDeclarados": 100000,
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA817Z",
+          "medic": "101",
+          "kgResultantes": 100033
+        },
+        {
+          "solPart": "731",
+          "cto": "2602-2600",
+          "mercaderia": "EXX60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 351360,
+          "tkDestino": "48",
+          "sbfa": "26008SBFA813M",
+          "medic": "95",
+          "kgResultantes": 349316
+        },
+        {
+          "solPart": "774",
+          "cto": "2602-402-403",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "INQUIBA",
+          "kgDeclarados": 56000,
+          "tkDestino": "67",
+          "sbfa": "26008SBFA809R/810J",
+          "medic": "103",
+          "kgResultantes": 55920
+        },
+        {
+          "solPart": "776",
+          "cto": "2602-1102",
+          "mercaderia": "ACETATO DE VINILO",
+          "receptor": "DALGAR",
+          "kgDeclarados": 205814,
+          "tkDestino": "65-25",
+          "sbfa": "26008SBFA828S",
+          "medic": "104",
+          "kgResultantes": 203483
+        },
+        {
+          "solPart": "775",
+          "cto": "2602-401-405",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 303648,
+          "tkDestino": "67",
+          "sbfa": "26008SBFA807P/812L",
+          "medic": "103",
+          "kgResultantes": 303219
+        },
+        {
+          "solPart": "747",
+          "cto": "2602-3600",
+          "mercaderia": "2ETILHEXA",
+          "receptor": "ATANOR",
+          "kgDeclarados": 320000,
+          "tkDestino": "58-63",
+          "sbfa": "26008SBFA816P",
+          "medic": "101",
+          "kgResultantes": 320105
+        },
+        {
+          "solPart": "734",
+          "cto": "2602-1101",
+          "mercaderia": "ACETATO DE VINILO",
+          "receptor": "CRILEN",
+          "kgDeclarados": 56000,
+          "tkDestino": "25",
+          "sbfa": "26008SBFA827R",
+          "medic": "104",
+          "kgResultantes": 55366
+        },
+        {
+          "solPart": "733",
+          "cto": "2602-0404",
+          "mercaderia": "ACRILATO DE BUTILO",
+          "receptor": "CRILEN",
+          "kgDeclarados": 112000,
+          "tkDestino": "67",
+          "sbfa": "26008SBFA811K",
+          "medic": "103",
+          "kgResultantes": 111842
+        },
+        {
+          "solPart": "728",
+          "cto": "2602-0801",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 148156,
+          "tkDestino": "96",
+          "sbfa": "26008SBFA825P",
+          "medic": "99",
+          "kgResultantes": 144795
+        },
+        {
+          "solPart": "730",
+          "cto": "2602-0501",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 262258,
+          "tkDestino": "75-76",
+          "sbfa": "26008SBFA829T",
+          "medic": "97",
+          "kgResultantes": 266082
+        },
+        {
+          "solPart": "729",
+          "cto": "2602-1001",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 198947,
+          "tkDestino": "41",
+          "sbfa": "26008SBFA826Z",
+          "medic": "100",
+          "kgResultantes": 198787
+        },
+        {
+          "solPart": "685",
+          "cto": "2602-3001",
+          "mercaderia": "SOLVENT NAPTHTHA L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 102388,
+          "tkDestino": "33",
+          "sbfa": "26008SBFA815Y",
+          "medic": "96",
+          "kgResultantes": 102996
+        },
+        {
+          "solPart": "681",
+          "cto": "2602-2901",
+          "mercaderia": "ISOPAR L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 149262,
+          "tkDestino": "81",
+          "sbfa": "26008SBFA814N",
+          "medic": "94",
+          "kgResultantes": 150130
+        }
+      ],
+      "dap": [
+        {
+          "documento": "26008IC65000022N",
+          "cto": "4201",
+          "cantDoctada": 687104,
+          "cantResult": 681750
+        },
+        {
+          "documento": "26008IC65000021M",
+          "cto": "4301",
+          "cantDoctada": 299998,
+          "cantResult": 299396
+        }
+      ],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-26T10:43:16.377175Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-26T10:43:16.377175Z"
+    },
+    {
+      "id": 1779107436331,
+      "buque": "BOW FIRDA",
+      "manifiesto": "12530U",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-05-20",
+      "filas": [
+        {
+          "solPart": "973",
+          "cto": "3301",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 549318,
+          "tkDestino": "10",
+          "sbfa": "890R",
+          "medic": "110",
+          "kgResultantes": 547401
+        },
+        {
+          "solPart": "972",
+          "cto": "3401",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 629103,
+          "tkDestino": "74-82",
+          "sbfa": "891S",
+          "medic": "111",
+          "kgResultantes": 624925
+        },
+        {
+          "solPart": "974",
+          "cto": "3601",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": 900341,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "892T",
+          "medic": "115",
+          "kgResultantes": 902859
+        },
+        {
+          "solPart": "964",
+          "cto": "OTUS2602 1101",
+          "mercaderia": "SOLVENT NAFTA",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 101448,
+          "tkDestino": "33",
+          "sbfa": "893U",
+          "medic": "112",
+          "kgResultantes": 102519
+        },
+        {
+          "solPart": "826",
+          "cto": "OTUS2602 2101",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 206775,
+          "tkDestino": "75-76",
+          "sbfa": "900J",
+          "medic": "114",
+          "kgResultantes": 208517
+        },
+        {
+          "solPart": "827",
+          "cto": "OTUS2602 2501",
+          "mercaderia": "ACIDO PROPIONICO",
+          "receptor": "PBB",
+          "kgDeclarados": 248431,
+          "tkDestino": "41",
+          "sbfa": "899D",
+          "medic": "113",
+          "kgResultantes": 246883
+        },
+        {
+          "solPart": "980",
+          "cto": "OTUS2602 1901-02-03-04-05",
+          "mercaderia": "BUTYL ACRILATO",
+          "receptor": "DALGAR",
+          "kgDeclarados": 207573,
+          "tkDestino": "34-67",
+          "sbfa": "894V-895W-896A-897B-898C",
+          "medic": "109",
+          "kgResultantes": 207496
+        }
+      ],
+      "dap": [
+        {
+          "documento": "26008IC65000024P",
+          "cto": "USTXTOTU2602BFIR2401",
+          "cantDoctada": 533132,
+          "cantResult": 532636
+        },
+        {
+          "documento": "26008IC65000025Z",
+          "cto": "BRSSZ3501",
+          "cantDoctada": 487531,
+          "cantResult": 481469
+        }
+      ],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-22T12:27:13.056Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-22T12:05:46.100Z"
+    },
+    {
+      "id": 1779293166429,
+      "buque": "CASTILLO DE HERRERA",
+      "manifiesto": "12817F",
+      "agencia": "BALZER",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-05-21",
+      "filas": [
+        {
+          "solPart": "997",
+          "cto": "02",
+          "mercaderia": "PROPYLENE GLYCOL USP",
+          "receptor": "PBB",
+          "kgDeclarados": 100000,
+          "tkDestino": "88",
+          "sbfa": "902L",
+          "medic": "118",
+          "kgResultantes": 99837
+        },
+        {
+          "solPart": "998",
+          "cto": "01",
+          "mercaderia": "PROPYLENE GLYCOL USP",
+          "receptor": "PBB",
+          "kgDeclarados": 1503049,
+          "tkDestino": "84-88",
+          "sbfa": "901K",
+          "medic": "118",
+          "kgResultantes": 1500595
+        },
+        {
+          "solPart": "999",
+          "cto": "03",
+          "mercaderia": "DIPROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 304345,
+          "tkDestino": "17",
+          "sbfa": "903M",
+          "medic": "117",
+          "kgResultantes": 300243
+        },
+        {
+          "solPart": "1000",
+          "cto": "04",
+          "mercaderia": "PROPYLENE GLYCOL IND",
+          "receptor": "PBB",
+          "kgDeclarados": 134933,
+          "tkDestino": "78",
+          "sbfa": "904N",
+          "medic": "116",
+          "kgResultantes": 135188
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-26T10:32:51.221Z",
+      "archivada": true,
+      "archivadaTs": "2026-05-26T10:32:51.221Z"
+    },
+    {
+      "id": 1779884351014,
+      "buque": "PHEASANT",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-05-28",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "2 HETILHEXANOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 504000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "2 HETILHEXANOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 716000,
+          "tkDestino": "63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-05-27T12:19:11.014Z"
+    }
+  ]
+}

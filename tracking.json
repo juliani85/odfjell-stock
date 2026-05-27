@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-27T10:10:54.873564Z",
+  "actualizado": "2026-05-27T10:20:50.614144Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -56,16 +56,16 @@
     },
     "9168635": {
       "estado": "en_puerto",
-      "puerto_actual": "Port Arthur Anch., United States (USA)",
-      "arribo": "2026-05-25T18:09:00Z",
+      "puerto_actual": "Port Arthur, United States (USA)",
+      "arribo": "2026-05-27T09:48:00Z",
       "calado_m": 11.6,
-      "nav_status": "At anchor",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-27T02:20:54.202974Z"
+      "ultimo_fetch": "2026-05-27T10:20:50.614144Z"
     },
     "9986049": {
       "estado": "en_route",

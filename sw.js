@@ -9,7 +9,7 @@
 // Google GSI) son cross-origin → el SW NO las intercepta: van directo a la red. Si no hay
 // red, fallan, que es lo correcto (no queremos servir datos de stock viejos cacheados).
 
-const CACHE = "stock-tagsa-v20";
+const CACHE = "stock-tagsa-v21";
 const SHELL = [
   "./",
   "./index.html",

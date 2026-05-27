@@ -545,11 +545,33 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1078",
+          "cto": "08",
+          "mercaderia": "2 HETILHEXANOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 104000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1080",
+          "cto": "05",
+          "mercaderia": "2 HETILHEXANOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 400000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-27T17:28:13.266Z"
+      "actualizadoTs": "2026-05-27T17:42:28.219Z"
     }
   ]
 }

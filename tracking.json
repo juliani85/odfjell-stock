@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-28T07:20:34.818026Z",
+  "actualizado": "2026-05-28T07:30:36.614949Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Kamsar, Guinea",
-      "velocidad_nudos": 10.9,
+      "velocidad_nudos": 11.0,
       "eta": "2026-05-29T20:00:00Z",
       "calado_m": 4.4,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-28T03:20:35.532913Z"
+      "ultimo_fetch": "2026-05-28T07:30:36.614949Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -71,7 +71,7 @@
     "9986049": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 8.4,
+      "velocidad_nudos": 8.3,
       "eta": "2026-05-28T10:00:00Z",
       "calado_m": 7.7,
       "nav_status": "Under way using engine",
@@ -80,7 +80,7 @@
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-28T07:20:34.818026Z"
+      "ultimo_fetch": "2026-05-28T07:30:36.614949Z"
     }
   }
 }

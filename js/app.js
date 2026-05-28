@@ -127,19 +127,19 @@ function cuerpoATexto({ plain, html }) {
 }
 
 function detectarColumnasPlan(headerStrings) {
-    const header = headerStrings.map(h => String(h).toLowerCase().trim());
+    const header = (headerStrings || []).map(h => String(h).toLowerCase().trim());
     const idx = (preds) => header.findIndex(h => preds.some(p => h.includes(p)));
     return {
         header,
         tnk: idx(["tnk", "tanq"]),
         prod: idx(["prod"]),
-        clie: idx(["clie", "cli"]),
+        clie: idx(["clie", "cli", "import", "export", "expor"]),
         buque: idx(["buque"]),
         viaje: idx(["viaje"]),
         subc: idx(["subc"]),
         conoc: idx(["conoc"]),
         despacho: idx(["despa"]),
-        exLegal: idx(["ex.", "legal"]),
+        exLegal: idx(["ex.", "legal", "avc"]),
         fecha: idx(["fecha"]),
         hora: idx(["hora"]),
         obs: idx(["obs"]),
@@ -547,10 +547,29 @@ async function parsearFilasExcel(msgRef, att, token) {
     const sheet = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
     if (rows.length < 2) return [];
-    const ci = detectarColumnasPlan(rows[0]);
-    if (ci.tnk < 0 || ci.despacho < 0) return [];
+
+    // Buscar la fila de cabeceras en las primeras 10 filas. Antes solo se miraba
+    // rows[0]: si el Excel traía un título mergeado o filas vacías arriba, no
+    // detectaba nada (caso 2026-05-28).
+    let headerRow = -1;
+    let ci = null;
+    const MAX_SCAN = Math.min(10, rows.length);
+    for (let i = 0; i < MAX_SCAN; i++) {
+        const cand = detectarColumnasPlan(rows[i] || []);
+        if (cand.tnk >= 0 && cand.despacho >= 0) {
+            headerRow = i;
+            ci = cand;
+            break;
+        }
+    }
+    if (headerRow < 0) {
+        console.warn(`[plan] Excel sin cabeceras detectables. Primera fila:`, rows[0]);
+        return [];
+    }
+    console.log(`[plan] Excel: cabeceras en fila ${headerRow}:`, rows[headerRow]);
+
     const filas = [];
-    for (let i = 1; i < rows.length; i++) {
+    for (let i = headerRow + 1; i < rows.length; i++) {
         const fila = construirFilaPlan(rows[i], ci, "excel", i);
         if (!fila) continue;
         // Excel trae fechas como objetos Date; reformateamos.

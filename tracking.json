@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-28T09:00:37.495302Z",
+  "actualizado": "2026-05-28T09:10:35.235199Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -71,7 +71,7 @@
     "9986049": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 6.0,
+      "velocidad_nudos": 7.3,
       "eta": "2026-05-28T10:00:00Z",
       "calado_m": 7.7,
       "nav_status": "Under way using engine",
@@ -80,7 +80,7 @@
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-28T09:00:37.495302Z"
+      "ultimo_fetch": "2026-05-28T09:10:35.235199Z"
     }
   }
 }

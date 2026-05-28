@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-28T08:30:37.734984Z",
+  "actualizado": "2026-05-28T08:40:35.098141Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -80,7 +80,7 @@
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-28T08:30:37.734984Z"
+      "ultimo_fetch": "2026-05-28T08:40:35.098141Z"
     }
   }
 }

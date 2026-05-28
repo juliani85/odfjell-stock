@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-28T19:10:37.596033Z",
+  "actualizado": "2026-05-28T19:20:36.395806Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -39,7 +39,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-05-28T15:10:41.706388Z"
+      "ultimo_fetch": "2026-05-28T19:20:36.395806Z"
     },
     "9143219": {
       "estado": "en_route",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-28T03:00:34.700156Z",
+  "actualizado": "2026-05-28T03:10:36.053048Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-05-27T23:00:37.058882Z"
+      "ultimo_fetch": "2026-05-28T03:10:36.053048Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -69,17 +69,18 @@
       "ultimo_fetch": "2026-05-28T02:40:36.969611Z"
     },
     "9986049": {
-      "estado": "en_puerto",
-      "puerto_actual": "Buenos Aires, Argentina",
-      "arribo": "2026-05-26T22:54:00Z",
+      "estado": "en_route",
+      "destino": "Buenos Aires, Argentina",
+      "velocidad_nudos": 10.7,
+      "eta": "2026-05-28T01:00:00Z",
       "calado_m": 7.7,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-27T23:00:37.058882Z"
+      "ultimo_fetch": "2026-05-28T03:10:36.053048Z"
     }
   }
 }

@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-05-29T07:51:07.534073Z",
+  "actualizado": "2026-05-29T08:01:09.396511Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Kamsar, Guinea",
-      "velocidad_nudos": 9.4,
+      "velocidad_nudos": 9.2,
       "eta": "2026-05-30T06:00:00Z",
       "calado_m": 4.3,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-29T04:00:33.556948Z"
+      "ultimo_fetch": "2026-05-29T08:01:09.396511Z"
     },
     "9973315": {
       "estado": "en_route",

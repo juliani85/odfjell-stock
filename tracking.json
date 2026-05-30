@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-30T06:50:57.148615Z",
+  "actualizado": "2026-05-30T07:01:01.046880Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -71,15 +71,15 @@
     "9986049": {
       "estado": "en_puerto",
       "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-05-28T10:11:00Z",
+      "arribo": "2026-05-30T05:13:00Z",
       "calado_m": 7.7,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9986049",
       "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-30T04:50:57.855561Z"
+      "ultimo_fetch": "2026-05-30T07:01:01.046880Z"
     }
   }
 }

@@ -513,11 +513,12 @@ function listarTodasLasPartes(part) {
     return out;
 }
 
-function buscarAdjuntoExcel(part) {
+function buscarAdjuntosExcel(part) {
     const todos = listarAdjuntos(part);
     const excelExt = /\.(xls|xlsx|xlsm|xlsb)$/i;
     const excelMime = /(excel|spreadsheet|ms-excel|officedocument\.spreadsheetml)/i;
-    return todos.find(a => excelExt.test(a.filename) || excelMime.test(a.mime)) || null;
+    // TODOS los Excel (un mail puede traer dos planillas, una por día: 30-05 y 01-06).
+    return todos.filter(a => excelExt.test(a.filename) || excelMime.test(a.mime));
 }
 
 function parseFechaPlanExcel(val) {
@@ -679,13 +680,33 @@ async function obtenerPlanesDesdeGmail(token) {
         let filasExcel = [];
         let filename = "";
         if (esPlanFormal) {
-            const att = buscarAdjuntoExcel(msg.payload);
-            if (att) {
-                filename = att.filename;
+            // Extrae la fecha del NOMBRE del archivo (ej "PLAN 01-06.xlsx" → 01/06),
+            // completando el año desde el asunto si el nombre no lo trae. Se usa como
+            // fallback de la fecha de cada fila cuando el Excel no tiene columna Fecha.
+            const fechaDeArchivo = (nombre) => {
+                const conAnio = extraerFecha(nombre);
+                if (conAnio) return conAnio;
+                const m = (nombre || "").match(/(\d{1,2})\s*[-_\/.]\s*(\d{1,2})(?!\s*[-_\/.]?\s*\d)/);
+                if (m && fecha) {
+                    const dia = parseInt(m[1]), mes = parseInt(m[2]);
+                    if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12) {
+                        return `${fecha.slice(0, 4)}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+                    }
+                }
+                return null;
+            };
+            // TODOS los Excel del mail (puede traer una planilla por día: 30-05 y 01-06).
+            const atts = buscarAdjuntosExcel(msg.payload);
+            for (const att of atts) {
                 try {
-                    filasExcel = await parsearFilasExcel(msgRef, att, token);
+                    const filas = await parsearFilasExcel(msgRef, att, token);
+                    const fechaArch = fechaDeArchivo(att.filename);
+                    if (fechaArch) filas.forEach(f => { if (!f.fechaOrig) f.fechaOrig = fechaArch; });
+                    filasExcel.push(...filas);
+                    filename = filename ? `${filename}, ${att.filename}` : att.filename;
+                    console.log(`[plan] Excel "${att.filename}" (${fechaArch || "sin fecha en nombre"}): ${filas.length} fila(s)`);
                 } catch (e) {
-                    console.warn(`[plan] error parseando Excel de "${subject}":`, e);
+                    console.warn(`[plan] error parseando Excel "${att.filename}" de "${subject}":`, e);
                 }
             }
         }

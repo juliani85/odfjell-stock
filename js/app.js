@@ -679,23 +679,30 @@ async function obtenerPlanesDesdeGmail(token) {
 
         let filasExcel = [];
         let filename = "";
+        // Filas de Excel agrupadas por la fecha de SU planilla (un mail puede traer una por
+        // día: 30-05.xls / 01-06.xls). La fecha sale del NOMBRE del archivo; si no la trae,
+        // cae a la del asunto. NUNCA de la columna "Fecha Orig." del contenido — esa es la
+        // fecha de oficialización del despacho, no la fecha de la carga.
+        const excelPorFecha = {};
         if (esPlanFormal) {
-            // Extrae la fecha del NOMBRE del archivo (ej "PLAN 01-06.xlsx" → 01/06),
-            // completando el año desde el asunto si el nombre no lo trae. Se usa como
-            // fallback de la fecha de cada fila cuando el Excel no tiene columna Fecha.
             const fechaDeArchivo = (nombre) => {
-                const conAnio = extraerFecha(nombre);
-                if (conAnio) return conAnio;
-                const m = (nombre || "").match(/(\d{1,2})\s*[-_\/.]\s*(\d{1,2})(?!\s*[-_\/.]?\s*\d)/);
-                if (m && fecha) {
+                // "01-06.xls" / "PLAN 01-06.xlsx" → fecha de la carga. Si el nombre trae solo
+                // DD-MM sin año, se completa con el año del asunto. Ignora fechas-timestamp
+                // tipo "2026-05-28T0729" (las da extraerFecha) priorizando el patrón DD-MM-…
+                const m = (nombre || "").match(/(?:^|[^\d])(\d{1,2})\s*[-_\/.]\s*(\d{1,2})(?:\s*[-_\/.]\s*(\d{2,4}))?(?![\d])/);
+                if (m) {
                     const dia = parseInt(m[1]), mes = parseInt(m[2]);
                     if (dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12) {
-                        return `${fecha.slice(0, 4)}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+                        let anio = m[3] ? parseInt(m[3]) : (fecha ? parseInt(fecha.slice(0, 4)) : null);
+                        if (anio != null) {
+                            if (anio < 100) anio += 2000;
+                            return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+                        }
                     }
                 }
                 return null;
             };
-            // TODOS los Excel del mail (puede traer una planilla por día: 30-05 y 01-06).
+            // TODOS los Excel del mail.
             const atts = buscarAdjuntosExcel(msg.payload);
             const adjuntosTodos = listarAdjuntos(msg.payload);
             console.log(`[plan] "${subject}" → ${adjuntosTodos.length} adjunto(s):`,
@@ -704,11 +711,11 @@ async function obtenerPlanesDesdeGmail(token) {
             for (const att of atts) {
                 try {
                     const filas = await parsearFilasExcel(msgRef, att, token);
-                    const fechaArch = fechaDeArchivo(att.filename);
-                    if (fechaArch) filas.forEach(f => { if (!f.fechaOrig) f.fechaOrig = fechaArch; });
+                    const fEx = fechaDeArchivo(att.filename) || fecha;
+                    (excelPorFecha[fEx] = excelPorFecha[fEx] || []).push(...filas);
                     filasExcel.push(...filas);
                     filename = filename ? `${filename}, ${att.filename}` : att.filename;
-                    console.log(`[plan] Excel "${att.filename}" (${fechaArch || "sin fecha en nombre"}): ${filas.length} fila(s)`);
+                    console.log(`[plan] Excel "${att.filename}" → carga del ${fEx}: ${filas.length} fila(s)`);
                 } catch (e) {
                     console.warn(`[plan] error parseando Excel "${att.filename}" de "${subject}":`, e);
                 }
@@ -733,27 +740,10 @@ async function obtenerPlanesDesdeGmail(token) {
             continue;
         }
 
-        // Cada fila se archiva en SU PROPIA fecha (columna "Fecha" del plan). Si la fila
-        // no trae fecha parseable, cae a la fecha del asunto. Esto resuelve el caso de un
-        // mismo mail que trae el plan de DOS días juntos (ej: 30/05 y 01/06): antes TODAS
-        // las filas quedaban bajo la fecha del asunto y el segundo día "no aparecía".
-        const fechaDeFila = (f) => extraerFecha(f && f.fechaOrig) || fecha;
-        const agruparPorFecha = (filas) => {
-            const out = {};
-            for (const f of filas) {
-                const fk = fechaDeFila(f);
-                (out[fk] = out[fk] || []).push(f);
-            }
-            return out;
-        };
-        const excelPorFecha = agruparPorFecha(filasExcel);
-        const agregarPorFecha = agruparPorFecha(filasAgregar);
-        const anularPorFecha = agruparPorFecha(filasAnular);
-        const fechasDelMail = new Set([
-            ...Object.keys(excelPorFecha),
-            ...Object.keys(agregarPorFecha),
-            ...Object.keys(anularPorFecha),
-        ]);
+        // Las filas del CUERPO (tabla pegada / prosa / movimientos informales) son del día
+        // del asunto. Las filas de Excel ya están en excelPorFecha, agrupadas por la fecha
+        // de cada planilla (nombre del archivo). Cada fecha tocada por el mail se procesa.
+        const fechasDelMail = new Set([...Object.keys(excelPorFecha), fecha]);
 
         // Detectar si este mail trae un "plan completo" (Excel adjunto o tabla pegada con
         // muchas filas) vs. agregados incrementales sueltos ("se agrega una carga…"):
@@ -765,8 +755,8 @@ async function obtenerPlanesDesdeGmail(token) {
 
         for (const fk of fechasDelMail) {
             const exF = excelPorFecha[fk] || [];
-            const agF = agregarPorFecha[fk] || [];
-            const anF = anularPorFecha[fk] || [];
+            const agF = (fk === fecha) ? filasAgregar : [];
+            const anF = (fk === fecha) ? filasAnular : [];
             if (exF.length === 0 && agF.length === 0 && anF.length === 0) continue;
 
             if (!porFecha[fk]) porFecha[fk] = {
@@ -797,7 +787,7 @@ async function obtenerPlanesDesdeGmail(token) {
                 anularRows: anF.length,
             });
             if (fk !== fecha) {
-                console.log(`[plan] "${subject}" → fila(s) reasignadas a ${fk} por su fecha propia (asunto decía ${fecha})`);
+                console.log(`[plan] "${subject}" → planilla del ${fk} (archivo aparte, asunto decía ${fecha})`);
             }
         }
     }

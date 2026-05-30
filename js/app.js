@@ -708,13 +708,27 @@ async function obtenerPlanesDesdeGmail(token) {
             continue;
         }
 
-        if (!porFecha[fecha]) porFecha[fecha] = {
-            filasExcel: [],          // siempre = filas del ÚLTIMO mail con Excel (pisa al anterior)
-            filasIncrementales: [],  // mails informales ("se agrega…") posteriores al último Excel
-            anuladas: [],
-            fuentes: [],
-            tieneExcel: false,
+        // Cada fila se archiva en SU PROPIA fecha (columna "Fecha" del plan). Si la fila
+        // no trae fecha parseable, cae a la fecha del asunto. Esto resuelve el caso de un
+        // mismo mail que trae el plan de DOS días juntos (ej: 30/05 y 01/06): antes TODAS
+        // las filas quedaban bajo la fecha del asunto y el segundo día "no aparecía".
+        const fechaDeFila = (f) => extraerFecha(f && f.fechaOrig) || fecha;
+        const agruparPorFecha = (filas) => {
+            const out = {};
+            for (const f of filas) {
+                const fk = fechaDeFila(f);
+                (out[fk] = out[fk] || []).push(f);
+            }
+            return out;
         };
+        const excelPorFecha = agruparPorFecha(filasExcel);
+        const agregarPorFecha = agruparPorFecha(filasAgregar);
+        const anularPorFecha = agruparPorFecha(filasAnular);
+        const fechasDelMail = new Set([
+            ...Object.keys(excelPorFecha),
+            ...Object.keys(agregarPorFecha),
+            ...Object.keys(anularPorFecha),
+        ]);
 
         // Detectar si este mail trae un "plan completo" (Excel adjunto o tabla pegada con
         // muchas filas) vs. agregados incrementales sueltos ("se agrega una carga…"):
@@ -723,25 +737,44 @@ async function obtenerPlanesDesdeGmail(token) {
         //     (caso: "Reenviamos el plan actualizado" con la tabla pegada).
         //   - Mail formal con < 3 filas en cuerpo, o mail informal → incremental.
         const UMBRAL_REEMPLAZO_TOTAL = 2;
-        const esReemplazoTotal = filasExcel.length > 0
-            || (esPlanFormal && filasAgregar.length >= UMBRAL_REEMPLAZO_TOTAL);
 
-        if (esReemplazoTotal) {
-            const fuenteFilas = filasExcel.length > 0 ? filasExcel : filasAgregar;
-            porFecha[fecha].filasExcel = fuenteFilas;
-            porFecha[fecha].filasIncrementales = [];
-            porFecha[fecha].tieneExcel = true;
-        } else {
-            porFecha[fecha].filasIncrementales.push(...filasAgregar);
+        for (const fk of fechasDelMail) {
+            const exF = excelPorFecha[fk] || [];
+            const agF = agregarPorFecha[fk] || [];
+            const anF = anularPorFecha[fk] || [];
+            if (exF.length === 0 && agF.length === 0 && anF.length === 0) continue;
+
+            if (!porFecha[fk]) porFecha[fk] = {
+                filasExcel: [],          // siempre = filas del ÚLTIMO mail con Excel (pisa al anterior)
+                filasIncrementales: [],  // mails informales ("se agrega…") posteriores al último Excel
+                anuladas: [],
+                fuentes: [],
+                tieneExcel: false,
+            };
+
+            const esReemplazoTotal = exF.length > 0
+                || (esPlanFormal && agF.length >= UMBRAL_REEMPLAZO_TOTAL);
+
+            if (esReemplazoTotal) {
+                const fuenteFilas = exF.length > 0 ? exF : agF;
+                porFecha[fk].filasExcel = fuenteFilas;
+                porFecha[fk].filasIncrementales = [];
+                porFecha[fk].tieneExcel = true;
+            } else {
+                porFecha[fk].filasIncrementales.push(...agF);
+            }
+            porFecha[fk].anuladas.push(...anF);
+            porFecha[fk].fuentes.push({
+                asunto: subject,
+                filename: filename || "(cuerpo)",
+                excelRows: exF.length,
+                agregarRows: agF.length,
+                anularRows: anF.length,
+            });
+            if (fk !== fecha) {
+                console.log(`[plan] "${subject}" → fila(s) reasignadas a ${fk} por su fecha propia (asunto decía ${fecha})`);
+            }
         }
-        porFecha[fecha].anuladas.push(...filasAnular);
-        porFecha[fecha].fuentes.push({
-            asunto: subject,
-            filename: filename || "(cuerpo)",
-            excelRows: filasExcel.length,
-            agregarRows: filasAgregar.length,
-            anularRows: filasAnular.length,
-        });
     }
 
     // Consolidación final: para cada fecha, info.filas = último Excel + incrementales posteriores.

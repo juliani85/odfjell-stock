@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-30T04:20:57.114513Z",
+  "actualizado": "2026-05-30T04:30:58.359014Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-05-30T00:21:08.038451Z"
+      "ultimo_fetch": "2026-05-30T04:30:58.359014Z"
     },
     "9973315": {
       "estado": "en_route",

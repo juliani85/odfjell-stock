@@ -697,6 +697,10 @@ async function obtenerPlanesDesdeGmail(token) {
             };
             // TODOS los Excel del mail (puede traer una planilla por día: 30-05 y 01-06).
             const atts = buscarAdjuntosExcel(msg.payload);
+            const adjuntosTodos = listarAdjuntos(msg.payload);
+            console.log(`[plan] "${subject}" → ${adjuntosTodos.length} adjunto(s):`,
+                adjuntosTodos.map(a => `${a.filename} [${a.mime}]`).join(" || "),
+                `→ ${atts.length} reconocido(s) como Excel`);
             for (const att of atts) {
                 try {
                     const filas = await parsearFilasExcel(msgRef, att, token);

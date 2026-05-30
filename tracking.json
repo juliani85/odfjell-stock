@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-30T00:31:05.581390Z",
+  "actualizado": "2026-05-30T00:41:07.590868Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -57,7 +57,6 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Port Arthur, United States (USA)",
-      "velocidad_nudos": 0.1,
       "eta": "2026-05-25T15:00:00Z",
       "calado_m": 9.8,
       "nav_status": "Moored",
@@ -66,7 +65,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-05-29T20:31:07.438440Z"
+      "ultimo_fetch": "2026-05-30T00:41:07.590868Z"
     },
     "9986049": {
       "estado": "en_puerto",

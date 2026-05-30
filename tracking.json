@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-05-30T12:00:59.328865Z",
+  "actualizado": "2026-05-30T12:10:58.999588Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -65,19 +65,6 @@
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
       "ultimo_fetch": "2026-05-30T08:50:58.102776Z"
-    },
-    "9986049": {
-      "estado": "en_puerto",
-      "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-05-30T05:13:00Z",
-      "calado_m": 7.7,
-      "nav_status": "Moored",
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9986049",
-      "nombre": "PHEASANT",
-      "ultimo_fetch": "2026-05-30T11:10:58.227625Z"
     }
   }
 }

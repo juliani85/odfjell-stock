@@ -4429,12 +4429,22 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 const remoto = await GH.cargar();
                 if (remoto) {
                     const cambios = mergearEntradasRemotas(remoto);
-                    if (cambios > 0) {
+                    // El array `stock` no se mergea entrada por entrada: puede tener cambios
+                    // directos que no pasan por una entrada nueva de historial (consolidar o
+                    // renombrar despachos, ajustar un saldo a mano). Como acá el cliente está
+                    // limpio (sin envíos pendientes), adoptar el stock remoto es seguro: no pisa
+                    // nada propio y equivale a un Ctrl+Shift+R, pero sin recargar la página.
+                    let stockCambiado = false;
+                    if (Array.isArray(remoto.stock) && JSON.stringify(remoto.stock) !== JSON.stringify(stock)) {
+                        stock = remoto.stock;
+                        stockCambiado = true;
+                    }
+                    if (cambios > 0 || stockCambiado) {
                         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
                         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));
                         localStorage.setItem("anuladosV3", JSON.stringify(anulados));
                         rerenderAfterMerge();
-                        mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
+                        if (cambios > 0) mostrarAlerta(`Se sincronizaron ${cambios} cambio(s) de otro usuario.`, "info");
                     }
                 }
             }
@@ -4468,6 +4478,9 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const ghData = await GH.cargar();
             if (ghData && ghData.historial) {
                 historial = ghData.historial;
+            }
+            if (ghData && Array.isArray(ghData.stock)) {
+                stock = ghData.stock;
             }
             await sincronizarVistasDesdeGH();
             renderViewer(document.getElementById("filtroViewer").value || "");

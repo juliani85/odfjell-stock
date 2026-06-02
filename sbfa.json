@@ -507,11 +507,11 @@
     {
       "id": 1779884351014,
       "buque": "PHEASANT",
-      "manifiesto": "",
-      "agencia": "B&M",
-      "cuit": "30-71631314-6",
+      "manifiesto": "26008MANI013465F",
+      "agencia": "AMI",
+      "cuit": "30-58534342-7",
       "fecha": "2026-05-28",
-      "notaNumero": "",
+      "notaNumero": "11",
       "filas": [
         {
           "solPart": "1073",
@@ -520,9 +520,9 @@
           "receptor": "MINERA EXAR",
           "kgDeclarados": 106000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "942P",
+          "medic": "126",
+          "kgResultantes": 106637
         },
         {
           "solPart": "1078",
@@ -531,9 +531,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 104000,
           "tkDestino": "58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "944R",
+          "medic": "126",
+          "kgResultantes": 104625
         },
         {
           "solPart": "1080",
@@ -542,9 +542,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 400000,
           "tkDestino": "58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "941Y",
+          "medic": "126",
+          "kgResultantes": 402404
         },
         {
           "solPart": "1083",
@@ -553,9 +553,9 @@
           "receptor": "TRAPALCO",
           "kgDeclarados": 26500,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "937T",
+          "medic": "126",
+          "kgResultantes": 26659
         },
         {
           "solPart": "1084",
@@ -564,9 +564,9 @@
           "receptor": "SINER",
           "kgDeclarados": 106000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "939V",
+          "medic": "126",
+          "kgResultantes": 106637
         },
         {
           "solPart": "1085",
@@ -575,9 +575,9 @@
           "receptor": "PROTEGRAN",
           "kgDeclarados": 55000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "938U",
+          "medic": "126",
+          "kgResultantes": 55330
         },
         {
           "solPart": "1086",
@@ -586,9 +586,9 @@
           "receptor": "MILBERG",
           "kgDeclarados": 23723,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "943Z",
+          "medic": "126",
+          "kgResultantes": 23866
         },
         {
           "solPart": "1087",
@@ -597,14 +597,16 @@
           "receptor": "CHEMOTECNICA",
           "kgDeclarados": 400000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "940N",
+          "medic": "126",
+          "kgResultantes": 402404
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-05-28T10:22:20.961Z"
+      "actualizadoTs": "2026-06-02T11:41:23.404Z",
+      "archivada": true,
+      "archivadaTs": "2026-06-02T11:41:23.404Z"
     }
   ]
 }

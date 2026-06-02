@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-02T01:30:48.204449Z",
+  "actualizado": "2026-06-02T01:40:56.357284Z",
   "barcos": {
     "9415636": {
       "estado": "en_puerto",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-01T21:40:51.061093Z"
+      "ultimo_fetch": "2026-06-02T01:40:56.357284Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-01T21:40:51.061093Z"
+      "ultimo_fetch": "2026-06-02T01:40:56.357284Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -56,7 +56,7 @@
     "9168635": {
       "estado": "en_route",
       "destino": "New Orleans, United States (USA)",
-      "velocidad_nudos": 11.8,
+      "velocidad_nudos": 11.1,
       "eta": "2026-05-25T15:00:00Z",
       "calado_m": 11.5,
       "nav_status": "Under way using engine",
@@ -65,7 +65,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-01T21:40:51.061093Z"
+      "ultimo_fetch": "2026-06-02T01:40:56.357284Z"
     }
   }
 }

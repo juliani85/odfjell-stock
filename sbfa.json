@@ -522,7 +522,7 @@
           "tkDestino": "54-63",
           "sbfa": "942P",
           "medic": "126",
-          "kgResultantes": 106637
+          "kgResultantes": 106636
         },
         {
           "solPart": "1078",
@@ -533,7 +533,7 @@
           "tkDestino": "58",
           "sbfa": "944R",
           "medic": "126",
-          "kgResultantes": 104625
+          "kgResultantes": 104624
         },
         {
           "solPart": "1080",
@@ -544,7 +544,7 @@
           "tkDestino": "58",
           "sbfa": "941Y",
           "medic": "126",
-          "kgResultantes": 402404
+          "kgResultantes": 402400
         },
         {
           "solPart": "1083",
@@ -566,7 +566,7 @@
           "tkDestino": "54-63",
           "sbfa": "939V",
           "medic": "126",
-          "kgResultantes": 106637
+          "kgResultantes": 106636
         },
         {
           "solPart": "1085",
@@ -588,7 +588,7 @@
           "tkDestino": "54-63",
           "sbfa": "943Z",
           "medic": "126",
-          "kgResultantes": 23866
+          "kgResultantes": 23865
         },
         {
           "solPart": "1087",
@@ -599,12 +599,12 @@
           "tkDestino": "54-63",
           "sbfa": "940N",
           "medic": "126",
-          "kgResultantes": 402404
+          "kgResultantes": 402400
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-02T11:41:23.404Z",
+      "actualizadoTs": "2026-06-02T11:42:23.231Z",
       "archivada": true,
       "archivadaTs": "2026-06-02T11:41:23.404Z"
     }

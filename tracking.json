@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-02T12:00:54.985546Z",
+  "actualizado": "2026-06-02T12:10:51.029972Z",
   "barcos": {
     "9415636": {
       "estado": "en_puerto",
@@ -43,7 +43,7 @@
     "9143219": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 11.5,
+      "velocidad_nudos": 11.6,
       "eta": "2026-06-15T12:00:00Z",
       "calado_m": 10.6,
       "nav_status": "Under way using engine",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-06-02T08:00:59.512965Z"
+      "ultimo_fetch": "2026-06-02T12:10:51.029972Z"
     },
     "9168635": {
       "estado": "en_route",

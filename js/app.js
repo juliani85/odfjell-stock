@@ -1439,7 +1439,15 @@ async function initApp() {
         if (document.getElementById("reporteDiario")?.classList.contains("active")) {
             renderReporteDiario();
         }
+        // Si está abierto el detalle de un tanque en "Historial por tanque", redibujarlo
+        // para que muestre los movimientos que llegaron por sincronización (sino la tabla
+        // queda congelada con lo que había al abrirla).
+        if (histTanqueAbierto && !document.getElementById("histTanqueDetalleView")?.classList.contains("hidden")) {
+            renderHistTanqueDetalle(histTanqueAbierto);
+        }
     }
+
+    let histTanqueAbierto = null;
 
     function guardarDatos() {
         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
@@ -4556,6 +4564,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     }
 
     function renderHistTanqueDetalle(numTanque) {
+        histTanqueAbierto = numTanque;
         const movs = historial
             .filter(h => h.tanque === numTanque)
             .slice()
@@ -4592,6 +4601,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     }
 
     function volverListaHistTanque() {
+        histTanqueAbierto = null;
         document.getElementById("histTanqueDetalleView").classList.add("hidden");
         document.getElementById("histTanqueListaView").classList.remove("hidden");
     }

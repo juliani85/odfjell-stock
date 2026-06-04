@@ -607,6 +607,31 @@
       "actualizadoTs": "2026-06-02T11:42:23.231Z",
       "archivada": true,
       "archivadaTs": "2026-06-02T11:41:23.404Z"
+    },
+    {
+      "id": 1780569835472,
+      "buque": "BOCHEM BRISBANE",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-06-04",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1132",
+          "cto": "790",
+          "mercaderia": "acido acetico",
+          "receptor": "atanor",
+          "kgDeclarados": 1020109,
+          "tkDestino": "13-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-06-04T10:43:55.472Z"
     }
   ]
 }

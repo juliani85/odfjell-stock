@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-04T09:00:40.212889Z",
+  "actualizado": "2026-06-04T09:10:41.479731Z",
   "barcos": {
     "9415636": {
       "estado": "en_puerto",
@@ -46,13 +46,12 @@
       "velocidad_nudos": 11.0,
       "eta": "2026-06-15T12:00:00Z",
       "calado_m": 10.6,
-      "nav_status": "Under way using engine",
       "zona": "North West Atlantic Ocean",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-06-04T05:00:42.275017Z"
+      "ultimo_fetch": "2026-06-04T09:10:41.479731Z"
     },
     "9168635": {
       "estado": "en_route",

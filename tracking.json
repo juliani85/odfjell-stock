@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-05T23:40:40.315271Z",
+  "actualizado": "2026-06-05T23:50:39.461331Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-05T19:40:41.272265Z"
+      "ultimo_fetch": "2026-06-05T23:50:39.461331Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-05T19:40:41.272265Z"
+      "ultimo_fetch": "2026-06-05T23:50:39.461331Z"
     },
     "9780536": {
       "estado": "en_puerto",
@@ -66,7 +66,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-05T19:40:41.272265Z"
+      "ultimo_fetch": "2026-06-05T23:50:39.461331Z"
     }
   }
 }

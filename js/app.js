@@ -753,6 +753,22 @@ async function obtenerPlanesDesdeGmail(token) {
         //   - Mail formal con < 3 filas en cuerpo, o mail informal → incremental.
         const UMBRAL_REEMPLAZO_TOTAL = 2;
 
+        // Intención de "solo agregar": si el mail pide explícitamente sumar/agregar
+        // cargas (sin reemplazar el plan del día), su Excel se trata como INCREMENTAL
+        // y NO tombstonea las cargas previas. Sin esto, un 2º mail del mismo día
+        // "agreguen estos camiones" con un Excel de pocas filas borraba todas las
+        // cargas que ya había cargado el 1º mail. "plan actualizado/reemplazo/…"
+        // tiene prioridad y sí reemplaza.
+        const textoIntencion = (
+            subject + " " +
+            (cuerpo.plain || "").slice(0, 800) + " " +
+            (cuerpo.html || "").replace(/<[^>]+>/g, " ").slice(0, 800)
+        ).toLowerCase();
+        const pideAgregar = /(agreg|se suma|sumar|sumamos|adicional|adicionar|incorpor|a[ñn]ad|anex)/.test(textoIntencion);
+        const pideReemplazo = /(plan completo|plan actualizado|actualiz|reemplaz|nuevo plan|plan definitivo|plan corregido|plan modificado|plan final)/.test(textoIntencion);
+        const esSoloAgregar = pideAgregar && !pideReemplazo;
+        if (esSoloAgregar) console.log(`[plan] "${subject}" → intención AGREGAR: el Excel se trata como incremental (no reemplaza el plan del día)`);
+
         for (const fk of fechasDelMail) {
             const exF = excelPorFecha[fk] || [];
             const agF = (fk === fecha) ? filasAgregar : [];
@@ -767,8 +783,8 @@ async function obtenerPlanesDesdeGmail(token) {
                 tieneExcel: false,
             };
 
-            const esReemplazoTotal = exF.length > 0
-                || (esPlanFormal && agF.length >= UMBRAL_REEMPLAZO_TOTAL);
+            const esReemplazoTotal = !esSoloAgregar && (exF.length > 0
+                || (esPlanFormal && agF.length >= UMBRAL_REEMPLAZO_TOTAL));
 
             if (esReemplazoTotal) {
                 const fuenteFilas = exF.length > 0 ? exF : agF;
@@ -776,7 +792,9 @@ async function obtenerPlanesDesdeGmail(token) {
                 porFecha[fk].filasIncrementales = [];
                 porFecha[fk].tieneExcel = true;
             } else {
-                porFecha[fk].filasIncrementales.push(...agF);
+                // Incremental: las filas (Excel incluido, si el mail pide "agregar") se suman
+                // al plan existente sin tombstonear lo previo.
+                porFecha[fk].filasIncrementales.push(...exF, ...agF);
             }
             porFecha[fk].anuladas.push(...anF);
             porFecha[fk].fuentes.push({
@@ -4357,7 +4375,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     // del mismo navegador. Tras el baneo de tagsaaduana@gmail.com el 15/05/2026 (Google
     // detectó "actividad inusual"), bajamos drásticamente la frecuencia: solo se permite
     // un auto-sync cada 30 min, y el intervalo de chequeo pasó de 10 min a 60 min.
-    const AUTO_SYNC_COOLDOWN_MS = 30 * 60 * 1000;
+    const AUTO_SYNC_COOLDOWN_MS = 120 * 60 * 1000;
     function intentarAutoSync() {
         if (localStorage.getItem("planGmailConsentio") !== "1") return;
         const ahora = Date.now();
@@ -4421,12 +4439,12 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
 
     actualizarBadgePlan();
 
-    // Auto-sync Gmail al iniciar (si el admin ya consintió alguna vez) y reintento cada 60 min.
-    // Intencionalmente conservador post-baneo 15/05/2026: el cooldown de 30 min en
+    // Auto-sync Gmail al iniciar (si el admin ya consintió alguna vez) y reintento cada 2 horas.
+    // Intencionalmente conservador post-baneo 15/05/2026: el cooldown de 2 horas en
     // intentarAutoSync filtra dispares redundantes entre sesiones.
     if (rolActual === "admin") {
         setTimeout(intentarAutoSync, 5000);
-        setInterval(intentarAutoSync, 60 * 60 * 1000);
+        setInterval(intentarAutoSync, 120 * 60 * 1000);
 
         // Polling unificado cada 30s: trae cambios remotos de stock/historial Y del plan
         // en el mismo tick. Antes había dos setIntervals independientes; ahora un solo timer

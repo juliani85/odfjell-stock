@@ -1,18 +1,19 @@
 {
-  "actualizado": "2026-06-09T14:00:44.555679Z",
+  "actualizado": "2026-06-09T14:10:35.644102Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 7.8,
+      "velocidad_nudos": 7.7,
       "eta": "2026-06-12T12:00:00Z",
       "calado_m": 4.2,
+      "nav_status": "Under way using engine",
       "zona": "West Africa",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-09T10:10:32.560314Z"
+      "ultimo_fetch": "2026-06-09T14:10:35.644102Z"
     },
     "9973315": {
       "estado": "en_route",
@@ -57,15 +58,16 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Houston, United States (USA)",
-      "velocidad_nudos": 6.7,
+      "velocidad_nudos": 7.2,
       "eta": "2026-06-11T04:30:00Z",
       "calado_m": 8.0,
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-09T10:10:32.560314Z"
+      "ultimo_fetch": "2026-06-09T14:10:35.644102Z"
     }
   }
 }

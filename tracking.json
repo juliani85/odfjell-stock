@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-06-10T18:41:01.286363Z",
+  "actualizado": "2026-06-10T18:51:00.531791Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 6.9,
+      "velocidad_nudos": 7.3,
       "eta": "2026-06-12T12:00:00Z",
       "calado_m": 4.2,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-10T14:41:03.507028Z"
+      "ultimo_fetch": "2026-06-10T18:51:00.531791Z"
     },
     "9973315": {
       "estado": "en_puerto",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-10T14:41:03.507028Z"
+      "ultimo_fetch": "2026-06-10T18:51:00.531791Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -67,7 +67,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-10T14:41:03.507028Z"
+      "ultimo_fetch": "2026-06-10T18:51:00.531791Z"
     }
   }
 }

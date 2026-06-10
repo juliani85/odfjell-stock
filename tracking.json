@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-10T06:30:56.360985Z",
+  "actualizado": "2026-06-10T06:40:57.584253Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -13,20 +13,20 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-10T02:40:31.950930Z"
+      "ultimo_fetch": "2026-06-10T06:40:57.584253Z"
     },
     "9973315": {
       "estado": "en_puerto",
       "puerto_actual": "Santos Anch., Brazil",
       "arribo": "2026-06-06T12:23:00Z",
-      "calado_m": 10.4,
+      "calado_m": 9.3,
       "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-10T02:40:31.950930Z"
+      "ultimo_fetch": "2026-06-10T06:40:57.584253Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -60,13 +60,12 @@
       "velocidad_nudos": 7.6,
       "eta": "2026-06-11T04:30:00Z",
       "calado_m": 8.0,
-      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-10T02:40:31.950930Z"
+      "ultimo_fetch": "2026-06-10T06:40:57.584253Z"
     }
   }
 }

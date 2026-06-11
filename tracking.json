@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-11T20:31:01.347326Z",
+  "actualizado": "2026-06-11T20:40:59.658592Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -32,14 +32,14 @@
       "estado": "en_route",
       "destino": "Aratu, Brazil",
       "velocidad_nudos": 13.6,
-      "eta": "2026-06-22T17:00:00Z",
+      "eta": "2026-06-22T14:30:00Z",
       "calado_m": 8.9,
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-11T16:31:07.161909Z"
+      "ultimo_fetch": "2026-06-11T20:40:59.658592Z"
     },
     "9143219": {
       "estado": "en_route",

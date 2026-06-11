@@ -632,6 +632,31 @@
       "dap": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-06-04T10:43:55.472Z"
+    },
+    {
+      "id": 1781175738589,
+      "buque": "SUN BIRD",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-06-11",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1180",
+          "cto": "sbird28txc02",
+          "mercaderia": "acido acetico",
+          "receptor": "atanor",
+          "kgDeclarados": 595649,
+          "tkDestino": "13-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "cesar",
+      "actualizadoTs": "2026-06-11T11:02:18.590Z"
     }
   ]
 }

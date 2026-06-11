@@ -1,11 +1,11 @@
 {
-  "actualizado": "2026-06-11T15:11:03.461471Z",
+  "actualizado": "2026-06-11T15:21:11.859260Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "Las Palmas, Spain",
-      "velocidad_nudos": 9.4,
-      "eta": "2026-06-12T11:00:00Z",
+      "velocidad_nudos": 8.6,
+      "eta": "2026-06-12T07:00:00Z",
       "calado_m": 4.2,
       "nav_status": "Under way using engine",
       "zona": "West Africa",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-11T11:21:00.450942Z"
+      "ultimo_fetch": "2026-06-11T15:21:11.859260Z"
     },
     "9973315": {
       "estado": "en_puerto",

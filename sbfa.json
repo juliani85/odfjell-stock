@@ -657,6 +657,53 @@
       "dap": [],
       "actualizadoPor": "cesar",
       "actualizadoTs": "2026-06-11T11:02:18.590Z"
+    },
+    {
+      "id": 1781285974155,
+      "buque": "BOW CECIL",
+      "manifiesto": "",
+      "agencia": "BYM",
+      "cuit": "",
+      "fecha": "2026-06-26",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1223",
+          "cto": "OTUS2602CECI2901",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 159885,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1221",
+          "cto": "OTUS2602CECI2102",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 314450,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1222",
+          "cto": "OTUS2602CECI2400",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 172297,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-06-12T17:39:34.155Z"
     }
   ]
 }

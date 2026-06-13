@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-13T17:20:11.884652Z",
+  "actualizado": "2026-06-13T17:30:10.007550Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -34,13 +34,12 @@
       "velocidad_nudos": 12.2,
       "eta": "2026-06-22T14:30:00Z",
       "calado_m": 8.9,
-      "nav_status": "Under way using engine",
       "zona": "Caribbean Sea",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-13T13:21:00.171579Z"
+      "ultimo_fetch": "2026-06-13T17:30:10.007550Z"
     },
     "9143219": {
       "estado": "en_route",

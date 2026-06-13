@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-06-12T23:50:57.088688Z",
+  "actualizado": "2026-06-13T00:00:55.279169Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "WANDELAAR/GHENT",
-      "velocidad_nudos": 10.3,
+      "velocidad_nudos": 9.7,
       "eta": "2026-06-19T17:00:00Z",
       "calado_m": 4.2,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-12T19:50:58.590372Z"
+      "ultimo_fetch": "2026-06-13T00:00:55.279169Z"
     },
     "9973315": {
       "estado": "en_puerto",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-12T19:50:58.590372Z"
+      "ultimo_fetch": "2026-06-13T00:00:55.279169Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -55,18 +55,17 @@
       "ultimo_fetch": "2026-06-12T22:10:58.636768Z"
     },
     "9168635": {
-      "estado": "en_route",
-      "destino": "Houston, United States (USA)",
-      "velocidad_nudos": 13.5,
-      "eta": "2026-06-12T22:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Houston Anch., United States (USA)",
+      "arribo": "2026-06-12T21:27:00Z",
       "calado_m": 7.1,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-12T19:50:58.590372Z"
+      "ultimo_fetch": "2026-06-13T00:00:55.279169Z"
     }
   }
 }

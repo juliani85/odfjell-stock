@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-16T16:40:25.202260Z",
+  "actualizado": "2026-06-16T16:50:30.205064Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -58,16 +58,15 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Houston, United States (USA)",
-      "velocidad_nudos": 1.0,
       "eta": "2026-06-12T22:00:00Z",
       "calado_m": 7.3,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-16T12:50:28.288780Z"
+      "ultimo_fetch": "2026-06-16T16:50:30.205064Z"
     }
   }
 }

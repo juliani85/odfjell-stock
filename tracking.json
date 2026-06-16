@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-16T02:40:15.250367Z",
+  "actualizado": "2026-06-16T02:50:22.114426Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-15T22:50:17.357373Z"
+      "ultimo_fetch": "2026-06-16T02:50:22.114426Z"
     },
     "9780536": {
       "estado": "en_route",

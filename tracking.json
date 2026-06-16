@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-16T15:00:25.993793Z",
+  "actualizado": "2026-06-16T15:10:26.310517Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -16,17 +16,18 @@
       "ultimo_fetch": "2026-06-16T14:00:31.168100Z"
     },
     "9973315": {
-      "estado": "en_puerto",
-      "puerto_actual": "Santos, Brazil",
-      "arribo": "2026-06-13T21:05:00Z",
-      "calado_m": 9.2,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "Rio Grande, Brazil",
+      "velocidad_nudos": 6.0,
+      "eta": "2026-06-18T15:00:00Z",
+      "calado_m": 9.0,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-16T11:10:17.750659Z"
+      "ultimo_fetch": "2026-06-16T15:10:26.310517Z"
     },
     "9780536": {
       "estado": "en_route",

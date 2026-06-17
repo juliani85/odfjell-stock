@@ -663,7 +663,7 @@
       "buque": "BOW CECIL",
       "manifiesto": "",
       "agencia": "BYM",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-06-26",
       "notaNumero": "",
       "filas": [
@@ -699,11 +699,33 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1236",
+          "cto": "OTUS 2602 801",
+          "mercaderia": "EXXSOL D 60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 248965,
+          "tkDestino": "23-48",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1235",
+          "cto": "OTUS 2602 1201",
+          "mercaderia": "SOLVENT NAPHTHA",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 100901,
+          "tkDestino": "19",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-12T17:39:34.155Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-06-17T16:33:07.141Z"
     }
   ]
 }

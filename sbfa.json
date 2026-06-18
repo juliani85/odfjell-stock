@@ -612,26 +612,37 @@
       "id": 1780569835472,
       "buque": "BOCHEM BRISBANE",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-06-04",
       "notaNumero": "",
       "filas": [
         {
           "solPart": "1132",
           "cto": "790",
-          "mercaderia": "acido acetico",
-          "receptor": "atanor",
+          "mercaderia": "ACIDO ACETICO",
+          "receptor": "ATANOR",
           "kgDeclarados": 1020109,
           "tkDestino": "13-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1231",
+          "cto": "800A-800B-800C",
+          "mercaderia": "ACETATO DE ETILO",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 356565,
+          "tkDestino": "52",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-06-04T10:43:55.472Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-06-18T15:23:43.481Z"
     },
     {
       "id": 1781175738589,

@@ -613,15 +613,28 @@ async function obtenerPlanesDesdeGmail(token) {
     }
 
     // Extrae fecha del asunto. 2-digit year -> +2000.
-    const extraerFecha = (asunto) => {
-        const m = (asunto || "").match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{2,4})/);
-        if (!m) return null;
-        const dia = parseInt(m[1]);
-        const mes = parseInt(m[2]);
-        let anio = parseInt(m[3]);
-        if (anio < 100) anio += 2000;
-        if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
-        return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    // Acepta dd/mm/aa[aa] (con / - .) y también dd/mm SIN año (caso real: asunto
+    // "PLAN DE CARGAS 18/06"); en ese caso completa con el año del mail (anioRef).
+    const extraerFecha = (asunto, anioRef) => {
+        const s = asunto || "";
+        // 1) Formato completo con año
+        let m = s.match(/(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})\s*[\/\-\.]\s*(\d{2,4})/);
+        if (m) {
+            const dia = parseInt(m[1]), mes = parseInt(m[2]);
+            let anio = parseInt(m[3]);
+            if (anio < 100) anio += 2000;
+            if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
+            return `${anio}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+        }
+        // 2) Formato sin año: dd/mm suelto → año del mail. El lookahead evita pisar
+        //    fechas con año (ya cubiertas arriba) y números más largos.
+        m = s.match(/(?:^|[^\d])(\d{1,2})\s*[\/\-\.]\s*(\d{1,2})(?![\d\/\-\.])/);
+        if (m && anioRef) {
+            const dia = parseInt(m[1]), mes = parseInt(m[2]);
+            if (dia < 1 || dia > 31 || mes < 1 || mes > 12) return null;
+            return `${anioRef}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+        }
+        return null;
     };
 
     const porFecha = {};
@@ -662,7 +675,10 @@ async function obtenerPlanesDesdeGmail(token) {
 
         let fecha;
         if (esPlanFormal) {
-            fecha = extraerFecha(subject);
+            const anioMail = msg.internalDate
+                ? new Date(parseInt(msg.internalDate, 10)).getFullYear()
+                : new Date().getFullYear();
+            fecha = extraerFecha(subject, anioMail);
             if (!fecha) {
                 console.log(`[plan] descartado (no se pudo extraer fecha del asunto): "${subject}"`);
                 descartados.push({ subject, motivo: "fecha no parseable" });

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-18T12:00:15.272796Z",
+  "actualizado": "2026-06-18T12:10:21.835333Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -19,14 +19,14 @@
       "estado": "en_route",
       "destino": "Rio Grande, Brazil",
       "velocidad_nudos": 10.9,
-      "eta": "2026-06-18T15:00:00Z",
+      "eta": "2026-06-18T16:00:00Z",
       "calado_m": 9.0,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-18T08:00:19.606282Z"
+      "ultimo_fetch": "2026-06-18T12:10:21.835333Z"
     },
     "9780536": {
       "estado": "en_route",

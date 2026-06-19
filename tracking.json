@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-06-19T15:40:15.584399Z",
+  "actualizado": "2026-06-19T15:50:16.298452Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
       "destino": "WANDELAAR/GHENT",
-      "velocidad_nudos": 8.5,
+      "velocidad_nudos": 11.7,
       "eta": "2026-06-19T15:00:00Z",
       "calado_m": 4.1,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-19T11:40:16.956634Z"
+      "ultimo_fetch": "2026-06-19T15:50:16.298452Z"
     },
     "9973315": {
       "estado": "en_puerto",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-21T21:10:20.185835Z",
+  "actualizado": "2026-06-21T21:20:22.483709Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -12,12 +12,12 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-21T17:10:21.158196Z"
+      "ultimo_fetch": "2026-06-21T21:20:22.483709Z"
     },
     "9973315": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 11.9,
+      "velocidad_nudos": 11.8,
       "eta": "2026-06-21T18:00:00Z",
       "calado_m": 8.4,
       "nav_status": "Under way using engine",
@@ -26,20 +26,20 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-21T21:10:20.185835Z"
+      "ultimo_fetch": "2026-06-21T21:20:22.483709Z"
     },
     "9780536": {
       "estado": "en_route",
       "destino": "Aratu, Brazil",
       "velocidad_nudos": 12.5,
-      "eta": "2026-06-22T09:00:00Z",
-      "calado_m": 8.9,
+      "eta": "2026-06-22T11:30:00Z",
+      "calado_m": 9.1,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-21T17:20:20.766976Z"
+      "ultimo_fetch": "2026-06-21T21:20:22.483709Z"
     },
     "9143219": {
       "estado": "en_puerto",

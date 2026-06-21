@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-21T07:10:22.523790Z",
+  "actualizado": "2026-06-21T07:20:21.412221Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -20,13 +20,12 @@
       "velocidad_nudos": 12.8,
       "eta": "2026-06-21T18:00:00Z",
       "calado_m": 8.4,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-21T06:50:24.472236Z"
+      "ultimo_fetch": "2026-06-21T07:20:21.412221Z"
     },
     "9780536": {
       "estado": "en_route",

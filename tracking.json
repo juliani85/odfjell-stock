@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-21T20:20:21.298392Z",
+  "actualizado": "2026-06-21T20:30:22.215676Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-21T20:20:21.298392Z"
+      "ultimo_fetch": "2026-06-21T20:30:22.215676Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -65,7 +65,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-06-21T16:20:24.372171Z"
+      "ultimo_fetch": "2026-06-21T20:30:22.215676Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-21T13:10:22.264734Z",
+  "actualizado": "2026-06-21T13:20:19.833908Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-21T13:10:22.264734Z"
+      "ultimo_fetch": "2026-06-21T13:20:19.833908Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-21T09:20:20.536439Z"
+      "ultimo_fetch": "2026-06-21T13:20:19.833908Z"
     },
     "9143219": {
       "estado": "en_puerto",

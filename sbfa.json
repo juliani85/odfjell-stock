@@ -640,9 +640,22 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000031N",
+          "cto": "USHOU820",
+          "cantDoctada": 305897,
+          "cantResult": null
+        },
+        {
+          "documento": "26008IC65000032Y",
+          "cto": "USHOU811",
+          "cantDoctada": 509816,
+          "cantResult": null
+        }
+      ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-18T15:23:43.481Z"
+      "actualizadoTs": "2026-06-22T11:31:59.095Z"
     },
     {
       "id": 1781175738589,

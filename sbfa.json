@@ -732,11 +732,55 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1246",
+          "cto": "OTUS 2602CECI3002",
+          "mercaderia": "VINIL ACETATE",
+          "receptor": "CRILEN",
+          "kgDeclarados": 28000,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1247",
+          "cto": "OTUS2602CECI3003",
+          "mercaderia": "VINIL ACETATE",
+          "receptor": "CRILEN",
+          "kgDeclarados": 28000,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1248",
+          "cto": "OTUS2602CECI3001",
+          "mercaderia": "VINIL ACETATE",
+          "receptor": "CRILEN",
+          "kgDeclarados": 28000,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1249",
+          "cto": "OTUS2602CECI2001",
+          "mercaderia": "BUTIL ACETATE",
+          "receptor": "CRILEN",
+          "kgDeclarados": 112000,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-06-17T16:33:07.141Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-06-22T10:50:44.943Z"
     }
   ]
 }

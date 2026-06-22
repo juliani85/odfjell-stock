@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-22T02:10:23.518517Z",
+  "actualizado": "2026-06-22T02:20:23.102937Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -17,7 +17,7 @@
     "9973315": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 5.7,
+      "velocidad_nudos": 11.4,
       "eta": "2026-06-21T18:00:00Z",
       "calado_m": 8.4,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-22T02:10:23.518517Z"
+      "ultimo_fetch": "2026-06-22T02:20:23.102937Z"
     },
     "9780536": {
       "estado": "en_route",

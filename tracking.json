@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-23T14:20:25.931963Z",
+  "actualizado": "2026-06-23T14:30:26.986989Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-23T10:20:27.670003Z"
+      "ultimo_fetch": "2026-06-23T14:30:26.986989Z"
     },
     "9973315": {
       "estado": "en_puerto",
@@ -37,7 +37,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-23T10:20:27.670003Z"
+      "ultimo_fetch": "2026-06-23T14:30:26.986989Z"
     },
     "9143219": {
       "estado": "en_puerto",

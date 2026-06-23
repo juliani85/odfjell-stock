@@ -789,11 +789,33 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1282",
+          "cto": "OTUS2602CECI2002/03/04/05/06/07/08/09",
+          "mercaderia": "BUTYL ACETATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 286805,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1281",
+          "cto": "OTUS2602CECI3004/05",
+          "mercaderia": "VINIL ACETATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 119251,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-22T10:50:44.943Z"
+      "actualizadoTs": "2026-06-23T14:17:13.805Z"
     }
   ]
 }

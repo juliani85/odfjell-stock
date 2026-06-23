@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-23T02:50:19.864219Z",
+  "actualizado": "2026-06-23T03:00:20.896184Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -51,7 +51,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-06-22T22:50:28.808195Z"
+      "ultimo_fetch": "2026-06-23T03:00:20.896184Z"
     },
     "9168635": {
       "estado": "en_puerto",

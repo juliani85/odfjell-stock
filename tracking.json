@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-23T03:50:21.656546Z",
+  "actualizado": "2026-06-23T04:00:20.717893Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -17,15 +17,16 @@
     "9973315": {
       "estado": "en_route",
       "destino": "Buenos Aires, Argentina",
+      "velocidad_nudos": 9.9,
       "eta": "2026-06-23T07:00:00Z",
       "calado_m": 8.5,
-      "nav_status": "Moored",
-      "zona": "South America Inland",
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-22T23:50:22.352656Z"
+      "ultimo_fetch": "2026-06-23T04:00:20.717893Z"
     },
     "9780536": {
       "estado": "en_puerto",

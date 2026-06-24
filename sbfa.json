@@ -660,10 +660,10 @@
     {
       "id": 1781175738589,
       "buque": "SUN BIRD",
-      "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
-      "fecha": "2026-06-11",
+      "manifiesto": "16051W",
+      "agencia": "AMI",
+      "cuit": "30585343427",
+      "fecha": "2026-06-23",
       "notaNumero": "",
       "filas": [
         {
@@ -679,8 +679,8 @@
         }
       ],
       "dap": [],
-      "actualizadoPor": "cesar",
-      "actualizadoTs": "2026-06-11T11:02:18.590Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-06-24T11:17:41.098Z"
     },
     {
       "id": 1781285974155,

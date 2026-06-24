@@ -623,10 +623,10 @@
           "mercaderia": "ACIDO ACETICO",
           "receptor": "ATANOR",
           "kgDeclarados": 1020109,
-          "tkDestino": "13-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "8",
+          "sbfa": "1027k",
+          "medic": "132",
+          "kgResultantes": 1018822
         },
         {
           "solPart": "1231",
@@ -635,9 +635,9 @@
           "receptor": "HENRY HIRSCHEN",
           "kgDeclarados": 356565,
           "tkDestino": "52",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1028L-1029M-1030E",
+          "medic": "131",
+          "kgResultantes": 359134
         }
       ],
       "dap": [
@@ -655,7 +655,9 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-23T12:01:02.003Z"
+      "actualizadoTs": "2026-06-24T11:26:00.555Z",
+      "archivada": true,
+      "archivadaTs": "2026-06-24T11:26:00.555Z"
     },
     {
       "id": 1781175738589,

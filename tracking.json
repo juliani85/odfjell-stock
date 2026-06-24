@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-24T04:10:40.605527Z",
+  "actualizado": "2026-06-24T04:20:44.166803Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-06-24T00:10:40.814793Z"
+      "ultimo_fetch": "2026-06-24T04:20:44.166803Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -41,15 +41,16 @@
     },
     "9143219": {
       "estado": "en_puerto",
-      "puerto_actual": "Santos Anch., Brazil",
-      "arribo": "2026-06-16T05:05:00Z",
+      "puerto_actual": "Santos, Brazil",
+      "arribo": "2026-06-24T03:34:00Z",
       "calado_m": 10.6,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-06-23T23:20:41.671442Z"
+      "ultimo_fetch": "2026-06-24T04:20:44.166803Z"
     },
     "9168635": {
       "estado": "en_puerto",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-24T02:30:43.974056Z",
+  "actualizado": "2026-06-24T02:40:42.330428Z",
   "barcos": {
     "9415636": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-23T22:40:38.749860Z"
+      "ultimo_fetch": "2026-06-24T02:40:42.330428Z"
     },
     "9973315": {
       "estado": "en_puerto",
@@ -29,15 +29,15 @@
     },
     "9780536": {
       "estado": "en_route",
-      "destino": "Salvador, Brazil",
+      "destino": "Rio de Janeiro, Brazil",
       "eta": "2026-06-26T20:00:00Z",
-      "calado_m": 9.1,
+      "calado_m": 9.0,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-23T22:40:38.749860Z"
+      "ultimo_fetch": "2026-06-24T02:40:42.330428Z"
     },
     "9143219": {
       "estado": "en_puerto",

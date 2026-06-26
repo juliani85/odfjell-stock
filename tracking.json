@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-06-26T08:00:45.018524Z",
+  "actualizado": "2026-06-26T08:11:03.074464Z",
   "barcos": {
     "9415636": {
-      "estado": "en_route",
-      "destino": "Hamburg, Germany",
-      "eta": "2026-06-25T19:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Hamburg, Germany",
+      "arribo": "2026-06-26T03:29:00Z",
       "calado_m": 4.0,
       "nav_status": "Moored",
       "zona": "North Sea",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9415636",
       "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-26T04:00:47.375255Z"
+      "ultimo_fetch": "2026-06-26T08:11:03.074464Z"
     },
     "9780536": {
       "estado": "en_route",
@@ -24,7 +24,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-26T04:00:47.375255Z"
+      "ultimo_fetch": "2026-06-26T08:11:03.074464Z"
     },
     "9143219": {
       "estado": "en_puerto",

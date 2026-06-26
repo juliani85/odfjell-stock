@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "SUN BIRD",
-      "imo": "9415636"
-    },
-    {
       "nombre": "TIVOLI PARK",
       "imo": "9780536"
     },

@@ -1,19 +1,6 @@
 {
-  "actualizado": "2026-06-26T10:50:41.912678Z",
+  "actualizado": "2026-06-26T11:00:47.598496Z",
   "barcos": {
-    "9415636": {
-      "estado": "en_puerto",
-      "puerto_actual": "Hamburg, Germany",
-      "arribo": "2026-06-26T03:29:00Z",
-      "calado_m": 4.0,
-      "nav_status": "Moored",
-      "zona": "North Sea",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9415636",
-      "nombre": "SUN BIRD",
-      "ultimo_fetch": "2026-06-26T08:11:03.074464Z"
-    },
     "9780536": {
       "estado": "en_route",
       "destino": "Rio de Janeiro, Brazil",

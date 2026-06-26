@@ -1,19 +1,18 @@
 {
-  "actualizado": "2026-06-26T20:20:40.579634Z",
+  "actualizado": "2026-06-26T20:30:48.976422Z",
   "barcos": {
     "9780536": {
-      "estado": "en_route",
-      "destino": "Rio de Janeiro, Brazil",
-      "velocidad_nudos": 11.9,
-      "eta": "2026-06-26T18:30:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Rio de Janeiro Anch., Brazil",
+      "arribo": "2026-06-26T18:23:00Z",
       "calado_m": 9.0,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-26T16:30:43.481562Z"
+      "ultimo_fetch": "2026-06-26T20:30:48.976422Z"
     },
     "9143219": {
       "estado": "en_puerto",

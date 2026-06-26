@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-26T14:50:10.668406Z",
+  "actualizado": "2026-06-26T14:50:37.409817Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -42,6 +42,12 @@
     "GGPARK": {
       "imo": null,
       "nombre": "GGPARK",
+      "fuente": null,
+      "error": "IMO no resuelto"
+    },
+    "BENGIN": {
+      "imo": null,
+      "nombre": "BENGIN",
       "fuente": null,
       "error": "IMO no resuelto"
     }

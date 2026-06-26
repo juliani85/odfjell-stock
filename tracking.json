@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-26T14:51:02.244999Z",
+  "actualizado": "2026-06-26T15:00:42.942707Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -50,6 +50,19 @@
       "nombre": "BENGIN",
       "fuente": null,
       "error": "IMO no resuelto"
+    },
+    "9250751": {
+      "estado": "en_puerto",
+      "puerto_actual": "Houston, United States (USA)",
+      "arribo": "2026-06-25T06:26:00Z",
+      "calado_m": 7.0,
+      "nav_status": "Moored",
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9250751",
+      "nombre": "BOW FIRDA",
+      "ultimo_fetch": "2026-06-26T15:00:42.942707Z"
     }
   }
 }

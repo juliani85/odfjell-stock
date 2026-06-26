@@ -675,14 +675,16 @@
           "receptor": "atanor",
           "kgDeclarados": 595649,
           "tkDestino": "13-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1041G",
+          "medic": "133",
+          "kgResultantes": 600345
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-24T11:17:41.098Z"
+      "actualizadoTs": "2026-06-26T10:55:53.002Z",
+      "archivada": true,
+      "archivadaTs": "2026-06-26T10:55:53.002Z"
     },
     {
       "id": 1781285974155,

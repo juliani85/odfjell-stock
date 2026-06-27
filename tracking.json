@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-27T23:10:43.081161Z",
+  "actualizado": "2026-06-27T23:20:39.441859Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
@@ -55,6 +55,7 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Texas City, United States (USA)",
+      "velocidad_nudos": 10.3,
       "eta": "2026-06-27T23:00:00Z",
       "calado_m": 7.6,
       "nav_status": "Under way using engine",
@@ -63,7 +64,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-06-27T19:20:37.371671Z"
+      "ultimo_fetch": "2026-06-27T23:20:39.441859Z"
     }
   }
 }

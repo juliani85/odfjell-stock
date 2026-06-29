@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-29T03:30:41.571286Z",
+  "actualizado": "2026-06-29T03:40:39.417899Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
@@ -53,17 +53,18 @@
       "error": "IMO no resuelto"
     },
     "9250751": {
-      "estado": "en_puerto",
-      "puerto_actual": "Texas City, United States (USA)",
-      "arribo": "2026-06-28T00:39:00Z",
+      "estado": "en_route",
+      "destino": "Texas City, United States (USA)",
+      "velocidad_nudos": 12.5,
+      "eta": "2026-06-29T05:00:00Z",
       "calado_m": 8.0,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-06-28T23:40:38.982883Z"
+      "ultimo_fetch": "2026-06-29T03:40:39.417899Z"
     }
   }
 }

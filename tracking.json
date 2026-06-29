@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-06-29T17:50:40.615645Z",
+  "actualizado": "2026-06-29T18:00:41.917438Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-06-29T13:50:42.924792Z"
+      "ultimo_fetch": "2026-06-29T18:00:41.917438Z"
     },
     "9143219": {
       "estado": "en_puerto",

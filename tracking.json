@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-01T17:10:40.918292Z",
+  "actualizado": "2026-07-01T17:20:42.956258Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-01T16:20:42.692273Z"
+      "ultimo_fetch": "2026-07-01T17:20:42.956258Z"
     },
     "9143219": {
       "estado": "en_puerto",
@@ -56,7 +56,6 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Texas City, United States (USA)",
-      "velocidad_nudos": 0.1,
       "eta": "2026-06-29T05:00:00Z",
       "calado_m": 8.0,
       "nav_status": "At anchor",
@@ -65,7 +64,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-01T13:10:41.235879Z"
+      "ultimo_fetch": "2026-07-01T17:20:42.956258Z"
     }
   }
 }

@@ -854,7 +854,7 @@
           "cto": "OTUS2602CECI3302",
           "mercaderia": "ETILHEXANOL-OCTANOL",
           "receptor": "CHEMOTECNICA S.A",
-          "kgDeclarados": 100000,
+          "kgDeclarados": 200000,
           "tkDestino": "54-63",
           "sbfa": "",
           "medic": "",
@@ -874,7 +874,7 @@
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-02T14:27:43.849Z"
+      "actualizadoTs": "2026-07-02T15:30:46.269Z"
     },
     {
       "id": 1782834570581,

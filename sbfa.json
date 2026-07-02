@@ -844,6 +844,31 @@
       "dap": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-06-30T15:49:30.581Z"
+    },
+    {
+      "id": 1782990886000,
+      "buque": "COVADONGA",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-07-02",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "26008EC01006764S",
+          "cto": "",
+          "mercaderia": "BENZOL",
+          "receptor": "TERNIUM",
+          "kgDeclarados": 850000,
+          "tkDestino": "73",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-02T11:14:46.000Z"
     }
   ]
 }

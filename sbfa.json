@@ -837,11 +837,44 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1342",
+          "cto": "OTUS2602CECI3303/OTUS2602CECI3304",
+          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "receptor": "FARMCHEM S.A",
+          "kgDeclarados": 50000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1343",
+          "cto": "OTUS2602CECI3302",
+          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "receptor": "CHEMOTECNICA S.A",
+          "kgDeclarados": 100000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1344",
+          "cto": "OTUS2602CECI3305/OTUS2602CECI3306",
+          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "receptor": "MINERA EXAR S.A",
+          "kgDeclarados": 50000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-02T13:26:43.568Z"
+      "actualizadoTs": "2026-07-02T14:27:43.849Z"
     },
     {
       "id": 1782834570581,

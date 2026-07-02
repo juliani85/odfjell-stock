@@ -815,11 +815,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1321",
+          "cto": "OTUS2602 330",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 300000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-06-23T14:17:13.805Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-02T11:09:23.948Z"
     },
     {
       "id": 1782834570581,

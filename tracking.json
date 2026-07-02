@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-02T15:10:56.981292Z",
+  "actualizado": "2026-07-02T15:20:59.740110Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -68,8 +68,8 @@
     "9300489": {
       "estado": "en_route",
       "destino": "Aviles, Spain",
-      "velocidad_nudos": 12.4,
-      "eta": "2026-07-19T12:00:00Z",
+      "velocidad_nudos": 13.2,
+      "eta": "2026-07-21T17:00:00Z",
       "calado_m": 6.9,
       "nav_status": "Under way using engine",
       "zona": "South America East Coast",
@@ -77,7 +77,7 @@
       "error": null,
       "imo": "9300489",
       "nombre": "COVADONGA",
-      "ultimo_fetch": "2026-07-02T11:14:06.053191Z"
+      "ultimo_fetch": "2026-07-02T15:20:59.740110Z"
     }
   }
 }

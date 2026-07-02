@@ -826,11 +826,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1364",
+          "cto": "3401",
+          "mercaderia": "fenol",
+          "receptor": "atanor",
+          "kgDeclarados": 499945,
+          "tkDestino": "80-85",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-02T11:09:23.948Z"
+      "actualizadoTs": "2026-07-02T12:50:30.431Z"
     },
     {
       "id": 1782834570581,

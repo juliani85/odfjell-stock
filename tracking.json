@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-03T06:10:56.951902Z",
+  "actualizado": "2026-07-03T06:20:55.062035Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-03T02:11:03.386547Z"
+      "ultimo_fetch": "2026-07-03T06:20:55.062035Z"
     },
     "GGPARK": {
       "imo": null,
@@ -63,7 +63,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-03T02:11:03.386547Z"
+      "ultimo_fetch": "2026-07-03T06:20:55.062035Z"
     },
     "9300489": {
       "estado": "en_route",

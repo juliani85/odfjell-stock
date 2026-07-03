@@ -913,6 +913,42 @@
       "dap": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-07-02T11:14:46.000Z"
+    },
+    {
+      "id": 1783085798808,
+      "buque": "TIVOLI PARK",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-07-03",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1368",
+          "cto": "3401",
+          "mercaderia": "alkonat l 10",
+          "receptor": "unilever",
+          "kgDeclarados": 999041,
+          "tkDestino": "74-82",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1367",
+          "cto": "3301",
+          "mercaderia": "alkonat l 70",
+          "receptor": "unilever",
+          "kgDeclarados": 1099287,
+          "tkDestino": "10-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-03T13:36:38.808Z"
     }
   ]
 }

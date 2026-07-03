@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-03T02:00:55.721886Z",
+  "actualizado": "2026-07-03T02:11:03.386547Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-03T01:00:57.989084Z"
+      "ultimo_fetch": "2026-07-03T02:11:03.386547Z"
     },
     "9143219": {
       "estado": "en_puerto",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-02T22:00:56.494895Z"
+      "ultimo_fetch": "2026-07-03T02:11:03.386547Z"
     },
     "GGPARK": {
       "imo": null,
@@ -63,7 +63,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-02T22:00:56.494895Z"
+      "ultimo_fetch": "2026-07-03T02:11:03.386547Z"
     },
     "9300489": {
       "estado": "en_route",

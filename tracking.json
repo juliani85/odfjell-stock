@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-04T10:40:36.248378Z",
+  "actualizado": "2026-07-04T10:50:38.385403Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-04T10:40:36.248378Z"
+      "ultimo_fetch": "2026-07-04T10:50:38.385403Z"
     },
     "9143219": {
       "estado": "en_puerto",
@@ -28,9 +28,9 @@
       "ultimo_fetch": "2026-07-04T09:30:38.624342Z"
     },
     "9168635": {
-      "estado": "en_route",
-      "destino": "Freeport, United States (USA)",
-      "eta": "2026-06-12T22:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Freeport Anch., United States (USA)",
+      "arribo": "2026-07-04T06:30:00Z",
       "calado_m": 9.7,
       "nav_status": "At anchor",
       "zona": "Gulf of Mexico",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-04T06:40:38.658956Z"
+      "ultimo_fetch": "2026-07-04T10:50:38.385403Z"
     },
     "GGPARK": {
       "imo": null,
@@ -53,18 +53,17 @@
       "error": "IMO no resuelto"
     },
     "9250751": {
-      "estado": "en_route",
-      "destino": "Houston, United States (USA)",
-      "velocidad_nudos": 10.6,
-      "eta": "2026-07-04T10:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Houston, United States (USA)",
+      "arribo": "2026-07-04T10:04:00Z",
       "calado_m": 7.9,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-04T06:40:38.658956Z"
+      "ultimo_fetch": "2026-07-04T10:50:38.385403Z"
     },
     "9300489": {
       "estado": "en_route",

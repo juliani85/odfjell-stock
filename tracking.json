@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-05T04:20:37.673519Z",
+  "actualizado": "2026-07-05T04:30:39.377354Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-05T04:20:37.673519Z"
+      "ultimo_fetch": "2026-07-05T04:30:39.377354Z"
     },
     "9143219": {
       "estado": "en_puerto",
@@ -76,7 +76,7 @@
       "error": null,
       "imo": "9300489",
       "nombre": "COVADONGA",
-      "ultimo_fetch": "2026-07-05T00:30:36.019879Z"
+      "ultimo_fetch": "2026-07-05T04:30:39.377354Z"
     }
   }
 }

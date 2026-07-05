@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-07-05T11:10:39.570425Z",
+  "actualizado": "2026-07-05T11:20:38.351844Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.4,
+      "velocidad_nudos": 11.0,
       "eta": "2026-07-04T12:00:00Z",
       "calado_m": 7.5,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-05T11:10:39.570425Z"
+      "ultimo_fetch": "2026-07-05T11:20:38.351844Z"
     },
     "9143219": {
       "estado": "en_puerto",
@@ -39,7 +39,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-05T07:20:37.717207Z"
+      "ultimo_fetch": "2026-07-05T11:20:38.351844Z"
     },
     "GGPARK": {
       "imo": null,
@@ -64,7 +64,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-05T07:20:37.717207Z"
+      "ultimo_fetch": "2026-07-05T11:20:38.351844Z"
     },
     "9300489": {
       "estado": "en_route",

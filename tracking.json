@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-07-05T07:50:43.321278Z",
+  "actualizado": "2026-07-05T08:00:40.425421Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 12.2,
+      "velocidad_nudos": 12.5,
       "eta": "2026-07-04T12:00:00Z",
       "calado_m": 7.5,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-05T07:50:43.321278Z"
+      "ultimo_fetch": "2026-07-05T08:00:40.425421Z"
     },
     "9143219": {
       "estado": "en_puerto",

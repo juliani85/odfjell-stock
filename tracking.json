@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-06T11:30:37.518976Z",
+  "actualizado": "2026-07-06T11:40:38.380396Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
@@ -31,7 +31,7 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",
-      "velocidad_nudos": 12.5,
+      "velocidad_nudos": 12.4,
       "eta": "2026-06-12T22:00:00Z",
       "calado_m": 9.7,
       "nav_status": "Under way using engine",
@@ -40,7 +40,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-06T07:40:36.649621Z"
+      "ultimo_fetch": "2026-07-06T11:40:38.380396Z"
     },
     "GGPARK": {
       "imo": null,
@@ -65,7 +65,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-06T07:40:36.649621Z"
+      "ultimo_fetch": "2026-07-06T11:40:38.380396Z"
     },
     "9300489": {
       "estado": "en_route",

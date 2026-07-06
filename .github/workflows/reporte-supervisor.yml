@@ -15,16 +15,8 @@ on:
         description: "N° de solicitudes (separados por ; )"
         required: false
         type: string
-      guarda:
-        description: "Agente girado — Guarda"
-        required: false
-        type: string
-      medidor:
-        description: "Agente girado — Medidor"
-        required: false
-        type: string
-      jefeturno:
-        description: "Agente girado — Jefe de turno"
+      agentes:
+        description: "Agentes girados (JSON: [{rol,nombre,hab}])"
         required: false
         type: string
 
@@ -45,9 +37,7 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           REP_SOLICITUDES: ${{ github.event.inputs.solicitudes }}
-          REP_GUARDA: ${{ github.event.inputs.guarda }}
-          REP_MEDIDOR: ${{ github.event.inputs.medidor }}
-          REP_JEFETURNO: ${{ github.event.inputs.jefeturno }}
+          REP_AGENTES: ${{ github.event.inputs.agentes }}
         run: |
           if [ -n "${{ github.event.inputs.fecha }}" ]; then
             python scripts/reporte_supervisor.py --destinatarios "${{ github.event.inputs.destinatarios }}" --fecha "${{ github.event.inputs.fecha }}"

@@ -518,22 +518,32 @@
                         <button class="btn btn-primary btn-sm" id="btnRepSupEnviar" type="button">📧 Enviar reporte</button>
                     </div>
 
-                    <div style="display:flex;gap:0.75rem;align-items:start;flex-wrap:wrap;margin-bottom:1rem">
-                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
-                            <label for="repSupSolicitudes">N° de solicitudes <span style="color:var(--gray-500);font-weight:normal">(opcional — una por línea)</span></label>
-                            <textarea id="repSupSolicitudes" rows="3" placeholder="Ej:&#10;1234&#10;5678" style="width:100%;resize:vertical"></textarea>
+                    <div class="form-group" style="margin-bottom:1rem;max-width:360px">
+                        <label for="repSupSolicitudes">N° de solicitudes <span style="color:var(--gray-500);font-weight:normal">(opcional — una por línea)</span></label>
+                        <textarea id="repSupSolicitudes" rows="3" placeholder="Ej:&#10;1234&#10;5678" style="width:100%;resize:vertical"></textarea>
+                    </div>
+
+                    <p style="color:var(--gray-500);font-size:0.8rem;margin:0 0 0.4rem 0">Agentes girados <span style="font-weight:normal">(opcional)</span></p>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;margin-bottom:1rem">
+                        <div style="border:1px solid var(--gray-200);border-radius:8px;padding:0.75rem;background:#fafafa">
+                            <div style="font-weight:600;color:#1e3a8a;margin-bottom:0.4rem">Guarda</div>
+                            <input type="text" id="repSupGuardaNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.4rem">
+                            <input type="text" id="repSupGuardaHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
                         </div>
-                        <div class="form-group" style="margin-bottom:0;width:170px">
-                            <label for="repSupGuarda">Guarda <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
-                            <input type="text" id="repSupGuarda" autocomplete="off" placeholder="Nombre">
+                        <div style="border:1px solid var(--gray-200);border-radius:8px;padding:0.75rem;background:#fafafa">
+                            <div style="font-weight:600;color:#1e3a8a;margin-bottom:0.4rem">Jefe de turno</div>
+                            <input type="text" id="repSupJefe1Nombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.4rem">
+                            <input type="text" id="repSupJefe1Hab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
                         </div>
-                        <div class="form-group" style="margin-bottom:0;width:170px">
-                            <label for="repSupMedidor">Medidor <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
-                            <input type="text" id="repSupMedidor" autocomplete="off" placeholder="Nombre">
+                        <div style="border:1px solid var(--gray-200);border-radius:8px;padding:0.75rem;background:#fafafa">
+                            <div style="font-weight:600;color:#1e3a8a;margin-bottom:0.4rem">Medidor</div>
+                            <input type="text" id="repSupMedidorNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.4rem">
+                            <input type="text" id="repSupMedidorHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
                         </div>
-                        <div class="form-group" style="margin-bottom:0;width:170px">
-                            <label for="repSupJefeTurno">Jefe de turno <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
-                            <input type="text" id="repSupJefeTurno" autocomplete="off" placeholder="Nombre">
+                        <div style="border:1px solid var(--gray-200);border-radius:8px;padding:0.75rem;background:#fafafa">
+                            <div style="font-weight:600;color:#1e3a8a;margin-bottom:0.4rem">Jefe de turno</div>
+                            <input type="text" id="repSupJefe2Nombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.4rem">
+                            <input type="text" id="repSupJefe2Hab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
                         </div>
                     </div>
 

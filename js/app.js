@@ -2796,31 +2796,45 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return `${d}/${m}/${y}`;
     }
 
-    // Lee los campos opcionales del turno (solicitudes / guarda / medidor / jefe de turno).
+    // Lee los campos opcionales del turno: solicitudes (una por línea) + 4 cards de
+    // agentes girados (Guarda, Jefe de turno, Medidor, Jefe de turno), cada una con
+    // nombre y N° de habilitación.
     function repSupDatosTurno() {
         const val = id => (document.getElementById(id)?.value || "").trim();
         const solicitudes = val("repSupSolicitudes").split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-        return { solicitudes, guarda: val("repSupGuarda"), medidor: val("repSupMedidor"), jefeturno: val("repSupJefeTurno") };
+        const agentes = [
+            { rol: "Guarda",        nombre: val("repSupGuardaNombre"),  hab: val("repSupGuardaHab") },
+            { rol: "Jefe de turno", nombre: val("repSupJefe1Nombre"),   hab: val("repSupJefe1Hab") },
+            { rol: "Medidor",       nombre: val("repSupMedidorNombre"), hab: val("repSupMedidorHab") },
+            { rol: "Jefe de turno", nombre: val("repSupJefe2Nombre"),   hab: val("repSupJefe2Hab") },
+        ];
+        return { solicitudes, agentes };
     }
 
-    // Bloque HTML "Datos del turno" (mismo diseño que en reporte_supervisor.py).
-    // Vacío si no se cargó nada (los 4 campos son opcionales).
+    // Bloque HTML "Datos del turno" (idéntico a reporte_supervisor.py::html_datos_turno).
+    // 4 cards en una tabla 2×2 (las tablas van bien en clientes de mail). Vacío si no
+    // se cargó nada. Las cards se muestran completas si al menos un agente tiene datos.
     function repSupHtmlDatosTurno(d) {
-        const filas = [];
-        if (d.guarda) filas.push(["Guarda", d.guarda]);
-        if (d.medidor) filas.push(["Medidor", d.medidor]);
-        if (d.jefeturno) filas.push(["Jefe de turno", d.jefeturno]);
+        const agentes = d.agentes || [];
+        const hayAgentes = agentes.some(a => a.nombre || a.hab);
         const haySol = d.solicitudes && d.solicitudes.length > 0;
-        if (!filas.length && !haySol) return "";
-        const td = "padding:4px 8px;border:1px solid #d1d5db;color:#111";
+        if (!hayAgentes && !haySol) return "";
         let html = `<h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>`;
-        if (filas.length) {
-            html += `<table style="border-collapse:collapse;font-size:12px;border:1px solid #d1d5db;margin-bottom:0.6rem">
-                ${filas.map(([k, v]) => `<tr><td style="${td};background:#e5e7eb;font-weight:bold">${_escHtml(k)}</td><td style="${td}">${_escHtml(v)}</td></tr>`).join("")}
-            </table>`;
-        }
         if (haySol) {
-            html += `<p style="margin:0.3rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> ${d.solicitudes.map(_escHtml).join(" · ")}</p>`;
+            html += `<p style="margin:0.3rem 0 0.6rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> ${d.solicitudes.map(_escHtml).join(" · ")}</p>`;
+        }
+        if (hayAgentes) {
+            const cardCell = a => {
+                const nom = a.nombre ? `<div style="color:#111">${_escHtml(a.nombre)}</div>` : "";
+                const hab = a.hab ? `<div style="color:#6b7280;font-size:11px">N° habilitación: ${_escHtml(a.hab)}</div>` : "";
+                return `<td width="50%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;background:#fafafa;vertical-align:top">
+                    <div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">${_escHtml(a.rol)}</div>${nom}${hab}
+                </td>`;
+            };
+            html += `<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px">
+                <tr>${cardCell(agentes[0])}${cardCell(agentes[1])}</tr>
+                <tr>${cardCell(agentes[2])}${cardCell(agentes[3])}</tr>
+            </table>`;
         }
         return html;
     }
@@ -3008,9 +3022,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     destinatarios: lista.join(","),
                     fecha: repSupFechaISO(),
                     solicitudes: dt.solicitudes.join(";"),
-                    guarda: dt.guarda,
-                    medidor: dt.medidor,
-                    jefeturno: dt.jefeturno,
+                    agentes: JSON.stringify(dt.agentes),
                 });
                 if (!res.ok) throw new Error(`proxy ${res.status}${res.detalle || ""}`);
                 estado.style.color = "#16a34a";

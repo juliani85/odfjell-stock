@@ -253,34 +253,43 @@ def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
 
 
 def html_datos_turno() -> str:
-    """Bloque opcional 'Datos del turno' (solicitudes + agentes girados).
-    Los datos vienen por variables de entorno desde el workflow. Mismo diseño
+    """Bloque opcional 'Datos del turno' (solicitudes + 4 cards de agentes girados
+    en tabla 2×2). Los datos vienen por env vars desde el workflow. MISMO diseño
     que repSupHtmlDatosTurno() en app.js. Vacío si no se cargó nada."""
     import html as _html
     solicitudes = [s.strip() for s in os.environ.get("REP_SOLICITUDES", "").split(";") if s.strip()]
-    guarda = os.environ.get("REP_GUARDA", "").strip()
-    medidor = os.environ.get("REP_MEDIDOR", "").strip()
-    jefe = os.environ.get("REP_JEFETURNO", "").strip()
-    filas = []
-    if guarda:
-        filas.append(("Guarda", guarda))
-    if medidor:
-        filas.append(("Medidor", medidor))
-    if jefe:
-        filas.append(("Jefe de turno", jefe))
-    if not filas and not solicitudes:
+    try:
+        agentes = json.loads(os.environ.get("REP_AGENTES", "") or "[]")
+    except Exception:
+        agentes = []
+    if not isinstance(agentes, list):
+        agentes = []
+    # normalizar a 4 posiciones para el grid 2×2
+    agentes = (agentes + [{}, {}, {}, {}])[:4]
+    hay_agentes = any((a or {}).get("nombre") or (a or {}).get("hab") for a in agentes)
+    if not hay_agentes and not solicitudes:
         return ""
-    td = "padding:4px 8px;border:1px solid #d1d5db;color:#111"
+
     out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
-    if filas:
-        rows = "".join(
-            f'<tr><td style="{td};background:#e5e7eb;font-weight:bold">{_html.escape(k)}</td>'
-            f'<td style="{td}">{_html.escape(v)}</td></tr>'
-            for k, v in filas)
-        out.append(f'<table style="border-collapse:collapse;font-size:12px;border:1px solid #d1d5db;margin-bottom:0.6rem">{rows}</table>')
     if solicitudes:
         lista = " · ".join(_html.escape(s) for s in solicitudes)
-        out.append(f'<p style="margin:0.3rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> {lista}</p>')
+        out.append(f'<p style="margin:0.3rem 0 0.6rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> {lista}</p>')
+
+    if hay_agentes:
+        def card(a):
+            a = a or {}
+            rol = _html.escape(a.get("rol") or "")
+            nom = f'<div style="color:#111">{_html.escape(a.get("nombre"))}</div>' if a.get("nombre") else ""
+            hab = (f'<div style="color:#6b7280;font-size:11px">N° habilitación: {_html.escape(a.get("hab"))}</div>'
+                   if a.get("hab") else "")
+            return (f'<td width="50%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;'
+                    f'background:#fafafa;vertical-align:top">'
+                    f'<div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">{rol}</div>{nom}{hab}</td>')
+        out.append(
+            '<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px">'
+            f'<tr>{card(agentes[0])}{card(agentes[1])}</tr>'
+            f'<tr>{card(agentes[2])}{card(agentes[3])}</tr>'
+            '</table>')
     return "".join(out)
 
 

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-06T04:30:40.027267Z",
+  "actualizado": "2026-07-06T04:40:41.482965Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
@@ -80,7 +80,7 @@
       "error": null,
       "imo": "9300489",
       "nombre": "COVADONGA",
-      "ultimo_fetch": "2026-07-06T00:40:39.837764Z"
+      "ultimo_fetch": "2026-07-06T04:40:41.482965Z"
     }
   }
 }

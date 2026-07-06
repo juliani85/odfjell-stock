@@ -917,10 +917,10 @@
     {
       "id": 1783085798808,
       "buque": "TIVOLI PARK",
-      "manifiesto": "",
-      "agencia": "B&M",
-      "cuit": "30-71631314-6",
-      "fecha": "2026-07-03",
+      "manifiesto": "17220V",
+      "agencia": "AMI",
+      "cuit": "30-58534342-7",
+      "fecha": "2026-07-06",
       "notaNumero": "",
       "filas": [
         {
@@ -955,7 +955,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-06T11:47:37.114Z"
+      "actualizadoTs": "2026-07-06T12:30:55.335Z"
     }
   ]
 }

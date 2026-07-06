@@ -956,6 +956,42 @@
       ],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-07-06T12:31:58.138Z"
+    },
+    {
+      "id": 1783355590831,
+      "buque": "GGPARK",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-07-06",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1377",
+          "cto": "1",
+          "mercaderia": "propylenglicol",
+          "receptor": "pbb",
+          "kgDeclarados": 1500000,
+          "tkDestino": "78-84-88-89",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1376",
+          "cto": "2",
+          "mercaderia": "propilenglicol",
+          "receptor": "pbb",
+          "kgDeclarados": 100226,
+          "tkDestino": "84-88",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-06T16:33:10.831Z"
     }
   ]
 }

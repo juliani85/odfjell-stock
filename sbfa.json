@@ -961,9 +961,9 @@
       "id": 1783355590831,
       "buque": "GGPARK",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
-      "fecha": "2026-07-06",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-07-12",
       "notaNumero": "",
       "filas": [
         {
@@ -990,8 +990,8 @@
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-06T16:33:10.831Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-06T17:47:00.802Z"
     }
   ]
 }

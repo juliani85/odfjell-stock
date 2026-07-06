@@ -252,6 +252,38 @@ def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
     """
 
 
+def html_datos_turno() -> str:
+    """Bloque opcional 'Datos del turno' (solicitudes + agentes girados).
+    Los datos vienen por variables de entorno desde el workflow. Mismo diseño
+    que repSupHtmlDatosTurno() en app.js. Vacío si no se cargó nada."""
+    import html as _html
+    solicitudes = [s.strip() for s in os.environ.get("REP_SOLICITUDES", "").split(";") if s.strip()]
+    guarda = os.environ.get("REP_GUARDA", "").strip()
+    medidor = os.environ.get("REP_MEDIDOR", "").strip()
+    jefe = os.environ.get("REP_JEFETURNO", "").strip()
+    filas = []
+    if guarda:
+        filas.append(("Guarda", guarda))
+    if medidor:
+        filas.append(("Medidor", medidor))
+    if jefe:
+        filas.append(("Jefe de turno", jefe))
+    if not filas and not solicitudes:
+        return ""
+    td = "padding:4px 8px;border:1px solid #d1d5db;color:#111"
+    out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
+    if filas:
+        rows = "".join(
+            f'<tr><td style="{td};background:#e5e7eb;font-weight:bold">{_html.escape(k)}</td>'
+            f'<td style="{td}">{_html.escape(v)}</td></tr>'
+            for k, v in filas)
+        out.append(f'<table style="border-collapse:collapse;font-size:12px;border:1px solid #d1d5db;margin-bottom:0.6rem">{rows}</table>')
+    if solicitudes:
+        lista = " · ".join(_html.escape(s) for s in solicitudes)
+        out.append(f'<p style="margin:0.3rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> {lista}</p>')
+    return "".join(out)
+
+
 def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     """Devuelve (subject, html_body)."""
     sbfa = cargar_json(SBFA_JSON, {})
@@ -310,6 +342,8 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
 
 <h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas</h2>
 {seccion_plan}
+
+{html_datos_turno()}
 
 <hr style="margin: 2rem 0 0.5rem 0; border: none; border-top: 1px solid #e5e7eb">
 <p style="color: #9ca3af; font-size: 11px; text-align: center; margin: 0">

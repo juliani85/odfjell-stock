@@ -518,6 +518,25 @@
                         <button class="btn btn-primary btn-sm" id="btnRepSupEnviar" type="button">📧 Enviar reporte</button>
                     </div>
 
+                    <div style="display:flex;gap:0.75rem;align-items:start;flex-wrap:wrap;margin-bottom:1rem">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                            <label for="repSupSolicitudes">N° de solicitudes <span style="color:var(--gray-500);font-weight:normal">(opcional — una por línea)</span></label>
+                            <textarea id="repSupSolicitudes" rows="3" placeholder="Ej:&#10;1234&#10;5678" style="width:100%;resize:vertical"></textarea>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:170px">
+                            <label for="repSupGuarda">Guarda <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
+                            <input type="text" id="repSupGuarda" autocomplete="off" placeholder="Nombre">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:170px">
+                            <label for="repSupMedidor">Medidor <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
+                            <input type="text" id="repSupMedidor" autocomplete="off" placeholder="Nombre">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:170px">
+                            <label for="repSupJefeTurno">Jefe de turno <span style="color:var(--gray-500);font-weight:normal">(opcional)</span></label>
+                            <input type="text" id="repSupJefeTurno" autocomplete="off" placeholder="Nombre">
+                        </div>
+                    </div>
+
                     <p id="repSupEstado" style="font-size:0.85rem;margin-bottom:0.5rem"></p>
                     <div id="repSupVistaPrevia" style="border:1px solid var(--gray-200);border-radius:8px;padding:1rem;background:#fafafa;display:none"></div>
                 </div>

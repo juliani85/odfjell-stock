@@ -2796,6 +2796,35 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return `${d}/${m}/${y}`;
     }
 
+    // Lee los campos opcionales del turno (solicitudes / guarda / medidor / jefe de turno).
+    function repSupDatosTurno() {
+        const val = id => (document.getElementById(id)?.value || "").trim();
+        const solicitudes = val("repSupSolicitudes").split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+        return { solicitudes, guarda: val("repSupGuarda"), medidor: val("repSupMedidor"), jefeturno: val("repSupJefeTurno") };
+    }
+
+    // Bloque HTML "Datos del turno" (mismo diseño que en reporte_supervisor.py).
+    // Vacío si no se cargó nada (los 4 campos son opcionales).
+    function repSupHtmlDatosTurno(d) {
+        const filas = [];
+        if (d.guarda) filas.push(["Guarda", d.guarda]);
+        if (d.medidor) filas.push(["Medidor", d.medidor]);
+        if (d.jefeturno) filas.push(["Jefe de turno", d.jefeturno]);
+        const haySol = d.solicitudes && d.solicitudes.length > 0;
+        if (!filas.length && !haySol) return "";
+        const td = "padding:4px 8px;border:1px solid #d1d5db;color:#111";
+        let html = `<h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>`;
+        if (filas.length) {
+            html += `<table style="border-collapse:collapse;font-size:12px;border:1px solid #d1d5db;margin-bottom:0.6rem">
+                ${filas.map(([k, v]) => `<tr><td style="${td};background:#e5e7eb;font-weight:bold">${_escHtml(k)}</td><td style="${td}">${_escHtml(v)}</td></tr>`).join("")}
+            </table>`;
+        }
+        if (haySol) {
+            html += `<p style="margin:0.3rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> ${d.solicitudes.map(_escHtml).join(" · ")}</p>`;
+        }
+        return html;
+    }
+
     // Devuelve un map { nombreBuque -> { nombre, imo, descargas[] } } con todas
     // las descargas SB/FA cuya fecha coincide con fechaIso.
     function repSupBuquesDeFecha(fechaIso) {
@@ -2948,6 +2977,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             ${bloquesBarcos}
             <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas</h3>
             ${planHtml}
+            ${repSupHtmlDatosTurno(repSupDatosTurno())}
         </div>`;
     }
 
@@ -2973,9 +3003,14 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             estado.style.color = "var(--gray-500)";
             estado.textContent = "Disparando workflow…";
             try {
+                const dt = repSupDatosTurno();
                 const res = await GH._ghDispatch("reporte-supervisor.yml", "master", {
                     destinatarios: lista.join(","),
                     fecha: repSupFechaISO(),
+                    solicitudes: dt.solicitudes.join(";"),
+                    guarda: dt.guarda,
+                    medidor: dt.medidor,
+                    jefeturno: dt.jefeturno,
                 });
                 if (!res.ok) throw new Error(`proxy ${res.status}${res.detalle || ""}`);
                 estado.style.color = "#16a34a";

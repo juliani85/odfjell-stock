@@ -352,7 +352,7 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
 
 <hr style="margin: 2rem 0 0.5rem 0; border: none; border-top: 1px solid #e5e7eb">
 <p style="color: #9ca3af; font-size: 11px; text-align: center; margin: 0">
-    Reporte generado por el sistema de Control de Stock de TAGSA · {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")} UTC
+    Los camiones que están pendientes de cumplido y no tienen habilitada la descarga en terminal, no operan y no se los considera habilitados para el reporte; solo figuran en el plan de cargas.
 </p>
 
 </body></html>"""

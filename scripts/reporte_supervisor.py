@@ -253,9 +253,10 @@ def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
 
 
 def html_datos_turno() -> str:
-    """Bloque opcional 'Datos del turno' (4 cards de agentes girados en tabla 2×2).
-    Los datos vienen por env var REP_AGENTES (JSON) desde el workflow. MISMO diseño
-    que repSupHtmlDatosTurno() en app.js. Vacío si no se cargó nada."""
+    """Bloque opcional 'Datos del turno': agentes girados en dos grupos (Camiones y
+    Barcos), cada uno con Guarda/Medidor/Jefe de turno (3 cards en fila). Los datos
+    vienen por env var REP_AGENTES (JSON [{grupo,rol,nombre,hab}]). MISMO diseño que
+    repSupHtmlDatosTurno() en app.js. Vacío si no se cargó nada."""
     import html as _html
     try:
         agentes = json.loads(os.environ.get("REP_AGENTES", "") or "[]")
@@ -263,29 +264,28 @@ def html_datos_turno() -> str:
         agentes = []
     if not isinstance(agentes, list):
         agentes = []
-    # normalizar a 4 posiciones para el grid 2×2
-    agentes = (agentes + [{}, {}, {}, {}])[:4]
-    hay_agentes = any((a or {}).get("nombre") or (a or {}).get("hab") for a in agentes)
-    if not hay_agentes:
+    hay = any((a or {}).get("nombre") or (a or {}).get("hab") for a in agentes)
+    if not hay:
         return ""
 
-    out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
+    def card(a):
+        a = a or {}
+        rol = _html.escape(a.get("rol") or "")
+        nom = f'<div style="color:#111">{_html.escape(a.get("nombre"))}</div>' if a.get("nombre") else ""
+        hab = (f'<div style="color:#6b7280;font-size:11px">N° habilitación: {_html.escape(a.get("hab"))}</div>'
+               if a.get("hab") else "")
+        return (f'<td width="33%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;'
+                f'background:#fafafa;vertical-align:top">'
+                f'<div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">{rol}</div>{nom}{hab}</td>')
 
-    if hay_agentes:
-        def card(a):
-            a = a or {}
-            rol = _html.escape(a.get("rol") or "")
-            nom = f'<div style="color:#111">{_html.escape(a.get("nombre"))}</div>' if a.get("nombre") else ""
-            hab = (f'<div style="color:#6b7280;font-size:11px">N° habilitación: {_html.escape(a.get("hab"))}</div>'
-                   if a.get("hab") else "")
-            return (f'<td width="50%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;'
-                    f'background:#fafafa;vertical-align:top">'
-                    f'<div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">{rol}</div>{nom}{hab}</td>')
-        out.append(
-            '<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px">'
-            f'<tr>{card(agentes[0])}{card(agentes[1])}</tr>'
-            f'<tr>{card(agentes[2])}{card(agentes[3])}</tr>'
-            '</table>')
+    out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
+    for grupo in ("Camiones", "Barcos"):
+        cards = [a for a in agentes if (a or {}).get("grupo") == grupo]
+        if not any((a or {}).get("nombre") or (a or {}).get("hab") for a in cards):
+            continue
+        out.append(f'<p style="margin:0.6rem 0 0.2rem 0;font-weight:bold;color:#111;font-size:13px">{grupo}</p>')
+        celdas = "".join(card(a) for a in cards)
+        out.append(f'<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px"><tr>{celdas}</tr></table>')
     return "".join(out)
 
 
@@ -342,10 +342,10 @@ def armar_html_reporte(fecha_iso: str | None = None) -> tuple[str, str]:
     </p>
 </div>
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">🚢 Barcos con descarga ({len(buques)})</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 1rem 0 0.5rem 0">Barcos con descarga ({len(buques)})</h2>
 {seccion_barcos}
 
-<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">🚛 Plan de Cargas</h2>
+<h2 style="color: #1e3a8a; font-size: 15px; margin: 2rem 0 0.5rem 0">Plan de Cargas</h2>
 {seccion_plan}
 
 {html_datos_turno()}

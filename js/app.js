@@ -2399,7 +2399,7 @@ async function initApp() {
             if (st.dataset.subtab === "histSalidas") renderHistorial(document.getElementById("filtroHistorial")?.value || "");
             if (st.dataset.subtab === "histPorTanque") { volverListaHistTanque(); renderHistTanqueLista(); }
             if (st.dataset.subtab === "histPorDespacho") { volverListaHistDespacho(); renderHistDespachoLista(); }
-            if (st.dataset.subtab === "repSupervisor") inicializarReporteSupervisor();
+            if (st.dataset.subtab === "repSupervisor") { inicializarReporteSupervisor(); repSupRenderInforme(); }
             if (st.dataset.subtab === "repDiferencias") renderDiferencias();
             if (st.dataset.subtab === "repPrecintos") renderPrecintos(document.getElementById("filtroPrecintos")?.value || "");
             if (st.dataset.subtab === "sbfaActivas") renderSbfaLista(document.getElementById("sbfaFiltro")?.value || "", "activas");
@@ -2783,8 +2783,9 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         _repSupInicializado = true;
         const inpFecha = document.getElementById("repSupFecha");
         if (inpFecha && !inpFecha.value) inpFecha.value = new Date().toISOString().slice(0, 10);
-        document.getElementById("btnRepSupVista").addEventListener("click", repSupVistaPrevia);
+        if (inpFecha) inpFecha.addEventListener("change", repSupRenderInforme);
         document.getElementById("btnRepSupEnviar").addEventListener("click", repSupEnviar);
+        repSupRenderInforme(); // la vista previa está siempre visible, armada por la fecha
     }
 
     function repSupFechaISO() {
@@ -2796,39 +2797,38 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return `${d}/${m}/${y}`;
     }
 
-    // Lee los campos opcionales del turno: 4 cards de agentes girados (Guarda, Jefe de
-    // turno, Medidor, Jefe de turno), cada una con nombre y N° de habilitación.
+    // Lee los agentes girados: dos grupos (Camiones y Barcos), cada uno con Guarda,
+    // Medidor y Jefe de turno; cada card con nombre y N° de habilitación.
     function repSupDatosTurno() {
         const val = id => (document.getElementById(id)?.value || "").trim();
-        const agentes = [
-            { rol: "Guarda",        nombre: val("repSupGuardaNombre"),  hab: val("repSupGuardaHab") },
-            { rol: "Jefe de turno", nombre: val("repSupJefe1Nombre"),   hab: val("repSupJefe1Hab") },
-            { rol: "Medidor",       nombre: val("repSupMedidorNombre"), hab: val("repSupMedidorHab") },
-            { rol: "Jefe de turno", nombre: val("repSupJefe2Nombre"),   hab: val("repSupJefe2Hab") },
+        const grupo = (g, p) => [
+            { grupo: g, rol: "Guarda",        nombre: val(p + "GuardaNombre"),  hab: val(p + "GuardaHab") },
+            { grupo: g, rol: "Medidor",       nombre: val(p + "MedidorNombre"), hab: val(p + "MedidorHab") },
+            { grupo: g, rol: "Jefe de turno", nombre: val(p + "JefeNombre"),    hab: val(p + "JefeHab") },
         ];
+        const agentes = [...grupo("Camiones", "repSupCam"), ...grupo("Barcos", "repSupBar")];
         return { agentes };
     }
 
     // Bloque HTML "Datos del turno" (idéntico a reporte_supervisor.py::html_datos_turno).
-    // 4 cards en una tabla 2×2 (las tablas van bien en clientes de mail). Vacío si no
-    // se cargó nada. Las cards se muestran completas si al menos un agente tiene datos.
+    // Dos sub-secciones (Camiones / Barcos), cada una con 3 cards en fila. Un grupo sin
+    // ningún dato se omite. Vacío si no se cargó nada.
     function repSupHtmlDatosTurno(d) {
         const agentes = d.agentes || [];
-        const hayAgentes = agentes.some(a => a.nombre || a.hab);
-        if (!hayAgentes) return "";
+        if (!agentes.some(a => a.nombre || a.hab)) return "";
+        const cardCell = a => {
+            const nom = a.nombre ? `<div style="color:#111">${_escHtml(a.nombre)}</div>` : "";
+            const hab = a.hab ? `<div style="color:#6b7280;font-size:11px">N° habilitación: ${_escHtml(a.hab)}</div>` : "";
+            return `<td width="33%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;background:#fafafa;vertical-align:top">
+                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">${_escHtml(a.rol)}</div>${nom}${hab}
+            </td>`;
+        };
         let html = `<h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>`;
-        {
-            const cardCell = a => {
-                const nom = a.nombre ? `<div style="color:#111">${_escHtml(a.nombre)}</div>` : "";
-                const hab = a.hab ? `<div style="color:#6b7280;font-size:11px">N° habilitación: ${_escHtml(a.hab)}</div>` : "";
-                return `<td width="50%" style="border:1px solid #d1d5db;border-radius:6px;padding:8px;background:#fafafa;vertical-align:top">
-                    <div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">${_escHtml(a.rol)}</div>${nom}${hab}
-                </td>`;
-            };
-            html += `<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px">
-                <tr>${cardCell(agentes[0])}${cardCell(agentes[1])}</tr>
-                <tr>${cardCell(agentes[2])}${cardCell(agentes[3])}</tr>
-            </table>`;
+        for (const g of ["Camiones", "Barcos"]) {
+            const del = agentes.filter(a => a.grupo === g);
+            if (!del.some(a => a.nombre || a.hab)) continue;
+            html += `<p style="margin:0.6rem 0 0.2rem 0;font-weight:bold;color:#111;font-size:13px">${g}</p>`;
+            html += `<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px"><tr>${del.map(cardCell).join("")}</tr></table>`;
         }
         return html;
     }
@@ -2981,18 +2981,18 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 <h2 style="color:#1e3a8a;margin:0;font-size:18px">Reporte para Supervisores — Operaciones del día</h2>
                 <p style="margin:0.3rem 0 0 0;color:#6b7280;font-size:12px">Odfjell Terminals Tagsa SA — Campana · ${fechaHoy}</p>
             </div>
-            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">🚢 Barcos con descarga (${buques.length})</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:1rem 0 0.5rem 0">Barcos con descarga (${buques.length})</h3>
             ${bloquesBarcos}
-            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">🚛 Plan de Cargas</h3>
+            <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">Plan de Cargas</h3>
             ${planHtml}
-            ${repSupHtmlDatosTurno(repSupDatosTurno())}
         </div>`;
     }
 
-    function repSupVistaPrevia() {
-        const cont = document.getElementById("repSupVistaPrevia");
-        cont.innerHTML = repSupArmarHTML();
-        cont.style.display = "block";
+    // Redibuja SOLO el informe (barcos + plan) según la fecha. Las cards de agentes
+    // (inputs editables) viven fijas en el HTML debajo, no se tocan al redibujar.
+    function repSupRenderInforme() {
+        const cont = document.getElementById("repSupInforme");
+        if (cont) cont.innerHTML = repSupArmarHTML();
     }
 
     function repSupEnviar() {

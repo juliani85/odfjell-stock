@@ -11,10 +11,6 @@ on:
         description: "Fecha del reporte en formato YYYY-MM-DD (vacío = hoy)"
         required: false
         type: string
-      solicitudes:
-        description: "N° de solicitudes (separados por ; )"
-        required: false
-        type: string
       agentes:
         description: "Agentes girados (JSON: [{rol,nombre,hab}])"
         required: false
@@ -36,7 +32,6 @@ jobs:
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          REP_SOLICITUDES: ${{ github.event.inputs.solicitudes }}
           REP_AGENTES: ${{ github.event.inputs.agentes }}
         run: |
           if [ -n "${{ github.event.inputs.fecha }}" ]; then

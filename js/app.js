@@ -2796,19 +2796,17 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return `${d}/${m}/${y}`;
     }
 
-    // Lee los campos opcionales del turno: solicitudes (una por línea) + 4 cards de
-    // agentes girados (Guarda, Jefe de turno, Medidor, Jefe de turno), cada una con
-    // nombre y N° de habilitación.
+    // Lee los campos opcionales del turno: 4 cards de agentes girados (Guarda, Jefe de
+    // turno, Medidor, Jefe de turno), cada una con nombre y N° de habilitación.
     function repSupDatosTurno() {
         const val = id => (document.getElementById(id)?.value || "").trim();
-        const solicitudes = val("repSupSolicitudes").split(/\r?\n/).map(s => s.trim()).filter(Boolean);
         const agentes = [
             { rol: "Guarda",        nombre: val("repSupGuardaNombre"),  hab: val("repSupGuardaHab") },
             { rol: "Jefe de turno", nombre: val("repSupJefe1Nombre"),   hab: val("repSupJefe1Hab") },
             { rol: "Medidor",       nombre: val("repSupMedidorNombre"), hab: val("repSupMedidorHab") },
             { rol: "Jefe de turno", nombre: val("repSupJefe2Nombre"),   hab: val("repSupJefe2Hab") },
         ];
-        return { solicitudes, agentes };
+        return { agentes };
     }
 
     // Bloque HTML "Datos del turno" (idéntico a reporte_supervisor.py::html_datos_turno).
@@ -2817,13 +2815,9 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     function repSupHtmlDatosTurno(d) {
         const agentes = d.agentes || [];
         const hayAgentes = agentes.some(a => a.nombre || a.hab);
-        const haySol = d.solicitudes && d.solicitudes.length > 0;
-        if (!hayAgentes && !haySol) return "";
+        if (!hayAgentes) return "";
         let html = `<h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>`;
-        if (haySol) {
-            html += `<p style="margin:0.3rem 0 0.6rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> ${d.solicitudes.map(_escHtml).join(" · ")}</p>`;
-        }
-        if (hayAgentes) {
+        {
             const cardCell = a => {
                 const nom = a.nombre ? `<div style="color:#111">${_escHtml(a.nombre)}</div>` : "";
                 const hab = a.hab ? `<div style="color:#6b7280;font-size:11px">N° habilitación: ${_escHtml(a.hab)}</div>` : "";
@@ -3021,7 +3015,6 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 const res = await GH._ghDispatch("reporte-supervisor.yml", "master", {
                     destinatarios: lista.join(","),
                     fecha: repSupFechaISO(),
-                    solicitudes: dt.solicitudes.join(";"),
                     agentes: JSON.stringify(dt.agentes),
                 });
                 if (!res.ok) throw new Error(`proxy ${res.status}${res.detalle || ""}`);

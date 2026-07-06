@@ -253,11 +253,10 @@ def html_plan_dia(plan: dict, fecha_iso: str | None = None) -> str:
 
 
 def html_datos_turno() -> str:
-    """Bloque opcional 'Datos del turno' (solicitudes + 4 cards de agentes girados
-    en tabla 2×2). Los datos vienen por env vars desde el workflow. MISMO diseño
+    """Bloque opcional 'Datos del turno' (4 cards de agentes girados en tabla 2×2).
+    Los datos vienen por env var REP_AGENTES (JSON) desde el workflow. MISMO diseño
     que repSupHtmlDatosTurno() en app.js. Vacío si no se cargó nada."""
     import html as _html
-    solicitudes = [s.strip() for s in os.environ.get("REP_SOLICITUDES", "").split(";") if s.strip()]
     try:
         agentes = json.loads(os.environ.get("REP_AGENTES", "") or "[]")
     except Exception:
@@ -267,13 +266,10 @@ def html_datos_turno() -> str:
     # normalizar a 4 posiciones para el grid 2×2
     agentes = (agentes + [{}, {}, {}, {}])[:4]
     hay_agentes = any((a or {}).get("nombre") or (a or {}).get("hab") for a in agentes)
-    if not hay_agentes and not solicitudes:
+    if not hay_agentes:
         return ""
 
     out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
-    if solicitudes:
-        lista = " · ".join(_html.escape(s) for s in solicitudes)
-        out.append(f'<p style="margin:0.3rem 0 0.6rem 0;font-size:12px;color:#111"><strong>N° de solicitudes:</strong> {lista}</p>')
 
     if hay_agentes:
         def card(a):

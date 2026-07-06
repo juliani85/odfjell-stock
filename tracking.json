@@ -1,20 +1,18 @@
 {
-  "actualizado": "2026-07-06T05:30:36.843965Z",
+  "actualizado": "2026-07-06T05:40:40.192278Z",
   "barcos": {
     "9780536": {
       "estado": "en_puerto",
-      "destino": "Campana, Argentina",
-      "eta": "2026-07-04T12:00:00Z",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-07-06T02:57:00Z",
       "calado_m": 7.5,
       "nav_status": "Moored",
       "zona": "South America Inland",
-      "puerto_actual": "Campana, Argentina",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-06T03:30:38.557626Z",
-      "arribo": "2026-07-06T03:30:38.557626Z"
+      "ultimo_fetch": "2026-07-06T05:40:40.192278Z"
     },
     "9143219": {
       "estado": "en_route",
@@ -28,7 +26,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-06T04:30:40.027267Z"
+      "ultimo_fetch": "2026-07-06T05:40:40.192278Z"
     },
     "9168635": {
       "estado": "en_route",

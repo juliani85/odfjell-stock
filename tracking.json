@@ -1,18 +1,20 @@
 {
-  "actualizado": "2026-07-06T03:20:40.618668Z",
+  "actualizado": "2026-07-06T03:30:38.557626Z",
   "barcos": {
     "9780536": {
-      "estado": "en_route",
+      "estado": "en_puerto",
       "destino": "Campana, Argentina",
       "eta": "2026-07-04T12:00:00Z",
       "calado_m": 7.5,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America Inland",
+      "puerto_actual": "Campana, Argentina",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9780536",
       "nombre": "TIVOLI PARK",
-      "ultimo_fetch": "2026-07-06T03:20:40.618668Z"
+      "ultimo_fetch": "2026-07-06T03:30:38.557626Z",
+      "arribo": "2026-07-06T03:30:38.557626Z"
     },
     "9143219": {
       "estado": "en_route",
@@ -29,9 +31,9 @@
       "ultimo_fetch": "2026-07-06T03:20:40.618668Z"
     },
     "9168635": {
-      "estado": "en_puerto",
-      "puerto_actual": "Freeport, United States (USA)",
-      "arribo": "2026-07-05T01:43:00Z",
+      "estado": "en_route",
+      "destino": "Salvador, Brazil",
+      "eta": "2026-06-12T22:00:00Z",
       "calado_m": 9.7,
       "nav_status": "Moored",
       "zona": "Gulf of Mexico",
@@ -39,7 +41,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-05T23:30:36.347004Z"
+      "ultimo_fetch": "2026-07-06T03:30:38.557626Z"
     },
     "GGPARK": {
       "imo": null,
@@ -54,9 +56,10 @@
       "error": "IMO no resuelto"
     },
     "9250751": {
-      "estado": "en_puerto",
-      "puerto_actual": "Houston, United States (USA)",
-      "arribo": "2026-07-04T10:04:00Z",
+      "estado": "en_route",
+      "destino": "Houston, United States (USA)",
+      "velocidad_nudos": 9.4,
+      "eta": "2026-07-06T03:00:00Z",
       "calado_m": 9.4,
       "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
@@ -64,7 +67,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-05T23:30:36.347004Z"
+      "ultimo_fetch": "2026-07-06T03:30:38.557626Z"
     },
     "9300489": {
       "estado": "en_route",

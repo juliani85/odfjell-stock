@@ -918,8 +918,8 @@
       "id": 1783085798808,
       "buque": "TIVOLI PARK",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-07-03",
       "notaNumero": "",
       "filas": [
@@ -946,9 +946,16 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-03T13:36:38.808Z"
+      "dap": [
+        {
+          "documento": "26008IC65001447T",
+          "cto": "USHO1",
+          "cantDoctada": 2504343,
+          "cantResult": null
+        }
+      ],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-06T11:47:37.114Z"
     }
   ]
 }

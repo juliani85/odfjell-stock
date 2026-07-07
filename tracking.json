@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-07T14:01:08.949796Z",
+  "actualizado": "2026-07-07T14:11:07.273673Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -56,7 +56,7 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Freeport, United States (USA)",
-      "velocidad_nudos": 10.4,
+      "velocidad_nudos": 12.5,
       "eta": "2026-07-07T13:00:00Z",
       "calado_m": 9.3,
       "nav_status": "Under way using engine",
@@ -65,7 +65,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-07T10:11:06.386131Z"
+      "ultimo_fetch": "2026-07-07T14:11:07.273673Z"
     },
     "9300489": {
       "estado": "en_route",

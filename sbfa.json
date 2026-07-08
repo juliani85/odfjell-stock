@@ -1041,11 +1041,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1395",
+          "cto": "3",
+          "mercaderia": "DIPROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 53863,
+          "tkDestino": "24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T17:30:13.468Z"
+      "actualizadoTs": "2026-07-08T18:14:06.278Z"
     },
     {
       "id": 1783511746752,

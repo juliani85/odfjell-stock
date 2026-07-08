@@ -1033,6 +1033,19 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-07-08T11:54:25.280Z"
+    },
+    {
+      "id": 1783511746752,
+      "buque": "BOW ENGINEER",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "",
+      "fecha": "2026-07-16",
+      "notaNumero": "",
+      "filas": [],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-08T11:55:46.752Z"
     }
   ]
 }

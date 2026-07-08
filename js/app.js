@@ -5324,6 +5324,14 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return { dif, pct };
     }
 
+    // ¿La diferencia está FUERA de tolerancia (→ rojo, va al acta de denuncia)?
+    // Compara con el MISMO redondeo a 2 decimales que se muestra en pantalla, así el
+    // color coincide con el % mostrado. 0,60% queda DENTRO (verde), no se denuncia:
+    // solo un % mostrado de 0,61% o más dispara la denuncia.
+    function sbfaFueraTol(pct) {
+        return parseFloat(Math.abs(Number(pct) || 0).toFixed(2)) > SBFA_TOLERANCIA_PCT;
+    }
+
     function sbfaFmt(n) {
         if (n === null || n === undefined || isNaN(n)) return "0";
         return Math.round(n).toLocaleString("es-AR");
@@ -5344,7 +5352,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             if (decl > 0 && res > 0) {
                 medidas++;
                 const pct = (res - decl) / decl * 100;
-                if (Math.abs(pct) > SBFA_TOLERANCIA_PCT) fueraTol++;
+                if (sbfaFueraTol(pct)) fueraTol++;
             } else if (decl > 0 && res <= 0) {
                 pendientes++;
             }
@@ -5738,7 +5746,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 const { dif, pct } = sbfaCalcDif(decl, res);
                 tdKg.textContent = sbfaFmt(dif);
                 tdPct.textContent = sbfaFmtPct(pct);
-                const fuera = Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+                const fuera = sbfaFueraTol(pct);
                 tdKg.classList.toggle("fuera-tol", fuera);
                 tdPct.classList.toggle("fuera-tol", fuera);
                 tdKg.classList.toggle("dentro-tol", !fuera);
@@ -5778,7 +5786,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 const { dif, pct } = sbfaCalcDif(doc, res);
                 tdKg.textContent = sbfaFmt(dif);
                 tdPct.textContent = sbfaFmtPct(pct);
-                const fuera = Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+                const fuera = sbfaFueraTol(pct);
                 tdKg.classList.toggle("fuera-tol", fuera);
                 tdPct.classList.toggle("fuera-tol", fuera);
                 tdKg.classList.remove("pendiente-tol");
@@ -6012,7 +6020,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const decl = Number(f.kgDeclarados) || 0;
             const res = Number(f.kgResultantes) || 0;
             if (decl <= 0 || res <= 0) return false;
-            return Math.abs((res - decl) / decl * 100) > SBFA_TOLERANCIA_PCT;
+            return sbfaFueraTol((res - decl) / decl * 100);
         });
 
         const numeroNota = (document.getElementById("sbfaNotaNumero").value || "").trim() || "____";
@@ -6075,7 +6083,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const res = Number(f.kgResultantes) || 0;
             const dif = res - decl;
             const pct = decl > 0 ? dif / decl * 100 : 0;
-            const fuera = decl > 0 && res > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            const fuera = decl > 0 && res > 0 && sbfaFueraTol(pct);
             subDecl += decl; subRes += res; subCount++;
             filasHtml += `<tr class="${fuera ? "fuera" : ""}">
                 <td>${f.solPart || ""}</td>
@@ -6098,7 +6106,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             const res = Number(x.cantResult) || 0;
             const dif = res - doc;
             const pct = doc > 0 ? dif / doc * 100 : 0;
-            const fuera = doc > 0 && res > 0 && Math.abs(pct) > SBFA_TOLERANCIA_PCT;
+            const fuera = doc > 0 && res > 0 && sbfaFueraTol(pct);
             return `<tr class="${fuera ? "fuera" : ""}">
                 <td>${x.documento || ""}</td>
                 <td>${x.cto || ""}</td>

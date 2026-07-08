@@ -1014,8 +1014,8 @@
       "buque": "GOLDENGATE PARK",
       "manifiesto": "",
       "agencia": "AMI",
-      "cuit": "",
-      "fecha": "2026-07-13",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-07-11",
       "notaNumero": "",
       "filas": [
         {
@@ -1043,7 +1043,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:56:26.088Z"
+      "actualizadoTs": "2026-07-08T14:34:35.478Z"
     },
     {
       "id": 1783511746752,

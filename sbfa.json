@@ -893,8 +893,8 @@
       "id": 1782990886000,
       "buque": "COVADONGA",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-07-02",
       "notaNumero": "",
       "filas": [
@@ -905,14 +905,16 @@
           "receptor": "TERNIUM",
           "kgDeclarados": 850000,
           "tkDestino": "73",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "EXPO",
+          "medic": "135",
+          "kgResultantes": 799298
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-02T11:14:46.000Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-08T11:48:57.278Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-08T11:48:57.278Z"
     },
     {
       "id": 1783085798808,

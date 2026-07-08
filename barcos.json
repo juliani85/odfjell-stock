@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "TIVOLI PARK",
-      "imo": "9780536"
-    },
-    {
       "nombre": "BOW CECIL",
       "imo": "9143219"
     },
@@ -18,11 +14,11 @@
     },
     {
       "nombre": "GOLDENGATE PARK",
-      "imo": "9493145"
+      "imo": null
     },
     {
       "nombre": "BOW ENGINEER",
-      "imo": "9317860"
+      "imo": null
     }
   ],
   "notificaciones": {

@@ -883,9 +883,22 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000036S",
+          "cto": "2602CECI2500",
+          "cantDoctada": 197161,
+          "cantResult": null
+        },
+        {
+          "documento": "26008IC65000035R",
+          "cto": "BRSZ3501",
+          "cantDoctada": 699402,
+          "cantResult": null
+        }
+      ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T17:26:01.474Z"
+      "actualizadoTs": "2026-07-08T19:26:39.631Z"
     },
     {
       "id": 1782834570581,

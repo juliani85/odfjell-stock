@@ -2785,6 +2785,13 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         if (inpFecha && !inpFecha.value) inpFecha.value = new Date().toISOString().slice(0, 10);
         if (inpFecha) inpFecha.addEventListener("change", repSupRenderInforme);
         document.getElementById("btnRepSupEnviar").addEventListener("click", repSupEnviar);
+        // Fila inicial por grupo (sin botón quitar) + botones "+" para agregar más.
+        document.getElementById("repSupCamionesFilas").appendChild(repSupCrearFila("Camiones", false));
+        document.getElementById("repSupBarcosFilas").appendChild(repSupCrearFila("Barcos", false));
+        document.getElementById("btnAddCamiones").addEventListener("click", () =>
+            document.getElementById("repSupCamionesFilas").appendChild(repSupCrearFila("Camiones", true)));
+        document.getElementById("btnAddBarcos").addEventListener("click", () =>
+            document.getElementById("repSupBarcosFilas").appendChild(repSupCrearFila("Barcos", true)));
         repSupRenderInforme(); // la vista previa está siempre visible, armada por la fecha
     }
 
@@ -2799,15 +2806,48 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
 
     // Lee los agentes girados: dos grupos (Camiones y Barcos), cada uno con Guarda,
     // Medidor y Jefe de turno; cada card con nombre y N° de habilitación.
+    // Lee todas las filas dinámicas de agentes (Camiones y Barcos). Cada fila son 3
+    // cards (Guarda / Medidor / Jefe de turno), y puede haber varias filas por grupo.
     function repSupDatosTurno() {
-        const val = id => (document.getElementById(id)?.value || "").trim();
-        const grupo = (g, p) => [
-            { grupo: g, rol: "Guarda",        nombre: val(p + "GuardaNombre"),  hab: val(p + "GuardaHab") },
-            { grupo: g, rol: "Medidor",       nombre: val(p + "MedidorNombre"), hab: val(p + "MedidorHab") },
-            { grupo: g, rol: "Jefe de turno", nombre: val(p + "JefeNombre"),    hab: val(p + "JefeHab") },
-        ];
-        const agentes = [...grupo("Camiones", "repSupCam"), ...grupo("Barcos", "repSupBar")];
+        const agentes = [];
+        for (const [g, contId] of [["Camiones", "repSupCamionesFilas"], ["Barcos", "repSupBarcosFilas"]]) {
+            const cont = document.getElementById(contId);
+            if (!cont) continue;
+            cont.querySelectorAll(".agente-card").forEach(card => {
+                agentes.push({
+                    grupo: g,
+                    rol: card.dataset.rol || "",
+                    nombre: (card.querySelector('[data-campo="nombre"]')?.value || "").trim(),
+                    hab: (card.querySelector('[data-campo="hab"]')?.value || "").trim(),
+                });
+            });
+        }
         return { agentes };
+    }
+
+    // Crea una fila de 3 cards (Guarda / Medidor / Jefe de turno) para un grupo.
+    // Las filas agregadas con "+" traen un botón para quitarlas (conBorrar=true).
+    function repSupCrearFila(grupo, conBorrar) {
+        const wrap = document.createElement("div");
+        wrap.className = "agente-fila-wrap";
+        wrap.style.marginBottom = "0.6rem";
+        const grid = document.createElement("div");
+        grid.style.cssText = "display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.6rem";
+        const card = (rol) => `<div class="agente-card" data-rol="${rol}" style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
+            <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">${rol}</div>
+            <input type="text" data-campo="nombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
+            <input type="text" data-campo="hab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
+        </div>`;
+        grid.innerHTML = card("Guarda") + card("Medidor") + card("Jefe de turno");
+        wrap.appendChild(grid);
+        if (conBorrar) {
+            const btn = document.createElement("button");
+            btn.type = "button"; btn.className = "btn btn-danger btn-xs";
+            btn.textContent = "✕ Quitar fila"; btn.style.marginTop = "0.35rem";
+            btn.addEventListener("click", () => wrap.remove());
+            wrap.appendChild(btn);
+        }
+        return wrap;
     }
 
     // Bloque HTML "Datos del turno" (idéntico a reporte_supervisor.py::html_datos_turno).

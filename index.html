@@ -525,42 +525,12 @@
                         <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>
 
                         <p style="font-weight:bold;color:#111;font-size:13px;margin:0.6rem 0 0.3rem 0">Camiones</p>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.6rem;margin-bottom:1rem">
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Guarda</div>
-                                <input type="text" id="repSupCamGuardaNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupCamGuardaHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Medidor</div>
-                                <input type="text" id="repSupCamMedidorNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupCamMedidorHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Jefe de turno</div>
-                                <input type="text" id="repSupCamJefeNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupCamJefeHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                        </div>
+                        <div id="repSupCamionesFilas"></div>
+                        <button id="btnAddCamiones" type="button" class="btn btn-secondary btn-sm" style="margin:0.2rem 0 1rem 0">+ Agregar guarda / medidor / jefe</button>
 
                         <p style="font-weight:bold;color:#111;font-size:13px;margin:0.6rem 0 0.3rem 0">Barcos</p>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.6rem">
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Guarda</div>
-                                <input type="text" id="repSupBarGuardaNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupBarGuardaHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Medidor</div>
-                                <input type="text" id="repSupBarMedidorNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupBarMedidorHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                            <div style="border:1px solid #d1d5db;border-radius:6px;padding:0.6rem;background:#fff">
-                                <div style="font-weight:bold;color:#1e3a8a;margin-bottom:0.35rem;font-size:0.85rem">Jefe de turno</div>
-                                <input type="text" id="repSupBarJefeNombre" autocomplete="off" placeholder="Nombre" style="width:100%;margin-bottom:0.35rem">
-                                <input type="text" id="repSupBarJefeHab" autocomplete="off" placeholder="N° de habilitación" style="width:100%">
-                            </div>
-                        </div>
+                        <div id="repSupBarcosFilas"></div>
+                        <button id="btnAddBarcos" type="button" class="btn btn-secondary btn-sm" style="margin:0.2rem 0 0 0">+ Agregar guarda / medidor / jefe</button>
                     </div>
                 </div>
             </div>

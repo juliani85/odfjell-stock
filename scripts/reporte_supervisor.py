@@ -278,14 +278,22 @@ def html_datos_turno() -> str:
                 f'background:#fafafa;vertical-align:top">'
                 f'<div style="font-weight:bold;color:#1e3a8a;margin-bottom:3px">{rol}</div>{nom}{hab}</td>')
 
+    def tiene_datos(a):
+        return bool((a or {}).get("nombre") or (a or {}).get("hab"))
+
     out = ['<h2 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h2>']
     for grupo in ("Camiones", "Barcos"):
         cards = [a for a in agentes if (a or {}).get("grupo") == grupo]
-        if not any((a or {}).get("nombre") or (a or {}).get("hab") for a in cards):
+        # una fila = 3 cards (guarda/medidor/jefe); se omiten las filas totalmente vacias
+        filas = [cards[i:i + 3] for i in range(0, len(cards), 3)]
+        filas = [ch for ch in filas if any(tiene_datos(a) for a in ch)]
+        if not filas:
             continue
         out.append(f'<p style="margin:0.6rem 0 0.2rem 0;font-weight:bold;color:#111;font-size:13px">{grupo}</p>')
-        celdas = "".join(card(a) for a in cards)
-        out.append(f'<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px"><tr>{celdas}</tr></table>')
+        out.append('<table style="width:100%;border-collapse:separate;border-spacing:6px;font-size:12px">')
+        for ch in filas:
+            out.append(f'<tr>{"".join(card(a) for a in ch)}</tr>')
+        out.append('</table>')
     return "".join(out)
 
 

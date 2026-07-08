@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-08T05:31:05.607134Z",
+  "actualizado": "2026-07-08T05:41:05.806327Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-08T05:31:05.607134Z"
+      "ultimo_fetch": "2026-07-08T05:41:05.806327Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -77,7 +77,7 @@
       "error": null,
       "imo": "9300489",
       "nombre": "COVADONGA",
-      "ultimo_fetch": "2026-07-08T01:31:06.610527Z"
+      "ultimo_fetch": "2026-07-08T05:41:05.806327Z"
     }
   }
 }

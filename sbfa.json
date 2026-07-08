@@ -943,9 +943,9 @@
           "receptor": "unilever",
           "kgDeclarados": 999041,
           "tkDestino": "74-82",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1084N",
+          "medic": "140",
+          "kgResultantes": 998116
         },
         {
           "solPart": "1367",
@@ -954,9 +954,9 @@
           "receptor": "unilever",
           "kgDeclarados": 1099287,
           "tkDestino": "10-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1072K",
+          "medic": "141",
+          "kgResultantes": 1092687
         }
       ],
       "dap": [
@@ -968,7 +968,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-06T12:31:58.138Z"
+      "actualizadoTs": "2026-07-08T15:09:29.522Z"
     },
     {
       "id": 1783355590831,

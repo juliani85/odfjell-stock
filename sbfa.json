@@ -1046,6 +1046,19 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-07-08T11:55:46.752Z"
+    },
+    {
+      "id": 1783511771220,
+      "buque": "BOW FORTUNE",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-08-05",
+      "notaNumero": "",
+      "filas": [],
+      "dap": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-08T11:56:11.220Z"
     }
   ]
 }

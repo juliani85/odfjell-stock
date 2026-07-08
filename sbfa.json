@@ -870,11 +870,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1389",
+          "cto": "3601",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": 998798,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-07T01:13:42.314Z"
+      "actualizadoTs": "2026-07-08T14:31:33.775Z"
     },
     {
       "id": 1782834570581,

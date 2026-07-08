@@ -993,7 +993,10 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:51:43.156Z"
+      "actualizadoTs": "2026-07-08T11:51:43.156Z",
+      "anulada": true,
+      "anuladaTs": "2026-07-08T11:52:09.338Z",
+      "anuladaPor": "julian"
     }
   ]
 }

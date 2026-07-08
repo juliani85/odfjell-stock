@@ -6355,7 +6355,7 @@ RATIFICA DENUNCIA: SI <span class="ch-box checked" style="margin:0 4px">X</span>
 <thead><tr><th style="width:35%">APELLIDOS Y NOMBRES</th><th style="width:25%">TIPO Y N° DE DOCUMENTO</th><th style="width:40%">DOMICILIO</th></tr></thead>
 <tbody>
 <tr><td>IGLESIAS, JULIAN</td><td>DNI L30388-7</td><td>Luis Costa 651 — Campana</td></tr>
-<tr><td>ESCALANTE, CESAR</td><td>DNI 25929-2</td><td>Luis Costa 651 — Campana</td></tr>
+<tr><td>LOPEZ, GUSTAVO</td><td>Legajo L32782-4</td><td>Luis Costa 651 — Campana</td></tr>
 <tr><td>ROMANO, CLAUDIA</td><td>DNI 25549-1</td><td>Luis Costa 651 — Campana</td></tr>
 </tbody>
 </table>

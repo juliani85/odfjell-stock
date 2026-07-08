@@ -1002,9 +1002,9 @@
       "id": 1783511629241,
       "buque": "GOLDENGATE PARK",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
-      "fecha": "2026-07-12",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-07-13",
       "notaNumero": "",
       "filas": [
         {
@@ -1032,7 +1032,7 @@
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:53:49.242Z"
+      "actualizadoTs": "2026-07-08T11:54:25.280Z"
     }
   ]
 }

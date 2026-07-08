@@ -964,11 +964,13 @@
           "documento": "26008IC65001447T",
           "cto": "USHO1",
           "cantDoctada": 2504343,
-          "cantResult": null
+          "cantResult": 2366192
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T15:09:29.522Z"
+      "actualizadoTs": "2026-07-08T15:34:07.645Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-08T15:34:07.646Z"
     },
     {
       "id": 1783355590831,

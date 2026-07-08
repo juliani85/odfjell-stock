@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-08T18:21:03.872370Z",
+  "actualizado": "2026-07-08T18:31:05.570005Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-08T18:21:03.872370Z"
+      "ultimo_fetch": "2026-07-08T18:31:05.570005Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -44,7 +44,7 @@
       "estado": "en_route",
       "destino": "Campana, Argentina",
       "velocidad_nudos": 12.9,
-      "eta": "2026-07-11T15:00:00Z",
+      "eta": "2026-07-12T04:00:00Z",
       "calado_m": 6.5,
       "nav_status": "Under way using engine",
       "zona": "South America East Coast",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-08T17:21:08.074935Z"
+      "ultimo_fetch": "2026-07-08T18:31:05.570005Z"
     },
     "9317860": {
       "estado": "en_route",

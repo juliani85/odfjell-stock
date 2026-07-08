@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-08T11:41:23.887603Z",
+  "actualizado": "2026-07-08T11:51:04.540442Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-08T11:41:23.887603Z"
+      "ultimo_fetch": "2026-07-08T11:51:04.540442Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -64,19 +64,6 @@
       "imo": "9250751",
       "nombre": "BOW FIRDA",
       "ultimo_fetch": "2026-07-08T10:41:06.742944Z"
-    },
-    "9300489": {
-      "estado": "en_route",
-      "destino": "Aviles, Spain",
-      "velocidad_nudos": 13.2,
-      "eta": "2026-07-21T17:00:00Z",
-      "calado_m": 6.9,
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9300489",
-      "nombre": "COVADONGA",
-      "ultimo_fetch": "2026-07-08T09:41:06.934139Z"
     }
   }
 }

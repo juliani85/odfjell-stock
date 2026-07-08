@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-08T11:51:04.540442Z",
+  "actualizado": "2026-07-08T11:52:39.931492Z",
   "barcos": {
     "9780536": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-08T11:51:04.540442Z"
+      "ultimo_fetch": "2026-07-08T11:52:39.931492Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -39,12 +39,6 @@
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
       "ultimo_fetch": "2026-07-08T08:01:05.880291Z"
-    },
-    "GGPARK": {
-      "imo": null,
-      "nombre": "GGPARK",
-      "fuente": null,
-      "error": "IMO no resuelto"
     },
     "BENGIN": {
       "imo": null,
@@ -64,6 +58,20 @@
       "imo": "9250751",
       "nombre": "BOW FIRDA",
       "ultimo_fetch": "2026-07-08T10:41:06.742944Z"
+    },
+    "9493145": {
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 8.0,
+      "eta": "2026-07-11T15:00:00Z",
+      "calado_m": 6.5,
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9493145",
+      "nombre": "GOLDENGATE PARK",
+      "ultimo_fetch": "2026-07-08T11:52:39.931492Z"
     }
   }
 }

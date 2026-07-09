@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-09T19:20:31.418431Z",
+  "actualizado": "2026-07-09T19:30:32.233722Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-09T19:20:31.418431Z"
+      "ultimo_fetch": "2026-07-09T19:30:32.233722Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -28,17 +28,18 @@
       "ultimo_fetch": "2026-07-09T16:30:32.812354Z"
     },
     "9250751": {
-      "estado": "en_puerto",
-      "puerto_actual": "Freeport, United States (USA)",
-      "arribo": "2026-07-08T21:04:00Z",
-      "calado_m": 9.3,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "Salvador, Brazil",
+      "velocidad_nudos": 12.6,
+      "eta": "2026-07-25T08:00:00Z",
+      "calado_m": 9.4,
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-09T15:20:33.429372Z"
+      "ultimo_fetch": "2026-07-09T19:30:32.233722Z"
     },
     "9493145": {
       "estado": "en_route",

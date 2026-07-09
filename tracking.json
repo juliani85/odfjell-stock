@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-07-09T08:41:04.531778Z",
+  "actualizado": "2026-07-09T08:51:06.435704Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 12.9,
+      "velocidad_nudos": 13.0,
       "eta": "2026-07-08T13:00:00Z",
       "calado_m": 8.7,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-09T08:41:04.531778Z"
+      "ultimo_fetch": "2026-07-09T08:51:06.435704Z"
     },
     "9168635": {
       "estado": "en_route",

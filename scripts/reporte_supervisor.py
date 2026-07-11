@@ -379,6 +379,9 @@ def enviar(destinatarios: list[str], subject: str, html: str) -> bool:
     msg["Subject"] = subject
     msg["From"] = f"TAGSA Aduana <{user}>"
     msg["To"] = ", ".join(destinatarios)
+    # El mail sale de la cuenta Gmail, pero las RESPUESTAS van a la casilla de AFIP
+    # de Julian. (Para enviar realmente DESDE @afip.gob.ar haría falta el SMTP de AFIP.)
+    msg["Reply-To"] = "juiglesias@afip.gob.ar"
     # Texto plano de fallback
     texto = "Este reporte se ve mejor en un cliente que renderice HTML."
     msg.attach(MIMEText(texto, "plain", "utf-8"))

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-11T17:10:43.999320Z",
+  "actualizado": "2026-07-11T17:20:45.154959Z",
   "barcos": {
     "9143219": {
       "estado": "en_puerto",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-11T17:00:43.505178Z"
+      "ultimo_fetch": "2026-07-11T17:20:45.154959Z"
     },
     "9317860": {
       "estado": "en_route",

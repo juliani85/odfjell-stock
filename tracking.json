@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-11T19:50:42.884187Z",
+  "actualizado": "2026-07-11T20:00:43.082668Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-11T16:00:41.337127Z"
+      "ultimo_fetch": "2026-07-11T20:00:43.082668Z"
     },
     "9250751": {
       "estado": "en_route",
@@ -39,7 +39,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-11T16:00:41.337127Z"
+      "ultimo_fetch": "2026-07-11T20:00:43.082668Z"
     },
     "9493145": {
       "estado": "en_route",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-11T19:40:40.914439Z"
+      "ultimo_fetch": "2026-07-11T20:00:43.082668Z"
     },
     "9317860": {
       "estado": "en_route",

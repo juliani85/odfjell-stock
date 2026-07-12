@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-07-12T05:50:58.610180Z",
+  "actualizado": "2026-07-12T06:01:07.702557Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
       "destino": "RECALADA",
-      "velocidad_nudos": 7.1,
+      "velocidad_nudos": 12.1,
       "eta": "2026-07-12T00:00:00Z",
       "calado_m": 8.0,
       "nav_status": "Under way using engine",
-      "zona": "South America Inland",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-12T02:01:03.148558Z"
+      "ultimo_fetch": "2026-07-12T06:01:07.702557Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T05:50:58.610180Z"
+      "ultimo_fetch": "2026-07-12T06:01:07.702557Z"
     },
     "9317860": {
       "estado": "en_route",

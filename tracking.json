@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-12T05:40:57.843403Z",
+  "actualizado": "2026-07-12T05:50:58.610180Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T05:40:57.843403Z"
+      "ultimo_fetch": "2026-07-12T05:50:58.610180Z"
     },
     "9317860": {
       "estado": "en_route",
@@ -65,7 +65,7 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-12T01:40:59.113678Z"
+      "ultimo_fetch": "2026-07-12T05:50:58.610180Z"
     }
   }
 }

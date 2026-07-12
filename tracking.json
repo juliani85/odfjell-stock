@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-12T14:20:56.914042Z",
+  "actualizado": "2026-07-12T14:30:58.367401Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -45,7 +45,7 @@
     "9493145": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 11.0,
+      "velocidad_nudos": 10.9,
       "eta": "2026-07-12T04:00:00Z",
       "calado_m": 6.5,
       "nav_status": "Under way using engine",
@@ -54,7 +54,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T14:20:56.914042Z"
+      "ultimo_fetch": "2026-07-12T14:30:58.367401Z"
     },
     "9317860": {
       "estado": "en_route",

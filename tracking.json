@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-12T08:10:57.375182Z",
+  "actualizado": "2026-07-12T08:20:57.369340Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -26,20 +26,21 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-12T04:10:58.907339Z"
+      "ultimo_fetch": "2026-07-12T08:20:57.369340Z"
     },
     "9250751": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",
-      "velocidad_nudos": 12.6,
+      "velocidad_nudos": 14.3,
       "eta": "2026-07-25T08:00:00Z",
       "calado_m": 9.4,
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-12T04:10:58.907339Z"
+      "ultimo_fetch": "2026-07-12T08:20:57.369340Z"
     },
     "9493145": {
       "estado": "en_route",
@@ -52,7 +53,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T08:10:57.375182Z"
+      "ultimo_fetch": "2026-07-12T08:20:57.369340Z"
     },
     "9317860": {
       "estado": "en_route",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-12T09:50:57.305394Z",
+  "actualizado": "2026-07-12T10:01:00.945491Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -53,20 +53,20 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T09:50:57.305394Z"
+      "ultimo_fetch": "2026-07-12T10:01:00.945491Z"
     },
     "9317860": {
       "estado": "en_route",
       "destino": "Suape, Brazil",
       "velocidad_nudos": 11.1,
       "eta": "2026-07-12T21:30:00Z",
-      "calado_m": 11.0,
+      "calado_m": 10.7,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-12T05:50:58.610180Z"
+      "ultimo_fetch": "2026-07-12T10:01:00.945491Z"
     }
   }
 }

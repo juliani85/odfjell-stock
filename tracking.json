@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-07-12T10:01:00.945491Z",
+  "actualizado": "2026-07-12T10:10:59.412602Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
       "destino": "RECALADA",
-      "velocidad_nudos": 12.1,
+      "velocidad_nudos": 13.4,
       "eta": "2026-07-12T00:00:00Z",
       "calado_m": 8.0,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9143219",
       "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-12T06:01:07.702557Z"
+      "ultimo_fetch": "2026-07-12T10:10:59.412602Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -53,7 +53,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-12T10:01:00.945491Z"
+      "ultimo_fetch": "2026-07-12T10:10:59.412602Z"
     },
     "9317860": {
       "estado": "en_route",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-13T13:11:05.827590Z",
+  "actualizado": "2026-07-13T13:41:05.963260Z",
   "barcos": {
     "9143219": {
       "estado": "en_route",
@@ -39,12 +39,12 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-13T09:41:03.345889Z"
+      "ultimo_fetch": "2026-07-13T13:41:05.963260Z"
     },
     "9493145": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 11.0,
+      "velocidad_nudos": 10.7,
       "eta": "2026-07-12T04:00:00Z",
       "calado_m": 6.5,
       "nav_status": "Under way using engine",
@@ -53,7 +53,7 @@
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-13T13:11:05.827590Z"
+      "ultimo_fetch": "2026-07-13T13:41:05.963260Z"
     },
     "9317860": {
       "estado": "en_route",

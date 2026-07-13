@@ -888,17 +888,17 @@
           "documento": "26008IC65000036S",
           "cto": "2602CECI2500",
           "cantDoctada": 197161,
-          "cantResult": null
+          "cantResult": 197248
         },
         {
           "documento": "26008IC65000035R",
           "cto": "BRSZ3501",
           "cantDoctada": 699402,
-          "cantResult": null
+          "cantResult": 699947
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-10T14:46:39.600Z"
+      "actualizadoTs": "2026-07-13T16:06:46.465Z"
     },
     {
       "id": 1782834570581,

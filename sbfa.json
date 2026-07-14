@@ -819,7 +819,7 @@
         {
           "solPart": "1321",
           "cto": "OTUS2602 3307",
-          "mercaderia": "2 ETIL HEXANOL",
+          "mercaderia": "2 ETILHEXANOL",
           "receptor": "ATANOR",
           "kgDeclarados": 300000,
           "tkDestino": "58",
@@ -898,7 +898,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-14T15:34:44.352Z",
+      "actualizadoTs": "2026-07-14T15:36:45.630Z",
       "archivada": true,
       "archivadaTs": "2026-07-14T15:31:58.552Z"
     },

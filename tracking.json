@@ -1,19 +1,6 @@
 {
-  "actualizado": "2026-07-14T15:31:02.535702Z",
+  "actualizado": "2026-07-14T15:41:03.824738Z",
   "barcos": {
-    "9143219": {
-      "estado": "en_puerto",
-      "puerto_actual": "Bahia Blanca Anch., Argentina",
-      "arribo": "2026-07-14T10:30:00Z",
-      "calado_m": 8.2,
-      "nav_status": "At anchor",
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9143219",
-      "nombre": "BOW CECIL",
-      "ultimo_fetch": "2026-07-14T15:21:03.689271Z"
-    },
     "9168635": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",

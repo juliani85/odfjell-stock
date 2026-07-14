@@ -689,7 +689,7 @@
     {
       "id": 1781285974155,
       "buque": "BOW CECIL",
-      "manifiesto": "",
+      "manifiesto": "17636J",
       "agencia": "BYM",
       "cuit": "30-71631314-6",
       "fecha": "2026-07-10",
@@ -702,9 +702,9 @@
           "receptor": "PBB",
           "kgDeclarados": 159885,
           "tkDestino": "41",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1118L",
+          "medic": "147",
+          "kgResultantes": 157818
         },
         {
           "solPart": "1221",
@@ -713,9 +713,9 @@
           "receptor": "PBB",
           "kgDeclarados": 314450,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1124X",
+          "medic": "145",
+          "kgResultantes": 296080
         },
         {
           "solPart": "1222",
@@ -724,9 +724,9 @@
           "receptor": "PBB",
           "kgDeclarados": 172297,
           "tkDestino": "96",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1117K",
+          "medic": "148",
+          "kgResultantes": 169742
         },
         {
           "solPart": "1236",
@@ -735,9 +735,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 248965,
           "tkDestino": "23-48",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1100C",
+          "medic": "152",
+          "kgResultantes": 248068
         },
         {
           "solPart": "1235",
@@ -746,9 +746,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 100901,
           "tkDestino": "19",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1101D",
+          "medic": "151",
+          "kgResultantes": 100666
         },
         {
           "solPart": "1246",
@@ -757,9 +757,9 @@
           "receptor": "CRILEN",
           "kgDeclarados": 28000,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1120E",
+          "medic": "146",
+          "kgResultantes": 27862
         },
         {
           "solPart": "1247",
@@ -768,9 +768,9 @@
           "receptor": "CRILEN",
           "kgDeclarados": 28000,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1121F",
+          "medic": "146",
+          "kgResultantes": 27862
         },
         {
           "solPart": "1248",
@@ -779,31 +779,31 @@
           "receptor": "CRILEN",
           "kgDeclarados": 28000,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1119M",
+          "medic": "146",
+          "kgResultantes": 27862
         },
         {
           "solPart": "1249",
           "cto": "OTUS2602CECI2001",
-          "mercaderia": "BUTIL ACETATE",
+          "mercaderia": "BUTIL ACRILATO",
           "receptor": "CRILEN",
           "kgDeclarados": 112000,
           "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1102E",
+          "medic": "150",
+          "kgResultantes": 111071
         },
         {
           "solPart": "1282",
           "cto": "OTUS2602CECI2002/03/04/05/06/07/08/09",
-          "mercaderia": "BUTYL ACETATE",
+          "mercaderia": "BUTYL ACRILATO",
           "receptor": "DALGAR",
           "kgDeclarados": 286805,
           "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1103F-1104G-1105H-1106X-1107J-1108K-1109L-1110D",
+          "medic": "150",
+          "kgResultantes": 284428
         },
         {
           "solPart": "1281",
@@ -812,64 +812,64 @@
           "receptor": "DALGAR",
           "kgDeclarados": 119251,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1122G-1123H",
+          "medic": "146",
+          "kgResultantes": 118663
         },
         {
           "solPart": "1321",
-          "cto": "OTUS2602 330",
+          "cto": "OTUS2602 3307",
           "mercaderia": "2 ETIL HEXANOL",
           "receptor": "ATANOR",
           "kgDeclarados": 300000,
           "tkDestino": "58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1116J",
+          "medic": "149",
+          "kgResultantes": 297834
         },
         {
           "solPart": "1364",
           "cto": "3401",
-          "mercaderia": "fenol",
-          "receptor": "atanor",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
           "kgDeclarados": 499945,
           "tkDestino": "80-85",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1098S",
+          "medic": "154",
+          "kgResultantes": 495307
         },
         {
           "solPart": "1342",
-          "cto": "OTUS2602CECI3303/OTUS2602CECI3304",
-          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "cto": "OTUS2602CECI3303/OTUS2602CECI3303-04",
+          "mercaderia": "2 ETILHEXANOL-OCTANOL",
           "receptor": "FARMCHEM S.A",
           "kgDeclarados": 50000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1112F-1113G",
+          "medic": "149",
+          "kgResultantes": 49640
         },
         {
           "solPart": "1343",
           "cto": "OTUS2602CECI3302",
-          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "mercaderia": "2 ETILHEXANOL-OCTANOL",
           "receptor": "CHEMOTECNICA S.A",
           "kgDeclarados": 200000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1111E",
+          "medic": "149",
+          "kgResultantes": 198556
         },
         {
           "solPart": "1344",
-          "cto": "OTUS2602CECI3305/OTUS2602CECI3306",
-          "mercaderia": "ETILHEXANOL-OCTANOL",
+          "cto": "OTUS2602CECI3305/OTUS2602CECI3305-6",
+          "mercaderia": "2 ETILHEXANOL-OCTANOL",
           "receptor": "MINERA EXAR S.A",
           "kgDeclarados": 50000,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1114H-1115X",
+          "medic": "149",
+          "kgResultantes": 49638
         },
         {
           "solPart": "1389",
@@ -878,9 +878,9 @@
           "receptor": "PBB",
           "kgDeclarados": 998798,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1099T",
+          "medic": "153",
+          "kgResultantes": 994554
         }
       ],
       "dap": [
@@ -898,7 +898,9 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-13T16:06:46.465Z"
+      "actualizadoTs": "2026-07-14T15:31:58.552Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-14T15:31:58.552Z"
     },
     {
       "id": 1782834570581,

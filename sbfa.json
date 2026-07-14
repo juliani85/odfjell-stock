@@ -786,7 +786,7 @@
         {
           "solPart": "1249",
           "cto": "OTUS2602CECI2001",
-          "mercaderia": "BUTIL ACRILATO",
+          "mercaderia": "BUTYL ACRILATO",
           "receptor": "CRILEN",
           "kgDeclarados": 112000,
           "tkDestino": "34-67",
@@ -898,7 +898,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-14T15:36:45.630Z",
+      "actualizadoTs": "2026-07-14T15:37:28.786Z",
       "archivada": true,
       "archivadaTs": "2026-07-14T15:31:58.552Z"
     },

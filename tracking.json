@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-14T18:11:02.971374Z",
+  "actualizado": "2026-07-14T18:21:02.125543Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -17,15 +17,16 @@
     "9250751": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",
-      "velocidad_nudos": 12.9,
+      "velocidad_nudos": 11.8,
       "eta": "2026-07-25T08:00:00Z",
       "calado_m": 9.4,
+      "nav_status": "Under way using engine",
       "zona": "North West Atlantic Ocean",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-14T14:11:05.792120Z"
+      "ultimo_fetch": "2026-07-14T18:21:02.125543Z"
     },
     "9493145": {
       "estado": "en_route",

@@ -693,7 +693,7 @@
       "agencia": "BYM",
       "cuit": "30-71631314-6",
       "fecha": "2026-07-10",
-      "notaNumero": "",
+      "notaNumero": "16",
       "filas": [
         {
           "solPart": "1223",
@@ -841,7 +841,7 @@
         {
           "solPart": "1342",
           "cto": "OTUS2602CECI3303/OTUS2602CECI3303-04",
-          "mercaderia": "2 ETILHEXANOL-OCTANOL",
+          "mercaderia": "2 ETILHEXANOL",
           "receptor": "FARMCHEM S.A",
           "kgDeclarados": 50000,
           "tkDestino": "54-63",
@@ -852,7 +852,7 @@
         {
           "solPart": "1343",
           "cto": "OTUS2602CECI3302",
-          "mercaderia": "2 ETILHEXANOL-OCTANOL",
+          "mercaderia": "2 ETILHEXANOL",
           "receptor": "CHEMOTECNICA S.A",
           "kgDeclarados": 200000,
           "tkDestino": "54-63",
@@ -863,7 +863,7 @@
         {
           "solPart": "1344",
           "cto": "OTUS2602CECI3305/OTUS2602CECI3305-6",
-          "mercaderia": "2 ETILHEXANOL-OCTANOL",
+          "mercaderia": "2 ETILHEXANOL",
           "receptor": "MINERA EXAR S.A",
           "kgDeclarados": 50000,
           "tkDestino": "54-63",
@@ -898,7 +898,7 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-14T15:31:58.552Z",
+      "actualizadoTs": "2026-07-14T15:34:44.352Z",
       "archivada": true,
       "archivadaTs": "2026-07-14T15:31:58.552Z"
     },

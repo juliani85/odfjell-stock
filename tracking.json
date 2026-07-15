@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-15T04:21:06.548104Z",
+  "actualizado": "2026-07-15T04:31:06.255099Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -31,16 +31,16 @@
     "9493145": {
       "estado": "en_route",
       "destino": "San Lorenzo, Argentina",
-      "velocidad_nudos": 9.3,
+      "velocidad_nudos": 0.1,
       "eta": "2026-07-14T21:00:00Z",
       "calado_m": 6.0,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9493145",
       "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-15T00:31:03.944211Z"
+      "ultimo_fetch": "2026-07-15T04:31:06.255099Z"
     },
     "9317860": {
       "estado": "en_route",

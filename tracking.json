@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-15T06:31:04.812309Z",
+  "actualizado": "2026-07-15T06:41:08.199229Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -20,13 +20,12 @@
       "velocidad_nudos": 11.8,
       "eta": "2026-07-25T08:00:00Z",
       "calado_m": 9.4,
-      "nav_status": "Under way using engine",
       "zona": "North West Atlantic Ocean",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-15T02:31:06.453622Z"
+      "ultimo_fetch": "2026-07-15T06:41:08.199229Z"
     },
     "9493145": {
       "estado": "en_route",

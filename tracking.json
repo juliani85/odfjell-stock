@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-16T11:40:41.664640Z",
+  "actualizado": "2026-07-16T11:50:43.004212Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -27,19 +27,6 @@
       "imo": "9250751",
       "nombre": "BOW FIRDA",
       "ultimo_fetch": "2026-07-16T11:20:48.210524Z"
-    },
-    "9493145": {
-      "estado": "en_puerto",
-      "puerto_actual": "San Lorenzo, Argentina",
-      "arribo": "2026-07-16T04:32:00Z",
-      "calado_m": 6.0,
-      "nav_status": "Under way using engine",
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9493145",
-      "nombre": "GOLDENGATE PARK",
-      "ultimo_fetch": "2026-07-16T09:20:42.836329Z"
     },
     "9317860": {
       "estado": "en_route",

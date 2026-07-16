@@ -1029,11 +1029,11 @@
     {
       "id": 1783511629241,
       "buque": "GOLDENGATE PARK",
-      "manifiesto": "",
+      "manifiesto": "17795P",
       "agencia": "AMI",
       "cuit": "30-71631314-6",
       "fecha": "2026-07-13",
-      "notaNumero": "",
+      "notaNumero": "17",
       "filas": [
         {
           "solPart": "1377",
@@ -1042,9 +1042,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1500000,
           "tkDestino": "78-84-88-89",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1134J",
+          "medic": "156",
+          "kgResultantes": 1500800
         },
         {
           "solPart": "1376",
@@ -1053,9 +1053,9 @@
           "receptor": "PBB",
           "kgDeclarados": 100226,
           "tkDestino": "84-88",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1135K",
+          "medic": "156",
+          "kgResultantes": 100279
         },
         {
           "solPart": "1395",
@@ -1064,14 +1064,16 @@
           "receptor": "PBB",
           "kgDeclarados": 53863,
           "tkDestino": "24",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1136L",
+          "medic": "155",
+          "kgResultantes": 53523
         }
       ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-13T17:48:10.459Z"
+      "actualizadoTs": "2026-07-16T11:43:54.822Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-16T11:43:54.822Z"
     },
     {
       "id": 1783511746752,

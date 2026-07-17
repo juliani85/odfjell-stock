@@ -1125,6 +1125,31 @@
       "dap": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-07-08T11:57:15.516Z"
+    },
+    {
+      "id": 1784295440868,
+      "buque": "BOW CARDINAL",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-07-17",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1441",
+          "cto": "OTUS2603NFIR1600",
+          "mercaderia": "FORMICO",
+          "receptor": "NEOPHOS",
+          "kgDeclarados": 100000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-17T13:37:20.868Z"
     }
   ]
 }

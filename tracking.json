@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-17T08:40:46.580082Z",
+  "actualizado": "2026-07-17T08:50:46.553979Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -33,13 +33,13 @@
       "destino": "Santos, Brazil",
       "velocidad_nudos": 11.1,
       "eta": "2026-07-19T20:00:00Z",
-      "calado_m": 10.2,
+      "calado_m": 10.1,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-17T04:50:42.097088Z"
+      "ultimo_fetch": "2026-07-17T08:50:46.553979Z"
     }
   }
 }

@@ -1092,14 +1092,26 @@
       "id": 1783511771220,
       "buque": "BOW FORTUNE",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-08-05",
       "notaNumero": "",
-      "filas": [],
+      "filas": [
+        {
+          "solPart": "1442",
+          "cto": "otus2603foru160",
+          "mercaderia": "2 etil hexanol",
+          "receptor": "atanor",
+          "kgDeclarados": 800000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:56:11.220Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-17T13:35:41.169Z"
     },
     {
       "id": 1783511835516,

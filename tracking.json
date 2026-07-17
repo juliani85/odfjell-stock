@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-17T21:40:24.359432Z",
+  "actualizado": "2026-07-17T21:50:26.093753Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -42,9 +42,9 @@
       "ultimo_fetch": "2026-07-17T21:20:25.086430Z"
     },
     "9114244": {
-      "estado": "en_route",
-      "destino": "Freeport, United States (USA)",
-      "eta": "2026-07-17T16:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Freeport, United States (USA)",
+      "arribo": "2026-07-17T17:11:00Z",
       "calado_m": 8.5,
       "nav_status": "Moored",
       "zona": "Gulf of Mexico",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-07-17T17:40:25.728755Z"
+      "ultimo_fetch": "2026-07-17T21:50:26.093753Z"
     }
   }
 }

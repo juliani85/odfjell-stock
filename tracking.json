@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-19T14:30:18.175644Z",
+  "actualizado": "2026-07-19T14:40:20.585279Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -39,20 +39,21 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-19T10:30:22.412627Z"
+      "ultimo_fetch": "2026-07-19T14:40:20.585279Z"
     },
     "9114244": {
-      "estado": "en_puerto",
-      "puerto_actual": "Freeport, United States (USA)",
-      "arribo": "2026-07-17T17:11:00Z",
-      "calado_m": 8.5,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "velocidad_nudos": 11.0,
+      "eta": "2026-08-07T11:00:00Z",
+      "calado_m": 10.3,
+      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-07-19T10:40:19.582862Z"
+      "ultimo_fetch": "2026-07-19T14:40:20.585279Z"
     }
   }
 }

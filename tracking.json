@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-20T19:20:18.581273Z",
+  "actualizado": "2026-07-20T19:30:23.120653Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -32,18 +32,17 @@
       "puerto_actual": "Santos Anch., Brazil",
       "arribo": "2026-07-19T17:13:00Z",
       "calado_m": 10.1,
-      "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-20T15:20:23.072257Z"
+      "ultimo_fetch": "2026-07-20T19:30:23.120653Z"
     },
     "9114244": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 12.9,
+      "velocidad_nudos": 13.4,
       "eta": "2026-08-07T11:00:00Z",
       "calado_m": 10.3,
       "nav_status": "Under way using engine",
@@ -52,7 +51,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-07-20T15:20:23.072257Z"
+      "ultimo_fetch": "2026-07-20T19:30:23.120653Z"
     }
   }
 }

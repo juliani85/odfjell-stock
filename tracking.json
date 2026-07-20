@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-20T11:10:21.751141Z",
+  "actualizado": "2026-07-20T11:20:22.651161Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -38,12 +38,12 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-20T07:10:26.527833Z"
+      "ultimo_fetch": "2026-07-20T11:20:22.651161Z"
     },
     "9114244": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 10.8,
+      "velocidad_nudos": 11.2,
       "eta": "2026-08-07T11:00:00Z",
       "calado_m": 10.3,
       "nav_status": "Under way using engine",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-07-20T07:10:26.527833Z"
+      "ultimo_fetch": "2026-07-20T11:20:22.651161Z"
     }
   }
 }

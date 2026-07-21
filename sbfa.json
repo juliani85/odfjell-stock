@@ -1107,11 +1107,22 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1444",
+          "cto": "otus2603foru2201",
+          "mercaderia": "exxsol d 60",
+          "receptor": "brenntag",
+          "kgDeclarados": 247083,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-17T13:35:41.169Z"
+      "actualizadoTs": "2026-07-21T10:59:47.700Z"
     },
     {
       "id": 1783511835516,

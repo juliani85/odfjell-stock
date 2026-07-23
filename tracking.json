@@ -1,9 +1,10 @@
 {
-  "actualizado": "2026-07-23T14:00:24.479934Z",
+  "actualizado": "2026-07-23T14:10:28.001392Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",
+      "velocidad_nudos": 0.1,
       "eta": "2026-07-22T16:30:00Z",
       "calado_m": 9.7,
       "nav_status": "At anchor",
@@ -12,7 +13,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-23T10:10:18.046890Z"
+      "ultimo_fetch": "2026-07-23T14:10:28.001392Z"
     },
     "9250751": {
       "estado": "en_route",

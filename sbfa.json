@@ -1129,13 +1129,25 @@
       "buque": "BOW FIRDA",
       "manifiesto": "",
       "agencia": "B&M",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-08-09",
       "notaNumero": "",
-      "filas": [],
+      "filas": [
+        {
+          "solPart": "1441",
+          "cto": "OTUS2603NFIR1600",
+          "mercaderia": "FORMICO",
+          "receptor": "NEOFOS",
+          "kgDeclarados": 100000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:57:15.516Z"
+      "actualizadoTs": "2026-07-23T11:20:55.574Z"
     },
     {
       "id": 1784295440868,

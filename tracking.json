@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-26T18:51:04.511705Z",
+  "actualizado": "2026-07-26T19:01:02.133377Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -29,17 +29,18 @@
       "ultimo_fetch": "2026-07-26T17:41:03.317294Z"
     },
     "9317860": {
-      "estado": "en_puerto",
-      "puerto_actual": "Santos, Brazil",
-      "arribo": "2026-07-24T05:04:00Z",
-      "calado_m": 10.0,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "RECALADA PS",
+      "velocidad_nudos": 10.6,
+      "eta": "2026-07-29T18:00:00Z",
+      "calado_m": 8.1,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-26T14:51:05.811751Z"
+      "ultimo_fetch": "2026-07-26T19:01:02.133377Z"
     }
   }
 }

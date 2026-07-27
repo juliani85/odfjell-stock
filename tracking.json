@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-27T19:30:52.419843Z",
+  "actualizado": "2026-07-27T19:40:59.029756Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -32,14 +32,14 @@
       "estado": "en_route",
       "destino": "RECALADA PS",
       "velocidad_nudos": 13.1,
-      "eta": "2026-07-29T18:00:00Z",
+      "eta": "2026-07-29T15:00:00Z",
       "calado_m": 8.1,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-27T15:31:03.206666Z"
+      "ultimo_fetch": "2026-07-27T19:40:59.029756Z"
     }
   }
 }

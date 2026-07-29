@@ -1197,16 +1197,16 @@
     {
       "id": 1784295440868,
       "buque": "BOW CARDINAL",
-      "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
-      "fecha": "2026-07-17",
+      "manifiesto": "1432T",
+      "agencia": "B&M",
+      "cuit": "30716313146",
+      "fecha": "2026-01-24",
       "notaNumero": "",
       "filas": [
         {
           "solPart": "1441",
           "cto": "OTUS2603NFIR1600",
-          "mercaderia": "FORMICO",
+          "mercaderia": "BUSCAR INFO EN MANI",
           "receptor": "NEOPHOS",
           "kgDeclarados": 100000,
           "tkDestino": "11",
@@ -1217,7 +1217,7 @@
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-17T13:37:20.868Z"
+      "actualizadoTs": "2026-07-29T16:00:59.533Z"
     },
     {
       "id": 1785338277932,

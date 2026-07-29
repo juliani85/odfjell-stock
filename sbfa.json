@@ -1245,9 +1245,9 @@
           "mercaderia": "ETHYL ACETATE",
           "receptor": "HENRY HIRSCHEN",
           "kgDeclarados": 152864,
-          "tkDestino": "",
+          "tkDestino": "52",
           "sbfa": "718Z",
-          "medic": "",
+          "medic": "88",
           "kgResultantes": 152498
         },
         {
@@ -1256,9 +1256,9 @@
           "mercaderia": "ETHYL ACETATE",
           "receptor": "HENRY HIRSCHEN",
           "kgDeclarados": 101909,
-          "tkDestino": "",
+          "tkDestino": "52",
           "sbfa": "719R",
-          "medic": "",
+          "medic": "88",
           "kgResultantes": 101665
         },
         {
@@ -1267,9 +1267,9 @@
           "mercaderia": "ETHYL ACETATE",
           "receptor": "HENRY HIRSCHEN",
           "kgDeclarados": 101909,
-          "tkDestino": "",
+          "tkDestino": "52",
           "sbfa": "720J",
-          "medic": "",
+          "medic": "88",
           "kgResultantes": 101665
         },
         {
@@ -1278,9 +1278,9 @@
           "mercaderia": "VYNIL ACETATE",
           "receptor": "INMOBAL NUTER",
           "kgDeclarados": 149997,
-          "tkDestino": "",
+          "tkDestino": "30",
           "sbfa": "721K",
-          "medic": "",
+          "medic": "87",
           "kgResultantes": 150020
         },
         {
@@ -1297,7 +1297,7 @@
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T15:17:57.933Z",
+      "actualizadoTs": "2026-07-29T15:19:51.152Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T15:17:57.933Z"
     }

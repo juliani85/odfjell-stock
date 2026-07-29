@@ -1820,6 +1820,86 @@
       ],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-07-29T15:46:59.058Z"
+    },
+    {
+      "id": 1785340206429,
+      "buque": "BOW CHAIN",
+      "manifiesto": "3329D",
+      "agencia": "B&M",
+      "cuit": "30716313146",
+      "fecha": "2026-02-06",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "0361",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 799212,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "0371",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 699436,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "3201",
+          "mercaderia": "PHENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 899873,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "9B",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DIRANSA",
+          "kgDeclarados": 112000,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "9C",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 26000,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "",
+          "cto": "9D",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 176556,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T15:50:06.430Z"
     }
   ]
 }

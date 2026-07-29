@@ -1998,6 +1998,99 @@
       "actualizadoTs": "2026-07-29T16:06:14.009Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T16:06:14.009Z"
+    },
+    {
+      "id": 1785341568481,
+      "buque": "STOLT COBALT",
+      "manifiesto": "41Y",
+      "agencia": "WAVE",
+      "cuit": "30654214715",
+      "fecha": "2026-01-03",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "710",
+          "mercaderia": "ARCOL POLYOL",
+          "receptor": "ALKANOS",
+          "kgDeclarados": 358842,
+          "tkDestino": "",
+          "sbfa": "21D",
+          "medic": "",
+          "kgResultantes": 355935
+        },
+        {
+          "solPart": "",
+          "cto": "737",
+          "mercaderia": "VINYL ACETATE",
+          "receptor": "INMOBAL",
+          "kgDeclarados": 102001,
+          "tkDestino": "",
+          "sbfa": "26X",
+          "medic": "",
+          "kgResultantes": 100008
+        },
+        {
+          "solPart": "",
+          "cto": "741",
+          "mercaderia": "ACETIC ACID",
+          "receptor": "ATANOR",
+          "kgDeclarados": 458997,
+          "tkDestino": "",
+          "sbfa": "22E",
+          "medic": "",
+          "kgResultantes": 458371
+        },
+        {
+          "solPart": "",
+          "cto": "750A",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 152206,
+          "tkDestino": "",
+          "sbfa": "23F",
+          "medic": "",
+          "kgResultantes": 152203
+        },
+        {
+          "solPart": "",
+          "cto": "750B",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 101471,
+          "tkDestino": "",
+          "sbfa": "24G",
+          "medic": "",
+          "kgResultantes": 101469
+        },
+        {
+          "solPart": "",
+          "cto": "750C",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 101471,
+          "tkDestino": "",
+          "sbfa": "27F",
+          "medic": "",
+          "kgResultantes": 101469
+        },
+        {
+          "solPart": "",
+          "cto": "775",
+          "mercaderia": "N PROPYL",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 509811,
+          "tkDestino": "",
+          "sbfa": "25H",
+          "medic": "",
+          "kgResultantes": 509190
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T16:12:48.481Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T16:12:48.481Z"
     }
   ]
 }

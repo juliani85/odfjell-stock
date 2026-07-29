@@ -1,4 +1,3 @@
-# GitHub Pages config
-include:
-  - .github
-  - .nojekyll
+# Deshabilitar Jekyll processing completamente
+plugins: []
+exclude: []

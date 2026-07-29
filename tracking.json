@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T17:00:52.479742Z",
+  "actualizado": "2026-07-29T17:10:52.885828Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -32,7 +32,7 @@
     "9317860": {
       "estado": "en_route",
       "destino": "RECALADA PS",
-      "velocidad_nudos": 12.4,
+      "velocidad_nudos": 12.7,
       "eta": "2026-07-29T14:00:00Z",
       "calado_m": 8.2,
       "nav_status": "Under way using engine",
@@ -41,7 +41,7 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-29T13:01:00.331399Z"
+      "ultimo_fetch": "2026-07-29T17:10:52.885828Z"
     },
     "9379909": {
       "estado": "en_route",

@@ -28,8 +28,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Setup Pages
+        run: |
+          echo "Preparando artefacto desde public/"
+          ls -la public/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: 'public'
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -5400,9 +5400,9 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return { totDecl, totRes, totDif: totRes - totDecl, fueraTol, pendientes, medidas };
     }
 
-    // Una descarga está "completa" cuando se le hizo la medición a TODO: cada fila
-    // y cada DAP con cantidad declarada tiene su resultante cargada. Las descargas
-    // completas se archivan solas (pasan al Historial) — ver guardarSbfaDescarga.
+    // Una descarga está "completa" cuando se le hizo la medición a TODO: cada fila,
+    // cada DAP y cada exportación con cantidad declarada tiene su resultante cargada.
+    // Las descargas completas se archivan solas (pasan al Historial) — ver guardarSbfaDescarga.
     function sbfaDescargaCompleta(d) {
         let medidas = 0, pendientes = 0;
         (d.filas || []).forEach(f => {
@@ -5411,12 +5411,14 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             if (decl > 0 && res > 0) medidas++;
             else if (decl > 0) pendientes++;
         });
-        (d.dap || []).forEach(x => {
+        const porDoctada = x => {
             const doc = Number(x.cantDoctada) || 0;
             const res = Number(x.cantResult) || 0;
             if (doc > 0 && res > 0) medidas++;
             else if (doc > 0) pendientes++;
-        });
+        };
+        (d.dap || []).forEach(porDoctada);
+        (d.exportaciones || []).forEach(porDoctada);
         return medidas > 0 && pendientes === 0;
     }
 

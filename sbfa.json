@@ -1094,14 +1094,14 @@
       "manifiesto": "",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-08-05",
+      "fecha": "2026-08-07",
       "notaNumero": "",
       "filas": [
         {
           "solPart": "1442",
-          "cto": "otus2603foru160",
-          "mercaderia": "2 etil hexanol",
-          "receptor": "atanor",
+          "cto": "OTUS2603foru160",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "ATANOR",
           "kgDeclarados": 800000,
           "tkDestino": "58",
           "sbfa": "",
@@ -1110,19 +1110,52 @@
         },
         {
           "solPart": "1444",
-          "cto": "otus2603foru2201",
-          "mercaderia": "exxsol d 60",
-          "receptor": "brenntag",
+          "cto": "OTUS2603foru2201",
+          "mercaderia": "EXXSOL D60",
+          "receptor": "BRENNTAG",
           "kgDeclarados": 247083,
           "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1511",
+          "cto": "OTUS2603FORU0704",
+          "mercaderia": "BUTUL CELOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 179040,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1510",
+          "cto": "OTUS2603FORU1101",
+          "mercaderia": "ACID PROPIONIC",
+          "receptor": "PBB",
+          "kgDeclarados": 148477,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1509",
+          "cto": "OTUS2603FORU0401",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 154454,
+          "tkDestino": "75-76",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-21T10:59:47.700Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-29T11:01:37.342Z"
     },
     {
       "id": 1783511835516,

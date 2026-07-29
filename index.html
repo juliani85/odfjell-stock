@@ -888,6 +888,35 @@
                 </div>
                 <button class="btn btn-secondary btn-sm" id="btnSbfaAddDap" type="button">+ Agregar conocimiento DAP</button>
 
+                <h3 style="font-size:1rem;margin:1.5rem 0 0.5rem">Exportaciones</h3>
+                <div class="table-container">
+                    <table class="sbfa-table sbfa-tabla-expo" id="sbfaTablaExpo">
+                        <colgroup>
+                            <col class="expo-doc">
+                            <col class="expo-producto">
+                            <col class="expo-kilos">
+                            <col class="col-borrar">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="expo-doc">Documento Aduanero</th>
+                                <th class="expo-producto">Producto</th>
+                                <th class="expo-kilos">Kilos Doctados</th>
+                                <th class="col-borrar"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right">Total Exportación</th>
+                                <th id="sbfaExpoTotalKilos">0</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnSbfaAddExpo" type="button">+ Agregar exportación</button>
+
                 <div class="form-actions" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:end">
                     <button class="btn btn-primary" id="btnSbfaGuardar" type="button">Guardar descarga</button>
                     <div class="form-group" style="margin-bottom:0;width:120px">

@@ -1310,16 +1310,17 @@
       "fecha": "2026-04-14",
       "notaNumero": "",
       "filas": [],
-      "dap": [
+      "dap": [],
+      "exportaciones": [
         {
           "documento": "26008EC0103598U",
-          "cto": "SEBO",
+          "producto": "SEBO",
           "cantDoctada": 1144000,
           "cantResult": 1144000
         }
       ],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T15:23:02.806Z",
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-29T18:07:46.985Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T15:23:02.806Z"
     },

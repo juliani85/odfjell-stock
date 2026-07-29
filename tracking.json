@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T16:02:07.273481Z",
+  "actualizado": "2026-07-29T16:04:25.655152Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -81,6 +81,13 @@
       "imo": "9866782",
       "nombre": "BOW PERSISTENT",
       "ultimo_fetch": "2026-07-29T16:02:07.273481Z"
+    },
+    "2058788": {
+      "fuente": null,
+      "error": "sin respuesta de vesselfinder",
+      "imo": "2058788",
+      "nombre": "MOCKINGBIRD",
+      "ultimo_fetch": "2026-07-29T16:04:25.655152Z"
     }
   }
 }

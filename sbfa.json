@@ -913,7 +913,10 @@
       "filas": [],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-06-30T15:49:30.581Z"
+      "actualizadoTs": "2026-06-30T15:49:30.581Z",
+      "anulada": true,
+      "anuladaTs": "2026-07-29T18:18:34.973Z",
+      "anuladaPor": "julian"
     },
     {
       "id": 1782990886000,

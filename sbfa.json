@@ -1960,6 +1960,44 @@
       ],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-07-29T16:03:33.351Z"
+    },
+    {
+      "id": 1785341174009,
+      "buque": "MOCKINGBIRD",
+      "manifiesto": "203Y",
+      "agencia": "WAVE",
+      "cuit": "30654214715",
+      "fecha": "2026-01-06",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "01",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 999244,
+          "tkDestino": "10-14",
+          "sbfa": "",
+          "medic": "7",
+          "kgResultantes": 1001685
+        },
+        {
+          "solPart": "",
+          "cto": "02",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 798905,
+          "tkDestino": "74",
+          "sbfa": "",
+          "medic": "6",
+          "kgResultantes": 801342
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T16:06:14.009Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T16:06:14.009Z"
     }
   ]
 }

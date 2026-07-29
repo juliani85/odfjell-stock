@@ -1300,6 +1300,28 @@
       "actualizadoTs": "2026-07-29T15:19:51.152Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T15:17:57.933Z"
+    },
+    {
+      "id": 1785338582806,
+      "buque": "BOW TIGER",
+      "manifiesto": "8671X",
+      "agencia": "B&M",
+      "cuit": "30716313146",
+      "fecha": "2026-04-14",
+      "notaNumero": "",
+      "filas": [],
+      "dap": [
+        {
+          "documento": "26008EC0103598U",
+          "cto": "SEBO",
+          "cantDoctada": 1144000,
+          "cantResult": 1144000
+        }
+      ],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T15:23:02.806Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T15:23:02.806Z"
     }
   ]
 }

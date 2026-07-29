@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Control de Stock - Odfjell Terminals Tagsa SA</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- PWA: la app se puede instalar en el celu; la web sigue funcionando igual -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a56db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Stock Tagsa">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png">
+</head>
+<body>
+    <!-- LOGIN -->
+    <div id="loginScreen" class="auth-screen">
+        <div class="auth-card">
+            <h1>Odfjell Terminals Tagsa SA</h1>
+            <p class="subtitle">Control de Stock — Campana</p>
+            <div class="form-group">
+                <label for="loginUser">Usuario</label>
+                <input type="text" id="loginUser" placeholder="Ingresá tu usuario" autocomplete="username" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="loginPass">Contraseña</label>
+                <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password">
+            </div>
+            <label class="auth-remember">
+                <input type="checkbox" id="loginRecordar">
+                <span>Recordar usuario y contraseña en este dispositivo</span>
+            </label>
+            <div id="loginError" class="auth-error hidden">Usuario o contraseña incorrectos</div>
+            <button class="btn btn-primary btn-block" id="btnLogin">Ingresar</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="header-top">
+                <div class="header-left">
+                    <img src="img/logo-arca.svg" alt="ARCA" class="logo-arca">
+                    <div>
+                        <h1>Odfjell Terminals Tagsa SA - Campana</h1>
+                        <p class="subtitle"><span class="subtitle-lbl">Control de Salidas | </span><span id="subtFecha"></span></p>
+                    </div>
+                </div>
+                <div class="header-user">
+                    <span id="syncEstado" class="sync-pill sync-sincronizado" title="Sincronizado con el servidor"></span>
+                    <span id="usuarioLogueado"></span>
+                    <button class="btn-ayuda" id="btnAyuda" type="button" title="Ayuda — manual del sistema" aria-label="Ayuda">?</button>
+                    <button class="btn btn-secondary btn-sm hidden" id="btnInstalarApp" title="Instalar como app en el celular">📲 Instalar app</button>
+                    <button class="btn btn-secondary btn-sm" id="btnLogout">Salir</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="hidden" id="mainApp">
+        <nav class="tabs">
+            <button class="tab active" data-tab="planCargas" data-rol="admin">Cargas <span id="badgePlanPendientes" class="badge-nuevas hidden">0</span></button>
+            <button class="tab" data-tab="salida" data-rol="admin">Salidas</button>
+            <button class="tab" data-tab="ingreso" data-rol="admin">Ingreso a Depósito</button>
+            <button class="tab" data-tab="transferencia" data-rol="admin">Transferencia</button>
+            <button class="tab" data-tab="stock" data-rol="admin">Stock x TK</button>
+            <button class="tab" data-tab="historial" data-rol="admin">Historial</button>
+            <button class="tab" data-tab="reporteDiario" data-rol="all">Reportes <span id="badgeDiferencias" class="badge-titila hidden" title="Hay despachos con diferencia sin resolver"></span></button>
+            <button class="tab" data-tab="barcos" data-rol="admin">Barcos <span id="badgeBarcosCerca" class="badge-nuevas hidden">0</span></button>
+            <button class="tab" data-tab="sbfa" data-rol="admin">SB/FA</button>
+            <button class="tab hidden" data-tab="salidasViewer" data-rol="viewer">Salidas <span id="badgeNuevas" class="badge-nuevas hidden">0</span></button>
+        </nav>
+
+        <!-- REGISTRAR SALIDA -->
+        <section id="salida" class="tab-content">
+            <div class="form-card">
+                <h2>Registrar Salida con Remito</h2>
+
+                <!-- REMITO Y FECHA (siempre visible arriba) -->
+                <div class="remito-bar remito-bar-2col">
+                    <div class="form-group">
+                        <label for="fechaSalida">Fecha</label>
+                        <input type="date" id="fechaSalida">
+                    </div>
+                    <div class="form-group">
+                        <label for="nroRemito">N° de Remito (últimos 4 dígitos)</label>
+                        <input type="text" id="nroRemito" placeholder="Ej: 0123" maxlength="4">
+                    </div>
+                </div>
+                <div id="alertaRemitoDup" class="alerta hidden"></div>
+
+                <!-- PASO 1: TANQUE -->
+                <div class="paso" id="paso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Ingresá el número de tanque</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="inputTanque" placeholder="Ej: 005" maxlength="3" autofocus>
+                            <button class="btn btn-primary" id="btnBuscarTanque">Buscar</button>
+                        </div>
+                        <div id="infoTanque" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: DESPACHO -->
+                <div class="paso disabled" id="paso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Seleccioná el despacho</span>
+                    </div>
+                    <div class="paso-body">
+                        <select id="selectDespacho">
+                            <option value="">-- Primero ingresá un tanque --</option>
+                        </select>
+                        <div id="infoDespacho" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <!-- PASO 3: KILOS -->
+                <div class="paso disabled" id="paso3">
+                    <div class="paso-header">
+                        <span class="paso-num">3</span>
+                        <span class="paso-titulo">Cantidad de kilos</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="kilosSalida">Kilos a retirar</label>
+                            <input type="number" id="kilosSalida" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+
+                        <div id="alertaStock" class="alerta hidden"></div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnRegistrar" disabled>Registrar Salida</button>
+                            <button class="btn btn-secondary" id="btnLimpiar">Limpiar Todo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INGRESO A DEPOSITO -->
+        <section id="ingreso" class="tab-content">
+            <div class="form-card">
+                <h2>Ingreso a Depósito</h2>
+
+                <div class="paso" id="ingPaso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Número de tanque destino</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="ingInputTanque" placeholder="Ej: 005" maxlength="3">
+                            <button class="btn btn-primary" id="btnIngBuscar">Buscar</button>
+                        </div>
+                        <div id="ingInfoTanque" class="info-box hidden"></div>
+                        <!-- Producto para tanque vacío -->
+                        <div id="ingProductoNuevo" class="hidden" style="margin-top:1rem">
+                            <div class="form-group">
+                                <label for="ingSelectProducto">Producto</label>
+                                <select id="ingSelectProducto">
+                                    <option value="">-- Seleccioná un producto --</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-top:0.5rem">
+                                <label for="ingClienteNuevo">Cliente / SubCliente</label>
+                                <input type="text" id="ingClienteNuevo" placeholder="Nombre del cliente">
+                            </div>
+                            <div id="ingProductoOtro" class="hidden" style="margin-top:0.5rem">
+                                <div class="form-group">
+                                    <label for="ingNuevoProducto">Nombre del producto nuevo</label>
+                                    <input type="text" id="ingNuevoProducto" placeholder="Ej: TOLUENO">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="ingPaso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Despacho y cantidad</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="ingDespacho">Número de Despacho</label>
+                            <input type="text" id="ingDespacho" placeholder="Ej: DI26IC04002280Y">
+                        </div>
+                        <div class="form-group" style="margin-top:0.75rem">
+                            <label for="ingKilos">Kilos a ingresar</label>
+                            <input type="number" id="ingKilos" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+                        <div id="ingAlerta" class="alerta hidden"></div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnIngRegistrar" disabled>Registrar Ingreso</button>
+                            <button class="btn btn-secondary" id="btnIngLimpiar">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRANSFERENCIA DE TANQUE -->
+        <section id="transferencia" class="tab-content">
+            <div class="form-card">
+                <h2>Transferencia entre Tanques</h2>
+
+                <div class="paso" id="trfPaso1">
+                    <div class="paso-header">
+                        <span class="paso-num">1</span>
+                        <span class="paso-titulo">Tanque de origen</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="input-tanque-row">
+                            <span class="prefix">TK</span>
+                            <input type="text" id="trfInputOrigen" placeholder="Ej: 005" maxlength="3">
+                            <button class="btn btn-primary" id="btnTrfBuscarOrigen">Buscar</button>
+                        </div>
+                        <div id="trfInfoOrigen" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="trfPaso2">
+                    <div class="paso-header">
+                        <span class="paso-num">2</span>
+                        <span class="paso-titulo">Despacho de origen</span>
+                    </div>
+                    <div class="paso-body">
+                        <select id="trfSelectDespacho">
+                            <option value="">-- Seleccioná un despacho --</option>
+                        </select>
+                        <div id="trfInfoDespacho" class="info-box hidden"></div>
+                    </div>
+                </div>
+
+                <div class="paso disabled" id="trfPaso3">
+                    <div class="paso-header">
+                        <span class="paso-num">3</span>
+                        <span class="paso-titulo">Tanque destino y cantidad</span>
+                    </div>
+                    <div class="paso-body">
+                        <div class="form-group">
+                            <label for="trfInputDestino">Tanque destino</label>
+                            <div class="input-tanque-row">
+                                <span class="prefix">TK</span>
+                                <input type="text" id="trfInputDestino" placeholder="Ej: 010" maxlength="3" disabled>
+                                <button class="btn btn-primary" id="btnTrfBuscarDestino" disabled>Buscar</button>
+                            </div>
+                        </div>
+                        <div id="trfInfoDestino" class="info-box hidden"></div>
+                        <div class="form-group" style="margin-top:0.75rem">
+                            <label for="trfKilos">Kilos a transferir</label>
+                            <input type="number" id="trfKilos" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        </div>
+                        <div id="trfAlerta" class="alerta hidden"></div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary btn-lg" id="btnTrfRegistrar" disabled>Registrar Transferencia</button>
+                            <button class="btn btn-secondary" id="btnTrfLimpiar">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STOCK POR TANQUE -->
+        <section id="stock" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Stock por Tanque y Despacho</h2>
+                    <div class="filtros">
+                        <input type="text" id="filtroStock" placeholder="Buscar tanque, producto o cliente...">
+                    </div>
+                </div>
+                <div class="resumen-cards">
+                    <div class="resumen-card">
+                        <span class="resumen-numero" id="totalTanques">0</span>
+                        <span class="resumen-label">Tanques con producto</span>
+                    </div>
+                    <div class="resumen-card ocupados">
+                        <span class="resumen-numero" id="totalDespachos">0</span>
+                        <span class="resumen-label">Despachos activos</span>
+                    </div>
+                    <div class="resumen-card kilos">
+                        <span class="resumen-numero" id="totalKilos">0</span>
+                        <span class="resumen-label">Total Kg</span>
+                    </div>
+                </div>
+                <div id="stockCards"></div>
+            </div>
+        </section>
+
+        <!-- HISTORIAL (contiene sub-pestañas) -->
+        <section id="historial" class="tab-content">
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="histSalidas">Todas las salidas</button>
+                <button class="sub-tab" data-subtab="histPorTanque">Por tanque</button>
+                <button class="sub-tab" data-subtab="histPorDespacho">Por despacho</button>
+            </nav>
+
+            <!-- SUB: HISTORIAL DE SALIDAS -->
+            <div id="histSalidas" class="sub-tab-content active">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Historial de Salidas</h2>
+                        <div class="filtros">
+                            <input type="text" id="filtroHistorial" placeholder="Buscar...">
+                            <button class="btn btn-secondary btn-sm" id="btnExportar">Exportar CSV</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="tablaHistorial">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Remito</th>
+                                    <th>Tanque</th>
+                                    <th>Producto</th>
+                                    <th>Despacho</th>
+                                    <th>Kilos</th>
+                                    <th>Usuario</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="10">No hay movimientos registrados</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR TANQUE -->
+            <div id="histPorTanque" class="sub-tab-content">
+                <div id="histTanqueListaView">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <h2>Historial por Tanque</h2>
+                            <div class="filtros">
+                                <input type="text" id="filtroHistTanque" placeholder="Buscar tanque, producto o cliente...">
+                            </div>
+                        </div>
+                        <div id="histTanqueCards"></div>
+                    </div>
+                </div>
+                <div id="histTanqueDetalleView" class="hidden">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <button class="btn btn-secondary btn-sm" id="btnVolverHistTanque">← Volver</button>
+                            <h2 id="histTanqueDetalleTitulo">Movimientos del Tanque</h2>
+                        </div>
+                        <div class="table-container">
+                            <table id="tablaHistTanque">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Remito</th>
+                                        <th>Producto</th>
+                                        <th>Despacho</th>
+                                        <th>Kilos</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: HISTORIAL POR DESPACHO -->
+            <div id="histPorDespacho" class="sub-tab-content">
+                <div id="histDespachoListaView">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <h2>Historial por Despacho</h2>
+                            <div class="filtros">
+                                <input type="text" id="filtroHistDespacho" placeholder="Buscar despacho, producto o cliente...">
+                            </div>
+                        </div>
+                        <div id="histDespachoCards"></div>
+                    </div>
+                </div>
+                <div id="histDespachoDetalleView" class="hidden">
+                    <div class="form-card">
+                        <div class="stock-header">
+                            <button class="btn btn-secondary btn-sm" id="btnVolverHistDespacho">← Volver</button>
+                            <h2 id="histDespachoDetalleTitulo">Movimientos del Despacho</h2>
+                        </div>
+                        <div class="table-container">
+                            <table id="tablaHistDespacho">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Remito</th>
+                                        <th>Tanque</th>
+                                        <th>Producto</th>
+                                        <th>Kilos</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REPORTES -->
+        <section id="reporteDiario" class="tab-content">
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="repDia">Reporte del Día</button>
+                <button class="sub-tab" data-subtab="repMensual">Reporte de Stock Mensual</button>
+                <button class="sub-tab" data-subtab="repSupervisor">Para Supervisores</button>
+                <button class="sub-tab" data-subtab="repDiferencias">Despachos con diferencia <span id="badgeDiferenciasSub" class="badge-titila hidden"></span></button>
+                <button class="sub-tab" data-subtab="repPrecintos">Precintos usados</button>
+            </nav>
+
+            <!-- SUB: REPORTE DEL DIA -->
+            <div id="repDia" class="sub-tab-content active">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte de Salidas</h2>
+                        <div class="filtros">
+                            <label for="reporteFechaInput" class="filtro-label">Fecha:</label>
+                            <input type="date" id="reporteFechaInput">
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirReporte">Imprimir Reporte</button>
+                        </div>
+                    </div>
+                    <p id="reporteFecha" style="margin-bottom:1rem;color:var(--gray-500)"></p>
+                    <div class="table-container">
+                        <table id="tablaReporte">
+                            <thead>
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Remito</th>
+                                    <th>Despacho</th>
+                                    <th>Producto</th>
+                                    <th>Kilos</th>
+                                    <th>Saldo Despacho</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="7">No hay salidas hoy</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="reporte-total" id="reporteTotal"></div>
+                </div>
+            </div>
+
+            <!-- SUB: REPORTE STOCK MENSUAL -->
+            <div id="repMensual" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte de Stock Mensual</h2>
+                        <div class="filtros">
+                            <label for="repMenFecha" class="filtro-label">Corte:</label>
+                            <input type="date" id="repMenFecha">
+                            <input type="time" id="repMenHora" value="19:00" step="60">
+                            <button class="btn btn-secondary btn-sm" id="btnRepMenAhora" type="button">Ahora</button>
+                            <input type="text" id="filtroRepMensual" placeholder="Buscar tanque, producto o cliente...">
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirMensual">Imprimir</button>
+                        </div>
+                    </div>
+                    <div class="resumen-cards">
+                        <div class="resumen-card">
+                            <span class="resumen-numero" id="repMenTanques">0</span>
+                            <span class="resumen-label">Tanques con producto</span>
+                        </div>
+                        <div class="resumen-card ocupados">
+                            <span class="resumen-numero" id="repMenDespachos">0</span>
+                            <span class="resumen-label">Despachos activos</span>
+                        </div>
+                        <div class="resumen-card kilos">
+                            <span class="resumen-numero" id="repMenKilos">0</span>
+                            <span class="resumen-label">Total Kg</span>
+                        </div>
+                    </div>
+                    <div id="repMensualCards"></div>
+                </div>
+            </div>
+
+            <!-- SUB: REPORTE PARA SUPERVISORES -->
+            <div id="repSupervisor" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Reporte para Supervisores</h2>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Genera y envía por mail un resumen de los <strong>buques operando en Campana</strong> (con sus particulares y conocimientos DAP) más el <strong>plan de cargas del día</strong>.
+                    </p>
+
+                    <div style="display:flex;gap:0.5rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
+                        <div class="form-group" style="margin-bottom:0;width:160px">
+                            <label for="repSupFecha">Fecha del reporte</label>
+                            <input type="date" id="repSupFecha">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:260px">
+                            <label for="repSupMail">Mail destinatario(s) — separá con coma para varios</label>
+                            <input type="text" id="repSupMail" placeholder="supervisor@empresa.com, otro@empresa.com">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnRepSupEnviar" type="button">📧 Enviar reporte</button>
+                    </div>
+
+                    <p id="repSupEstado" style="font-size:0.85rem;margin-bottom:0.5rem"></p>
+
+                    <div id="repSupVistaPrevia" style="border:1px solid var(--gray-200);border-radius:8px;padding:1rem;background:#fafafa">
+                        <div id="repSupInforme"></div>
+
+                        <h3 style="color:#1e3a8a;font-size:15px;margin:2rem 0 0.5rem 0">📋 Datos del turno</h3>
+
+                        <p style="font-weight:bold;color:#111;font-size:13px;margin:0.6rem 0 0.3rem 0">Camiones</p>
+                        <div id="repSupCamionesFilas"></div>
+                        <button id="btnAddCamiones" type="button" class="btn btn-secondary btn-sm" style="margin:0.2rem 0 1rem 0">+ Agregar guarda / medidor / jefe</button>
+
+                        <p style="font-weight:bold;color:#111;font-size:13px;margin:0.6rem 0 0.3rem 0">Barcos</p>
+                        <div id="repSupBarcosFilas"></div>
+                        <button id="btnAddBarcos" type="button" class="btn btn-secondary btn-sm" style="margin:0.2rem 0 0 0">+ Agregar guarda / medidor / jefe</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: DESPACHOS CON DIFERENCIA -->
+            <div id="repDiferencias" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Despachos con diferencia</h2>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Anotá los despachos donde no coinciden los <strong>kilos de stock</strong> con los <strong>kilos del SIM</strong>. Cada uno queda con una <span class="luz-titila" style="vertical-align:middle"></span> titilando. Cuando se soluciona, tocás <strong>✓ Resuelto</strong> y desaparece de la lista (no entra en próximos mails). El botón <strong>"📧 Enviar mail"</strong> manda el listado de los pendientes.
+                    </p>
+                    <div style="display:flex;gap:0.6rem;align-items:end;flex-wrap:wrap;margin-bottom:1rem">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:200px">
+                            <label for="difDespacho">Despacho</label>
+                            <input type="text" id="difDespacho" placeholder="Ej: DI26IC04002547U" autocomplete="off">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:150px">
+                            <label for="difKgStock">Kg. Stock</label>
+                            <input type="text" id="difKgStock" inputmode="numeric" placeholder="0" autocomplete="off">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;width:150px">
+                            <label for="difKgSim">Kg. SIM</label>
+                            <input type="text" id="difKgSim" inputmode="numeric" placeholder="0" autocomplete="off">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnDifAgregar" type="button">Agregar</button>
+                    </div>
+                    <div style="display:flex;gap:0.6rem;align-items:end;flex-wrap:wrap;margin-bottom:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200)">
+                        <div class="form-group" style="margin-bottom:0;flex:1;min-width:260px">
+                            <label for="difMail">Enviar el listado de pendientes a — separá con coma para varios</label>
+                            <input type="text" id="difMail" placeholder="destinatario@empresa.com, otro@empresa.com" autocomplete="off">
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btnDifMail" type="button">📧 Enviar mail</button>
+                    </div>
+                    <p id="difMailEstado" style="font-size:0.85rem;margin-bottom:1rem"></p>
+                    <div class="table-container">
+                        <table id="tablaDiferencias" class="dif-table">
+                            <colgroup>
+                                <col style="width:3%"><col style="width:13%"><col style="width:8%">
+                                <col style="width:14%"><col style="width:14%"><col style="width:8%">
+                                <col style="width:8%"><col style="width:8%"><col style="width:8%">
+                                <col style="width:16%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Despacho</th>
+                                    <th>TK</th>
+                                    <th>Producto</th>
+                                    <th>Cliente</th>
+                                    <th>Kg. Stock</th>
+                                    <th>Kg. SIM</th>
+                                    <th>Diferencia</th>
+                                    <th>Cargado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="10">No hay despachos con diferencia cargados.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB: PRECINTOS USADOS -->
+            <div id="repPrecintos" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Precintos usados</h2>
+                        <div class="filtros">
+                            <input type="text" id="filtroPrecintos" placeholder="Buscar precinto, despacho, tanque, producto, remito...">
+                            <button class="btn btn-secondary btn-sm" id="btnImprimirPrecintos" type="button">Imprimir</button>
+                        </div>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Lista de precintos cargados al registrar salidas <strong>TR06</strong> y <strong>TRM6</strong>. Ordenada por número de precinto — si un precinto se usó en 2 salidas distintas, las dos filas quedan juntas y se marca <span style="background:#fef3c7;padding:0 4px;border-radius:3px">en amarillo</span>.
+                    </p>
+                    <p id="precintosResumen" style="font-size:0.9rem;margin-bottom:0.75rem;color:var(--gray-700)"></p>
+                    <div class="table-container">
+                        <table id="tablaPrecintos">
+                            <thead>
+                                <tr>
+                                    <th>Precinto N°</th>
+                                    <th>Despacho</th>
+                                    <th>TK</th>
+                                    <th>Producto</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Remito</th>
+                                    <th>Kg.</th>
+                                    <th>Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="empty-row"><td colspan="10">No hay precintos registrados todavía. Se cargan al registrar una salida cuyo despacho sea TR06 o TRM6.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PLAN DE CARGAS -->
+        <section id="planCargas" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Plan de Cargas</h2>
+                    <div class="filtros">
+                        <label for="planFechaInput" class="filtro-label">Fecha:</label>
+                        <input type="date" id="planFechaInput">
+                        <button class="btn btn-primary btn-sm" id="btnPlanSincronizar">📧 Sincronizar con Gmail</button>
+                        <button class="btn btn-secondary btn-sm" id="btnPlanImprimir">Imprimir</button>
+                    </div>
+                </div>
+                <div id="planEstado" class="alerta hidden" style="margin-bottom:1rem"></div>
+                <div id="planResumen" class="resumen-cards hidden">
+                    <div class="resumen-card">
+                        <span class="resumen-numero" id="planTotalFilas">0</span>
+                        <span class="resumen-label">Cargas planificadas</span>
+                    </div>
+                    <div class="resumen-card ocupados">
+                        <span class="resumen-numero" id="planPendientes">0</span>
+                        <span class="resumen-label">Pendientes</span>
+                    </div>
+                    <div class="resumen-card kilos">
+                        <span class="resumen-numero" id="planCumplidos">0</span>
+                        <span class="resumen-label">Cumplidas</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="tablaPlan">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Hora</th>
+                                <th>Tanque</th>
+                                <th>Producto</th>
+                                <th>Cliente</th>
+                                <th>Despacho</th>
+                                <th>Buque/Viaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="7">No hay plan cargado para esta fecha. Usá <strong>Sincronizar con Gmail</strong> para importarlo.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- BARCOS -->
+        <section id="barcos" class="tab-content">
+            <div class="form-card">
+                <details class="config-collapsable">
+                    <summary>⚙ Configurar barcos y notificaciones</summary>
+                    <div class="config-collapsable-body">
+                        <div class="config-bloque">
+                            <h3>Agregar barco al seguimiento</h3>
+                            <div class="config-row">
+                                <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                                    <label for="barcoNombre">Nombre del barco</label>
+                                    <input type="text" id="barcoNombre" placeholder="Ej: BOW CAROLINE">
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btnAgregarBarco" type="button">Agregar</button>
+                            </div>
+                        </div>
+
+                        <div class="config-bloque">
+                            <h3>📧 Avisos por mail al arribar un barco</h3>
+                            <p class="config-help">Cuando el tracking detecte que un barco arribó a Campana, se manda mail a estas casillas.</p>
+                            <div class="config-row">
+                                <div class="form-group" style="margin-bottom:0;flex:1;min-width:220px">
+                                    <label for="mailArribo">Casilla de mail</label>
+                                    <input type="email" id="mailArribo" placeholder="ejemplo@dominio.com">
+                                </div>
+                                <button class="btn btn-primary btn-sm" id="btnAgregarMailArribo" type="button">Agregar</button>
+                            </div>
+                            <div id="mailsArriboLista" style="margin-top:0.75rem"></div>
+                        </div>
+                    </div>
+                </details>
+
+                <input type="hidden" id="barcosUmbral" value="24">
+                <div id="barcosCards"></div>
+            </div>
+        </section>
+
+        <!-- SB/FA: SOBRANTES Y FALTANTES POR DESCARGA DE BUQUE -->
+        <section id="sbfa" class="tab-content">
+            <nav class="sub-tabs">
+                <button class="sub-tab active" data-subtab="sbfaActivas">Descargas</button>
+                <button class="sub-tab" data-subtab="sbfaHistorial">Historial</button>
+            </nav>
+
+            <div id="sbfaActivas" class="sub-tab-content active">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>SB/FA — Detalle de descargas</h2>
+                        <div class="filtros">
+                            <input type="text" id="sbfaFiltro" placeholder="Buscar (buque, MANI, Cto, Sol Part, mercadería…)">
+                        </div>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Detalle resultante del ingreso de manifiesto, por solicitud particular y conocimientos DAP.
+                        Tolerancia ley: <strong>±0.6%</strong> (Resolución 2220/1990, Anexo II punto 12.1).
+                    </p>
+                    <div id="sbfaLista"></div>
+                </div>
+            </div>
+
+            <div id="sbfaHistorial" class="sub-tab-content">
+                <div class="form-card">
+                    <div class="stock-header">
+                        <h2>Historial — descargas terminadas</h2>
+                        <div class="filtros">
+                            <input type="text" id="sbfaHistFiltro" placeholder="Buscar (buque, MANI, Cto, Sol Part, mercadería…)">
+                        </div>
+                    </div>
+                    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">
+                        Descargas con la medición completa de todas sus filas. Pasan acá solas y el buque se saca del seguimiento de la pestaña Barcos.
+                    </p>
+                    <div id="sbfaHistLista"></div>
+                </div>
+            </div>
+
+            <!-- Editor de descarga -->
+            <div id="sbfaEditor" class="form-card hidden" style="margin-top:1.25rem">
+                <div class="stock-header">
+                    <h2 id="sbfaEditorTitulo">Nueva descarga</h2>
+                    <div class="filtros">
+                        <button class="btn btn-secondary btn-sm" id="btnSbfaCancelar" type="button">Cerrar</button>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;margin-bottom:1rem">
+                    <div class="form-group">
+                        <label for="sbfaBuque">Buque (B/T)</label>
+                        <input type="text" id="sbfaBuque" placeholder="BOW CHAIN">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaManifiesto">Manifiesto N°</label>
+                        <input type="text" id="sbfaManifiesto" placeholder="33184-E">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaAgencia">Agencia marítima</label>
+                        <input type="text" id="sbfaAgencia" placeholder="Ej: B&amp;M">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaCuit">CUIT agencia</label>
+                        <input type="text" id="sbfaCuit" placeholder="30-XXXXXXXX-X">
+                    </div>
+                    <div class="form-group">
+                        <label for="sbfaFecha">Fecha descarga</label>
+                        <input type="date" id="sbfaFecha">
+                    </div>
+                </div>
+
+                <h3 style="font-size:1rem;margin:1rem 0 0.5rem">Conocimientos por solicitud particular</h3>
+                <p style="color:var(--gray-500);font-size:0.8rem;margin-bottom:0.5rem">
+                    🟦 <strong>Pre-arribo</strong>: se va cargando a lo largo de las semanas previas. &nbsp;
+                    🟨 <strong>Post-medición</strong>: se completa días después del arribo, con la medición real. &nbsp;
+                    Para campos con varios valores (Part., Cto., Empresa, Tk.) separá con guión: <code>1883-1884-1939</code>.
+                </p>
+                <div class="table-container">
+                    <table class="sbfa-table" id="sbfaTablaFilas">
+                        <colgroup>
+                            <col class="col-part">
+                            <col class="col-cto">
+                            <col class="col-producto">
+                            <col class="col-empresa">
+                            <col class="col-kg-pre">
+                            <col class="col-tk">
+                            <col class="col-sbfa">
+                            <col class="col-medic">
+                            <col class="col-kg-post">
+                            <col class="col-dif-kg">
+                            <col class="col-dif-pct">
+                            <col class="col-borrar">
+                        </colgroup>
+                        <thead>
+                            <tr class="sbfa-grupo">
+                                <th colspan="6" class="grupo-pre">Pre-arribo</th>
+                                <th colspan="3" class="grupo-post">Post-medición</th>
+                                <th colspan="2" class="grupo-calc">Diferencia</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <th class="col-pre col-part">Part. N°</th>
+                                <th class="col-pre col-cto">Cto. N°</th>
+                                <th class="col-pre col-producto">Producto</th>
+                                <th class="col-pre col-empresa">Empresa</th>
+                                <th class="col-pre col-kg-pre">Kg.</th>
+                                <th class="col-pre col-tk">Tk.</th>
+                                <th class="col-post col-sbfa">SBFA N°</th>
+                                <th class="col-post col-medic">Medición N°</th>
+                                <th class="col-post col-kg-post">Kg.</th>
+                                <th class="col-dif-kg">Kg.</th>
+                                <th class="col-dif-pct">Dif. %</th>
+                                <th class="col-borrar"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" style="text-align:right">Totales</th>
+                                <th id="sbfaTotalDecl">0</th>
+                                <th colspan="3"></th>
+                                <th id="sbfaTotalRes">0</th>
+                                <th id="sbfaTotalDif">0</th>
+                                <th id="sbfaTotalDifPct">0%</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnSbfaAddFila" type="button">+ Agregar fila</button>
+
+                <h3 style="font-size:1rem;margin:1.5rem 0 0.5rem">Conocimientos DAP (Directos a Plaza)</h3>
+                <div class="table-container">
+                    <table class="sbfa-table sbfa-tabla-dap" id="sbfaTablaDap">
+                        <colgroup>
+                            <col class="dap-doc">
+                            <col class="dap-cto">
+                            <col class="dap-doctada">
+                            <col class="dap-result">
+                            <col class="dap-difkg">
+                            <col class="dap-difpct">
+                            <col class="col-borrar">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="dap-doc">Documento Aduanero</th>
+                                <th class="dap-cto">Cto. N°</th>
+                                <th class="dap-doctada">Cant. Doctada</th>
+                                <th class="dap-result">Cant. Result.</th>
+                                <th class="dap-difkg">Dif. Kg.</th>
+                                <th class="dap-difpct">Dif. %</th>
+                                <th class="col-borrar"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2" style="text-align:right">Totales DAP</th>
+                                <th id="sbfaDapTotalDoc">0</th>
+                                <th id="sbfaDapTotalRes">0</th>
+                                <th id="sbfaDapTotalDif">0</th>
+                                <th id="sbfaDapTotalDifPct">0%</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnSbfaAddDap" type="button">+ Agregar conocimiento DAP</button>
+
+                <div class="form-actions" style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:end">
+                    <button class="btn btn-primary" id="btnSbfaGuardar" type="button">Guardar descarga</button>
+                    <div class="form-group" style="margin-bottom:0;width:120px">
+                        <label for="sbfaNotaNumero" style="font-size:0.8rem">N° Nota</label>
+                        <input type="text" id="sbfaNotaNumero" placeholder="Ej: 8">
+                    </div>
+                    <button class="btn btn-primary" id="btnSbfaImprimir" type="button" title="Imprime los 3 informes (Detalle, Acta y Nota) en una sola pasada">🖨 Imprimir Informe</button>
+                    <button class="btn btn-secondary" id="btnSbfaEliminar" type="button" style="margin-left:auto;color:#b91c1c">Eliminar descarga</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA UMA: SALIDAS -->
+        <section id="salidasViewer" class="tab-content">
+            <div class="form-card">
+                <div class="stock-header">
+                    <h2>Salidas Registradas</h2>
+                    <div class="filtros">
+                        <input type="date" id="fechaViewer">
+                        <input type="text" id="filtroViewer" placeholder="Buscar...">
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="tablaViewer">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Remito</th>
+                                <th>Tanque</th>
+                                <th>Producto</th>
+                                <th>Despacho</th>
+                                <th>Kilos</th>
+                                <th>Salida SIM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-row"><td colspan="9">No hay salidas registradas</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal confirmación -->
+    <div id="modalConfirm" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modalTitulo">Confirmar Salida</h3>
+            <div id="modalBody"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnConfirmar">Confirmar</button>
+                <button class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de aviso (centrado, reemplaza alert() nativo) -->
+    <div id="modalInfo" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modalInfoTitulo">Aviso</h3>
+            <div id="modalInfoBody"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnModalInfoOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda — manual del sistema -->
+    <div id="modalAyuda" class="modal hidden">
+        <div class="modal-content modal-ayuda">
+            <div class="ayuda-header">
+                <h3>📖 Manual del sistema</h3>
+                <button class="ayuda-cerrar" id="btnAyudaCerrar" type="button" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="ayuda-body">
+                <p class="ayuda-intro">
+                    Sistema de <strong>Control de Stock de Odfjell Terminals Tagsa SA</strong> — terminal Campana.
+                    Sirve para registrar salidas, ingresos y transferencias de producto de los tanques, llevar el
+                    plan de cargas, seguir los buques y generar los reportes. Tocá cada sección para ver cómo funciona.
+                </p>
+
+                <details>
+                    <summary>1. Ingresar al sistema</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Escribí tu <strong>usuario</strong> y <strong>contraseña</strong> y tocá <strong>Ingresar</strong>.</li>
+                            <li>Si tildás <strong>"Recordar usuario y contraseña en este dispositivo"</strong>, la próxima vez los campos vienen completos (igual hay que tocar Ingresar). Conviene tildarlo solo en tu computadora o celular personal.</li>
+                            <li>Hay dos tipos de acceso: <strong>Administrador</strong> (carga y edición completa) y <strong>Consulta</strong> (solo ve el tablón de salidas).</li>
+                            <li><strong>"Salir"</strong> cierra la sesión. Si tenías el usuario recordado, sigue recordado para la próxima.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>2. Cómo se guardan los datos</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>No hay que apretar "Guardar": <strong>cada movimiento se sube solo</strong> al servidor.</li>
+                            <li>Al lado de tu nombre hay un puntito de color: <strong>verde</strong> = todo sincronizado, <strong>amarillo</strong> = guardando, <strong>rojo</strong> = hubo un error de conexión.</li>
+                            <li>Si el puntito queda en <strong>rojo</strong>, fijate que tengas internet y <strong>recargá la página</strong>.</li>
+                            <li>Varias personas pueden trabajar al mismo tiempo desde distintas computadoras: el sistema combina los cambios solo y se actualiza cada 30 segundos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>3. Plan de Cargas (pestaña "Cargas")</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Muestra las cargas programadas para la fecha elegida arriba.</li>
+                            <li><strong>📧 Sincronizar con Gmail</strong> trae el plan desde los mails de la casilla del sistema.</li>
+                            <li>Cada fila arranca como <strong>Pendiente</strong>. Cuando registrás la salida correspondiente, se marca sola como <strong>Cumplida</strong>.</li>
+                            <li>El número rojo en la pestaña "Cargas" indica cuántas cargas quedan <strong>pendientes</strong>.</li>
+                            <li><strong>Imprimir</strong> saca el plan en papel.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>4. Registrar Salida (pestaña "Salidas")</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Arriba cargás la <strong>fecha</strong> y los <strong>últimos 4 dígitos del remito</strong> (el remito es opcional).</li>
+                            <li><strong>Paso 1:</strong> escribí el número de tanque y tocá Buscar (o Enter).</li>
+                            <li><strong>Paso 2:</strong> elegí el despacho de la lista (podés usar las flechas ↑↓).</li>
+                            <li><strong>Paso 3:</strong> escribí los kilos a retirar y tocá <strong>Registrar Salida</strong>.</li>
+                            <li>Se puede hacer todo con el teclado: el foco va saltando paso a paso.</li>
+                            <li>Si el remito ya se cargó ese mismo día, el sistema te avisa para que no lo dupliques.</li>
+                            <li>Si el despacho es <strong>TR06</strong> o <strong>TRM6</strong>, te pide el <strong>N° de precinto</strong> (es obligatorio).</li>
+                            <li>Antes de confirmar aparece un resumen con todos los datos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>5. Ingreso a Depósito</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Suma kilos a un tanque cuando entra producto.</li>
+                            <li>Si el tanque estaba vacío, te pide elegir el <strong>producto</strong> y cargar el <strong>cliente</strong>.</li>
+                            <li>Indicá el número de despacho y los kilos que ingresan.</li>
+                            <li>Un tanque solo puede tener <strong>un producto</strong>. Si ya tiene stock de otro, el sistema <strong>no te deja</strong> ingresar uno distinto; si está vacío pero figuraba con otro producto, te <strong>avisa</strong> antes de confirmar.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>6. Transferencia entre Tanques</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Mueve producto de un tanque a otro.</li>
+                            <li><strong>Paso 1:</strong> tanque de origen. <strong>Paso 2:</strong> despacho de origen. <strong>Paso 3:</strong> tanque destino y kilos.</li>
+                            <li>El sistema valida que los productos de origen y destino sean compatibles.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>7. Stock x TK</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Lista todos los tanques con producto. Tiene buscador por tanque, producto o cliente.</li>
+                            <li>Cada tarjeta se expande y muestra los despachos con su stock.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>8. Renombrar un despacho</summary>
+                    <div class="ayuda-seccion">
+                        <p><strong>¿Para qué sirve?</strong> Para corregir un despacho que llegó con un nombre no estándar o con un error de tipeo, y dejarlo en el formato correcto.</p>
+                        <p><strong>¿Cómo se hace? (paso a paso)</strong></p>
+                        <ul>
+                            <li>Si no sabés en qué tanque está el despacho, andá a <strong>Historial → Por despacho</strong> y buscá el BL: ahí ves en qué tanque está.</li>
+                            <li>Andá a la pestaña <strong>Salidas</strong>. En el Paso 1 escribí ese número de tanque.</li>
+                            <li>En el Paso 2 elegí el despacho. Debajo de sus datos aparece el botón <strong>"✎ Renombrar despacho"</strong> — tocalo.</li>
+                            <li>Si el despacho tiene formato no estándar, el cuadro de renombrar se abre solo la primera vez que lo seleccionás.</li>
+                        </ul>
+                        <p>Un despacho está en <strong>formato estándar</strong> cuando su nombre contiene <code>IC04</code>, <code>IC06</code>, <code>TRP</code>, <code>EC01</code>, <code>REMO</code>, <code>TRM6</code> o <code>IT14</code>.</p>
+                        <p><strong>En el cuadro de renombrar</strong> escribís el nombre nuevo y los kilos a migrar:</p>
+                        <ul>
+                            <li><strong>Migrás TODOS los kilos</strong> → renombrado completo: el despacho viejo desaparece y queda solo el nuevo.</li>
+                            <li><strong>Migrás una PARTE</strong> → se crea un despacho nuevo con esos kilos en este tanque y el viejo se queda con el saldo restante. Útil cuando un despacho grande en realidad junta varios despachos chicos.</li>
+                            <li><strong>Cliente / SubCliente</strong> → el cuadro te muestra el cliente actual del despacho; confirmalo o cambialo si corresponde.</li>
+                        </ul>
+                        <p><strong>Si el despacho está en varios tanques</strong>, al renombrar todo aparece un cuadro con 3 botones:</p>
+                        <ul>
+                            <li><strong>Renombrar en TODOS</strong> los tanques que tengan ese despacho.</li>
+                            <li><strong>Renombrar solo en este TK</strong> — los demás tanques no se tocan.</li>
+                            <li><strong>Cancelar.</strong></li>
+                        </ul>
+                        <p>Se puede usar el <strong>mismo nombre de despacho en tanques distintos</strong> (dos camiones del mismo despacho en TK diferentes es válido). Un despacho que quedó en 0 kg no molesta: si renombrás hacia ese nombre, el sistema lo reutiliza sin avisar conflicto.</p>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>9. Historial</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li><strong>Todas las salidas:</strong> la lista completa de movimientos (salidas, ingresos, transferencias). Tiene buscador y "Exportar CSV". Cada movimiento se puede <strong>anular</strong>.</li>
+                            <li><strong>Por tanque:</strong> elegí un tanque y ves todos sus movimientos.</li>
+                            <li><strong>Por despacho:</strong> elegí un despacho y ves todos sus movimientos.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>10. Reportes</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li><strong>Reporte del Día:</strong> las salidas de una fecha, con el saldo de cada despacho. Imprimible.</li>
+                            <li><strong>Reporte de Stock Mensual:</strong> el stock a una fecha y hora de corte. El sistema reconstruye el stock a ese momento exacto. Imprimible.</li>
+                            <li><strong>Para Supervisores:</strong> arma y envía por mail un resumen de los buques operando y el plan de cargas del día.</li>
+                            <li><strong>Despachos con diferencia:</strong> anotá los despachos donde no coinciden los kilos de stock con los del SIM. Quedan titilando hasta que tocás "✓ Resuelto". Se pueden mandar por mail.</li>
+                            <li><strong>Precintos usados:</strong> lista de todos los precintos cargados en salidas TR06 / TRM6.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>11. Barcos</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Sigue la posición de los buques (tracking AIS) y avisa cuando uno arriba a Campana.</li>
+                            <li>En <strong>"⚙ Configurar barcos y notificaciones"</strong> agregás un barco escribiendo solo el nombre.</li>
+                            <li>Ahí mismo cargás las casillas de mail que reciben el aviso de arribo.</li>
+                            <li>El número rojo en la pestaña "Barcos" indica cuántos buques están cerca de Campana.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>12. SB/FA — Detalle de descargas</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Detalle de sobrantes y faltantes por descarga de buque (reemplaza el Excel "DETALLE SBFA").</li>
+                            <li>Cargás los conocimientos por solicitud particular y los DAP, con kilos declarados y medidos.</li>
+                            <li>La tolerancia de ley es <strong>±0,6%</strong> (Resolución 2220/1990).</li>
+                            <li><strong>🖨 Imprimir Informe</strong> saca los 3 informes (Detalle, Acta y Nota) de una sola vez.</li>
+                            <li>Sub-pestaña <strong>Historial</strong>: una descarga pasa sola al Historial cuando <strong>(a)</strong> se completa la medición de todas sus filas, o <strong>(b)</strong> se le asigna un <strong>N° de Nota</strong>. En cualquiera de los dos casos, el buque se saca del seguimiento de Barcos. Si después le borrás todo (medición y nota), vuelve a Descargas.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>13. Instalar la app en el celular</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>El botón <strong>"📲 Instalar app"</strong> (arriba) la instala como aplicación en el celular o la computadora.</li>
+                            <li>Queda el ícono en la pantalla de inicio y se abre como una app común.</li>
+                            <li>En el celular el sistema funciona en modo consulta.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>14. Consejos y problemas comunes</summary>
+                    <div class="ayuda-seccion">
+                        <ul>
+                            <li>Después de una actualización del sistema, recargá con <strong>Ctrl + Shift + R</strong> para tomar la versión nueva.</li>
+                            <li>Si algo se ve raro o desactualizado, recargá la página.</li>
+                            <li>El puntito rojo de sincronización casi siempre se arregla recargando con internet activo.</li>
+                            <li>Un despacho que llegó a 0 kg deja de mostrarse en las listas, pero el sistema lo conserva en el historial.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="btnAyudaOk" type="button">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+      // Registro del service worker (PWA). Si falla, la app sigue funcionando igual como web.
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch((e) => console.warn("[pwa] SW no registrado:", e));
+        });
+      }
+
+      // Botón "Instalar app" dentro de la propia app (en vez de depender del menú del navegador).
+      (function () {
+        var btn = document.getElementById("btnInstalarApp");
+        if (!btn) return;
+        var standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+        if (standalone) { btn.remove(); return; } // ya está instalada
+        btn.classList.remove("hidden");
+
+        var deferred = null;
+        var ua = navigator.userAgent || "";
+        var esIOS = /iphone|ipad|ipod/i.test(ua) && !window.MSStream;
+
+        window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; });
+        window.addEventListener("appinstalled", function () { deferred = null; btn.classList.add("hidden"); });
+
+        btn.addEventListener("click", function () {
+          if (deferred) {
+            deferred.prompt();
+            (deferred.userChoice || Promise.resolve()).then(function (r) {
+              if (r && r.outcome === "accepted") btn.classList.add("hidden");
+              deferred = null;
+            }).catch(function () {});
+            return;
+          }
+          if (esIOS) {
+            alert("Para instalar la app en el iPhone:\n\n1. Abrila en Safari (tiene que ser Safari, no Chrome).\n2. Tocá el botón Compartir (el cuadrado con la flecha hacia arriba).\n3. Bajá y tocá \"Agregar a pantalla de inicio\".\n4. Tocá \"Agregar\".\n\nQueda el ícono en tu pantalla de inicio.");
+          } else {
+            alert("Para instalar la app:\n\nAbrí el menú del navegador (los 3 puntitos ⋮ arriba a la derecha) y tocá \"Instalar app\" o \"Agregar a pantalla de inicio\".\n\nSi no aparece la opción o te da error, actualizá Chrome y los \"Servicios de Google Play\" desde la Play Store y reintentá.");
+          }
+        });
+      })();
+
+      // Modal de ayuda — manual del sistema
+      (function () {
+        var btn = document.getElementById("btnAyuda");
+        var modal = document.getElementById("modalAyuda");
+        if (!btn || !modal) return;
+        var cerrar = function () { modal.classList.add("hidden"); };
+        btn.addEventListener("click", function () { modal.classList.remove("hidden"); });
+        document.getElementById("btnAyudaCerrar").addEventListener("click", cerrar);
+        document.getElementById("btnAyudaOk").addEventListener("click", cerrar);
+        modal.addEventListener("click", function (e) { if (e.target === modal) cerrar(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !modal.classList.contains("hidden")) cerrar();
+        });
+      })();
+    </script>
+</body>
+</html>

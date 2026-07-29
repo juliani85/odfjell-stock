@@ -1,0 +1,34 @@
+{
+  "barcos": [
+    {
+      "nombre": "BOW FORTUNE",
+      "imo": "9168635"
+    },
+    {
+      "nombre": "BOW FIRDA",
+      "imo": "9250751"
+    },
+    {
+      "nombre": "BOW ENGINEER",
+      "imo": "9317860"
+    },
+    {
+      "nombre": "BOW HARMONY",
+      "imo": "9379909"
+    },
+    {
+      "nombre": "BOW CARDINAL",
+      "imo": "9114244"
+    },
+    {
+      "nombre": "BOW PERSISTENT",
+      "imo": "9866782"
+    }
+  ],
+  "notificaciones": {
+    "mailsArribo": [
+      "juiglesias@afip.gob.ar",
+      "cromano@afip.gob.ar"
+    ]
+  }
+}

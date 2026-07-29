@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T15:11:03.800557Z",
+  "actualizado": "2026-07-29T15:20:43.721311Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -43,18 +43,19 @@
       "nombre": "BOW ENGINEER",
       "ultimo_fetch": "2026-07-29T13:01:00.331399Z"
     },
-    "9739305": {
-      "estado": "en_puerto",
-      "puerto_actual": "Rio de Janeiro, Brazil",
-      "arribo": "2026-07-26T20:48:00Z",
-      "calado_m": 8.0,
-      "nav_status": "Moored",
+    "9989223": {
+      "estado": "en_route",
+      "destino": "Itaqui, Brazil",
+      "velocidad_nudos": 12.6,
+      "eta": "2026-08-05T12:00:00Z",
+      "calado_m": 8.6,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
-      "imo": "9739305",
-      "nombre": "STOLT COBALT",
-      "ultimo_fetch": "2026-07-29T15:08:52.024189Z"
+      "imo": "9989223",
+      "nombre": "BOW TIGER",
+      "ultimo_fetch": "2026-07-29T15:20:43.721311Z"
     }
   }
 }

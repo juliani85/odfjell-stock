@@ -1,0 +1,605 @@
+"""Scrapea posicion/ETA/velocidad de los barcos en barcos.json y escribe
+tracking.json en la raiz del frontend. Lo dispara el Cron Trigger del
+Cloudflare Worker (y la app al agregar un barco), via workflow_dispatch.
+
+Uso local:
+    python scripts/track_vessels.py
+
+Salida:
+    tracking.json con estructura:
+    {
+        "actualizado": "2026-05-08T15:00:00Z",
+        "barcos": {
+            "9367554": {
+                "imo": "9367554",
+                "nombre": "BOW CAROLINE",
+                "posicion": [lat, lon] | null,
+                "destino": "Campana, Argentina" | null,
+                "eta": "2026-05-08T23:00:00Z" | null,
+                "velocidad_nudos": 14.7 | null,
+                "rumbo": 210 | null,
+                "ultimo_puerto": "Santos, Brazil" | null,
+                "ultimo_reporte": "2026-05-07T11:07:00Z" | null,
+                "fuente": "myshiptracking" | "vesselfinder",
+                "error": null | "mensaje",
+                "ultimo_fetch": "2026-05-08T15:00:00Z"  # cuando se consulto por ultima vez
+            }
+        }
+    }
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any
+from urllib.parse import quote
+
+import requests
+
+ROOT = Path(__file__).resolve().parent.parent
+BARCOS_JSON = ROOT / "barcos.json"
+TRACKING_JSON = ROOT / "tracking.json"
+
+UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+HEADERS = {"User-Agent": UA, "Accept-Language": "en-US,en;q=0.9"}
+TIMEOUT = 20
+
+
+def fetch(url: str) -> str | None:
+    try:
+        r = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+        if r.status_code != 200:
+            return None
+        return r.text
+    except Exception:
+        return None
+
+
+def _to_iso(ts: str) -> str | None:
+    """Convierte una variedad de formatos de fecha+hora UTC a ISO 8601."""
+    if not ts:
+        return None
+    ts = ts.strip()
+    formatos = [
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d %H:%M:%S",
+        "%b %d, %H:%M",
+        "%b %d, %Y %H:%M",
+    ]
+    for fmt in formatos:
+        try:
+            d = datetime.strptime(ts, fmt)
+            if d.year == 1900:
+                d = d.replace(year=datetime.now(timezone.utc).year)
+            return d.replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+        except ValueError:
+            continue
+    return None
+
+
+def parsear_myshiptracking(html: str) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    txt = re.sub(r"\s+", " ", html)
+
+    m = re.search(r"Latitude\s*/\s*Longitude[^<]*<[^>]*>\s*([-\d.]+)\s*/\s*([-\d.]+)", txt)
+    if m:
+        out["posicion"] = [float(m.group(1)), float(m.group(2))]
+
+    m = re.search(r"Destination[^<]*<[^>]*>\s*([A-Z][A-Z0-9 ,/\-]{2,60})", txt)
+    if m:
+        out["destino"] = m.group(1).strip().rstrip("|").strip()
+
+    m = re.search(r"ETA[^<]*<[^>]*>\s*([\d\-: ]{10,19})", txt)
+    if m:
+        out["eta"] = _to_iso(m.group(1))
+
+    m = re.search(r"Speed[^<]*<[^>]*>\s*([\d.]+)\s*Knots", txt)
+    if m:
+        out["velocidad_nudos"] = float(m.group(1))
+
+    m = re.search(r"Course[^<]*<[^>]*>\s*([\d.]+)", txt)
+    if m:
+        out["rumbo"] = float(m.group(1))
+
+    m = re.search(r"Last\s*Port[^<]*<[^>]*>\s*([A-Z][A-Z0-9 ,/\-]{2,60})", txt, re.IGNORECASE)
+    if m:
+        out["ultimo_puerto"] = m.group(1).strip().rstrip("|").strip()
+
+    m = re.search(r"Last\s*Report[^<]*<[^>]*>\s*([\d\-: ]{10,19})", txt, re.IGNORECASE)
+    if m:
+        out["ultimo_reporte"] = _to_iso(m.group(1))
+
+    return out
+
+
+def parsear_vesselfinder(html: str) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+
+    # Frase principal con destino + (velocidad) + ETA. Ejemplos:
+    #   "en route to the port of <strong>Campana, Argentina</strong>,
+    #     sailing at a speed of 9.8 knots
+    #     and expected to arrive there on <strong>May 10, 06:00</strong>."
+    #   Si el barco está fondeado/parado, VesselFinder OMITE el "sailing at a speed of …":
+    #     "en route to the port of <strong>Campana, Argentina</strong> , and
+    #      expected to arrive there on <strong>May 8, 20:00</strong>."
+    #   → por eso la cláusula de velocidad es opcional (era el bug del BOW CAROLINE: fondeado,
+    #     sin línea de velocidad, no matcheaba y quedaba sin estado).
+    #   "the port of" tambien es opcional: cuando el destino NO es un puerto reconocido
+    #   sino un destino AIS crudo (ej "T.CITY ADVARIO66"), VesselFinder escribe
+    #   "en route to <strong>T.CITY ADVARIO66</strong>" sin "the port of" (era el bug
+    #   del BOW CECIL: quedaba sin estado y la UI no mostraba nada).
+    m = re.search(
+        r"en route to (?:the port of\s*)?<strong>([^<]+)</strong>"
+        r"(?:[\s\S]{0,300}?sailing at a speed of\s*([\d.]+)\s*knots)?"
+        r"[\s\S]{0,300}?expected to arrive[\s\S]{0,40}?<strong>([^<]+)</strong>",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if m:
+        out["estado"] = "en_route"
+        out["destino"] = m.group(1).strip()
+        if m.group(2):
+            out["velocidad_nudos"] = float(m.group(2))
+        out["eta"] = _to_iso(m.group(3).strip())
+    else:
+        m = re.search(
+            r"arrived at (?:the port of\s*)?<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
+            html, re.IGNORECASE | re.DOTALL,
+        )
+        if m:
+            out["estado"] = "en_puerto"
+            out["puerto_actual"] = m.group(1).strip()
+            out["arribo"] = _to_iso(m.group(2).strip())
+        else:
+            m = re.search(
+                r"departed from (?:the port of\s*)?<strong>([^<]+)</strong>\s*on\s*([A-Za-z]+\s+\d{1,2},\s+\d{2}:\d{2})",
+                html, re.IGNORECASE | re.DOTALL,
+            )
+            if m:
+                out["estado"] = "navegando"
+                out["ultimo_puerto"] = m.group(1).strip()
+                out["partida"] = _to_iso(m.group(2).strip())
+
+    # Calado actual
+    m = re.search(r"draught</td>\s*<td[^>]*>\s*([\d.]+)\s*m", html, re.IGNORECASE)
+    if m:
+        out["calado_m"] = float(m.group(1))
+
+    # Estado de navegación AIS (ej: "At anchor", "Moored", "Under way using engine").
+    # En VesselFinder el valor va dentro de <span data-title="Moored">Moored</span>.
+    m = re.search(r"Navigation Status</td>[\s\S]{0,200}?data-title=\"([^\"]+)\"", html, re.IGNORECASE)
+    if not m:
+        m = re.search(r"Navigation Status</td>[\s\S]{0,200}?>\s*([A-Za-z][A-Za-z /]+?)\s*</span>", html, re.IGNORECASE)
+    if m:
+        out["nav_status"] = m.group(1).strip()
+
+    # Zona AIS general: "<NAME> is at <ZONA> reported X ago by AIS." (ej: "South America Inland",
+    # "South America East Coast"). Sirve para distinguir "fondeado en el río cerca de Campana"
+    # de "fondeado mar afuera esperando".
+    m = re.search(r"</strong>\s*is\s*at\s+([A-Za-z][A-Za-z ,/()\-]{2,60}?)\s+reported\b", html, re.IGNORECASE)
+    if m:
+        out["zona"] = m.group(1).strip()
+
+    # Heurística de "arribó a Campana" para cuando VesselFinder NO escribe el "arrived at the
+    # port of Campana on DATE" (pasa cuando el barco está amarrado/fondeado en el río: sigue
+    # mostrándolo "en route to Campana" pero con Navigation Status = Moored / At anchor).
+    # Era el bug por el que no llegó la notificación del BOW CARDINAL.
+    if out.get("estado") != "en_puerto":
+        nav = (out.get("nav_status") or "").lower()
+        zona = (out.get("zona") or "").lower()
+        dest = (out.get("destino") or "").lower()
+        parado = any(s in nav for s in ("moored", "at anchor", "aground"))
+        cerca_campana = ("campana" in zona) or ("inland" in zona and "campana" in dest)
+        if parado and cerca_campana:
+            out["estado"] = "en_puerto"
+            out["puerto_actual"] = out.get("destino") or "Campana, Argentina"
+            # La hora de arribo NO sale de la ETA: la fija main() = el momento en que
+            # detectamos al barco amarrado/fondeado (transición a este estado).
+
+    # Tipo / flag (descripción del header)
+    m = re.search(
+        r"is a\s*([A-Za-z/ ]+?)\s*built in\s*\d{4}.{0,80}flag of\s*<strong>([^<]+)</strong>",
+        html,
+    )
+    if m:
+        out["tipo"] = m.group(1).strip()
+        out["bandera"] = m.group(2).strip()
+
+    return out
+
+
+def fetch_imo(imo: str) -> dict[str, Any]:
+    """Intenta varias fuentes en orden y retorna lo que pudo extraer."""
+    fuentes = [
+        ("myshiptracking", f"https://www.myshiptracking.com/vessels/imo-{imo}", parsear_myshiptracking),
+        ("vesselfinder", f"https://www.vesselfinder.com/vessels/details/{imo}", parsear_vesselfinder),
+    ]
+    last_err = None
+    for nombre, url, parser in fuentes:
+        html = fetch(url)
+        if not html:
+            last_err = f"sin respuesta de {nombre}"
+            continue
+        datos = parser(html)
+        if datos:
+            datos["fuente"] = nombre
+            datos["error"] = None
+            return datos
+        last_err = f"{nombre} sin datos parseables"
+    return {"fuente": None, "error": last_err or "fuentes agotadas"}
+
+
+def buscar_imo_por_nombre(nombre: str) -> str | None:
+    """Busca en VesselFinder el IMO correspondiente al nombre. Si hay
+    varios resultados, prioriza los que tengan destino que contenga
+    "Campana" o "Argentina"."""
+    if not nombre:
+        return None
+    url = f"https://www.vesselfinder.com/vessels?name={quote(nombre)}"
+    html = fetch(url)
+    if not html:
+        return None
+
+    # Cada fila de resultado tiene un link a /vessels/details/IMO y
+    # las columnas de la fila incluyen Destination/ETA. Extraemos por
+    # filas <tr> y dentro cada IMO + texto de la fila para priorizar.
+    candidatos: list[tuple[str, str]] = []
+    for fila in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.DOTALL):
+        m = re.search(r"/vessels/details/(\d{7})", fila)
+        if not m:
+            continue
+        # Validar que el nombre del barco coincida con el buscado.
+        # El nombre suele aparecer como <a ...>NOMBRE</a> dentro de la
+        # primera celda. Permitimos coincidencia case-insensitive y
+        # match parcial al inicio para tolerar sufijos tipo "(IMO ...)".
+        m_nom = re.search(r">\s*([A-Z][A-Z0-9 \-/.]{2,40})\s*<", fila)
+        nombre_fila = m_nom.group(1).strip() if m_nom else ""
+        if nombre_fila and nombre_fila.upper() != nombre.strip().upper():
+            # tolerar variaciones leves (espacios o guiones)
+            if nombre.strip().upper() not in nombre_fila.upper():
+                continue
+        candidatos.append((m.group(1), fila))
+
+    if not candidatos:
+        # Sin fila que matchee el nombre. NO usar un fallback ciego (agarrar el
+        # primer /vessels/details/NNN del HTML): eso asigna IMOs de barcos
+        # equivocados — fue el caso de BOCHEM BRISBANE, que matcheo 6360231 (un
+        # barco viejo) en vez de su IMO real 9973315. Mejor dejarlo pendiente.
+        return None
+
+    # Priorizar los que mencionen Campana o Argentina en la fila.
+    for imo, fila in candidatos:
+        txt = fila.lower()
+        if "campana" in txt:
+            return imo
+    for imo, fila in candidatos:
+        txt = fila.lower()
+        if "argentina" in txt:
+            return imo
+    return candidatos[0][0]
+
+
+def cargar_tracking_previo() -> dict[str, Any]:
+    """Lee el tracking.json previo (si existe) para comparar contra el nuevo
+    y detectar transiciones de estado."""
+    if not TRACKING_JSON.exists():
+        return {"barcos": {}}
+    try:
+        return json.loads(TRACKING_JSON.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"  No se pudo leer tracking previo: {e}")
+        return {"barcos": {}}
+
+
+def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
+    """Devuelve lista de barcos que arribaron (transición a en_puerto en Campana)
+    desde el tracking previo. Cada item: {imo, nombre, puerto, arribo}."""
+    arribos = []
+    barcos_prev = tracking_previo.get("barcos", {})
+    barcos_nuevos = tracking_nuevo.get("barcos", {})
+    for imo, datos in barcos_nuevos.items():
+        if not isinstance(datos, dict):
+            continue
+        estado_nuevo = (datos.get("estado") or "").lower()
+        if estado_nuevo != "en_puerto":
+            continue
+        puerto = (datos.get("puerto_actual") or "").lower()
+        if "campana" not in puerto:
+            continue  # solo nos interesa Campana
+        prev = barcos_prev.get(imo) or {}
+        estado_prev = (prev.get("estado") or "").lower() if isinstance(prev, dict) else ""
+        # Solo notificamos si es una transición (antes no estaba en puerto en Campana)
+        if estado_prev == "en_puerto" and "campana" in (prev.get("puerto_actual") or "").lower():
+            continue  # ya estaba ahí, no es un arribo nuevo
+        # El barco YA figuraba en el tracking previo pero sin estado conocido
+        # (VesselFinder no respondió o el HTML no se pudo parsear): no sabemos
+        # si venía en puerto. NO es un arribo: un estado vacío no significa
+        # "el barco estaba afuera". Sin esto, cuando VesselFinder se cae un rato
+        # con el barco amarrado y después se recupera, se reenviaba el mail de
+        # arribo (era el doble aviso del BOW FIRDA).
+        if imo in barcos_prev and not estado_prev:
+            continue
+        arribos.append({
+            "imo": imo,
+            "nombre": datos.get("nombre") or imo,
+            "puerto": datos.get("puerto_actual") or "Campana",
+            "arribo": datos.get("arribo") or datos.get("ultimo_reporte"),
+        })
+    return arribos
+
+
+def _fmt_fecha_hora_local(iso: str | None) -> str:
+    """Convierte un ISO (UTC) a 'DD/MM/AAAA HH:MM hs' en hora de Argentina (UTC-3)."""
+    if not iso:
+        return "—"
+    try:
+        dt = datetime.fromisoformat(str(iso).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        loc = dt.astimezone(timezone(timedelta(hours=-3)))
+        return loc.strftime("%d/%m/%Y %H:%M") + " hs"
+    except Exception:
+        return str(iso)
+
+
+def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
+    """Envía un mail por cada arribo detectado a la lista de destinatarios.
+    Usa SMTP de Gmail con App Password (variables de entorno GMAIL_USER y
+    GMAIL_APP_PASSWORD). Devuelve True si se envió todo OK."""
+    if not arribos or not destinatarios:
+        return True
+
+    user = os.environ.get("GMAIL_USER", "").strip()
+    pwd = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    if not user or not pwd:
+        print("  GMAIL_USER / GMAIL_APP_PASSWORD no configurados — no se envía mail.")
+        return False
+
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    ok = True
+    for arr in arribos:
+        nombre = arr["nombre"]
+        puerto = arr["puerto"]
+        arribo = _fmt_fecha_hora_local(arr.get("arribo"))
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"🚢 Arribo a Campana — {nombre}"
+        msg["From"] = f"TAGSA Aduana <{user}>"
+        msg["To"] = ", ".join(destinatarios)
+
+        texto = (
+            f"El buque {nombre} (IMO {arr['imo']}) arribó al puerto.\n\n"
+            f"Puerto: {puerto}\n"
+            f"Fecha y hora de arribo: {arribo}\n\n"
+            f"Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.\n"
+        )
+        html = f"""
+        <html><body style="font-family:Arial,sans-serif;font-size:14px;color:#111">
+        <h2 style="color:#1e3a8a">🚢 Arribo a Campana — {nombre}</h2>
+        <p>El buque <strong>{nombre}</strong> (IMO {arr['imo']}) arribó al puerto.</p>
+        <table style="border-collapse:collapse;margin:1em 0">
+            <tr><td style="padding:4px 12px;color:#6b7280">Puerto</td><td style="padding:4px 12px"><strong>{puerto}</strong></td></tr>
+            <tr><td style="padding:4px 12px;color:#6b7280">Fecha y hora de arribo</td><td style="padding:4px 12px"><strong>{arribo}</strong></td></tr>
+        </table>
+        <p style="color:#6b7280;font-size:12px">Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.</p>
+        </body></html>
+        """
+        msg.attach(MIMEText(texto, "plain", "utf-8"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=20) as smtp:
+                smtp.login(user, pwd)
+                smtp.send_message(msg)
+            print(f"  Mail de arribo enviado: {nombre} → {len(destinatarios)} destinatarios")
+        except Exception as e:
+            print(f"  ERROR enviando mail para {nombre}: {e}")
+            ok = False
+    return ok
+
+
+def _horas_hasta(eta_iso: str | None) -> float | None:
+    """Horas (puede dar negativo) desde ahora hasta una ETA en ISO UTC."""
+    if not eta_iso:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(eta_iso).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return (dt - datetime.now(timezone.utc)).total_seconds() / 3600
+    except Exception:
+        return None
+
+
+def _es_campana(texto: str | None) -> bool:
+    return "campana" in (texto or "").lower()
+
+
+def intervalo_refresco_min(entry: dict[str, Any]) -> int:
+    """Cada cuantos minutos conviene volver a consultar VesselFinder por este
+    barco. Las frecuencias rapidas por ETA solo aplican si el DESTINO es
+    Campana: la ETA de VesselFinder es al destino actual del barco, que puede
+    ser OTRO puerto antes de venir aca — esa ETA no es a Campana.
+    Solo afecta a VesselFinder — nada que ver con Gmail."""
+    estado = (entry.get("estado") or "").lower()
+    if estado == "en_puerto":
+        # En Campana: chequear de a ratos por si zarpa. En otro puerto: todavia
+        # no vino, baja frecuencia (cuando salga hacia aca cambia a en_route).
+        return 120 if _es_campana(entry.get("puerto_actual")) else 240
+    if estado == "en_route":
+        if not _es_campana(entry.get("destino")):
+            return 240  # va a otro puerto: su ETA no es a Campana
+        horas = _horas_hasta(entry.get("eta"))
+        if horas is None:
+            return 120  # viene a Campana pero sin ETA conocida
+        if horas <= 8:
+            return 0    # arribo inminente (o ETA vencida): cada corrida
+        if horas <= 24:
+            return 20
+        if horas <= 72:
+            return 60
+        return 240      # a Campana pero faltan mas de 3 dias
+    if estado == "navegando":
+        return 240      # zarpo de un puerto, sin rumbo confirmado a Campana
+    return 120          # sin datos / estado desconocido: frecuencia media
+
+
+def main() -> int:
+    config = json.loads(BARCOS_JSON.read_text(encoding="utf-8"))
+    barcos = config.get("barcos", [])
+    print(f"Trackeando {len(barcos)} barcos...")
+
+    # Cargar tracking previo para detectar transiciones
+    tracking_previo = cargar_tracking_previo()
+
+    # Mapa nombre->IMO del tracking previo. La busqueda por nombre en VesselFinder
+    # (endpoint /vessels?name=) es la request que mas se parece a scraping; el
+    # detalle por IMO (/vessels/details/IMO) es una vista de pagina normal. Por eso
+    # solo se busca por nombre UNA vez por barco: si ya se resolvio el IMO en una
+    # corrida anterior, se reusa y no se toca el buscador.
+    imo_conocido: dict[str, str] = {}
+    for v in (tracking_previo.get("barcos") or {}).values():
+        if isinstance(v, dict) and v.get("imo") and v.get("nombre"):
+            imo_conocido[str(v["nombre"]).strip().upper()] = str(v["imo"]).strip()
+
+    config_modificado = False
+    # Resolver IMOs faltantes: primero del tracking previo; solo si el barco
+    # nunca se vio antes se busca por nombre en VesselFinder.
+    for b in barcos:
+        if str(b.get("imo") or "").strip():
+            continue
+        nombre = b.get("nombre", "").strip()
+        if not nombre:
+            continue
+        prev_imo = imo_conocido.get(nombre.upper())
+        if prev_imo:
+            b["imo"] = prev_imo
+            config_modificado = True
+            print(f"  IMO de '{nombre}' reusado del tracking previo: {prev_imo}")
+            continue
+        print(f"  Buscando IMO de '{nombre}'...", end=" ", flush=True)
+        imo = buscar_imo_por_nombre(nombre)
+        if imo:
+            b["imo"] = imo
+            config_modificado = True
+            print(f"encontrado: {imo}")
+        else:
+            print("no encontrado (queda pendiente)")
+
+    if config_modificado:
+        BARCOS_JSON.write_text(
+            json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"  barcos.json actualizado con IMOs resueltos.")
+
+    salida: dict[str, Any] = {
+        "actualizado": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "barcos": {},
+    }
+    for b in barcos:
+        imo = str(b.get("imo") or "").strip()
+        if not imo:
+            # entrada que aún no resolvió IMO; la representamos en tracking
+            # con error para que la UI sepa el estado
+            salida["barcos"][b.get("nombre", "?")] = {
+                "imo": None, "nombre": b.get("nombre", ""),
+                "fuente": None, "error": "IMO no resuelto",
+            }
+            continue
+        nombre = b.get("nombre", "")
+        prev = (tracking_previo.get("barcos") or {}).get(imo)
+        # Polling adaptativo: si el barco esta lejos de arribar, no se vuelve a
+        # consultar VesselFinder en cada corrida — se reusa el dato previo hasta
+        # que pase su intervalo de refresco (ver intervalo_refresco_min).
+        if isinstance(prev, dict):
+            intervalo = intervalo_refresco_min(prev)
+            ult = prev.get("ultimo_fetch")
+            edad_min = None
+            if ult:
+                try:
+                    dt_ult = datetime.fromisoformat(str(ult).replace("Z", "+00:00"))
+                    if dt_ult.tzinfo is None:
+                        dt_ult = dt_ult.replace(tzinfo=timezone.utc)
+                    edad_min = (datetime.now(timezone.utc) - dt_ult).total_seconds() / 60
+                except Exception:
+                    edad_min = None
+            if intervalo > 0 and edad_min is not None and edad_min < intervalo:
+                reusado = dict(prev)
+                reusado["imo"] = imo
+                reusado["nombre"] = nombre
+                salida["barcos"][imo] = reusado
+                print(f"  {nombre} (IMO {imo})... reusado "
+                      f"(dato de hace {edad_min:.0f} min, refresca a los {intervalo})")
+                continue
+        print(f"  {nombre} (IMO {imo})...", end=" ", flush=True)
+        datos = fetch_imo(imo)
+        # Si el fetch falló y no trajo estado, NO pisar el último dato bueno con
+        # un estado vacío: se conserva el último estado conocido (igual que el
+        # polling adaptativo cuando "reusa"). Perder el estado hacía que la
+        # corrida siguiente lo contara como arribo nuevo y reenviara el mail.
+        if not datos.get("estado") and isinstance(prev, dict) and prev.get("estado"):
+            conservado = dict(prev)
+            conservado["imo"] = imo
+            conservado["nombre"] = nombre
+            salida["barcos"][imo] = conservado
+            print(f"sin respuesta — se conserva el último estado conocido "
+                  f"({prev.get('estado')}, dato de {prev.get('ultimo_fetch')})")
+            continue
+        datos["imo"] = imo
+        datos["nombre"] = nombre
+        datos["ultimo_fetch"] = salida["actualizado"]
+        salida["barcos"][imo] = datos
+
+        # Hora de arribo a Campana = el momento en que detectamos al barco en puerto/amarrado.
+        # Si VesselFinder reportó una hora real de arribo, la dejamos. Si ya lo veníamos viendo
+        # en puerto en la corrida anterior, arrastramos esa hora (no la pisamos cada 10 min).
+        est = (datos.get("estado") or "").lower()
+        pa = (datos.get("puerto_actual") or "").lower()
+        if est == "en_puerto" and "campana" in pa:
+            prev = (tracking_previo.get("barcos") or {}).get(imo) or {}
+            prev_ok = isinstance(prev, dict) and (prev.get("estado") or "").lower() == "en_puerto" \
+                and "campana" in (prev.get("puerto_actual") or "").lower()
+            if not datos.get("arribo"):
+                datos["arribo"] = prev.get("arribo") if (prev_ok and prev.get("arribo")) else salida["actualizado"]
+
+        if datos.get("eta"):
+            print(f"ok ({datos['fuente']}, ETA {datos['eta']})")
+        elif datos.get("estado"):
+            print(f"ok ({datos['fuente']}, estado {datos['estado']})")
+        elif datos.get("error"):
+            print(f"sin datos: {datos['error']}")
+        else:
+            print(f"sin estado ({datos.get('fuente')}) — no se pudo parsear el viaje")
+
+    TRACKING_JSON.write_text(
+        json.dumps(salida, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    print(f"Escrito {TRACKING_JSON}")
+
+    # Detectar arribos y enviar mails
+    arribos = detectar_arribos(tracking_previo, salida)
+    if arribos:
+        nombres = ", ".join(a["nombre"] for a in arribos)
+        print(f"Arribos detectados: {nombres}")
+        destinatarios = (config.get("notificaciones") or {}).get("mailsArribo") or []
+        if destinatarios:
+            enviar_mail_arribos(arribos, destinatarios)
+        else:
+            print("  Sin destinatarios configurados (notificaciones.mailsArribo en barcos.json).")
+    else:
+        print("Sin arribos nuevos.")
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

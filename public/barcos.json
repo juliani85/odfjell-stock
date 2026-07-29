@@ -1,0 +1,30 @@
+{
+  "barcos": [
+    {
+      "nombre": "BOW CECIL",
+      "imo": "9143219"
+    },
+    {
+      "nombre": "BOW FORTUNE",
+      "imo": "9168635"
+    },
+    {
+      "nombre": "BOW FIRDA",
+      "imo": "9250751"
+    },
+    {
+      "nombre": "GOLDENGATE PARK",
+      "imo": "9493145"
+    },
+    {
+      "nombre": "BOW ENGINEER",
+      "imo": "9317860"
+    }
+  ],
+  "notificaciones": {
+    "mailsArribo": [
+      "juiglesias@afip.gob.ar",
+      "cromano@afip.gob.ar"
+    ]
+  }
+}

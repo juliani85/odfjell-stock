@@ -1,0 +1,41 @@
+name: Reporte para Supervisores
+
+on:
+  workflow_dispatch:
+    inputs:
+      destinatarios:
+        description: "Mails destinatarios (separados por coma)"
+        required: true
+        type: string
+      fecha:
+        description: "Fecha del reporte en formato YYYY-MM-DD (vacío = hoy)"
+        required: false
+        type: string
+      agentes:
+        description: "Agentes girados (JSON: [{rol,nombre,hab}])"
+        required: false
+        type: string
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Enviar reporte
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          REP_AGENTES: ${{ github.event.inputs.agentes }}
+        run: |
+          if [ -n "${{ github.event.inputs.fecha }}" ]; then
+            python scripts/reporte_supervisor.py --destinatarios "${{ github.event.inputs.destinatarios }}" --fecha "${{ github.event.inputs.fecha }}"
+          else
+            python scripts/reporte_supervisor.py --destinatarios "${{ github.event.inputs.destinatarios }}"
+          fi

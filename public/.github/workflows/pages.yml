@@ -1,0 +1,35 @@
+name: Deploy GitHub Pages
+
+# Publica el sitio. NO se rebuildea cuando el cambio toca solo archivos .json
+# (datos/vistas/plan/sbfa/barcos/tracking) — esos se leen por el proxy de Cloudflare,
+# no desde el sitio de Pages, así que un cambio de datos no necesita re-deploy.
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - '**.json'
+  workflow_dispatch:   # deploy manual cuando haga falta
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - id: deployment
+        uses: actions/deploy-pages@v4

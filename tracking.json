@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T15:42:57.490905Z",
+  "actualizado": "2026-07-29T15:47:32.167685Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -55,6 +55,19 @@
       "imo": "9379909",
       "nombre": "BOW HARMONY",
       "ultimo_fetch": "2026-07-29T15:42:57.490905Z"
+    },
+    "9214317": {
+      "estado": "en_puerto",
+      "puerto_actual": "Antwerpen, Belgium",
+      "arribo": "2026-07-25T12:07:00Z",
+      "calado_m": 8.2,
+      "nav_status": "Moored",
+      "zona": "North Sea",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9214317",
+      "nombre": "BOW CHAIN",
+      "ultimo_fetch": "2026-07-29T15:47:32.167685Z"
     }
   }
 }

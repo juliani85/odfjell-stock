@@ -14,7 +14,11 @@
     },
     {
       "nombre": "BOW HARMONY",
-      "imo": "9379909"
+      "imo": null
+    },
+    {
+      "nombre": "BOW CHAIN",
+      "imo": null
     }
   ],
   "notificaciones": {

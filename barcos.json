@@ -14,11 +14,15 @@
     },
     {
       "nombre": "BOW HARMONY",
-      "imo": "9379909"
+      "imo": null
     },
     {
       "nombre": "BOW CARDINAL",
-      "imo": "9114244"
+      "imo": null
+    },
+    {
+      "nombre": "BOW PERSISTENT",
+      "imo": null
     }
   ],
   "notificaciones": {

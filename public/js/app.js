@@ -5854,8 +5854,10 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         document.getElementById("sbfaDapTotalDifPct").textContent = totDapRes > 0 && totDoc > 0 ? sbfaFmtPct((totDapRes - totDoc) / totDoc * 100) : "—";
 
         // EXPORTACIONES — misma lógica que DAP
+        const expoTableExpo = document.querySelector("#sbfaTablaExpo tbody");
+        if (expoTableExpo) {
         let totExpoDoc = 0, totExpoRes = 0;
-        document.querySelectorAll("#sbfaTablaExpo tbody tr").forEach(tr => {
+        expoTableExpo.querySelectorAll("tr").forEach(tr => {
             const doc = sbfaParseKg(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
             const res = sbfaParseKg(tr.querySelector('[data-k="cantResult"]').value) || 0;
             totExpoDoc += doc;
@@ -5889,6 +5891,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         document.getElementById("sbfaExpoTotalRes").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes) : "—";
         document.getElementById("sbfaExpoTotalDif").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes - totExpoDoc) : "—";
         document.getElementById("sbfaExpoTotalDifPct").textContent = totExpoRes > 0 && totExpoDoc > 0 ? sbfaFmtPct((totExpoRes - totExpoDoc) / totExpoDoc * 100) : "—";
+        }
     }
 
     function renderSbfaTablaDap(items) {

@@ -1837,9 +1837,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 799212,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "379D",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 797369
         },
         {
           "solPart": "",
@@ -1848,9 +1848,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 699436,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "378S",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 699255
         },
         {
           "solPart": "",
@@ -1859,9 +1859,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 899873,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "377R",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 895466
         },
         {
           "solPart": "",
@@ -1870,9 +1870,9 @@
           "receptor": "DIRANSA",
           "kgDeclarados": 112000,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "432J",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 111550
         },
         {
           "solPart": "",
@@ -1881,9 +1881,9 @@
           "receptor": "DALGAR",
           "kgDeclarados": 26000,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "433K",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 25895
         },
         {
           "solPart": "",
@@ -1892,14 +1892,16 @@
           "receptor": "DALGAR",
           "kgDeclarados": 176556,
           "tkDestino": "",
-          "sbfa": "",
+          "sbfa": "434L",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 175847
         }
       ],
       "dap": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T15:50:06.430Z"
+      "actualizadoTs": "2026-07-29T15:51:46.277Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T15:51:46.277Z"
     }
   ]
 }

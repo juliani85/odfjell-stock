@@ -1,0 +1,4 @@
+# GitHub Pages config
+include:
+  - .github
+  - .nojekyll

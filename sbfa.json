@@ -1080,13 +1080,25 @@
       "buque": "BOW ENGINEER",
       "manifiesto": "",
       "agencia": "B&M",
-      "cuit": "",
-      "fecha": "2026-07-16",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-07-30",
       "notaNumero": "",
-      "filas": [],
+      "filas": [
+        {
+          "solPart": "1513",
+          "cto": "0701",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 880325,
+          "tkDestino": "80-85",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
       "dap": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-08T11:55:46.752Z"
+      "actualizadoTs": "2026-07-29T11:03:42.394Z"
     },
     {
       "id": 1783511771220,

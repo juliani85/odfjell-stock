@@ -1940,6 +1940,26 @@
       "actualizadoTs": "2026-07-29T15:56:33.355Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T15:56:33.355Z"
+    },
+    {
+      "id": 1785341013351,
+      "buque": "BOW PERSISTENT",
+      "manifiesto": "305R",
+      "agencia": "B&M",
+      "cuit": "30716313146",
+      "fecha": "2026-01-08",
+      "notaNumero": "",
+      "filas": [],
+      "dap": [
+        {
+          "documento": "26008EC0111398Z",
+          "cto": "TRANSCLOR",
+          "cantDoctada": 3000000,
+          "cantResult": null
+        }
+      ],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T16:03:33.351Z"
     }
   ]
 }

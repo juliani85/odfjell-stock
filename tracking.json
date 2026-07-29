@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T15:53:24.219773Z",
+  "actualizado": "2026-07-29T15:57:11.359537Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -64,6 +64,19 @@
       "imo": "9739317",
       "nombre": "MAGNESIUM",
       "ultimo_fetch": "2026-07-29T15:53:24.219773Z"
+    },
+    "9114244": {
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "velocidad_nudos": 12.7,
+      "eta": "2026-08-07T20:00:00Z",
+      "calado_m": 10.3,
+      "zona": "Caribbean Sea",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9114244",
+      "nombre": "BOW CARDINAL",
+      "ultimo_fetch": "2026-07-29T15:57:11.359537Z"
     }
   }
 }

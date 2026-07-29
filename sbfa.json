@@ -1741,7 +1741,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 1100000
         },
         {
           "solPart": "",
@@ -1752,7 +1752,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 106719
         },
         {
           "solPart": "",
@@ -1763,7 +1763,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 403279
         },
         {
           "solPart": "",
@@ -1774,7 +1774,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 501363
         },
         {
           "solPart": "",
@@ -1785,7 +1785,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 500000
         },
         {
           "solPart": "",
@@ -1796,7 +1796,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 500000
         },
         {
           "solPart": "",
@@ -1807,7 +1807,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 599097
         }
       ],
       "dap": [
@@ -1818,8 +1818,11 @@
           "cantResult": 2483848
         }
       ],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T15:46:59.058Z"
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-29T17:46:58.033Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T17:46:58.033Z"
     },
     {
       "id": 1785340206429,

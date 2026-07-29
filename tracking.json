@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T16:11:02.728328Z",
+  "actualizado": "2026-07-29T16:21:01.267928Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -81,19 +81,6 @@
       "imo": "9866782",
       "nombre": "BOW PERSISTENT",
       "ultimo_fetch": "2026-07-29T16:02:07.273481Z"
-    },
-    "9739305": {
-      "estado": "en_puerto",
-      "puerto_actual": "Rio de Janeiro, Brazil",
-      "arribo": "2026-07-26T20:48:00Z",
-      "calado_m": 8.0,
-      "nav_status": "Moored",
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9739305",
-      "nombre": "STOLT COBALT",
-      "ultimo_fetch": "2026-07-29T16:07:24.786196Z"
     }
   }
 }

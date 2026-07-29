@@ -1218,6 +1218,88 @@
       "dap": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-07-17T13:37:20.868Z"
+    },
+    {
+      "id": 1785338277932,
+      "buque": "STOLT COBALT",
+      "manifiesto": "10510Z",
+      "agencia": "WAVE",
+      "cuit": "30654214715",
+      "fecha": "2026-04-30",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "011",
+          "mercaderia": "ACIDO ACETICO",
+          "receptor": "ATANOR",
+          "kgDeclarados": 306016,
+          "tkDestino": "",
+          "sbfa": "717P",
+          "medic": "",
+          "kgResultantes": 303287
+        },
+        {
+          "solPart": "",
+          "cto": "015A",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 152864,
+          "tkDestino": "",
+          "sbfa": "718Z",
+          "medic": "",
+          "kgResultantes": 152498
+        },
+        {
+          "solPart": "",
+          "cto": "015B",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 101909,
+          "tkDestino": "",
+          "sbfa": "719R",
+          "medic": "",
+          "kgResultantes": 101665
+        },
+        {
+          "solPart": "",
+          "cto": "015C",
+          "mercaderia": "ETHYL ACETATE",
+          "receptor": "HENRY HIRSCHEN",
+          "kgDeclarados": 101909,
+          "tkDestino": "",
+          "sbfa": "720J",
+          "medic": "",
+          "kgResultantes": 101665
+        },
+        {
+          "solPart": "",
+          "cto": "020",
+          "mercaderia": "VYNIL ACETATE",
+          "receptor": "INMOBAL NUTER",
+          "kgDeclarados": 149997,
+          "tkDestino": "",
+          "sbfa": "721K",
+          "medic": "",
+          "kgResultantes": 150020
+        },
+        {
+          "solPart": "",
+          "cto": "035",
+          "mercaderia": "N-PROPYL ACETATE",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 509875,
+          "tkDestino": "",
+          "sbfa": "722",
+          "medic": "",
+          "kgResultantes": 507872
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T15:17:57.933Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T15:17:57.933Z"
     }
   ]
 }

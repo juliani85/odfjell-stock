@@ -1677,6 +1677,51 @@
       "dap": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-07-29T15:38:11.148Z"
+    },
+    {
+      "id": 1785339726015,
+      "buque": "STOLT BISMUTH",
+      "manifiesto": "6275G",
+      "agencia": "WAVE",
+      "cuit": "30654214715",
+      "fecha": "2026-03-17",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "840",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": 1500414,
+          "tkDestino": "",
+          "sbfa": "571N",
+          "medic": "",
+          "kgResultantes": 1500414
+        },
+        {
+          "solPart": "",
+          "cto": "736",
+          "mercaderia": "ACETIC ACID",
+          "receptor": "ATANOR",
+          "kgDeclarados": 662993,
+          "tkDestino": "",
+          "sbfa": "572Y",
+          "medic": "",
+          "kgResultantes": 662300
+        }
+      ],
+      "dap": [
+        {
+          "documento": "",
+          "cto": "752 - N PROPANOL",
+          "cantDoctada": 611819,
+          "cantResult": 611819
+        }
+      ],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T15:42:06.016Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T15:42:06.016Z"
     }
   ]
 }

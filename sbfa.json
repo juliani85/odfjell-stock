@@ -1950,16 +1950,17 @@
       "fecha": "2026-01-08",
       "notaNumero": "",
       "filas": [],
-      "dap": [
+      "dap": [],
+      "exportaciones": [
         {
           "documento": "26008EC0111398Z",
-          "cto": "TRANSCLOR",
+          "producto": "TRANSCLOR",
           "cantDoctada": 3000000,
-          "cantResult": null
+          "cantResult": 3000000
         }
       ],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T16:03:33.351Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-07-29T17:44:44.981Z"
     },
     {
       "id": 1785341174009,

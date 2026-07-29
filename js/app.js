@@ -5573,6 +5573,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             if (notaInputE) notaInputE.value = d.notaNumero || "";
             renderSbfaTablaFilas(d.filas || []);
             renderSbfaTablaDap(d.dap || []);
+            renderSbfaTablaExpo(d.exportaciones || []);
             eliminarBtn.style.display = "";
         } else {
             sbfaEditandoId = null;
@@ -5587,6 +5588,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             // 6 filas por default para ir cargando particulares antes del arribo
             renderSbfaTablaFilas([{}, {}, {}, {}, {}, {}]);
             renderSbfaTablaDap([{}]);
+            renderSbfaTablaExpo([{}]);
             eliminarBtn.style.display = "";
         }
 
@@ -5623,6 +5625,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 document.getElementById("sbfaFecha").value = borrador.fecha || "";
                 renderSbfaTablaFilas(borrador.filas?.length ? borrador.filas : [{}, {}, {}, {}, {}, {}]);
                 renderSbfaTablaDap(borrador.dap?.length ? borrador.dap : [{}]);
+                renderSbfaTablaExpo(borrador.exportaciones?.length ? borrador.exportaciones : [{}]);
             } else {
                 sbfaLimpiarBorrador(sbfaEditandoId);
             }
@@ -5849,6 +5852,43 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         document.getElementById("sbfaDapTotalRes").textContent = totDapRes > 0 ? sbfaFmt(totDapRes) : "—";
         document.getElementById("sbfaDapTotalDif").textContent = totDapRes > 0 ? sbfaFmt(totDapRes - totDoc) : "—";
         document.getElementById("sbfaDapTotalDifPct").textContent = totDapRes > 0 && totDoc > 0 ? sbfaFmtPct((totDapRes - totDoc) / totDoc * 100) : "—";
+
+        // EXPORTACIONES — misma lógica que DAP
+        let totExpoDoc = 0, totExpoRes = 0;
+        document.querySelectorAll("#sbfaTablaExpo tbody tr").forEach(tr => {
+            const doc = sbfaParseKg(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
+            const res = sbfaParseKg(tr.querySelector('[data-k="cantResult"]').value) || 0;
+            totExpoDoc += doc;
+            totExpoRes += res;
+            const tdKg = tr.querySelector("[data-difkg]");
+            const tdPct = tr.querySelector("[data-difpct]");
+            if (doc > 0 && res > 0) {
+                const { dif, pct } = sbfaCalcDif(doc, res);
+                tdKg.textContent = sbfaFmt(dif);
+                tdPct.textContent = sbfaFmtPct(pct);
+                const fuera = sbfaFueraTol(pct);
+                tdKg.classList.toggle("fuera-tol", fuera);
+                tdPct.classList.toggle("fuera-tol", fuera);
+                tdKg.classList.remove("pendiente-tol");
+                tdPct.classList.remove("pendiente-tol");
+            } else if (doc > 0 || res > 0) {
+                tdKg.textContent = "—";
+                tdPct.textContent = "pendiente";
+                tdKg.classList.remove("fuera-tol");
+                tdPct.classList.remove("fuera-tol");
+                tdKg.classList.add("pendiente-tol");
+                tdPct.classList.add("pendiente-tol");
+            } else {
+                tdKg.textContent = "";
+                tdPct.textContent = "";
+                tdKg.classList.remove("fuera-tol", "pendiente-tol");
+                tdPct.classList.remove("fuera-tol", "pendiente-tol");
+            }
+        });
+        document.getElementById("sbfaExpoTotalDoc").textContent = sbfaFmt(totExpoDoc);
+        document.getElementById("sbfaExpoTotalRes").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes) : "—";
+        document.getElementById("sbfaExpoTotalDif").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes - totExpoDoc) : "—";
+        document.getElementById("sbfaExpoTotalDifPct").textContent = totExpoRes > 0 && totExpoDoc > 0 ? sbfaFmtPct((totExpoRes - totExpoDoc) / totExpoDoc * 100) : "—";
     }
 
     function renderSbfaTablaDap(items) {
@@ -5906,6 +5946,62 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         });
     }
 
+    // --- EXPORTACIONES ---
+    function renderSbfaTablaExpo(items) {
+        const tbody = document.querySelector("#sbfaTablaExpo tbody");
+        tbody.innerHTML = items.map((d, i) => sbfaExpoHTML(d, i)).join("");
+        sbfaBindExpoEvents();
+        sbfaRecalcularTotales();
+    }
+
+    function sbfaExpoHTML(d, i) {
+        return `<tr data-i="${i}">
+            <td class="expo-doc"><input data-k="documento" value="${d.documento || ""}" placeholder="26008EC..."></td>
+            <td class="expo-producto"><input data-k="producto" value="${d.producto || ""}" placeholder="Ej: BENZOL"></td>
+            <td class="col-num expo-doctada"><input data-k="cantDoctada" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantDoctada)}" placeholder="0" maxlength="9"></td>
+            <td class="col-num expo-result"><input data-k="cantResult" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantResult)}" placeholder="0" maxlength="9"></td>
+            <td class="dif-kg expo-difkg" data-difkg>0</td>
+            <td class="dif-pct expo-difpct" data-difpct>0,00%</td>
+            <td class="col-borrar"><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
+        </tr>`;
+    }
+
+    function sbfaBindExpoEvents() {
+        document.querySelectorAll("#sbfaTablaExpo tbody input").forEach(inp => {
+            if (inp.dataset.kg !== undefined) {
+                inp.addEventListener("keydown", sbfaBloquearDecimales);
+                inp.addEventListener("input", () => {
+                    sbfaFormatearInputKg(inp);
+                    sbfaRecalcularTotales();
+                });
+            } else {
+                inp.addEventListener("input", sbfaRecalcularTotales);
+            }
+        });
+        document.querySelectorAll("#sbfaTablaExpo [data-borrar]").forEach(b => {
+            b.addEventListener("click", () => {
+                const idx = Number(b.dataset.borrar);
+                const items = sbfaLeerExpo();
+                items.splice(idx, 1);
+                renderSbfaTablaExpo(items);
+            });
+        });
+    }
+
+    function sbfaLeerExpo() {
+        return Array.from(document.querySelectorAll("#sbfaTablaExpo tbody tr")).map(tr => {
+            const obj = {};
+            tr.querySelectorAll("input[data-k]").forEach(inp => {
+                if (inp.dataset.kg !== undefined) {
+                    obj[inp.dataset.k] = sbfaParseKg(inp.value);
+                } else {
+                    obj[inp.dataset.k] = inp.value.trim();
+                }
+            });
+            return obj;
+        });
+    }
+
     function sbfaArmarDescarga() {
         return {
             id: sbfaEditandoId || Date.now(),
@@ -5917,6 +6013,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             notaNumero: (document.getElementById("sbfaNotaNumero")?.value || "").trim(),
             filas: sbfaLeerFilas().filter(f => Object.values(f).some(v => v !== "" && v !== null)),
             dap: sbfaLeerDap().filter(d => Object.values(d).some(v => v !== "" && v !== null)),
+            exportaciones: sbfaLeerExpo().filter(e => Object.values(e).some(v => v !== "" && v !== null)),
             actualizadoPor: usuarioActual,
             actualizadoTs: new Date().toISOString(),
         };
@@ -6628,6 +6725,11 @@ ${fueraTol.length ? `
             const items = sbfaLeerDap();
             items.push({});
             renderSbfaTablaDap(items);
+        });
+        document.getElementById("btnSbfaAddExpo").addEventListener("click", () => {
+            const items = sbfaLeerExpo();
+            items.push({});
+            renderSbfaTablaExpo(items);
         });
         document.getElementById("btnSbfaImprimir").addEventListener("click", imprimirInformeSbfa);
         document.getElementById("sbfaFiltro").addEventListener("input", e => renderSbfaLista(e.target.value, "activas"));

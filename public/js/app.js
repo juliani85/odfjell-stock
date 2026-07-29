@@ -5853,13 +5853,42 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         document.getElementById("sbfaDapTotalDif").textContent = totDapRes > 0 ? sbfaFmt(totDapRes - totDoc) : "—";
         document.getElementById("sbfaDapTotalDifPct").textContent = totDapRes > 0 && totDoc > 0 ? sbfaFmtPct((totDapRes - totDoc) / totDoc * 100) : "—";
 
-        // EXPORTACIONES
-        let totExpoKilos = 0;
+        // EXPORTACIONES — misma lógica que DAP
+        let totExpoDoc = 0, totExpoRes = 0;
         document.querySelectorAll("#sbfaTablaExpo tbody tr").forEach(tr => {
-            const kilos = sbfaParseKg(tr.querySelector('[data-k="kilos"]').value) || 0;
-            totExpoKilos += kilos;
+            const doc = sbfaParseKg(tr.querySelector('[data-k="cantDoctada"]').value) || 0;
+            const res = sbfaParseKg(tr.querySelector('[data-k="cantResult"]').value) || 0;
+            totExpoDoc += doc;
+            totExpoRes += res;
+            const tdKg = tr.querySelector("[data-difkg]");
+            const tdPct = tr.querySelector("[data-difpct]");
+            if (doc > 0 && res > 0) {
+                const { dif, pct } = sbfaCalcDif(doc, res);
+                tdKg.textContent = sbfaFmt(dif);
+                tdPct.textContent = sbfaFmtPct(pct);
+                const fuera = sbfaFueraTol(pct);
+                tdKg.classList.toggle("fuera-tol", fuera);
+                tdPct.classList.toggle("fuera-tol", fuera);
+                tdKg.classList.remove("pendiente-tol");
+                tdPct.classList.remove("pendiente-tol");
+            } else if (doc > 0 || res > 0) {
+                tdKg.textContent = "—";
+                tdPct.textContent = "pendiente";
+                tdKg.classList.remove("fuera-tol");
+                tdPct.classList.remove("fuera-tol");
+                tdKg.classList.add("pendiente-tol");
+                tdPct.classList.add("pendiente-tol");
+            } else {
+                tdKg.textContent = "";
+                tdPct.textContent = "";
+                tdKg.classList.remove("fuera-tol", "pendiente-tol");
+                tdPct.classList.remove("fuera-tol", "pendiente-tol");
+            }
         });
-        document.getElementById("sbfaExpoTotalKilos").textContent = totExpoKilos > 0 ? sbfaFmt(totExpoKilos) : "—";
+        document.getElementById("sbfaExpoTotalDoc").textContent = sbfaFmt(totExpoDoc);
+        document.getElementById("sbfaExpoTotalRes").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes) : "—";
+        document.getElementById("sbfaExpoTotalDif").textContent = totExpoRes > 0 ? sbfaFmt(totExpoRes - totExpoDoc) : "—";
+        document.getElementById("sbfaExpoTotalDifPct").textContent = totExpoRes > 0 && totExpoDoc > 0 ? sbfaFmtPct((totExpoRes - totExpoDoc) / totExpoDoc * 100) : "—";
     }
 
     function renderSbfaTablaDap(items) {
@@ -5929,7 +5958,10 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return `<tr data-i="${i}">
             <td class="expo-doc"><input data-k="documento" value="${d.documento || ""}" placeholder="26008EC..."></td>
             <td class="expo-producto"><input data-k="producto" value="${d.producto || ""}" placeholder="Ej: BENZOL"></td>
-            <td class="col-num expo-kilos"><input data-k="kilos" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.kilos)}" placeholder="0" maxlength="9"></td>
+            <td class="col-num expo-doctada"><input data-k="cantDoctada" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantDoctada)}" placeholder="0" maxlength="9"></td>
+            <td class="col-num expo-result"><input data-k="cantResult" data-kg inputmode="numeric" value="${sbfaFmtKgInput(d.cantResult)}" placeholder="0" maxlength="9"></td>
+            <td class="dif-kg expo-difkg" data-difkg>0</td>
+            <td class="dif-pct expo-difpct" data-difpct>0,00%</td>
             <td class="col-borrar"><button class="btn-borrar-fila" data-borrar="${i}" title="Borrar">×</button></td>
         </tr>`;
     }

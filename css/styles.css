@@ -1192,6 +1192,16 @@ tbody tr:hover { background: var(--gray-50); }
 .sbfa-tabla-dap .dap-difpct   { width: 8%; }
 /* Headers del DAP en una sola línea (los anchos en porcentajes ya alcanzan) */
 .sbfa-tabla-dap thead th { white-space: nowrap; line-height: 1.15; }
+
+/* Tabla Exportaciones — mismas columnas que DAP */
+.sbfa-tabla-expo .expo-doc      { width: 30%; }
+.sbfa-tabla-expo .expo-producto { width: 24%; }
+.sbfa-tabla-expo .expo-doctada  { width: 14%; }
+.sbfa-tabla-expo .expo-result   { width: 14%; }
+.sbfa-tabla-expo .expo-difkg    { width: 8%; }
+.sbfa-tabla-expo .expo-difpct   { width: 8%; }
+.sbfa-tabla-expo thead th { white-space: nowrap; line-height: 1.15; }
+
 .sbfa-table .dif-kg, .sbfa-table .dif-pct { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sbfa-table .fuera-tol { background: #fee2e2; color: #b91c1c; font-weight: 700; }
 .sbfa-table .dentro-tol { color: var(--gray-700); }

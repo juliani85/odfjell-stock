@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-29T16:01:06.139484Z",
+  "actualizado": "2026-07-29T16:02:07.273481Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -68,6 +68,19 @@
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
       "ultimo_fetch": "2026-07-29T15:57:11.359537Z"
+    },
+    "9866782": {
+      "estado": "en_route",
+      "destino": "Guayaquil, Ecuador",
+      "velocidad_nudos": 13.6,
+      "eta": "2026-07-31T05:00:00Z",
+      "calado_m": 7.1,
+      "zona": "South America West Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9866782",
+      "nombre": "BOW PERSISTENT",
+      "ultimo_fetch": "2026-07-29T16:02:07.273481Z"
     }
   }
 }

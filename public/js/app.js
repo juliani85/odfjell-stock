@@ -5485,7 +5485,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 <div class="sbfa-card-header">
                     <div>
                         <div class="sbfa-card-titulo">${d.buque || "(sin buque)"} — MANI ${d.manifiesto || "—"}</div>
-                        <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP${d.archivada && d.archivadaTs ? ` · 📦 archivada ${d.archivadaTs.slice(0, 10).split("-").reverse().join("/")}` : ""}</div>
+                        <div class="sbfa-card-meta">${fechaTxt} · ${(d.filas || []).length} sol. particular · ${(d.dap || []).length} DAP</div>
                     </div>
                     ${estado}
                 </div>

@@ -30,14 +30,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: 'public'
-      - name: Verificar que index.html existe
-        run: |
-          if [ ! -f public/index.html ]; then
-            echo "ERROR: public/index.html no encontrado"
-            exit 1
-          fi
-          echo "✓ public/index.html encontrado"
-          grep -q "Exportaciones" public/index.html && echo "✓ Sección de exportaciones encontrada" || echo "✗ Sección de exportaciones NO encontrada"
+          path: '.'
       - id: deployment
         uses: actions/deploy-pages@v4

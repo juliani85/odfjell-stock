@@ -1902,6 +1902,44 @@
       "actualizadoTs": "2026-07-29T15:52:48.301Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T15:51:46.277Z"
+    },
+    {
+      "id": 1785340593355,
+      "buque": "STOLT MAGNESIUM",
+      "manifiesto": "2499K",
+      "agencia": "WAVE",
+      "cuit": "30654214715",
+      "fecha": "2026-02-05",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "",
+          "cto": "715",
+          "mercaderia": "ARCOL POLYOL",
+          "receptor": "ALKANOS",
+          "kgDeclarados": 308387,
+          "tkDestino": "69",
+          "sbfa": "269R",
+          "medic": "23",
+          "kgResultantes": 307670
+        },
+        {
+          "solPart": "",
+          "cto": "731",
+          "mercaderia": "ACETIC ACID",
+          "receptor": "ATANOR",
+          "kgDeclarados": 663023,
+          "tkDestino": "8",
+          "sbfa": "270J",
+          "medic": "22",
+          "kgResultantes": 664717
+        }
+      ],
+      "dap": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-29T15:56:33.355Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-29T15:56:33.355Z"
     }
   ]
 }

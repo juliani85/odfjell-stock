@@ -2045,7 +2045,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 1100000
+          "kgResultantes": 1099150
         },
         {
           "solPart": "",
@@ -2056,7 +2056,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 106719
+          "kgResultantes": 105784
         },
         {
           "solPart": "",
@@ -2067,7 +2067,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 403279
+          "kgResultantes": 393799
         },
         {
           "solPart": "",
@@ -2078,7 +2078,7 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 501363
+          "kgResultantes": 498434
         },
         {
           "solPart": "",
@@ -2089,29 +2089,29 @@
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 500000
+          "kgResultantes": 498434
         },
         {
           "solPart": "",
           "cto": "1401",
-          "mercaderia": "ALKONAT L10",
+          "mercaderia": "ALKONAT L70",
           "receptor": "UNILEVER",
           "kgDeclarados": 500000,
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 500000
+          "kgResultantes": 493627
         },
         {
           "solPart": "",
           "cto": "1402",
-          "mercaderia": "ALKONAT L10",
+          "mercaderia": "ALKONAT L70",
           "receptor": "UNILEVER",
           "kgDeclarados": 599097,
           "tkDestino": "",
           "sbfa": "",
           "medic": "",
-          "kgResultantes": 599097
+          "kgResultantes": 596200
         }
       ],
       "dap": [
@@ -2123,8 +2123,8 @@
         }
       ],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-29T17:46:58.033Z",
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-30T12:41:20.904Z",
       "archivada": true,
       "archivadaTs": "2026-07-29T17:46:58.033Z"
     },

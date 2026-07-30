@@ -1097,11 +1097,221 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1547",
+          "cto": "OTUS2603ENGI0203",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "TOTAL",
+          "kgDeclarados": 270000,
+          "tkDestino": "-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1543",
+          "cto": "OTUS2603ENGI0213-4-5-6-7-26-27-28-29",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 258000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1549",
+          "cto": "OTUS2603ENGI0207-8-9-10-11-30-31",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "QUIMICA TRUE",
+          "kgDeclarados": 514000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1546",
+          "cto": "OTUS2603ENGI0206",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FEBEL",
+          "kgDeclarados": 108000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1540",
+          "cto": "OTUS2603ENGI201-2-4",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FAST CHEMICAL",
+          "kgDeclarados": 945000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1539",
+          "cto": "OTUS2603ENGI0219",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "LAQUIMAR",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1538",
+          "cto": "OTU2603ENGI0221",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "CASSAB ARG.",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1537",
+          "cto": "OTUS2603ENGI0212",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "LARING",
+          "kgDeclarados": 54000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1536",
+          "cto": "OTUS2603ENGI0225",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "INDUNOR",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1545",
+          "cto": "OTUS2603ENGI0218",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "BARDAL",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1544",
+          "cto": "OTUS2603ENGI0205",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "AUTO VENTURES",
+          "kgDeclarados": 108000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1543",
+          "cto": "OTUS2603ENGI0222",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1542",
+          "cto": "OTUS22603ENGI0223",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "DROQUIMAR",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1541",
+          "cto": "OTUS2603ENGI0220",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "FARLOC",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1535",
+          "cto": "OTUS2603ENGI0224",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "POLYKIM",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1534",
+          "cto": "OTUS2603ENGI0232",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 27000,
+          "tkDestino": "36-50-55-12",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1533",
+          "cto": "OTUS2603ENGI0304",
+          "mercaderia": "DIETILENGLICOL",
+          "receptor": "POLIRESINAS SAN LUIS",
+          "kgDeclarados": 189000,
+          "tkDestino": "35",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1532",
+          "cto": "OTUS2603ENGI0301",
+          "mercaderia": "DIETILENGLICOL",
+          "receptor": "PLAQUIMET",
+          "kgDeclarados": 27000,
+          "tkDestino": "35",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1531",
+          "cto": "OTUS2603ENGI0302",
+          "mercaderia": "DIETILENGLICOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 54000,
+          "tkDestino": "35",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-29T11:03:42.394Z"
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-07-30T11:20:14.684Z"
     },
     {
       "id": 1783511771220,

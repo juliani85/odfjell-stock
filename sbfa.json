@@ -1207,20 +1207,107 @@
       "notaNumero": "",
       "filas": [
         {
-          "solPart": "1441",
-          "cto": "OTUS2603NFIR1600",
-          "mercaderia": "BUSCAR INFO EN MANI",
-          "receptor": "NEOPHOS",
-          "kgDeclarados": 100000,
-          "tkDestino": "11",
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "SOLVESSO 100",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 150000,
+          "tkDestino": "33",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "10",
+          "kgResultantes": 150559
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 1080000,
+          "tkDestino": "5-36-50",
+          "sbfa": "",
+          "medic": "11",
+          "kgResultantes": 1086094
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "MILBERG ATANOR",
+          "kgDeclarados": 980000,
+          "tkDestino": "58-54",
+          "sbfa": "",
+          "medic": "12",
+          "kgResultantes": 982979
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "SOLVESSO 150",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 196000,
+          "tkDestino": "19",
+          "sbfa": "",
+          "medic": "13",
+          "kgResultantes": 196561
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "BUTIL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 308000,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "14",
+          "kgResultantes": 308581
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "ACIDO PROPIONICO",
+          "receptor": "PBB",
+          "kgDeclarados": 150000,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "15",
+          "kgResultantes": 149324
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "ACETATO DE VINILO",
+          "receptor": "DALGAR",
+          "kgDeclarados": 155000,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "16",
+          "kgResultantes": 155220
+        },
+        {
+          "solPart": "",
+          "cto": "",
+          "mercaderia": "DIFENIL METANO ISOCIANATO",
+          "receptor": "PBB",
+          "kgDeclarados": 200000,
+          "tkDestino": "75",
+          "sbfa": "",
+          "medic": "17",
+          "kgResultantes": 200725
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000002L",
+          "cto": "PROPANOL",
+          "cantDoctada": 608447,
+          "cantResult": 609715
+        }
+      ],
+      "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-07-29T16:00:59.533Z"
+      "actualizadoTs": "2026-07-30T11:03:06.092Z",
+      "archivada": true,
+      "archivadaTs": "2026-07-30T11:03:06.092Z"
     },
     {
       "id": 1785338277932,

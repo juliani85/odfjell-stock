@@ -1,19 +1,18 @@
 {
-  "actualizado": "2026-07-30T11:50:42.470068Z",
+  "actualizado": "2026-07-30T12:00:39.989770Z",
   "barcos": {
     "9250751": {
-      "estado": "en_route",
-      "destino": "Santos, Brazil",
-      "velocidad_nudos": 12.2,
-      "eta": "2026-07-30T11:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Santos Anch., Brazil",
+      "arribo": "2026-07-30T10:20:00Z",
       "calado_m": 9.5,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-07-30T07:50:43.731321Z"
+      "ultimo_fetch": "2026-07-30T12:00:39.989770Z"
     },
     "9317860": {
       "estado": "en_route",

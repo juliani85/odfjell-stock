@@ -15,7 +15,7 @@
       "ultimo_fetch": "2026-07-31T00:20:43.618018Z"
     },
     "9317860": {
-      "estado": "en_route",
+      "estado": "en_puerto",
       "destino": "Zarate, Argentina",
       "eta": "2026-07-31T05:00:00Z",
       "calado_m": 7.3,
@@ -25,7 +25,11 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-31T02:00:40.438669Z"
+      "ultimo_fetch": "2026-07-31T02:00:40.438669Z",
+      "puerto_actual": "Campana / Paraná (estimado)",
+      "arribo": "2026-07-30T09:40:40Z",
+      "destino_ais": "Zarate, Argentina",
+      "arribo_estimado": true
     }
   }
 }

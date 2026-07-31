@@ -196,10 +196,22 @@ def parsear_vesselfinder(html: str) -> dict[str, Any]:
         zona = (out.get("zona") or "").lower()
         dest = (out.get("destino") or "").lower()
         parado = any(s in nav for s in ("moored", "at anchor", "aground"))
-        cerca_campana = ("campana" in zona) or ("inland" in zona and "campana" in dest)
-        if parado and cerca_campana:
+        # NO se exige que el destino AIS diga "Campana": el capitán suele dejar cargado
+        # el punto de recalada ("RECALADA PS") o la escala siguiente, y entonces el barco
+        # aparece amarrado sin que nada nombre a Campana — fue el caso del BOW ENGINEER
+        # (amarrado el 30/07 06:40 ART con destino AIS "RECALADA PS", sin aviso).
+        # "South America Inland" = ya entró al Paraná / Río de la Plata, y todo barco de
+        # barcos.json es un barco que la terminal espera acá, así que amarrado río adentro
+        # se toma como arribo. Si el destino no confirma Campana, se marca como estimado.
+        en_el_rio = ("campana" in zona) or ("inland" in zona)
+        if parado and en_el_rio:
             out["estado"] = "en_puerto"
-            out["puerto_actual"] = out.get("destino") or "Campana, Argentina"
+            if "campana" in zona or "campana" in dest:
+                out["puerto_actual"] = out.get("destino") or "Campana, Argentina"
+            else:
+                out["puerto_actual"] = "Campana / Paraná (estimado)"
+                out["destino_ais"] = out.get("destino")
+                out["arribo_estimado"] = True
             # La hora de arribo NO sale de la ETA: la fija main() = el momento en que
             # detectamos al barco amarrado/fondeado (transición a este estado).
 
@@ -331,6 +343,9 @@ def detectar_arribos(tracking_previo: dict, tracking_nuevo: dict) -> list[dict]:
             "nombre": datos.get("nombre") or imo,
             "puerto": datos.get("puerto_actual") or "Campana",
             "arribo": datos.get("arribo") or datos.get("ultimo_reporte"),
+            "estimado": bool(datos.get("arribo_estimado")),
+            "destino_ais": datos.get("destino_ais"),
+            "nav_status": datos.get("nav_status"),
         })
     return arribos
 
@@ -371,25 +386,51 @@ def enviar_mail_arribos(arribos: list[dict], destinatarios: list[str]) -> bool:
         nombre = arr["nombre"]
         puerto = arr["puerto"]
         arribo = _fmt_fecha_hora_local(arr.get("arribo"))
+        # Cuando el destino AIS no nombra a Campana, el arribo se dedujo de verlo
+        # amarrado en el Paraná: se avisa igual pero sin afirmar de más.
+        estimado = arr.get("estimado")
+        nav = arr.get("nav_status") or "amarrado"
+        dest_ais = arr.get("destino_ais") or "—"
+        asunto = ("🚢 Posible arribo a Campana" if estimado else "🚢 Arribo a Campana") + f" — {nombre}"
+        encabezado = (
+            f"El buque {nombre} (IMO {arr['imo']}) figura {nav.lower()} en zona Campana / Paraná."
+            if estimado else
+            f"El buque {nombre} (IMO {arr['imo']}) arribó al puerto."
+        )
+        nota = (
+            "El destino declarado por AIS no dice Campana "
+            f"(destino AIS: {dest_ais}), así que el arribo se deduce de la posición "
+            "y del estado de navegación. Verificar en la terminal.\n"
+            if estimado else ""
+        )
         msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"🚢 Arribo a Campana — {nombre}"
+        msg["Subject"] = asunto
         msg["From"] = f"TAGSA Aduana <{user}>"
         msg["To"] = ", ".join(destinatarios)
 
         texto = (
-            f"El buque {nombre} (IMO {arr['imo']}) arribó al puerto.\n\n"
+            f"{encabezado}\n\n"
             f"Puerto: {puerto}\n"
             f"Fecha y hora de arribo: {arribo}\n\n"
+            f"{nota}"
             f"Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.\n"
+        )
+        nota_html = (
+            f'<p style="background:#fef3c7;border-left:3px solid #f59e0b;padding:8px 12px;margin:1em 0">'
+            f"El destino declarado por AIS no dice Campana (destino AIS: <strong>{dest_ais}</strong>), "
+            f"así que el arribo se deduce de la posición y del estado de navegación. "
+            f"Verificar en la terminal.</p>"
+            if estimado else ""
         )
         html = f"""
         <html><body style="font-family:Arial,sans-serif;font-size:14px;color:#111">
-        <h2 style="color:#1e3a8a">🚢 Arribo a Campana — {nombre}</h2>
-        <p>El buque <strong>{nombre}</strong> (IMO {arr['imo']}) arribó al puerto.</p>
+        <h2 style="color:#1e3a8a">{asunto}</h2>
+        <p>{encabezado}</p>
         <table style="border-collapse:collapse;margin:1em 0">
             <tr><td style="padding:4px 12px;color:#6b7280">Puerto</td><td style="padding:4px 12px"><strong>{puerto}</strong></td></tr>
             <tr><td style="padding:4px 12px;color:#6b7280">Fecha y hora de arribo</td><td style="padding:4px 12px"><strong>{arribo}</strong></td></tr>
         </table>
+        {nota_html}
         <p style="color:#6b7280;font-size:12px">Aviso automático del sistema de tracking AIS de Odfjell Terminals Tagsa SA — Campana.</p>
         </body></html>
         """
@@ -436,6 +477,16 @@ def intervalo_refresco_min(entry: dict[str, Any]) -> int:
         # no vino, baja frecuencia (cuando salga hacia aca cambia a en_route).
         return 120 if _es_campana(entry.get("puerto_actual")) else 240
     if estado == "en_route":
+        zona = (entry.get("zona") or "").lower()
+        nav = (entry.get("nav_status") or "").lower()
+        # Ya entro al rio, o esta parado: puede amarrar en cualquier momento y el aviso
+        # de arribo depende de verlo amarrado. Se chequea en cada corrida sin mirar la
+        # ETA ni el destino declarado (con el BOW ENGINEER, el destino "RECALADA PS" lo
+        # dejaba en 240 min y paso 4 h amarrado sin que nadie lo mirara).
+        if "inland" in zona or "campana" in zona or any(
+            s in nav for s in ("moored", "at anchor", "aground")
+        ):
+            return 0
         if not _es_campana(entry.get("destino")):
             return 240  # va a otro puerto: su ETA no es a Campana
         horas = _horas_hasta(entry.get("eta"))
@@ -569,7 +620,20 @@ def main() -> int:
             prev_ok = isinstance(prev, dict) and (prev.get("estado") or "").lower() == "en_puerto" \
                 and "campana" in (prev.get("puerto_actual") or "").lower()
             if not datos.get("arribo"):
-                datos["arribo"] = prev.get("arribo") if (prev_ok and prev.get("arribo")) else salida["actualizado"]
+                if prev_ok and prev.get("arribo"):
+                    datos["arribo"] = prev["arribo"]
+                else:
+                    # Si en la corrida anterior el barco YA figuraba amarrado/fondeado
+                    # (aunque todavía no lo contáramos como arribo), la hora real es la
+                    # de aquel dato y no la de ahora: si no, un corte del cron o una
+                    # demora de VesselFinder falsea la hora de arribo del mail.
+                    prev_nav = (prev.get("nav_status") or "").lower()
+                    prev_parado = any(s in prev_nav for s in ("moored", "at anchor", "aground"))
+                    datos["arribo"] = (
+                        prev.get("ultimo_fetch")
+                        if (prev_parado and prev.get("ultimo_fetch"))
+                        else salida["actualizado"]
+                    )
 
         if datos.get("eta"):
             print(f"ok ({datos['fuente']}, ETA {datos['eta']})")

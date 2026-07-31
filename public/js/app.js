@@ -6029,6 +6029,17 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     async function sbfaSacarBarcoDelSeguimiento(buque) {
         const bU = (buque || "").trim().toUpperCase();
         if (!bU) return false;
+        // Si al buque le quedan descargas activas (otra recalada, o una carga vieja
+        // que recién se está cargando al histórico), sigue en seguimiento: archivar
+        // UNA descarga no significa que el barco ya no venga. Sin esto, cargar el
+        // histórico sacaba de Barcos a buques con descarga futura pendiente — fue el
+        // caso del BOW FORTUNE (descarga del 07/08 activa, salió del seguimiento al
+        // archivar la del 27/03).
+        const quedanActivas = (sbfaConfig.descargas || []).some(d =>
+            !d.anulada && !d.archivada &&
+            (d.buque || "").trim().toUpperCase() === bU
+        );
+        if (quedanActivas) return false;
         const antes = (barcosConfig.barcos || []).length;
         barcosConfig.barcos = (barcosConfig.barcos || []).filter(b => (b.nombre || "").trim().toUpperCase() !== bU);
         if (barcosConfig.barcos.length === antes) return false; // no estaba en seguimiento

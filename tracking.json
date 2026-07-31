@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-31T23:11:05.043942Z",
+  "actualizado": "2026-07-31T23:21:04.520198Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -31,14 +31,14 @@
       "estado": "en_puerto",
       "puerto_actual": "Santos, Brazil",
       "arribo": "2026-07-30T10:43:00Z",
-      "calado_m": 9.7,
+      "calado_m": 9.0,
       "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-07-31T19:20:49.904520Z"
+      "ultimo_fetch": "2026-07-31T23:21:04.520198Z"
     }
   }
 }

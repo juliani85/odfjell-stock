@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-31T14:00:42.077685Z",
+  "actualizado": "2026-07-31T14:10:43.294801Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -17,16 +17,15 @@
     "9317860": {
       "estado": "en_route",
       "destino": "Zarate, Argentina",
-      "velocidad_nudos": 0.1,
       "eta": "2026-07-31T10:00:00Z",
       "calado_m": 7.3,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-07-31T14:00:42.077685Z"
+      "ultimo_fetch": "2026-07-31T14:10:43.294801Z"
     },
     "9168635": {
       "estado": "en_puerto",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-01T19:01:05.330010Z",
+  "actualizado": "2026-08-01T19:11:19.142520Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -15,17 +15,18 @@
       "ultimo_fetch": "2026-08-01T17:01:11.916990Z"
     },
     "9317860": {
-      "estado": "en_puerto",
-      "puerto_actual": "Zarate, Argentina",
-      "arribo": "2026-07-31T13:56:00Z",
-      "calado_m": 7.3,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "velocidad_nudos": 8.2,
+      "eta": "2026-08-04T10:00:00Z",
+      "calado_m": 6.8,
+      "nav_status": "Under way using engine",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-08-01T15:01:10.521484Z"
+      "ultimo_fetch": "2026-08-01T19:11:19.142520Z"
     },
     "9168635": {
       "estado": "en_puerto",

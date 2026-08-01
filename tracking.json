@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-01T19:41:04.937026Z",
+  "actualizado": "2026-08-01T19:51:06.956185Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -17,7 +17,7 @@
     "9317860": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 9.4,
+      "velocidad_nudos": 10.0,
       "eta": "2026-08-04T10:00:00Z",
       "calado_m": 6.8,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9317860",
       "nombre": "BOW ENGINEER",
-      "ultimo_fetch": "2026-08-01T19:41:04.937026Z"
+      "ultimo_fetch": "2026-08-01T19:51:06.956185Z"
     },
     "9168635": {
       "estado": "en_puerto",

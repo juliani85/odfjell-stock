@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-08-04T06:20:23.255710Z",
+  "actualizado": "2026-08-04T06:30:30.566297Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
-      "puerto_actual": "Santos, Brazil",
-      "arribo": "2026-07-31T15:46:00Z",
+      "puerto_actual": "Santos Anch., Brazil",
+      "arribo": "2026-08-04T04:26:00Z",
       "calado_m": 8.7,
       "nav_status": "Under way using engine",
       "zona": "South America East Coast",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-04T02:20:32.585204Z"
+      "ultimo_fetch": "2026-08-04T06:30:30.566297Z"
     },
     "9317860": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-04T02:30:24.570486Z"
+      "ultimo_fetch": "2026-08-04T06:30:30.566297Z"
     }
   }
 }

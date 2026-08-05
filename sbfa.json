@@ -1207,20 +1207,32 @@
       "notaNumero": "",
       "filas": [
         {
-          "solPart": "1441",
-          "cto": "OTUS2603NFIR1600",
-          "mercaderia": "FORMICO",
-          "receptor": "NEOFOS",
-          "kgDeclarados": 100000,
+          "solPart": "1574-1573-1571-1441",
+          "cto": "otus2603bfir1603-1602-1601OTUS2603NFIR1600-",
+          "mercaderia": "acido formico",
+          "receptor": "princz-neophos",
+          "kgDeclarados": 300000,
           "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1572",
+          "cto": "otus2603nfir140",
+          "mercaderia": "2 ethil hexanol",
+          "receptor": "atanor",
+          "kgDeclarados": 1000000,
+          "tkDestino": "58",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
         }
       ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-23T11:20:55.574Z"
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-05T14:08:19.924Z"
     },
     {
       "id": 1784295440868,

@@ -1207,11 +1207,11 @@
       "notaNumero": "",
       "filas": [
         {
-          "solPart": "1574-1573-1571-1441-1557",
-          "cto": "otus2603bfir1603-1602-1601OTUS2603NFIR1600--otus2603bfir1604",
+          "solPart": "1574-1573-1571-1441-1557-1575",
+          "cto": "otus2603bfir1603-1602-1601OTUS2603NFIR1600--otus2603bfir1604-1605",
           "mercaderia": "acido formico",
-          "receptor": "princz-neophos-aba color",
-          "kgDeclarados": 350000,
+          "receptor": "princz-neophos-aba color-la hispano",
+          "kgDeclarados": 419712,
           "tkDestino": "11",
           "sbfa": "",
           "medic": "",
@@ -1231,8 +1231,8 @@
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-05T14:11:36.614Z"
+      "actualizadoPor": "cesar",
+      "actualizadoTs": "2026-08-05T15:46:58.419Z"
     },
     {
       "id": 1784295440868,

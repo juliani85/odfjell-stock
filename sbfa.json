@@ -1160,11 +1160,11 @@
           "kgResultantes": null
         },
         {
-          "solPart": "1511",
-          "cto": "OTUS2603FORU0704",
+          "solPart": "1511-1576",
+          "cto": "OTUS2603FORU0704-OTUS2603FORU0701",
           "mercaderia": "BUTUL CELOSOLVE",
-          "receptor": "PBB",
-          "kgDeclarados": 179040,
+          "receptor": "PBB-Q.CALLEGARI",
+          "kgDeclarados": 278507,
           "tkDestino": "96",
           "sbfa": "",
           "medic": "",
@@ -1194,8 +1194,9 @@
         }
       ],
       "dap": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-07-29T11:01:37.342Z"
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-06T12:09:47.689Z"
     },
     {
       "id": 1783511835516,

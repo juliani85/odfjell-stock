@@ -1191,12 +1191,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1586-1585",
+          "cto": "OTUS2603FORU1302-1301",
+          "mercaderia": "VINYL ACETATE",
+          "receptor": "DALGAR-SURPOLIMEROS",
+          "kgDeclarados": 104871,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1584",
+          "cto": "OTUS22603FORU0101",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 104595,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-06T12:09:47.689Z"
+      "actualizadoTs": "2026-08-07T11:24:59.953Z"
     },
     {
       "id": 1783511835516,

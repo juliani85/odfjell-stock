@@ -1250,12 +1250,45 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1610",
+          "cto": "2901",
+          "mercaderia": "voranol",
+          "receptor": "pbb",
+          "kgDeclarados": 749764,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1611",
+          "cto": "otus2603bfir0501",
+          "mercaderia": "acido propionico",
+          "receptor": "pbb",
+          "kgDeclarados": 150136,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1612",
+          "cto": "otus2603bfir0200",
+          "mercaderia": "papi",
+          "receptor": "pbb",
+          "kgDeclarados": 157665,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-10T14:17:01.171Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-11T10:41:12.094Z"
     },
     {
       "id": 1784295440868,

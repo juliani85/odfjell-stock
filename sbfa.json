@@ -1213,12 +1213,56 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1623",
+          "cto": "OTUS2603FORU1603/05/06",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "AGROFACIL",
+          "kgDeclarados": 159000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1624",
+          "cto": "OTUS2603FORU1604",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "FARMCHEM",
+          "kgDeclarados": 53000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1625",
+          "cto": "OTUS2603FORU1607/08/09/10",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "MILBERG",
+          "kgDeclarados": 106000,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1626",
+          "cto": "OTUS2603FORU1601/02",
+          "mercaderia": "2 ETIL HEXANOL",
+          "receptor": "CHEMOTECNICA",
+          "kgDeclarados": 282500,
+          "tkDestino": "54-63",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-10T14:16:48.479Z"
+      "actualizadoTs": "2026-08-12T14:34:32.137Z"
     },
     {
       "id": 1783511835516,

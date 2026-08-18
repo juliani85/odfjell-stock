@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-18T03:51:07.193634Z",
+  "actualizado": "2026-08-18T04:01:10.104951Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -16,17 +16,18 @@
       "ultimo_fetch": "2026-08-18T02:51:08.279090Z"
     },
     "9168635": {
-      "estado": "en_puerto",
-      "puerto_actual": "Santos, Brazil",
-      "arribo": "2026-08-12T22:51:00Z",
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 5.8,
+      "eta": "2026-08-22T21:00:00Z",
       "calado_m": 9.0,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-18T00:01:07.145288Z"
+      "ultimo_fetch": "2026-08-18T04:01:10.104951Z"
     }
   }
 }

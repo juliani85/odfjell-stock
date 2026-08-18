@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-18T09:01:09.286298Z",
+  "actualizado": "2026-08-18T09:11:07.655328Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -18,7 +18,7 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 13.4,
+      "velocidad_nudos": 14.0,
       "eta": "2026-08-21T05:30:00Z",
       "calado_m": 8.0,
       "nav_status": "Under way using engine",
@@ -27,7 +27,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-18T08:11:05.215820Z"
+      "ultimo_fetch": "2026-08-18T09:11:07.655328Z"
     }
   }
 }

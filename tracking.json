@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-19T10:51:09.615034Z",
+  "actualizado": "2026-08-19T10:55:02.412053Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -27,6 +27,20 @@
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
       "ultimo_fetch": "2026-08-19T10:41:08.065684Z"
+    },
+    "9260835": {
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 13.5,
+      "eta": "2026-08-21T11:00:00Z",
+      "calado_m": 5.9,
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9260835",
+      "nombre": "SCOT BREMEN",
+      "ultimo_fetch": "2026-08-19T10:55:02.412053Z"
     }
   }
 }

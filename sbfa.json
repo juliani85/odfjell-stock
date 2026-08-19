@@ -2340,6 +2340,32 @@
       "actualizadoTs": "2026-07-30T11:29:31.419Z",
       "archivada": true,
       "archivadaTs": "2026-07-30T11:29:31.420Z"
+    },
+    {
+      "id": 1787137010786,
+      "buque": "SCOT BREMEN",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-08-19",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "26008EC01008895C",
+          "cto": "1",
+          "mercaderia": "benzol",
+          "receptor": "ternium",
+          "kgDeclarados": 1100000,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-19T10:56:50.786Z"
     }
   ]
 }

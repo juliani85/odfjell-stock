@@ -2345,9 +2345,9 @@
       "id": 1787137010786,
       "buque": "SCOT BREMEN",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
-      "fecha": "2026-08-19",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-08-22",
       "notaNumero": "",
       "filas": [
         {
@@ -2364,8 +2364,8 @@
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-19T10:56:50.786Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-08-19T18:07:03.428Z"
     }
   ]
 }

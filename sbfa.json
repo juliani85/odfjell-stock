@@ -1274,11 +1274,11 @@
           "kgResultantes": null
         },
         {
-          "solPart": "1572-1665-1664-1663-1662",
-          "cto": "otus2603nfir140-1405-1408-1409-1410-1411-1404-1407-1412-1413-1406",
+          "solPart": "1572-1665-1664-1663-1662-1680",
+          "cto": "otus2603nfir140-1405-1408-1409-1410-1411-1404-1407-1412-1413-1406-1403",
           "mercaderia": "2 ethil hexanol",
-          "receptor": "atanor-siner-agrofacil-chemotecnica-farmchen",
-          "kgDeclarados": 1638000,
+          "receptor": "atanor-siner-agrofacil-chemotecnica-farmchen-varteco",
+          "kgDeclarados": 1798000,
           "tkDestino": "58-54-63-65",
           "sbfa": "",
           "medic": "",
@@ -1321,7 +1321,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-19T14:55:37.480Z"
+      "actualizadoTs": "2026-08-20T14:30:41.756Z"
     },
     {
       "id": 1784295440868,

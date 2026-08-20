@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-20T06:21:10.072602Z",
+  "actualizado": "2026-08-20T06:31:07.508943Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-20T06:01:14.940916Z"
+      "ultimo_fetch": "2026-08-20T06:31:07.508943Z"
     },
     "9260835": {
       "estado": "en_route",

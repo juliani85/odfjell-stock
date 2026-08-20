@@ -2349,23 +2349,18 @@
       "cuit": "30-71631314-6",
       "fecha": "2026-08-22",
       "notaNumero": "",
-      "filas": [
+      "filas": [],
+      "dap": [],
+      "exportaciones": [
         {
-          "solPart": "26008EC01008895C",
-          "cto": "1",
-          "mercaderia": "benzol",
-          "receptor": "ternium",
-          "kgDeclarados": 1100000,
-          "tkDestino": "",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "documento": "26008EC01008895C",
+          "producto": "BENZOL",
+          "cantDoctada": 1100000,
+          "cantResult": null
         }
       ],
-      "dap": [],
-      "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-19T18:07:03.428Z"
+      "actualizadoTs": "2026-08-20T13:27:13.157Z"
     }
   ]
 }

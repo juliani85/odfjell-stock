@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-20T14:01:07.660354Z",
+  "actualizado": "2026-08-20T14:11:07.767698Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-20T13:41:08.671794Z"
+      "ultimo_fetch": "2026-08-20T14:11:07.767698Z"
     },
     "9260835": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9260835",
       "nombre": "SCOT BREMEN",
-      "ultimo_fetch": "2026-08-20T13:41:08.671794Z"
+      "ultimo_fetch": "2026-08-20T14:11:07.767698Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-20T06:31:07.508943Z",
+  "actualizado": "2026-08-20T06:41:08.465430Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9260835",
       "nombre": "SCOT BREMEN",
-      "ultimo_fetch": "2026-08-20T05:31:09.669066Z"
+      "ultimo_fetch": "2026-08-20T06:41:08.465430Z"
     }
   }
 }

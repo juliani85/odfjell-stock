@@ -1162,7 +1162,7 @@
         {
           "solPart": "1511-1576",
           "cto": "OTUS2603FORU0704-OTUS2603FORU0701",
-          "mercaderia": "BUTUL CELOSOLVE",
+          "mercaderia": "BUTYL CELOSOLVE",
           "receptor": "PBB-Q.CALLEGARI",
           "kgDeclarados": 278507,
           "tkDestino": "96",
@@ -1251,7 +1251,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-21T15:00:55.306Z"
+      "actualizadoTs": "2026-08-21T15:01:38.930Z"
     },
     {
       "id": 1783511835516,

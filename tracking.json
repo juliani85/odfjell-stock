@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-21T10:10:24.786558Z",
+  "actualizado": "2026-08-21T10:20:28.648952Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-21T10:10:24.786558Z"
+      "ultimo_fetch": "2026-08-21T10:20:28.648952Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-21T10:10:24.786558Z"
+      "ultimo_fetch": "2026-08-21T10:20:28.648952Z"
     },
     "9260835": {
       "estado": "en_route",
@@ -34,13 +34,12 @@
       "velocidad_nudos": 12.2,
       "eta": "2026-08-20T23:00:00Z",
       "calado_m": 5.9,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9260835",
       "nombre": "SCOT BREMEN",
-      "ultimo_fetch": "2026-08-21T10:10:24.786558Z"
+      "ultimo_fetch": "2026-08-21T10:20:28.648952Z"
     }
   }
 }

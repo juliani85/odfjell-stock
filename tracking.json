@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-23T16:20:25.811164Z",
+  "actualizado": "2026-08-23T16:30:23.661706Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-23T15:20:26.596741Z"
+      "ultimo_fetch": "2026-08-23T16:30:23.661706Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -26,12 +26,12 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-23T16:20:25.811164Z"
+      "ultimo_fetch": "2026-08-23T16:30:23.661706Z"
     },
     "9260835": {
       "estado": "en_puerto",
       "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-08-22T15:20:00Z",
+      "arribo": "2026-08-23T15:52:00Z",
       "calado_m": 5.9,
       "nav_status": "Moored",
       "zona": "South America Inland",
@@ -39,7 +39,7 @@
       "error": null,
       "imo": "9260835",
       "nombre": "SCOT BREMEN",
-      "ultimo_fetch": "2026-08-23T14:10:23.911831Z"
+      "ultimo_fetch": "2026-08-23T16:30:23.661706Z"
     }
   }
 }

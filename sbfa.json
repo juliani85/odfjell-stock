@@ -1248,10 +1248,17 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000039V",
+          "cto": "PROPYLENE GLYCOL",
+          "cantDoctada": 156389,
+          "cantResult": null
+        }
+      ],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-22T16:42:42.473Z"
+      "actualizadoTs": "2026-08-24T18:14:25.017Z"
     },
     {
       "id": 1783511835516,

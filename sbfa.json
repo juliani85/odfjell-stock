@@ -2361,6 +2361,32 @@
       ],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-08-22T16:42:54.640Z"
+    },
+    {
+      "id": 1787577532663,
+      "buque": "BOW EXPLORER",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-08-24",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1686",
+          "cto": "OTUS2604 EXPL 0803",
+          "mercaderia": "ACRILATO DE BUTILO",
+          "receptor": "DIRANSA",
+          "kgDeclarados": 28000,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-24T13:18:52.664Z"
     }
   ]
 }

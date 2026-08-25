@@ -2406,6 +2406,32 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-08-24T13:18:52.664Z"
+    },
+    {
+      "id": 1787675930145,
+      "buque": "STOLT OCELOT",
+      "manifiesto": "",
+      "agencia": "wave",
+      "cuit": "",
+      "fecha": "2026-09-09",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1718",
+          "cto": "223a-b-c",
+          "mercaderia": "acetato de etilo",
+          "receptor": "henry hirschen",
+          "kgDeclarados": 349958,
+          "tkDestino": "52",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-25T16:38:50.145Z"
     }
   ]
 }

@@ -2375,11 +2375,11 @@
           "documento": "26008EC01008895C",
           "producto": "BENZOL",
           "cantDoctada": 1100000,
-          "cantResult": null
+          "cantResult": 999571
         }
       ],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-25T11:43:19.255Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-08-25T20:01:01.720Z"
     },
     {
       "id": 1787577532663,

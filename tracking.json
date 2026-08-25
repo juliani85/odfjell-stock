@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-25T21:41:04.183396Z",
+  "actualizado": "2026-08-25T21:51:06.287185Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-25T21:41:04.183396Z"
+      "ultimo_fetch": "2026-08-25T21:51:06.287185Z"
     },
     "9168635": {
       "estado": "en_puerto",
@@ -29,16 +29,16 @@
     },
     "9828211": {
       "estado": "en_route",
-      "destino": "Salvador, Brazil",
+      "destino": "RIO\\RJ",
       "eta": "2026-08-27T11:00:00Z",
-      "calado_m": 7.7,
+      "calado_m": 3.5,
       "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-08-25T21:41:04.183396Z"
+      "ultimo_fetch": "2026-08-25T21:51:06.287185Z"
     },
     "9459539": {
       "estado": "en_puerto",

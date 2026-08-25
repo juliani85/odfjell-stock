@@ -2351,12 +2351,24 @@
     {
       "id": 1787137010786,
       "buque": "SCOT BREMEN",
-      "manifiesto": "",
+      "manifiesto": "21798-N",
       "agencia": "BALTZER",
       "cuit": "30-68049506-4",
-      "fecha": "2026-08-22",
+      "fecha": "2026-08-21",
       "notaNumero": "",
-      "filas": [],
+      "filas": [
+        {
+          "solPart": "26008EC01008895C",
+          "cto": "",
+          "mercaderia": "BENZOL",
+          "receptor": "TERNIUM",
+          "kgDeclarados": 1100000,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
       "dap": [],
       "exportaciones": [
         {
@@ -2366,8 +2378,8 @@
           "cantResult": null
         }
       ],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-22T16:42:54.640Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-08-25T11:43:19.255Z"
     },
     {
       "id": 1787577532663,

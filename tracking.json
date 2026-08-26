@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-08-26T04:31:08.681744Z",
+  "actualizado": "2026-08-26T04:41:07.080026Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 8.2,
+      "velocidad_nudos": 7.5,
       "eta": "2026-08-26T07:00:00Z",
       "calado_m": 6.5,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-26T04:31:08.681744Z"
+      "ultimo_fetch": "2026-08-26T04:41:07.080026Z"
     },
     "9168635": {
       "estado": "en_puerto",
@@ -43,17 +43,17 @@
       "ultimo_fetch": "2026-08-26T03:01:03.738613Z"
     },
     "9459539": {
-      "estado": "en_puerto",
-      "puerto_actual": "Aratu Anch., Brazil",
-      "arribo": "2026-08-24T03:56:00Z",
-      "calado_m": 8.9,
-      "nav_status": "At anchor",
+      "estado": "en_route",
+      "destino": "Salvador, Brazil",
+      "eta": "2026-08-25T05:00:00Z",
+      "calado_m": 5.4,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-08-26T00:41:08.973499Z"
+      "ultimo_fetch": "2026-08-26T04:41:07.080026Z"
     }
   }
 }

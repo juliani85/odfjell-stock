@@ -2432,6 +2432,65 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-08-25T16:38:50.145Z"
+    },
+    {
+      "id": 1787761300726,
+      "buque": "BOW CARDINAL",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "",
+      "fecha": "2026-09-02",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1673",
+          "cto": "OTUS2604CARD1301",
+          "mercaderia": "SOLVESSO",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 199540,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1674",
+          "cto": "OTUS2604CARD1101",
+          "mercaderia": "SOLVESSO",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 198986,
+          "tkDestino": "19",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1675",
+          "cto": "OTUS2604CARD1001",
+          "mercaderia": "ISOPAR L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 302820,
+          "tkDestino": "81",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1676",
+          "cto": "OTUS2604CARD0501",
+          "mercaderia": "EXXSOL D60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 298464,
+          "tkDestino": "23-48",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-08-26T16:21:40.727Z"
     }
   ]
 }

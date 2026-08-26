@@ -1,9 +1,10 @@
 {
-  "actualizado": "2026-08-26T19:11:05.498219Z",
+  "actualizado": "2026-08-26T19:21:09.341017Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
+      "velocidad_nudos": 0.1,
       "eta": "2026-08-26T07:00:00Z",
       "calado_m": 6.5,
       "nav_status": "At anchor",
@@ -12,12 +13,12 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-26T19:11:05.498219Z"
+      "ultimo_fetch": "2026-08-26T19:21:09.341017Z"
     },
     "9168635": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 10.8,
+      "velocidad_nudos": 11.8,
       "eta": "2026-08-26T16:00:00Z",
       "calado_m": 7.2,
       "nav_status": "Under way using engine",
@@ -26,7 +27,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-08-26T19:11:05.498219Z"
+      "ultimo_fetch": "2026-08-26T19:21:09.341017Z"
     },
     "9828211": {
       "estado": "en_route",
@@ -39,7 +40,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-08-26T15:11:14.279064Z"
+      "ultimo_fetch": "2026-08-26T19:21:09.341017Z"
     },
     "9459539": {
       "estado": "en_puerto",

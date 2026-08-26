@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-26T00:31:07.885576Z",
+  "actualizado": "2026-08-26T00:41:08.973499Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-26T00:31:07.885576Z"
+      "ultimo_fetch": "2026-08-26T00:41:08.973499Z"
     },
     "9168635": {
       "estado": "en_puerto",
@@ -52,7 +52,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-08-25T20:41:06.932135Z"
+      "ultimo_fetch": "2026-08-26T00:41:08.973499Z"
     }
   }
 }

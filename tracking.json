@@ -1,9 +1,10 @@
 {
-  "actualizado": "2026-08-26T20:51:04.294121Z",
+  "actualizado": "2026-08-26T21:01:08.118131Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
+      "velocidad_nudos": 0.1,
       "eta": "2026-08-26T07:00:00Z",
       "calado_m": 6.5,
       "nav_status": "At anchor",
@@ -12,7 +13,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-26T20:51:04.294121Z"
+      "ultimo_fetch": "2026-08-26T21:01:08.118131Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -52,7 +53,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-08-26T17:01:07.546059Z"
+      "ultimo_fetch": "2026-08-26T21:01:08.118131Z"
     },
     "9114244": {
       "estado": "en_puerto",

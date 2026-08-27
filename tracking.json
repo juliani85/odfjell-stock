@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-27T21:01:07.444730Z",
+  "actualizado": "2026-08-27T21:11:05.610399Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -45,14 +45,14 @@
       "estado": "en_puerto",
       "puerto_actual": "Santos, Brazil",
       "arribo": "2026-08-23T21:48:00Z",
-      "calado_m": 10.3,
-      "nav_status": "Moored",
+      "calado_m": 7.4,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-08-27T17:01:09.537486Z"
+      "ultimo_fetch": "2026-08-27T21:11:05.610399Z"
     }
   }
 }

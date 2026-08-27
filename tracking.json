@@ -1,9 +1,10 @@
 {
-  "actualizado": "2026-08-26T23:51:03.265499Z",
+  "actualizado": "2026-08-27T00:01:07.868567Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
+      "velocidad_nudos": 0.2,
       "eta": "2026-08-26T07:00:00Z",
       "calado_m": 6.5,
       "nav_status": "At anchor",
@@ -12,7 +13,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-26T23:51:03.265499Z"
+      "ultimo_fetch": "2026-08-27T00:01:07.868567Z"
     },
     "9168635": {
       "estado": "en_route",

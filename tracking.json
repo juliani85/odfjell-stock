@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-27T18:21:06.179097Z",
+  "actualizado": "2026-08-27T18:36:06.173004Z",
   "barcos": {
     "9250751": {
       "estado": "en_puerto",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-27T16:31:11.346033Z"
+      "ultimo_fetch": "2026-08-27T18:36:06.173004Z"
     },
     "9168635": {
       "estado": "en_route",

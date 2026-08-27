@@ -1144,9 +1144,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 800000,
           "tkDestino": "58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1421X",
+          "medic": "179",
+          "kgResultantes": 800049
         },
         {
           "solPart": "1444",
@@ -1155,9 +1155,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 247083,
           "tkDestino": "33",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1382Y",
+          "medic": "171",
+          "kgResultantes": 247328
         },
         {
           "solPart": "1511-1576",
@@ -1166,9 +1166,9 @@
           "receptor": "PBB-Q.CALLEGARI",
           "kgDeclarados": 278507,
           "tkDestino": "96",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1410G-1409Y",
+          "medic": "175",
+          "kgResultantes": 278629
         },
         {
           "solPart": "1510",
@@ -1177,9 +1177,9 @@
           "receptor": "PBB",
           "kgDeclarados": 148477,
           "tkDestino": "41",
-          "sbfa": "",
+          "sbfa": "1408N",
           "medic": "",
-          "kgResultantes": null
+          "kgResultantes": 147921
         },
         {
           "solPart": "1509",
@@ -1188,9 +1188,9 @@
           "receptor": "PBB",
           "kgDeclarados": 154454,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1415L",
+          "medic": "174",
+          "kgResultantes": 154329
         },
         {
           "solPart": "1586-1585",
@@ -1199,9 +1199,9 @@
           "receptor": "DALGAR-SURPOLIMEROS",
           "kgDeclarados": 104871,
           "tkDestino": "25",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1419P-1418Y",
+          "medic": "177",
+          "kgResultantes": 104757
         },
         {
           "solPart": "1584",
@@ -1210,9 +1210,9 @@
           "receptor": "DALGAR",
           "kgDeclarados": 104595,
           "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1420H",
+          "medic": "178",
+          "kgResultantes": 102956
         },
         {
           "solPart": "1623-1624-1625-1626",
@@ -1221,9 +1221,9 @@
           "receptor": "AGROFACIL-FARMCHEN-MILBERG-CHEMOTECNICA",
           "kgDeclarados": 600500,
           "tkDestino": "54-63",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1422J-1423K-1424L-1425M-1426N-1427Y-1428P-1429Z-1431J-1430X",
+          "medic": "179",
+          "kgResultantes": 599903
         },
         {
           "solPart": "1644",
@@ -1232,9 +1232,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 699700,
           "tkDestino": "74-82",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1417N",
+          "medic": "176",
+          "kgResultantes": 696060
         },
         {
           "solPart": "1645",
@@ -1243,9 +1243,9 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 799404,
           "tkDestino": "10-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1407M",
+          "medic": "173",
+          "kgResultantes": 783042
         }
       ],
       "dap": [
@@ -1253,12 +1253,14 @@
           "documento": "26008IC65000039V",
           "cto": "PROPYLENE GLYCOL",
           "cantDoctada": 156389,
-          "cantResult": null
+          "cantResult": 156281
         }
       ],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-25T12:14:36.720Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-08-27T19:34:08.868Z",
+      "archivada": true,
+      "archivadaTs": "2026-08-27T19:34:08.868Z"
     },
     {
       "id": 1783511835516,

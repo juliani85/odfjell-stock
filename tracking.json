@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-08-28T23:01:10.279800Z",
+  "actualizado": "2026-08-28T23:11:07.154568Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "KM 210",
-      "velocidad_nudos": 2.1,
+      "velocidad_nudos": 2.2,
       "eta": "2026-08-29T01:00:00Z",
       "calado_m": 6.5,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-28T23:01:10.279800Z"
+      "ultimo_fetch": "2026-08-28T23:11:07.154568Z"
     },
     "9828211": {
       "estado": "en_puerto",

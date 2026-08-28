@@ -1178,7 +1178,7 @@
           "kgDeclarados": 148477,
           "tkDestino": "41",
           "sbfa": "1408N",
-          "medic": "",
+          "medic": "172",
           "kgResultantes": 147921
         },
         {
@@ -1258,7 +1258,7 @@
       ],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-27T19:34:08.868Z",
+      "actualizadoTs": "2026-08-28T19:22:27.153Z",
       "archivada": true,
       "archivadaTs": "2026-08-27T19:34:08.868Z"
     },

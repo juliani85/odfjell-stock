@@ -2414,7 +2414,7 @@
       "buque": "STOLT OCELOT",
       "manifiesto": "",
       "agencia": "wave",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-09-09",
       "notaNumero": "",
       "filas": [
@@ -2428,12 +2428,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1748",
+          "cto": "183",
+          "mercaderia": "vinyl acetate",
+          "receptor": "inmobal",
+          "kgDeclarados": 101472,
+          "tkDestino": "30",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-25T16:38:50.145Z"
+      "actualizadoTs": "2026-08-28T13:31:53.114Z"
     },
     {
       "id": 1787761300726,

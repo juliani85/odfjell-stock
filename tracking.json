@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-08-29T01:31:05.387923Z",
+  "actualizado": "2026-08-29T01:41:05.451003Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
       "destino": "KM 210",
-      "velocidad_nudos": 2.2,
+      "velocidad_nudos": 0.4,
       "eta": "2026-08-29T01:00:00Z",
       "calado_m": 6.5,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America Inland",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-29T01:31:05.387923Z"
+      "ultimo_fetch": "2026-08-29T01:41:05.451003Z"
     },
     "9828211": {
       "estado": "en_puerto",
@@ -44,7 +44,7 @@
     "9114244": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 7.8,
+      "velocidad_nudos": 7.1,
       "eta": "2026-08-29T18:00:00Z",
       "calado_m": 7.4,
       "nav_status": "Under way using engine",
@@ -53,7 +53,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-08-28T21:31:10.226135Z"
+      "ultimo_fetch": "2026-08-29T01:41:05.451003Z"
     }
   }
 }

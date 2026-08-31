@@ -1,19 +1,6 @@
 {
-  "actualizado": "2026-08-31T14:31:09.052676Z",
+  "actualizado": "2026-08-31T14:41:06.313933Z",
   "barcos": {
-    "9250751": {
-      "estado": "en_route",
-      "destino": "KM 210",
-      "eta": "2026-08-29T01:00:00Z",
-      "calado_m": 6.5,
-      "nav_status": "At anchor",
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9250751",
-      "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-31T14:31:09.052676Z"
-    },
     "9828211": {
       "estado": "en_puerto",
       "puerto_actual": "Vitoria, Brazil",

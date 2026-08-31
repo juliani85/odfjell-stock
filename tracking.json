@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-08-31T01:51:06.050536Z",
+  "actualizado": "2026-08-31T02:01:06.364132Z",
   "barcos": {
     "9250751": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9250751",
       "nombre": "BOW FIRDA",
-      "ultimo_fetch": "2026-08-31T01:51:06.050536Z"
+      "ultimo_fetch": "2026-08-31T02:01:06.364132Z"
     },
     "9828211": {
       "estado": "en_puerto",
@@ -38,20 +38,20 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-08-30T22:01:06.639278Z"
+      "ultimo_fetch": "2026-08-31T02:01:06.364132Z"
     },
     "9114244": {
       "estado": "en_puerto",
       "puerto_actual": "Santos Anch., Brazil",
       "arribo": "2026-08-29T04:59:00Z",
-      "calado_m": 7.4,
+      "calado_m": 7.0,
       "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-08-30T22:01:06.639278Z"
+      "ultimo_fetch": "2026-08-31T02:01:06.364132Z"
     }
   }
 }

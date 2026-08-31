@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "BOW FIRDA",
-      "imo": "9250751"
-    },
-    {
       "nombre": "BOW EXPLORER",
       "imo": "9828211"
     },

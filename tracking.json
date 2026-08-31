@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-08-31T21:41:07.127513Z",
+  "actualizado": "2026-08-31T21:51:12.718698Z",
   "barcos": {
     "9828211": {
-      "estado": "en_puerto",
-      "puerto_actual": "Vitoria, Brazil",
-      "arribo": "2026-08-27T18:36:00Z",
-      "calado_m": 10.6,
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "eta": "2026-09-02T17:00:00Z",
+      "calado_m": 9.3,
       "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-08-31T17:41:07.153505Z"
+      "ultimo_fetch": "2026-08-31T21:51:12.718698Z"
     },
     "9459539": {
       "estado": "en_puerto",

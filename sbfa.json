@@ -1278,9 +1278,9 @@
           "receptor": "princz-neophos-aba color-la hispano",
           "kgDeclarados": 419712,
           "tkDestino": "11",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1462N-1463Y-1466R-1467S-1469U-1470M",
+          "medic": "187",
+          "kgResultantes": 416789
         },
         {
           "solPart": "1572-1665-1664-1663-1662-1680",
@@ -1289,9 +1289,9 @@
           "receptor": "atanor-siner-agrofacil-chemotecnica-farmchen-varteco",
           "kgDeclarados": 1798000,
           "tkDestino": "58-54-63-65",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1449S-1450K-1451L-1452M-1453N-1454Y-1455P-1456Z-1457R-1458S-1459T-1460L-1461M",
+          "medic": "186",
+          "kgResultantes": 1805036
         },
         {
           "solPart": "1610",
@@ -1300,9 +1300,9 @@
           "receptor": "pbb",
           "kgDeclarados": 749764,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1448R",
+          "medic": "183",
+          "kgResultantes": 749188
         },
         {
           "solPart": "1611",
@@ -1311,9 +1311,9 @@
           "receptor": "pbb",
           "kgDeclarados": 150136,
           "tkDestino": "41",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1472Y",
+          "medic": "184",
+          "kgResultantes": 150912
         },
         {
           "solPart": "1612",
@@ -1322,15 +1322,17 @@
           "receptor": "pbb",
           "kgDeclarados": 157665,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1473P",
+          "medic": "185",
+          "kgResultantes": 157994
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-25T20:02:54.588Z"
+      "actualizadoTs": "2026-08-31T14:39:01.580Z",
+      "archivada": true,
+      "archivadaTs": "2026-08-31T14:39:01.580Z"
     },
     {
       "id": 1784295440868,

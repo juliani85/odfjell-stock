@@ -2389,8 +2389,8 @@
       "id": 1787577532663,
       "buque": "BOW EXPLORER",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-08-24",
       "notaNumero": "",
       "filas": [
@@ -2404,12 +2404,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1734",
+          "cto": "OTUS2604EXPL1501-02-03",
+          "mercaderia": "VINYL ACETATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 104913,
+          "tkDestino": "25",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1733",
+          "cto": "OTUS2604EXPL0801-04",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 174963,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-08-24T13:18:52.664Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-08-31T17:14:26.556Z"
     },
     {
       "id": 1787675930145,

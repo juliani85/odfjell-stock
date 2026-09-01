@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-01T00:51:04.891206Z",
+  "actualizado": "2026-09-01T01:01:05.360919Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-01T00:51:04.891206Z"
+      "ultimo_fetch": "2026-09-01T01:01:05.360919Z"
     },
     "9459539": {
       "estado": "en_puerto",

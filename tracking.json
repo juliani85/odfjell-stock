@@ -1,18 +1,19 @@
 {
-  "actualizado": "2026-09-01T02:21:05.909161Z",
+  "actualizado": "2026-09-01T02:31:04.717608Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
+      "velocidad_nudos": 0.5,
       "eta": "2026-09-02T17:00:00Z",
       "calado_m": 9.3,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-01T02:21:05.909161Z"
+      "ultimo_fetch": "2026-09-01T02:31:04.717608Z"
     },
     "9459539": {
       "estado": "en_puerto",

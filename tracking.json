@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-03T03:00:56.124205Z",
+  "actualizado": "2026-09-03T03:10:54.748008Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-02T23:01:05.269073Z"
+      "ultimo_fetch": "2026-09-03T03:10:54.748008Z"
     },
     "9114244": {
       "estado": "en_puerto",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-02T23:01:05.269073Z"
+      "ultimo_fetch": "2026-09-03T03:10:54.748008Z"
     }
   }
 }

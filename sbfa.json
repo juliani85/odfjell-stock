@@ -2529,7 +2529,7 @@
           "mercaderia": "FENOL",
           "receptor": "ATANOR",
           "kgDeclarados": 995793,
-          "tkDestino": "",
+          "tkDestino": "80-85",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
@@ -2538,7 +2538,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-09-03T13:57:11.212Z"
+      "actualizadoTs": "2026-09-03T13:57:24.505Z"
     }
   ]
 }

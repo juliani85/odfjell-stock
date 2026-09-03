@@ -2475,7 +2475,7 @@
       "buque": "BOW CARDINAL",
       "manifiesto": "",
       "agencia": "B&M",
-      "cuit": "",
+      "cuit": "30-71631314-6",
       "fecha": "2026-09-02",
       "notaNumero": "",
       "filas": [
@@ -2522,12 +2522,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1775",
+          "cto": "1701",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 995793,
+          "tkDestino": "",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-26T16:21:40.727Z"
+      "actualizadoTs": "2026-09-03T13:57:11.212Z"
     }
   ]
 }

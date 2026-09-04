@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-04T17:10:17.907340Z",
+  "actualizado": "2026-09-04T17:20:27.733601Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -32,14 +32,14 @@
       "destino": "Santos, Brazil",
       "velocidad_nudos": 11.9,
       "eta": "2026-09-07T09:00:00Z",
-      "calado_m": 5.5,
+      "calado_m": 6.3,
       "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-04T13:10:21.761734Z"
+      "ultimo_fetch": "2026-09-04T17:20:27.733601Z"
     }
   }
 }

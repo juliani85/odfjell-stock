@@ -2426,12 +2426,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1776",
+          "cto": "otus2604expl0802",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "CRILEN",
+          "kgDeclarados": 112000,
+          "tkDestino": "34-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-31T17:14:26.556Z"
+      "actualizadoTs": "2026-09-04T14:00:53.405Z"
     },
     {
       "id": 1787675930145,

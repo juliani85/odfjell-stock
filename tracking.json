@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-04T20:00:25.798381Z",
+  "actualizado": "2026-09-04T20:10:26.637352Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -16,16 +16,16 @@
     },
     "9459539": {
       "estado": "en_puerto",
-      "puerto_actual": "Santos Anch., Brazil",
-      "arribo": "2026-08-30T07:33:00Z",
+      "puerto_actual": "Santos, Brazil",
+      "arribo": "2026-09-04T18:06:00Z",
       "calado_m": 9.0,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-04T16:10:20.676986Z"
+      "ultimo_fetch": "2026-09-04T20:10:26.637352Z"
     },
     "9114244": {
       "estado": "en_route",

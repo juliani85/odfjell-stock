@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-05T06:50:17.185255Z",
+  "actualizado": "2026-09-05T07:00:17.921357Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -30,7 +30,7 @@
     "9114244": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 12.9,
+      "velocidad_nudos": 12.6,
       "eta": "2026-09-07T09:00:00Z",
       "calado_m": 9.4,
       "nav_status": "Under way using engine",
@@ -39,7 +39,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-05T06:00:17.644694Z"
+      "ultimo_fetch": "2026-09-05T07:00:17.921357Z"
     }
   }
 }

@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-09-06T13:30:17.890855Z",
+  "actualizado": "2026-09-06T13:40:22.116322Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
       "puerto_actual": "Santos Anch., Brazil",
       "arribo": "2026-09-02T12:25:00Z",
-      "calado_m": 9.2,
+      "calado_m": 8.0,
       "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-06T09:30:52.233874Z"
+      "ultimo_fetch": "2026-09-06T13:40:22.116322Z"
     },
     "9459539": {
       "estado": "en_puerto",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-06T13:20:18.020110Z"
+      "ultimo_fetch": "2026-09-06T13:40:22.116322Z"
     }
   }
 }

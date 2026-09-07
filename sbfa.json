@@ -2437,12 +2437,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1797",
+          "cto": "otus2604expl010",
+          "mercaderia": "2 etilhexanol",
+          "receptor": "atanor",
+          "kgDeclarados": 850000,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-09-04T14:00:53.405Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-09-07T13:04:09.691Z"
     },
     {
       "id": 1787675930145,

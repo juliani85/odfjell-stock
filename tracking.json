@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-08T02:10:18.171808Z",
+  "actualizado": "2026-09-08T02:20:17.369660Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -18,14 +18,14 @@
       "estado": "en_puerto",
       "puerto_actual": "Santos Anch., Brazil",
       "arribo": "2026-09-06T20:28:00Z",
-      "calado_m": 8.5,
+      "calado_m": 11.1,
       "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-07T22:10:21.248211Z"
+      "ultimo_fetch": "2026-09-08T02:20:17.369660Z"
     },
     "9114244": {
       "estado": "en_route",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-08T02:10:18.171808Z"
+      "ultimo_fetch": "2026-09-08T02:20:17.369660Z"
     }
   }
 }

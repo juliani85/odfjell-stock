@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-09T10:20:25.445181Z",
+  "actualizado": "2026-09-09T10:30:26.834113Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -38,7 +38,7 @@
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-09T08:30:24.991052Z"
+      "ultimo_fetch": "2026-09-09T10:30:26.834113Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-09T02:00:18.001782Z",
+  "actualizado": "2026-09-09T02:10:19.079324Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -29,18 +29,16 @@
     },
     "9114244": {
       "estado": "en_puerto",
-      "destino": "Campana, Argentina",
-      "eta": "2026-09-07T19:30:00Z",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-09-08T23:30:00Z",
       "calado_m": 9.5,
       "nav_status": "Moored",
       "zona": "South America Inland",
-      "puerto_actual": "Campana, Argentina",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9114244",
       "nombre": "BOW CARDINAL",
-      "ultimo_fetch": "2026-09-09T00:00:19.984085Z",
-      "arribo": "2026-09-09T00:00:19.984085Z"
+      "ultimo_fetch": "2026-09-09T02:10:19.079324Z"
     }
   }
 }

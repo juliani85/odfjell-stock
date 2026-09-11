@@ -2448,12 +2448,45 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1826",
+          "cto": "otus2604expl1101",
+          "mercaderia": "butyl cellosolve",
+          "receptor": "pbb",
+          "kgDeclarados": 185000,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1827",
+          "cto": "otus2604expl1401",
+          "mercaderia": "propionic acid",
+          "receptor": "pbb",
+          "kgDeclarados": 145846,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1828",
+          "cto": "otus2604expl0901",
+          "mercaderia": "papi",
+          "receptor": "pbb",
+          "kgDeclarados": 262493,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-07T13:04:09.691Z"
+      "actualizadoTs": "2026-09-11T10:50:49.647Z"
     },
     {
       "id": 1787675930145,

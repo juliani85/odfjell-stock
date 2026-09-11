@@ -2552,7 +2552,7 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 199540,
           "tkDestino": "23",
-          "sbfa": "",
+          "sbfa": "1524M",
           "medic": "173",
           "kgResultantes": 200253
         },
@@ -2563,7 +2563,7 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 198986,
           "tkDestino": "19",
-          "sbfa": "",
+          "sbfa": "1525N",
           "medic": "174",
           "kgResultantes": 197049
         },
@@ -2574,7 +2574,7 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 302820,
           "tkDestino": "81",
-          "sbfa": "",
+          "sbfa": "1523L",
           "medic": "176",
           "kgResultantes": 303278
         },
@@ -2585,7 +2585,7 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 298464,
           "tkDestino": "48",
-          "sbfa": "",
+          "sbfa": "1522K",
           "medic": "175",
           "kgResultantes": 296071
         },
@@ -2596,7 +2596,7 @@
           "receptor": "ATANOR",
           "kgDeclarados": 995793,
           "tkDestino": "80-85",
-          "sbfa": "",
+          "sbfa": "1542M",
           "medic": "172",
           "kgResultantes": 996857
         }
@@ -2617,7 +2617,7 @@
       ],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-11T11:15:49.342Z",
+      "actualizadoTs": "2026-09-11T11:20:35.219Z",
       "archivada": true,
       "archivadaTs": "2026-09-11T11:15:49.342Z"
     }

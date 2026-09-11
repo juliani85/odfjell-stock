@@ -2548,24 +2548,24 @@
         {
           "solPart": "1673",
           "cto": "OTUS2604CARD1301",
-          "mercaderia": "SOLVESSO",
+          "mercaderia": "SOLVESSO 100",
           "receptor": "BRENNTAG",
           "kgDeclarados": 199540,
-          "tkDestino": "33",
+          "tkDestino": "23",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "173",
+          "kgResultantes": 200253
         },
         {
           "solPart": "1674",
           "cto": "OTUS2604CARD1101",
-          "mercaderia": "SOLVESSO",
+          "mercaderia": "SOLVESSO 150",
           "receptor": "BRENNTAG",
           "kgDeclarados": 198986,
           "tkDestino": "19",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "174",
+          "kgResultantes": 197049
         },
         {
           "solPart": "1675",
@@ -2575,8 +2575,8 @@
           "kgDeclarados": 302820,
           "tkDestino": "81",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "176",
+          "kgResultantes": 303278
         },
         {
           "solPart": "1676",
@@ -2584,10 +2584,10 @@
           "mercaderia": "EXXSOL D60",
           "receptor": "BRENNTAG",
           "kgDeclarados": 298464,
-          "tkDestino": "23-48",
+          "tkDestino": "48",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "175",
+          "kgResultantes": 296071
         },
         {
           "solPart": "1775",
@@ -2597,14 +2597,29 @@
           "kgDeclarados": 995793,
           "tkDestino": "80-85",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "172",
+          "kgResultantes": 996857
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000043Z",
+          "cto": "ETHYL ACETATE",
+          "cantDoctada": 499100,
+          "cantResult": 500806
+        },
+        {
+          "documento": "26008IC65000042P",
+          "cto": "ACETONA",
+          "cantDoctada": 299954,
+          "cantResult": 298293
+        }
+      ],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-09-03T13:57:24.505Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-09-11T11:15:49.342Z",
+      "archivada": true,
+      "archivadaTs": "2026-09-11T11:15:49.342Z"
     }
   ]
 }

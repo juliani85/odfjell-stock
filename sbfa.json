@@ -2529,12 +2529,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "1833",
+          "cto": "113",
+          "mercaderia": "arcol f 3040",
+          "receptor": "alkanos",
+          "kgDeclarados": 414738,
+          "tkDestino": "69",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-08T16:14:05.767Z"
+      "actualizadoTs": "2026-09-11T14:09:17.625Z"
     },
     {
       "id": 1787761300726,

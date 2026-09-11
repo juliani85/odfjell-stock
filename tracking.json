@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-11T11:10:57.929800Z",
+  "actualizado": "2026-09-11T11:20:58.687762Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -25,19 +25,6 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-11T08:20:58.391153Z"
-    },
-    "9114244": {
-      "estado": "en_route",
-      "destino": "Mundra, India",
-      "velocidad_nudos": 13.0,
-      "eta": "2026-10-08T12:30:00Z",
-      "calado_m": 9.2,
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9114244",
-      "nombre": "BOW CARDINAL",
       "ultimo_fetch": "2026-09-11T08:20:58.391153Z"
     }
   }

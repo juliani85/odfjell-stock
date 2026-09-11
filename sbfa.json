@@ -2539,10 +2539,10 @@
     {
       "id": 1787761300726,
       "buque": "BOW CARDINAL",
-      "manifiesto": "",
+      "manifiesto": "23102-R",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-09-02",
+      "fecha": "2026-09-08",
       "notaNumero": "",
       "filas": [
         {
@@ -2617,7 +2617,7 @@
       ],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-11T11:20:35.219Z",
+      "actualizadoTs": "2026-09-11T11:21:28.618Z",
       "archivada": true,
       "archivadaTs": "2026-09-11T11:15:49.342Z"
     }

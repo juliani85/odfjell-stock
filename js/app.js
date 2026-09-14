@@ -1326,6 +1326,66 @@ async function initApp() {
     const subtFecha = document.getElementById("subtFecha");
     if (subtFecha) subtFecha.textContent = `Stock al ${hoySub.toLocaleDateString("es-AR")}`;
 
+    // Vuelve a buscar en el array `stock` VIGENTE el tanque y el despacho que un
+    // formulario capturó por referencia al abrirse. Entre que el operador elige el
+    // despacho y confirma pueden pasar minutos, y en el medio el sync puede haber
+    // reemplazado el objeto. Descontar sobre la referencia vieja es escribir en un
+    // objeto que ya no está en `stock`: el movimiento sube al historial y el saldo
+    // queda intacto. Causa de ~30 salidas sin descontar entre junio y septiembre 2026
+    // (las mismas que aparecían como diferencia contra el SIM).
+    function resolverDespachoVivo(tanqueRef, despachoRef) {
+        if (!tanqueRef || !despachoRef) return null;
+        const tanque = stock.find(t => t.tanque === tanqueRef.tanque);
+        if (!tanque) return null;
+        const desp = tanque.despachos.find(d => d === despachoRef)
+            || tanque.despachos.find(d => d.despacho === despachoRef.despacho);
+        return desp ? { tanque, desp } : null;
+    }
+
+    // Adopta el stock remoto MUTANDO el array local en lugar de reemplazarlo. Con
+    // `stock = remoto.stock` todas las referencias que la UI tenía tomadas quedaban
+    // huérfanas de golpe (ver resolverDespachoVivo). Mutando in situ, los objetos que
+    // siguen existiendo conservan su identidad y los formularios abiertos siguen
+    // apuntando al stock real. Devuelve true si algo cambió.
+    function adoptarStockRemoto(remotoStock) {
+        if (!Array.isArray(remotoStock)) return false;
+        let cambio = false;
+        const vistos = new Set();
+        for (const tR of remotoStock) {
+            vistos.add(tR.tanque);
+            const tL = stock.find(t => t.tanque === tR.tanque);
+            if (!tL) { stock.push(tR); cambio = true; continue; }
+            if (tL.producto !== tR.producto) { tL.producto = tR.producto; cambio = true; }
+            if (tL.cliente !== tR.cliente) { tL.cliente = tR.cliente; cambio = true; }
+            // Multiset por nombre: un tanque puede tener dos despachos con el mismo nombre.
+            const porNombre = new Map();
+            for (const d of tL.despachos) {
+                if (!porNombre.has(d.despacho)) porNombre.set(d.despacho, []);
+                porNombre.get(d.despacho).push(d);
+            }
+            const reconstruido = [];
+            for (const dR of tR.despachos) {
+                const cola = porNombre.get(dR.despacho);
+                const dL = cola && cola.length ? cola.shift() : null;
+                if (!dL) { reconstruido.push(dR); cambio = true; continue; }
+                if (dL.stock !== dR.stock) { dL.stock = dR.stock; cambio = true; }
+                if ((dL.cliente || "") !== (dR.cliente || "")) {
+                    if (dR.cliente) dL.cliente = dR.cliente; else delete dL.cliente;
+                    cambio = true;
+                }
+                reconstruido.push(dL);
+            }
+            for (const cola of porNombre.values()) if (cola.length) cambio = true;
+            // Mismo array (no reasignar): hay código que se queda con `tanque.despachos`.
+            tL.despachos.length = 0;
+            tL.despachos.push(...reconstruido);
+        }
+        for (let i = stock.length - 1; i >= 0; i--) {
+            if (!vistos.has(stock[i].tanque)) { stock.splice(i, 1); cambio = true; }
+        }
+        return cambio;
+    }
+
     // Aplica una entrada del historial al stock local (para mergear movimientos
     // que hizo otro usuario en paralelo).
     function aplicarEntradaAlStock(h) {
@@ -1579,7 +1639,11 @@ async function initApp() {
                 if (clienteNuevo) desp.cliente = clienteNuevo;
                 // Si en el mismo tanque quedaba un "fantasma" con el nombre nuevo y 0 kg
                 // (un despacho ya despachado, oculto en la UI), se descarta para no duplicar.
-                t.despachos = t.despachos.filter(d => d === desp || d.despacho !== despachoNuevo || d.stock > 0);
+                // In place: reasignar el array dejaría huérfanas las referencias de la UI.
+                for (let i = t.despachos.length - 1; i >= 0; i--) {
+                    const d = t.despachos[i];
+                    if (d !== desp && d.despacho === despachoNuevo && d.stock <= 0) t.despachos.splice(i, 1);
+                }
                 tanquesAfectados.push(t.tanque);
             }
         });
@@ -1712,13 +1776,26 @@ async function initApp() {
 
             const cliTxt = (clienteNuevo && clienteNuevo !== clienteActual) ? ` · Cliente: ${clienteNuevo}` : "";
             if (esSplit) {
-                despachoObj.stock -= kilos;
+                // Sobre el objeto vigente en `stock` (ver resolverDespachoVivo): si el sync
+                // reemplazó la referencia, el split se aplicaría a un objeto huérfano.
+                const vivoRen = resolverDespachoVivo(tanqueActual, despachoObj);
+                if (!vivoRen) {
+                    mostrarAlerta(`NO se dividió el despacho: ${viejo} ya no figura en el TK ${tanqueActual.tanque} (cambió desde otra sesión). Volvé a intentarlo.`, "error");
+                    return;
+                }
+                const tanqueVivo = vivoRen.tanque;
+                vivoRen.desp.stock -= kilos;
                 const nuevoDesp = { despacho: nuevo, stock: kilos };
-                const cli = clienteNuevo || despachoObj.cliente;
+                const cli = clienteNuevo || vivoRen.desp.cliente;
                 if (cli) nuevoDesp.cliente = cli;
                 // Descartar fantasmas con el mismo nombre y 0 kg antes de agregar el nuevo.
-                tanqueActual.despachos = tanqueActual.despachos.filter(d => d.despacho !== nuevo || d.stock > 0);
-                tanqueActual.despachos.push(nuevoDesp);
+                // In place: no reasignar el array, hay referencias tomadas por la UI.
+                for (let i = tanqueVivo.despachos.length - 1; i >= 0; i--) {
+                    const d = tanqueVivo.despachos[i];
+                    if (d.despacho === nuevo && d.stock <= 0) tanqueVivo.despachos.splice(i, 1);
+                }
+                tanqueVivo.despachos.push(nuevoDesp);
+                despachoObj = vivoRen.desp;
                 guardarDatos();
                 mostrarAlerta(`Despacho dividido en TK ${tanqueActual.tanque}: ${formatKg(kilos)} kg migrados de "${viejo}" a "${nuevo}". Saldo viejo: ${formatKg(despachoObj.stock)} kg${cliTxt}`, "success");
             } else {
@@ -2078,8 +2155,21 @@ async function initApp() {
             };
             if (precinto) salida.precinto = precinto;
 
-            despachoActual.stock -= kilos;
-            const restante2 = despachoActual.stock;
+            // Descontar SIEMPRE sobre el objeto que está hoy en `stock`, no sobre la
+            // referencia capturada cuando se eligió el despacho: si el sync la reemplazó,
+            // el descuento se perdería y la salida subiría al historial sin bajar el saldo.
+            const vivo = resolverDespachoVivo(tanqueActual, despachoActual);
+            if (!vivo) {
+                modal.classList.add("hidden");
+                window._confirmarAccion = null;
+                mostrarAlerta(`NO se registró la salida: el despacho ${despachoActual.despacho} ya no figura en el TK ${tanqueActual.tanque} (lo renombraron o lo movieron desde otra sesión). Buscá el tanque de nuevo y volvé a cargarla.`, "error");
+                limpiarFormulario();
+                return;
+            }
+            tanqueActual = vivo.tanque;
+            despachoActual = vivo.desp;
+            vivo.desp.stock -= kilos;
+            const restante2 = vivo.desp.stock;
 
             historial.unshift(salida);
             const matchPlan = matchearSalidaConPlan(salida);
@@ -3756,7 +3846,16 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         `;
 
         window._confirmarAccion = () => {
-            // Descontar origen
+            // Descontar origen — sobre el objeto vigente en `stock` (ver resolverDespachoVivo).
+            const vivoTrf = resolverDespachoVivo(trfOrigenTanque, trfOrigenDespacho);
+            if (!vivoTrf) {
+                modal.classList.add("hidden");
+                window._confirmarAccion = null;
+                mostrarAlerta(`NO se registró la transferencia: el despacho ${trfOrigenDespacho.despacho} ya no figura en el TK ${trfOrigenTanque.tanque} (cambió desde otra sesión). Volvé a cargarla.`, "error");
+                return;
+            }
+            trfOrigenTanque = vivoTrf.tanque;
+            trfOrigenDespacho = vivoTrf.desp;
             trfOrigenDespacho.stock -= kilos;
 
             // Agregar a destino
@@ -4578,11 +4677,10 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     // renombrar despachos, ajustar un saldo a mano). Como acá el cliente está
                     // limpio (sin envíos pendientes), adoptar el stock remoto es seguro: no pisa
                     // nada propio y equivale a un Ctrl+Shift+R, pero sin recargar la página.
-                    let stockCambiado = false;
-                    if (Array.isArray(remoto.stock) && JSON.stringify(remoto.stock) !== JSON.stringify(stock)) {
-                        stock = remoto.stock;
-                        stockCambiado = true;
-                    }
+                    // Se adopta MUTANDO el array (no `stock = remoto.stock`): un formulario
+                    // abierto puede tener tomada la referencia a un despacho y descontar sobre
+                    // ella al confirmar.
+                    const stockCambiado = adoptarStockRemoto(remoto.stock);
                     if (cambios > 0 || stockCambiado) {
                         localStorage.setItem("stockTanquesV3", JSON.stringify(stock));
                         localStorage.setItem("historialSalidasV3", JSON.stringify(historial));

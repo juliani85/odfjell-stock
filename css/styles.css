@@ -1299,3 +1299,17 @@ tbody tr:hover { background: var(--gray-50); }
     /* Plan de cargas: ya tiene su propia vista compacta — asegurarme que la tabla scroll */
     #tablaPlan { font-size: 0.8rem; }
 }
+
+/* Tanque NACIONAL: mercadería nacionalizada, fuera del régimen fiscal. */
+.nacional-badge {
+    display: inline-block;
+    background: #0f766e;
+    color: white;
+    padding: 0.12rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+}

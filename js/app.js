@@ -2293,13 +2293,16 @@ async function initApp() {
             const renpqBadge = renpq
                 ? `<span class="renpq-badge" title="Precursor químico — RENPQ Lista ${renpq.lista} (Decreto 593/19)">⚠ RNPQ ${renpq.lista}</span>`
                 : "";
+            const nacBadge = esTanqueNacional(t.tanque)
+                ? `<span class="nacional-badge" title="Tanque NACIONAL: mercadería nacionalizada, no está bajo régimen fiscal. Queda fuera del reporte mensual a ARCA.">NACIONAL</span>`
+                : "";
             const cardCls = renpq ? "stock-card renpq" : "stock-card";
             return `<div class="${cardCls}" onclick="this.classList.toggle('open')">
                 <div class="stock-card-header">
                     <div class="stock-card-left">
                         <span class="stock-card-tanque">TK ${t.tanque}</span>
                         <div>
-                            <div class="stock-card-producto">${t.producto} ${renpqBadge}</div>
+                            <div class="stock-card-producto">${t.producto} ${renpqBadge}${nacBadge}</div>
                             <div class="stock-card-cliente">${t.cliente}</div>
                         </div>
                     </div>
@@ -3217,6 +3220,13 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return clon;
     }
 
+    // Un tanque NACIONAL opera con mercadería nacionalizada: se carga y se
+    // consulta como cualquier otro, pero no es fiscal — no va al reporte mensual
+    // a ARCA ni cuenta como tanque fiscal en las comparaciones.
+    function esTanqueNacional(num) {
+        return typeof tanquesNacionales !== "undefined" && tanquesNacionales.includes(num);
+    }
+
     // Devuelve un array con TODOS los tanques fiscales en orden, completando
     // con un objeto vacío los que no aparecen en stockBase (para que el reporte
     // muestre los tanques fiscales sin movimientos).
@@ -3289,7 +3299,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                     <div class="stock-card-left">
                         <span class="stock-card-tanque">TK ${t.tanque}</span>
                         <div>
-                            <div class="stock-card-producto">${productoMostrar}${renpqBadgeRm}</div>
+                            <div class="stock-card-producto">${productoMostrar}${renpqBadgeRm}${esTanqueNacional(t.tanque) ? ' <span class="nacional-badge">NACIONAL</span>' : ""}</div>
                             <div class="stock-card-cliente">${clienteMostrar}</div>
                         </div>
                     </div>

@@ -389,13 +389,20 @@ const tanquesDesafectados = [
     "091", "092", "093", "094", "095", "098",
 ];
 
+// Tanques NACIONALES: operan con mercadería nacionalizada, NO están bajo
+// régimen fiscal. Se cargan en el sistema (el stock físico existe y figura en
+// el "Existencia PM de Tanques" de Odfjell) pero quedan fuera del reporte
+// mensual a ARCA y de toda comparación de tanques fiscales. Detectados en la
+// conciliación del 31/08/2026: el sistema no los llevaba.
+const tanquesNacionales = ["009", "043"];
+
 // Tanques con condición FISCAL (operables). Lista oficial del depósito —
 // estos tanques deben aparecer en el reporte mensual aunque estén en 0.
 const tanquesFiscales = [
-    "001", "002", "004", "005", "006", "007", "008", "009", "010", "011",
+    "001", "002", "004", "005", "006", "007", "008", "010", "011",
     "012", "013", "014", "015", "017", "018", "019", "021", "023", "024",
     "025", "027", "028", "029", "030", "031", "032", "033", "034", "035",
-    "036", "037", "038", "039", "041", "042", "043", "044", "046", "047", "048",
+    "036", "037", "038", "039", "041", "042", "044", "046", "047", "048",
     "049", "050", "051", "052", "054", "055", "056", "058", "060", "061",
     "063", "065", "067", "069", "071", "072", "073", "074", "075", "076",
     "078", "079", "080", "081", "082", "084", "085", "086", "088", "089",

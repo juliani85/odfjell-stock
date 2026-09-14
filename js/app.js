@@ -888,6 +888,14 @@ const GH = {
     _pendienteVistas: null,
     _timerPlan: null,
     _pendientePlan: null,
+    // Marca de agua: `actualizado` del último PUT propio confirmado. La API de contents
+    // de GitHub tiene consistencia eventual — segundos después de escribir todavía puede
+    // devolver el contenido anterior. Sin esta marca, el polling adopta esa lectura vieja
+    // y el cliente retrocede su propio stock (movimiento que queda en historial pero no
+    // en el saldo del despacho). Ver el polling de 30s.
+    _ultimoEscrito: null,
+    _ultimoEscritoPlan: null,
+    _actualizadoPlanLeido: "",
     _estado: "sincronizado",
     _listeners: [],
 
@@ -1026,6 +1034,7 @@ const GH = {
                 }
                 if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
                 if (out.nuevoSha) this.sha = out.nuevoSha;
+                this._ultimoEscrito = datos.actualizado;
                 if (this._pendiente === merger) this._pendiente = null;
             } catch (e) {
                 console.error('[GH sync stock]', e);
@@ -1091,6 +1100,9 @@ const GH = {
             if (!res) return null;
             this.shaPlan = res.sha;
             const c = this._parseTexto(res) || {};
+            // El retorno es solo el mapa de planes; el `actualizado` del archivo queda acá
+            // para que el polling pueda descartar lecturas anteriores a su propio PUT.
+            this._actualizadoPlanLeido = c.actualizado || "";
             return c.planes || {};
         } catch (e) {
             console.warn('[GH cargarPlan]', e.message || e);
@@ -1196,6 +1208,7 @@ const GH = {
                 }
                 if (!out.ok) throw new Error(`proxy ${out.status}${out.detalle}`);
                 if (out.nuevoSha) this.shaPlan = out.nuevoSha;
+                this._ultimoEscritoPlan = datos.actualizado;
                 // El plan local en memoria se actualiza con el merged para que el cliente vea
                 // tombstones y cargas remotas que no tenía.
                 for (const f of Object.keys(merged)) planes[f] = merged[f];
@@ -4549,7 +4562,16 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             // 1) Stock/historial
             if (!(GH._enviando || GH._pendiente)) {
                 const remoto = await GH.cargar();
-                if (remoto) {
+                // Revalidar DESPUÉS del await: la lectura tarda 1-3s y en ese lapso el usuario
+                // pudo registrar un movimiento (GH._pendiente/_enviando pasan a activo). Adoptar
+                // ahora `remoto.stock` borraría el efecto de ese movimiento del stock local, y el
+                // PUT siguiente subiría el saldo sin él — el movimiento queda en el historial pero
+                // el despacho desaparece del tanque. Caso real: TK 048 / otus2604card0501 (11/09/2026).
+                const ocupado = GH._enviando || GH._pendiente;
+                // Lectura stale por consistencia eventual de la API: si el remoto es anterior a
+                // nuestro último PUT confirmado, descartarlo y esperar al próximo tick.
+                const atrasado = remoto && GH._ultimoEscrito && (remoto.actualizado || "") < GH._ultimoEscrito;
+                if (remoto && !ocupado && !atrasado) {
                     const cambios = mergearEntradasRemotas(remoto);
                     // El array `stock` no se mergea entrada por entrada: puede tener cambios
                     // directos que no pasan por una entrada nueva de historial (consolidar o
@@ -4573,7 +4595,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             // 2) Plan: si otro cliente o un cleanup manual modificó plan.json, traer.
             if (!(GH._enviandoPlan || GH._pendientePlan)) {
                 const remoto = await GH.cargarPlan();
-                if (remoto) {
+                // Mismas dos guardas que el stock: no pisar `planes` si mientras leíamos
+                // se encoló una edición local, ni con una lectura anterior a nuestro PUT.
+                const ocupadoPlan = GH._enviandoPlan || GH._pendientePlan;
+                const atrasadoPlan = remoto && GH._ultimoEscritoPlan && (GH._actualizadoPlanLeido || "") < GH._ultimoEscritoPlan;
+                if (remoto && !ocupadoPlan && !atrasadoPlan) {
                     const fechaSel = getFechaPlan ? getFechaPlan() : null;
                     const filasAntes = (fechaSel && planes[fechaSel] && planes[fechaSel].filas) ? planes[fechaSel].filas.filter(f => !f.eliminada).length : 0;
                     planes = remoto;

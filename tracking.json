@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-15T18:50:58.056583Z",
+  "actualizado": "2026-09-15T19:01:02.657791Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-15T14:51:07.456068Z"
+      "ultimo_fetch": "2026-09-15T19:01:02.657791Z"
     }
   }
 }

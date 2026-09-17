@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-17T14:10:19.794139Z",
+  "actualizado": "2026-09-17T14:18:37.339972Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -26,6 +26,19 @@
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
       "ultimo_fetch": "2026-09-17T12:10:26.627860Z"
+    },
+    "9143219": {
+      "estado": "en_route",
+      "destino": "Rotterdam, Netherlands",
+      "velocidad_nudos": 7.7,
+      "eta": "2026-09-20T20:00:00Z",
+      "calado_m": 10.2,
+      "zona": "North East Atlantic Ocean",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9143219",
+      "nombre": "BOW CECIL",
+      "ultimo_fetch": "2026-09-17T14:18:37.339972Z"
     }
   }
 }

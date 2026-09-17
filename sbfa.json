@@ -2483,11 +2483,11 @@
           "kgResultantes": null
         },
         {
-          "solPart": "1861",
-          "cto": "otus2604expl104-106-107-108-109-110-105",
+          "solPart": "1861-1871",
+          "cto": "otus2604expl104-106-107-108-109-110-105-103",
           "mercaderia": "2 ethyl hexanol",
-          "receptor": "siner-milberg-chemotecnica",
-          "kgDeclarados": 400000,
+          "receptor": "siner-milberg-chemotecnica-varteco",
+          "kgDeclarados": 560000,
           "tkDestino": "54-63-58",
           "sbfa": "",
           "medic": "",
@@ -2497,7 +2497,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-16T11:02:36.324Z"
+      "actualizadoTs": "2026-09-17T15:06:42.295Z"
     },
     {
       "id": 1787675930145,

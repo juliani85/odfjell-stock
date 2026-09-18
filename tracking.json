@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-18T16:50:38.974018Z",
+  "actualizado": "2026-09-18T17:00:50.374789Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -17,7 +17,7 @@
     "9459539": {
       "estado": "en_route",
       "destino": "La Plata, Argentina",
-      "eta": "2026-09-22T06:00:00Z",
+      "eta": "2026-09-22T04:00:00Z",
       "calado_m": 7.9,
       "nav_status": "Moored",
       "zona": "South America East Coast",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-18T16:50:38.974018Z"
+      "ultimo_fetch": "2026-09-18T17:00:50.374789Z"
     }
   }
 }

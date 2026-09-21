@@ -2441,7 +2441,7 @@
         {
           "solPart": "1797",
           "cto": "otus2604expl010",
-          "mercaderia": "2 etilhexanol",
+          "mercaderia": "2 ETIL HEXANOL",
           "receptor": "atanor",
           "kgDeclarados": 850000,
           "tkDestino": "58",
@@ -2452,7 +2452,7 @@
         {
           "solPart": "1826",
           "cto": "otus2604expl1101",
-          "mercaderia": "butyl cellosolve",
+          "mercaderia": "BUTYUL CELLOSOLVE",
           "receptor": "pbb",
           "kgDeclarados": 185000,
           "tkDestino": "96",
@@ -2463,7 +2463,7 @@
         {
           "solPart": "1827",
           "cto": "otus2604expl1401",
-          "mercaderia": "propionic acid",
+          "mercaderia": "PROPIONIC ACID",
           "receptor": "pbb",
           "kgDeclarados": 145846,
           "tkDestino": "41",
@@ -2474,7 +2474,7 @@
         {
           "solPart": "1828",
           "cto": "otus2604expl0901",
-          "mercaderia": "papi",
+          "mercaderia": "PAPI",
           "receptor": "pbb",
           "kgDeclarados": 262493,
           "tkDestino": "75-76",
@@ -2485,10 +2485,32 @@
         {
           "solPart": "1861-1871",
           "cto": "otus2604expl104-106-107-108-109-110-105-103",
-          "mercaderia": "2 ethyl hexanol",
+          "mercaderia": "2 ETIL HEXANOL",
           "receptor": "siner-milberg-chemotecnica-varteco",
           "kgDeclarados": 560000,
           "tkDestino": "54-63-58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1869",
+          "cto": "22",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 498892,
+          "tkDestino": "10-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1870",
+          "cto": "21",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 599611,
+          "tkDestino": "74-82",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
@@ -2496,8 +2518,8 @@
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-17T15:06:42.295Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-09-21T11:03:46.676Z"
     },
     {
       "id": 1787675930145,

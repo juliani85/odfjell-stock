@@ -1,11 +1,10 @@
 {
-  "actualizado": "2026-09-21T16:10:39.263047Z",
+  "actualizado": "2026-09-21T16:20:43.080029Z",
   "barcos": {
     "9828211": {
-      "estado": "en_route",
-      "destino": "Paranagua, Brazil",
-      "velocidad_nudos": 0.2,
-      "eta": "2026-09-21T15:00:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Paranagua Anch., Brazil",
+      "arribo": "2026-09-21T15:41:00Z",
       "calado_m": 7.6,
       "nav_status": "At anchor",
       "zona": "South America East Coast",
@@ -13,7 +12,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-21T16:10:39.263047Z"
+      "ultimo_fetch": "2026-09-21T16:20:43.080029Z"
     },
     "9459539": {
       "estado": "en_route",

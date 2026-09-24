@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-24T09:10:38.118742Z",
+  "actualizado": "2026-09-24T09:20:34.961780Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-24T08:10:42.177800Z"
+      "ultimo_fetch": "2026-09-24T09:20:34.961780Z"
     },
     "9459539": {
       "estado": "en_puerto",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-24T05:20:34.953651Z"
+      "ultimo_fetch": "2026-09-24T09:20:34.961780Z"
     }
   }
 }

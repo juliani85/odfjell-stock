@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-25T05:00:35.052510Z",
+  "actualizado": "2026-09-25T05:10:37.893936Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
@@ -13,12 +13,12 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-25T04:40:35.087383Z"
+      "ultimo_fetch": "2026-09-25T05:10:37.893936Z"
     },
     "9459539": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 8.7,
+      "velocidad_nudos": 5.9,
       "eta": "2026-09-25T05:00:00Z",
       "calado_m": 7.4,
       "nav_status": "Under way using engine",
@@ -27,7 +27,7 @@
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-25T05:00:35.052510Z"
+      "ultimo_fetch": "2026-09-25T05:10:37.893936Z"
     }
   }
 }

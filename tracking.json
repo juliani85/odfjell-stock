@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-09-26T07:01:03.949176Z",
+  "actualizado": "2026-09-26T07:11:04.988898Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 6.2,
+      "velocidad_nudos": 2.3,
       "eta": "2026-09-25T21:00:00Z",
       "calado_m": 7.5,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-26T07:01:03.949176Z"
+      "ultimo_fetch": "2026-09-26T07:11:04.988898Z"
     },
     "9459539": {
       "estado": "en_route",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-27T19:21:03.079615Z",
+  "actualizado": "2026-09-27T19:31:07.486138Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
@@ -12,20 +12,19 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-27T19:21:03.079615Z"
+      "ultimo_fetch": "2026-09-27T19:31:07.486138Z"
     },
     "9459539": {
       "estado": "en_puerto",
       "puerto_actual": "Buenos Aires, Argentina",
       "arribo": "2026-09-26T08:46:00Z",
       "calado_m": 7.3,
-      "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9459539",
       "nombre": "STOLT OCELOT",
-      "ultimo_fetch": "2026-09-27T15:21:05.613776Z"
+      "ultimo_fetch": "2026-09-27T19:31:07.486138Z"
     }
   }
 }

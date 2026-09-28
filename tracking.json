@@ -1,20 +1,18 @@
 {
-  "actualizado": "2026-09-28T07:31:04.789938Z",
+  "actualizado": "2026-09-28T07:41:10.133787Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
-      "destino": "Campana, Argentina",
-      "eta": "2026-09-25T21:00:00Z",
+      "puerto_actual": "Campana, Argentina",
+      "arribo": "2026-09-28T05:21:00Z",
       "calado_m": 7.5,
       "nav_status": "Moored",
       "zona": "South America Inland",
-      "puerto_actual": "Campana, Argentina",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-28T05:41:04.357814Z",
-      "arribo": "2026-09-28T05:41:04.357814Z"
+      "ultimo_fetch": "2026-09-28T07:41:10.133787Z"
     },
     "9459539": {
       "estado": "en_puerto",

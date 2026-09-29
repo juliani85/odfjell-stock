@@ -2666,6 +2666,43 @@
       "actualizadoTs": "2026-09-11T11:56:51.461Z",
       "archivada": true,
       "archivadaTs": "2026-09-11T11:15:49.342Z"
+    },
+    {
+      "id": 1790687445485,
+      "buque": "BOW LUNA",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-09-29",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "1983-82-81-80-79-78-77-",
+          "cto": "OTUS2605LUNA0210-214-215-216-209-211-217-213-212",
+          "mercaderia": "MONOETILENGLICOL",
+          "receptor": "QUIMICA TRUE-LARING-LAQUIMAR-FAST CHEMICAL-FARLOC-AUTO VENTURES-TOTAL-",
+          "kgDeclarados": 1100000,
+          "tkDestino": "5-36",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "1930",
+          "cto": "501",
+          "mercaderia": "VORANOL",
+          "receptor": "PBB",
+          "kgDeclarados": null,
+          "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-09-29T13:10:45.485Z"
     }
   ]
 }

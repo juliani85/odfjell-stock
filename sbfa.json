@@ -2537,7 +2537,7 @@
           "receptor": "henry hirschen",
           "kgDeclarados": 349958,
           "tkDestino": "52",
-          "sbfa": "",
+          "sbfa": "1677-v1678-w-1679-a",
           "medic": "192",
           "kgResultantes": 351810
         },
@@ -2548,7 +2548,7 @@
           "receptor": "inmobal",
           "kgDeclarados": 101472,
           "tkDestino": "30",
-          "sbfa": "",
+          "sbfa": "1675-t",
           "medic": "193",
           "kgResultantes": 100655
         },
@@ -2559,7 +2559,7 @@
           "receptor": "atanor",
           "kgDeclarados": 915640,
           "tkDestino": "13-14",
-          "sbfa": "",
+          "sbfa": "1676-u",
           "medic": "191",
           "kgResultantes": 913866
         },
@@ -2570,7 +2570,7 @@
           "receptor": "alkanos",
           "kgDeclarados": 414738,
           "tkDestino": "69",
-          "sbfa": "",
+          "sbfa": "1674-s",
           "medic": "190",
           "kgResultantes": 422572
         }
@@ -2578,7 +2578,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-29T12:13:30.865Z",
+      "actualizadoTs": "2026-09-29T12:21:44.998Z",
       "archivada": true,
       "archivadaTs": "2026-09-29T12:13:30.866Z"
     },

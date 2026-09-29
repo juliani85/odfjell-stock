@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-09-29T19:51:04.653445Z",
+  "actualizado": "2026-09-29T20:01:11.719146Z",
   "barcos": {
     "9828211": {
       "estado": "en_route",
       "destino": "Buenos Aires, Argentina",
-      "velocidad_nudos": 10.7,
+      "velocidad_nudos": 10.6,
       "eta": "2026-09-29T19:30:00Z",
       "calado_m": 7.4,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-09-29T19:51:04.653445Z"
+      "ultimo_fetch": "2026-09-29T20:01:11.719146Z"
     },
     "9942653": {
       "estado": "en_route",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-09-29T13:01:11.873896Z",
+  "actualizado": "2026-09-29T13:06:41.196996Z",
   "barcos": {
     "9828211": {
       "estado": "en_puerto",
@@ -13,6 +13,20 @@
       "imo": "9828211",
       "nombre": "BOW EXPLORER",
       "ultimo_fetch": "2026-09-29T12:51:08.130421Z"
+    },
+    "9942653": {
+      "estado": "en_route",
+      "destino": "Buenos Aires, Argentina",
+      "velocidad_nudos": 12.7,
+      "eta": "2026-10-02T00:00:00Z",
+      "calado_m": 9.5,
+      "nav_status": "Under way using engine",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9942653",
+      "nombre": "BOW LUNA",
+      "ultimo_fetch": "2026-09-29T13:06:41.196996Z"
     }
   }
 }

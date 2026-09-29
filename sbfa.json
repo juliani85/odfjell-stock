@@ -2524,10 +2524,10 @@
     {
       "id": 1787675930145,
       "buque": "STOLT OCELOT",
-      "manifiesto": "",
+      "manifiesto": "25085-G",
       "agencia": "wave",
       "cuit": "30-71631314-6",
-      "fecha": "2026-09-09",
+      "fecha": "2026-09-25",
       "notaNumero": "",
       "filas": [
         {
@@ -2538,8 +2538,8 @@
           "kgDeclarados": 349958,
           "tkDestino": "52",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "192",
+          "kgResultantes": 351810
         },
         {
           "solPart": "1748",
@@ -2549,8 +2549,8 @@
           "kgDeclarados": 101472,
           "tkDestino": "30",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "193",
+          "kgResultantes": 100655
         },
         {
           "solPart": "1750",
@@ -2560,8 +2560,8 @@
           "kgDeclarados": 915640,
           "tkDestino": "13-14",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "191",
+          "kgResultantes": 913866
         },
         {
           "solPart": "1833",
@@ -2571,14 +2571,16 @@
           "kgDeclarados": 414738,
           "tkDestino": "69",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "190",
+          "kgResultantes": 422572
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-11T14:09:17.625Z"
+      "actualizadoTs": "2026-09-29T12:13:30.865Z",
+      "archivada": true,
+      "archivadaTs": "2026-09-29T12:13:30.866Z"
     },
     {
       "id": 1787761300726,

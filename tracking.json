@@ -1,19 +1,6 @@
 {
-  "actualizado": "2026-10-02T13:30:43.271898Z",
+  "actualizado": "2026-10-02T13:40:42.828652Z",
   "barcos": {
-    "9828211": {
-      "estado": "en_puerto",
-      "puerto_actual": "Buenos Aires, Argentina",
-      "arribo": "2026-10-01T09:18:00Z",
-      "calado_m": 7.4,
-      "nav_status": "Moored",
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9828211",
-      "nombre": "BOW EXPLORER",
-      "ultimo_fetch": "2026-10-02T09:40:44.223371Z"
-    },
     "9942653": {
       "estado": "en_route",
       "destino": "Buenos Aires, Argentina",

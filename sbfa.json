@@ -2388,10 +2388,10 @@
     {
       "id": 1787577532663,
       "buque": "BOW EXPLORER",
-      "manifiesto": "",
+      "manifiesto": "25092-E",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-08-24",
+      "fecha": "2026-09-28",
       "notaNumero": "",
       "filas": [
         {
@@ -2486,7 +2486,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-02T13:36:45.002Z",
+      "actualizadoTs": "2026-10-02T13:53:46.185Z",
       "archivada": true,
       "archivadaTs": "2026-10-02T13:36:45.002Z"
     },

@@ -2694,6 +2694,32 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-10-02T12:01:26.169Z"
+    },
+    {
+      "id": 1790951830803,
+      "buque": "BOCHEM BRISBANE",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-10-02",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2026",
+          "cto": "270",
+          "mercaderia": "ARCOL F 3040",
+          "receptor": "ALKANOS",
+          "kgDeclarados": 629913,
+          "tkDestino": "69",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-10-02T14:37:10.804Z"
     }
   ]
 }

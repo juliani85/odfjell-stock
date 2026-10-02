@@ -2671,8 +2671,8 @@
       "id": 1790687445485,
       "buque": "BOW LUNA",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-09-29",
       "notaNumero": "",
       "filas": [
@@ -2692,8 +2692,30 @@
           "cto": "501",
           "mercaderia": "VORANOL",
           "receptor": "PBB",
-          "kgDeclarados": null,
+          "kgDeclarados": 1000558,
           "tkDestino": "27-28-29-31-32",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2002",
+          "cto": "06",
+          "mercaderia": "alkonat l 10",
+          "receptor": "unilever",
+          "kgDeclarados": 499558,
+          "tkDestino": "74-82",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2001",
+          "cto": "07",
+          "mercaderia": "alkonat l 70",
+          "receptor": "unilever",
+          "kgDeclarados": 599722,
+          "tkDestino": "10-14",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
@@ -2702,7 +2724,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-09-29T13:10:45.485Z"
+      "actualizadoTs": "2026-10-02T12:01:26.169Z"
     }
   ]
 }

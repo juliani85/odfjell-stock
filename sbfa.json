@@ -2395,24 +2395,13 @@
       "notaNumero": "",
       "filas": [
         {
-          "solPart": "1686",
-          "cto": "OTUS2604 EXPL 0803",
-          "mercaderia": "ACRILATO DE BUTILO",
-          "receptor": "DIRANSA",
-          "kgDeclarados": 28000,
-          "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
-        },
-        {
           "solPart": "1734",
           "cto": "OTUS2604EXPL1501-02-03",
           "mercaderia": "VINYL ACETATE",
           "receptor": "DALGAR",
           "kgDeclarados": 104913,
           "tkDestino": "24",
-          "sbfa": "",
+          "sbfa": "1708-z al1710-j",
           "medic": "198",
           "kgResultantes": 104940
         },
@@ -2423,7 +2412,7 @@
           "receptor": "DALGAR-crilen-diransa",
           "kgDeclarados": 314963,
           "tkDestino": "67",
-          "sbfa": "",
+          "sbfa": "1704-m al 1707-p",
           "medic": "197",
           "kgResultantes": 315154
         },
@@ -2434,7 +2423,7 @@
           "receptor": "pbb",
           "kgDeclarados": 185000,
           "tkDestino": "96",
-          "sbfa": "",
+          "sbfa": "1711-k",
           "medic": "199",
           "kgResultantes": 183763
         },
@@ -2445,7 +2434,7 @@
           "receptor": "pbb",
           "kgDeclarados": 145846,
           "tkDestino": "41",
-          "sbfa": "",
+          "sbfa": "1712-l",
           "medic": "200",
           "kgResultantes": 145674
         },
@@ -2456,7 +2445,7 @@
           "receptor": "pbb",
           "kgDeclarados": 262493,
           "tkDestino": "75-76",
-          "sbfa": "",
+          "sbfa": "1713-m",
           "medic": "201",
           "kgResultantes": 263986
         },
@@ -2467,7 +2456,7 @@
           "receptor": "siner-milberg-chemotecnica-varteco-atanor",
           "kgDeclarados": 1410000,
           "tkDestino": "54-63-58",
-          "sbfa": "",
+          "sbfa": "1695-v al 1703 l",
           "medic": "196",
           "kgResultantes": 1409247
         },
@@ -2478,7 +2467,7 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 498892,
           "tkDestino": "10-14",
-          "sbfa": "",
+          "sbfa": "1694-u",
           "medic": "195",
           "kgResultantes": 495931
         },
@@ -2489,7 +2478,7 @@
           "receptor": "UNILEVER",
           "kgDeclarados": 599611,
           "tkDestino": "74-82",
-          "sbfa": "",
+          "sbfa": "1693-t",
           "medic": "194",
           "kgResultantes": 595511
         }
@@ -2497,7 +2486,9 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-02T13:09:49.868Z"
+      "actualizadoTs": "2026-10-02T13:36:45.002Z",
+      "archivada": true,
+      "archivadaTs": "2026-10-02T13:36:45.002Z"
     },
     {
       "id": 1787675930145,

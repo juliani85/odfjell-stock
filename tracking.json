@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-02T14:30:48.156535Z",
+  "actualizado": "2026-10-02T14:36:43.778793Z",
   "barcos": {
     "9942653": {
       "estado": "en_route",
@@ -14,6 +14,19 @@
       "imo": "9942653",
       "nombre": "BOW LUNA",
       "ultimo_fetch": "2026-10-02T10:40:52.485712Z"
+    },
+    "9973315": {
+      "estado": "en_puerto",
+      "puerto_actual": "Santos Anch., Brazil",
+      "arribo": "2026-09-30T12:05:00Z",
+      "calado_m": 10.0,
+      "nav_status": "At anchor",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9973315",
+      "nombre": "BOCHEM BRISBANE",
+      "ultimo_fetch": "2026-10-02T14:36:43.778793Z"
     }
   }
 }

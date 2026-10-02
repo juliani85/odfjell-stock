@@ -2411,43 +2411,21 @@
           "mercaderia": "VINYL ACETATE",
           "receptor": "DALGAR",
           "kgDeclarados": 104913,
-          "tkDestino": "25",
+          "tkDestino": "24",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "198",
+          "kgResultantes": 104940
         },
         {
-          "solPart": "1733",
-          "cto": "OTUS2604EXPL0801-04",
+          "solPart": "1733-1776",
+          "cto": "OTUS2604EXPL0801-04-otus2604expl0802",
           "mercaderia": "BUTYL ACRYLATE",
-          "receptor": "DALGAR",
-          "kgDeclarados": 174963,
-          "tkDestino": "34-67",
+          "receptor": "DALGAR-crilen",
+          "kgDeclarados": 286963,
+          "tkDestino": "67",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
-        },
-        {
-          "solPart": "1776",
-          "cto": "otus2604expl0802",
-          "mercaderia": "BUTYL ACRYLATE",
-          "receptor": "CRILEN",
-          "kgDeclarados": 112000,
-          "tkDestino": "34-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
-        },
-        {
-          "solPart": "1797",
-          "cto": "otus2604expl010",
-          "mercaderia": "2 ETIL HEXANOL",
-          "receptor": "atanor",
-          "kgDeclarados": 850000,
-          "tkDestino": "58",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "197",
+          "kgResultantes": 315154
         },
         {
           "solPart": "1826",
@@ -2457,8 +2435,8 @@
           "kgDeclarados": 185000,
           "tkDestino": "96",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "199",
+          "kgResultantes": 183763
         },
         {
           "solPart": "1827",
@@ -2468,8 +2446,8 @@
           "kgDeclarados": 145846,
           "tkDestino": "41",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "200",
+          "kgResultantes": 145674
         },
         {
           "solPart": "1828",
@@ -2479,19 +2457,19 @@
           "kgDeclarados": 262493,
           "tkDestino": "75-76",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "201",
+          "kgResultantes": 263986
         },
         {
-          "solPart": "1861-1871",
-          "cto": "otus2604expl104-106-107-108-109-110-105-103",
+          "solPart": "1861-1871-1797",
+          "cto": "otus2604expl104-106-107-108-109-110-105-103-otus2604expl010",
           "mercaderia": "2 ETIL HEXANOL",
-          "receptor": "siner-milberg-chemotecnica-varteco",
-          "kgDeclarados": 560000,
+          "receptor": "siner-milberg-chemotecnica-varteco-atanor",
+          "kgDeclarados": 1410000,
           "tkDestino": "54-63-58",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "196",
+          "kgResultantes": 1409247
         },
         {
           "solPart": "1869",
@@ -2501,8 +2479,8 @@
           "kgDeclarados": 498892,
           "tkDestino": "10-14",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "195",
+          "kgResultantes": 495931
         },
         {
           "solPart": "1870",
@@ -2512,14 +2490,14 @@
           "kgDeclarados": 599611,
           "tkDestino": "74-82",
           "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "medic": "194",
+          "kgResultantes": 595511
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-09-21T11:03:46.676Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-10-02T13:06:41.972Z"
     },
     {
       "id": 1787675930145,

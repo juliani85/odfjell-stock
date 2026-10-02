@@ -2417,11 +2417,11 @@
           "kgResultantes": 104940
         },
         {
-          "solPart": "1733-1776",
-          "cto": "OTUS2604EXPL0801-04-otus2604expl0802",
+          "solPart": "1733-1776-1685",
+          "cto": "OTUS2604EXPL0801-04-otus2604expl0802-803",
           "mercaderia": "BUTYL ACRYLATE",
-          "receptor": "DALGAR-crilen",
-          "kgDeclarados": 286963,
+          "receptor": "DALGAR-crilen-diransa",
+          "kgDeclarados": 314963,
           "tkDestino": "67",
           "sbfa": "",
           "medic": "197",
@@ -2497,7 +2497,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-02T13:06:41.972Z"
+      "actualizadoTs": "2026-10-02T13:09:49.868Z"
     },
     {
       "id": 1787675930145,

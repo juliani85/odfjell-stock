@@ -1,9 +1,10 @@
 {
-  "actualizado": "2026-10-03T02:50:43.324307Z",
+  "actualizado": "2026-10-03T03:00:48.621282Z",
   "barcos": {
     "9942653": {
       "estado": "en_route",
       "destino": "Buenos Aires, Argentina",
+      "velocidad_nudos": 0.1,
       "eta": "2026-10-02T13:00:00Z",
       "calado_m": 8.5,
       "nav_status": "At anchor",
@@ -12,7 +13,7 @@
       "error": null,
       "imo": "9942653",
       "nombre": "BOW LUNA",
-      "ultimo_fetch": "2026-10-03T02:50:43.324307Z"
+      "ultimo_fetch": "2026-10-03T03:00:48.621282Z"
     },
     "9973315": {
       "estado": "en_puerto",

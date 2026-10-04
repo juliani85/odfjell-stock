@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-10-04T10:21:26.376624Z",
+  "actualizado": "2026-10-04T10:30:45.568791Z",
   "barcos": {
     "9942653": {
       "estado": "en_route",
       "destino": "Zarate, Argentina",
-      "velocidad_nudos": 9.3,
+      "velocidad_nudos": 9.4,
       "eta": "2026-10-04T11:00:00Z",
       "calado_m": 8.4,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9942653",
       "nombre": "BOW LUNA",
-      "ultimo_fetch": "2026-10-04T10:21:26.376624Z"
+      "ultimo_fetch": "2026-10-04T10:30:45.568791Z"
     },
     "9973315": {
       "estado": "en_puerto",

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-07T04:50:52.035610Z",
+  "actualizado": "2026-10-07T05:00:48.006693Z",
   "barcos": {
     "9942653": {
       "estado": "en_puerto",
@@ -15,17 +15,18 @@
       "ultimo_fetch": "2026-10-07T04:00:45.875705Z"
     },
     "9973315": {
-      "estado": "en_puerto",
-      "puerto_actual": "Santos, Brazil",
-      "arribo": "2026-10-05T07:19:00Z",
-      "calado_m": 10.0,
-      "nav_status": "Moored",
+      "estado": "en_route",
+      "destino": "ARRCA",
+      "velocidad_nudos": 1.6,
+      "eta": "2026-10-10T11:30:00Z",
+      "calado_m": 9.9,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-07T01:00:43.693382Z"
+      "ultimo_fetch": "2026-10-07T05:00:48.006693Z"
     }
   }
 }

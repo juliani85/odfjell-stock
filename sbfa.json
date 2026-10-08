@@ -2652,9 +2652,9 @@
           "receptor": "QUIMICA TRUE-LARING-LAQUIMAR-FAST CHEMICAL-FARLOC-AUTO VENTURES-TOTAL-",
           "kgDeclarados": 1100000,
           "tkDestino": "5-36",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1741N-1742Y-1743P-1744Z-1745R-1746S-1747T-1748U-1749V",
+          "medic": "206",
+          "kgResultantes": 1098472
         },
         {
           "solPart": "1930",
@@ -2663,9 +2663,9 @@
           "receptor": "PBB",
           "kgDeclarados": 1000558,
           "tkDestino": "27-28-29-31-32",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1740M",
+          "medic": "205",
+          "kgResultantes": 992812
         },
         {
           "solPart": "2002",
@@ -2674,9 +2674,9 @@
           "receptor": "unilever",
           "kgDeclarados": 499558,
           "tkDestino": "74-82",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1754R",
+          "medic": "203",
+          "kgResultantes": 497987
         },
         {
           "solPart": "2001",
@@ -2685,15 +2685,17 @@
           "receptor": "unilever",
           "kgDeclarados": 599722,
           "tkDestino": "10-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1755S",
+          "medic": "204",
+          "kgResultantes": 595176
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-02T12:01:26.169Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-08T17:54:22.706Z",
+      "archivada": true,
+      "archivadaTs": "2026-10-08T17:54:22.706Z"
     },
     {
       "id": 1790951830803,

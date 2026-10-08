@@ -1,19 +1,6 @@
 {
-  "actualizado": "2026-10-08T17:50:54.219332Z",
+  "actualizado": "2026-10-08T18:01:10.109324Z",
   "barcos": {
-    "9942653": {
-      "estado": "en_route",
-      "destino": "BY KM 210",
-      "eta": "2026-10-07T23:00:00Z",
-      "calado_m": 7.0,
-      "nav_status": "At anchor",
-      "zona": "South America Inland",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9942653",
-      "nombre": "BOW LUNA",
-      "ultimo_fetch": "2026-10-08T17:50:54.219332Z"
-    },
     "9973315": {
       "estado": "en_route",
       "destino": "ARRCA",

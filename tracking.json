@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-08T00:00:50.661367Z",
+  "actualizado": "2026-10-08T00:10:48.256284Z",
   "barcos": {
     "9942653": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9942653",
       "nombre": "BOW LUNA",
-      "ultimo_fetch": "2026-10-08T00:00:50.661367Z"
+      "ultimo_fetch": "2026-10-08T00:10:48.256284Z"
     },
     "9973315": {
       "estado": "en_route",

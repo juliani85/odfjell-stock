@@ -2720,6 +2720,32 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-10-02T14:37:10.804Z"
+    },
+    {
+      "id": 1791457921509,
+      "buque": "GOLDEN THETIS",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-10-08",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2046",
+          "cto": "115",
+          "mercaderia": "ACIDO ACETICO",
+          "receptor": "ATANOR",
+          "kgDeclarados": 1019654,
+          "tkDestino": "13-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-08T11:12:01.509Z"
     }
   ]
 }

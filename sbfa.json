@@ -2639,10 +2639,10 @@
     {
       "id": 1790687445485,
       "buque": "BOW LUNA",
-      "manifiesto": "",
+      "manifiesto": "25742G",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-09-29",
+      "fecha": "2026-10-06",
       "notaNumero": "",
       "filas": [
         {
@@ -2693,7 +2693,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-08T17:54:22.706Z",
+      "actualizadoTs": "2026-10-08T17:54:50.764Z",
       "archivada": true,
       "archivadaTs": "2026-10-08T17:54:22.706Z"
     },

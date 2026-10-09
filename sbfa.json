@@ -2701,8 +2701,8 @@
       "id": 1790951830803,
       "buque": "BOCHEM BRISBANE",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-10-02",
       "notaNumero": "",
       "filas": [
@@ -2716,12 +2716,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2061",
+          "cto": "250A-B-C-D-E",
+          "mercaderia": "SODA CAUSTICA",
+          "receptor": "DALGAR",
+          "kgDeclarados": 300000,
+          "tkDestino": "50-55-98-99",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-02T14:37:10.804Z"
+      "actualizadoTs": "2026-10-09T13:50:52.782Z"
     },
     {
       "id": 1791457921509,

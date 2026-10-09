@@ -2759,6 +2759,32 @@
       "exportaciones": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-10-08T11:12:01.509Z"
+    },
+    {
+      "id": 1791553932718,
+      "buque": "BOW CHAIN",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-10-09",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2048",
+          "cto": "OTUS2605CAIN 2001",
+          "mercaderia": "BUTILO",
+          "receptor": "DIRANSA",
+          "kgDeclarados": 156000,
+          "tkDestino": "31-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-10-09T13:52:12.718Z"
     }
   ]
 }

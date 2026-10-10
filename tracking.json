@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-10T22:20:47.101264Z",
+  "actualizado": "2026-10-10T22:30:48.449732Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
@@ -28,17 +28,18 @@
       "ultimo_fetch": "2026-10-10T20:30:49.421120Z"
     },
     "9214317": {
-      "estado": "en_puerto",
-      "puerto_actual": "Aratu, Brazil",
-      "arribo": "2026-10-08T22:42:00Z",
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "velocidad_nudos": 15.3,
+      "eta": "2026-10-14T12:00:00Z",
       "calado_m": 10.0,
-      "nav_status": "Moored",
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-10T18:30:43.292556Z"
+      "ultimo_fetch": "2026-10-10T22:30:48.449732Z"
     }
   }
 }

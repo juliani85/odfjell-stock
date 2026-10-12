@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-10-12T09:50:48.489869Z",
+  "actualizado": "2026-10-12T10:01:07.721927Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
       "destino": "RECLADA",
-      "velocidad_nudos": 0.1,
+      "velocidad_nudos": 0.2,
       "eta": "2026-10-12T01:30:00Z",
       "calado_m": 10.0,
       "nav_status": "At anchor",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-12T09:50:48.489869Z"
+      "ultimo_fetch": "2026-10-12T10:01:07.721927Z"
     },
     "1037701": {
       "estado": "en_route",

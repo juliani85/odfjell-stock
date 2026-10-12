@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-12T02:50:44.773061Z",
+  "actualizado": "2026-10-12T03:00:46.914829Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
@@ -31,15 +31,16 @@
     "9214317": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 15.3,
+      "velocidad_nudos": 13.0,
       "eta": "2026-10-14T12:00:00Z",
       "calado_m": 10.0,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-11T22:50:50.227691Z"
+      "ultimo_fetch": "2026-10-12T03:00:46.914829Z"
     }
   }
 }

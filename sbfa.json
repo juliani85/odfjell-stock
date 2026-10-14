@@ -2700,10 +2700,10 @@
     {
       "id": 1790951830803,
       "buque": "BOCHEM BRISBANE",
-      "manifiesto": "",
-      "agencia": "B&M",
-      "cuit": "30-71631314-6",
-      "fecha": "2026-10-02",
+      "manifiesto": "26675M",
+      "agencia": "WAVE",
+      "cuit": "30-65421471-5",
+      "fecha": "2026-10-13",
       "notaNumero": "",
       "filas": [
         {
@@ -2713,9 +2713,9 @@
           "receptor": "ALKANOS",
           "kgDeclarados": 629913,
           "tkDestino": "69",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1776V",
+          "medic": "208",
+          "kgResultantes": 624712
         },
         {
           "solPart": "2061",
@@ -2731,8 +2731,8 @@
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-09T13:50:52.782Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-14T19:48:19.615Z"
     },
     {
       "id": 1791457921509,

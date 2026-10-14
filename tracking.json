@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-14T03:50:19.847275Z",
+  "actualizado": "2026-10-14T04:00:21.274795Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-14T03:50:19.847275Z"
+      "ultimo_fetch": "2026-10-14T04:00:21.274795Z"
     },
     "1037701": {
       "estado": "en_route",
@@ -30,15 +30,16 @@
     "9214317": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 13.0,
+      "velocidad_nudos": 13.1,
       "eta": "2026-10-14T12:00:00Z",
       "calado_m": 10.0,
+      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-13T23:50:48.765330Z"
+      "ultimo_fetch": "2026-10-14T04:00:21.274795Z"
     }
   }
 }

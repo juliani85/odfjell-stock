@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-10-14T04:40:24.803352Z",
+  "actualizado": "2026-10-14T04:50:18.204159Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
       "destino": "San Nicolas, Argentina",
-      "velocidad_nudos": 7.8,
+      "velocidad_nudos": 7.7,
       "eta": "2026-10-14T09:00:00Z",
       "calado_m": 9.7,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-14T04:40:24.803352Z"
+      "ultimo_fetch": "2026-10-14T04:50:18.204159Z"
     },
     "1037701": {
       "estado": "en_route",

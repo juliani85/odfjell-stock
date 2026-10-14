@@ -2764,8 +2764,8 @@
       "id": 1791553932718,
       "buque": "BOW CHAIN",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-10-09",
       "notaNumero": "",
       "filas": [
@@ -2779,12 +2779,67 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2081",
+          "cto": "OTUS2605CAIN3606/0607",
+          "mercaderia": "ACIDO FORMICO",
+          "receptor": "DALGAR",
+          "kgDeclarados": 78897,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2082",
+          "cto": "OTUS2605CAIN3608/3609",
+          "mercaderia": "ACIDO FORMICO",
+          "receptor": "NEOPHOS",
+          "kgDeclarados": 250000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2083",
+          "cto": "OTUS2605CAIN2004",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 175956,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2084",
+          "cto": "OTUS2605CAIN2003",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "INQUIBA",
+          "kgDeclarados": 28000,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2085",
+          "cto": "OTUS2605CAIN3002/3003/3004/3005/3006/3007",
+          "mercaderia": "VINYL ACETATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 254545,
+          "tkDestino": "34",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-09T13:52:12.718Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-14T16:41:15.521Z"
     }
   ]
 }

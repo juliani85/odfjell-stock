@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-15T06:40:28.089452Z",
+  "actualizado": "2026-10-15T06:50:26.516946Z",
   "barcos": {
     "9973315": {
       "estado": "en_puerto",
@@ -12,20 +12,20 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-15T02:40:28.282854Z"
+      "ultimo_fetch": "2026-10-15T06:50:26.516946Z"
     },
     "1037701": {
-      "estado": "en_route",
-      "destino": "Suape, Brazil",
-      "velocidad_nudos": 13.3,
-      "eta": "2026-10-13T19:16:00Z",
+      "estado": "en_puerto",
+      "puerto_actual": "Suape Anch., Brazil",
+      "arribo": "2026-10-13T16:50:00Z",
       "calado_m": 9.6,
-      "zona": "Caribbean Sea",
+      "nav_status": "At anchor",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-15T02:40:28.282854Z"
+      "ultimo_fetch": "2026-10-15T06:50:26.516946Z"
     },
     "9214317": {
       "estado": "en_puerto",

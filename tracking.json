@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-16T11:00:32.513698Z",
+  "actualizado": "2026-10-16T11:10:30.413686Z",
   "barcos": {
     "9973315": {
       "estado": "en_puerto",
@@ -18,14 +18,14 @@
       "estado": "en_route",
       "destino": "Aratu, Brazil",
       "velocidad_nudos": 7.0,
-      "eta": "2026-10-17T06:16:00Z",
+      "eta": "2026-10-17T08:00:00Z",
       "calado_m": 9.4,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-16T07:10:29.506302Z"
+      "ultimo_fetch": "2026-10-16T11:10:30.413686Z"
     },
     "9214317": {
       "estado": "en_puerto",

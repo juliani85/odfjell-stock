@@ -1,18 +1,19 @@
 {
-  "actualizado": "2026-10-17T05:00:27.835159Z",
+  "actualizado": "2026-10-17T05:10:26.840764Z",
   "barcos": {
     "9973315": {
-      "estado": "en_puerto",
-      "puerto_actual": "Campana, Argentina",
-      "arribo": "2026-10-16T07:23:00Z",
+      "estado": "en_route",
+      "destino": "Campana, Argentina",
+      "velocidad_nudos": 0.1,
+      "eta": "2026-10-16T09:00:00Z",
       "calado_m": 7.3,
-      "nav_status": "Moored",
-      "zona": "South America Inland",
+      "nav_status": "At anchor",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-16T20:30:29.889638Z"
+      "ultimo_fetch": "2026-10-17T05:10:26.840764Z"
     },
     "1037701": {
       "estado": "en_route",

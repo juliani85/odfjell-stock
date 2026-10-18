@@ -1,10 +1,9 @@
 {
-  "actualizado": "2026-10-18T10:50:29.249179Z",
+  "actualizado": "2026-10-18T11:00:27.458662Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 0.1,
       "eta": "2026-10-16T09:00:00Z",
       "calado_m": 7.3,
       "nav_status": "At anchor",
@@ -13,7 +12,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-18T10:50:29.249179Z"
+      "ultimo_fetch": "2026-10-18T11:00:27.458662Z"
     },
     "1037701": {
       "estado": "en_route",
@@ -26,7 +25,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-18T10:50:29.249179Z"
+      "ultimo_fetch": "2026-10-18T11:00:27.458662Z"
     },
     "9214317": {
       "estado": "en_puerto",
@@ -39,7 +38,7 @@
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-18T07:00:27.679012Z"
+      "ultimo_fetch": "2026-10-18T11:00:27.458662Z"
     }
   }
 }

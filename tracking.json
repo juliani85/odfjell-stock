@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-19T04:40:27.741114Z",
+  "actualizado": "2026-10-19T04:50:28.814988Z",
   "barcos": {
     "9973315": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "9973315",
       "nombre": "BOCHEM BRISBANE",
-      "ultimo_fetch": "2026-10-19T04:40:27.741114Z"
+      "ultimo_fetch": "2026-10-19T04:50:28.814988Z"
     },
     "1037701": {
       "estado": "en_route",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-19T00:50:27.534229Z"
+      "ultimo_fetch": "2026-10-19T04:50:28.814988Z"
     },
     "9214317": {
       "estado": "en_puerto",

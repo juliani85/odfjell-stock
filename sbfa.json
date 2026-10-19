@@ -2834,12 +2834,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2139",
+          "cto": "otus2605cain 2002",
+          "mercaderia": "butilo",
+          "receptor": "crilen",
+          "kgDeclarados": 112000,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2140",
+          "cto": "otus2605cain3008",
+          "mercaderia": "vinilo",
+          "receptor": "crilen",
+          "kgDeclarados": 59091,
+          "tkDestino": "34",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-14T16:41:15.521Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-10-19T16:35:29.716Z"
     }
   ]
 }

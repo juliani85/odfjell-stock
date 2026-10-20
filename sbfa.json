@@ -2714,7 +2714,7 @@
           "kgDeclarados": 629913,
           "tkDestino": "69",
           "sbfa": "1776V",
-          "medic": "208",
+          "medic": "209",
           "kgResultantes": 624712
         },
         {
@@ -2725,14 +2725,14 @@
           "kgDeclarados": 3000000,
           "tkDestino": "50-55-98-99",
           "sbfa": "1799d-1800j-1801k-1802l-1803m",
-          "medic": "209",
+          "medic": "210",
           "kgResultantes": 2994230
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-20T12:00:17.446Z",
+      "actualizadoTs": "2026-10-20T12:41:35.870Z",
       "archivada": true,
       "archivadaTs": "2026-10-20T12:00:17.446Z"
     },

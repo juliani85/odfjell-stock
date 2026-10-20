@@ -2935,12 +2935,56 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2108",
+          "cto": "OTUS2605CAIN0901",
+          "mercaderia": "SOLVESSO 100",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 149522,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2109",
+          "cto": "OTUS2605CAIN1101",
+          "mercaderia": "SOLVESSO 200",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 214823,
+          "tkDestino": "23",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2110",
+          "cto": "OTUS2605CAIN0500",
+          "mercaderia": "EXXSOL D60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 345564,
+          "tkDestino": "48",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2111",
+          "cto": "OTUS2605CAIN0801",
+          "mercaderia": "ISOPAR L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 349612,
+          "tkDestino": "81",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-20T13:18:49.448Z"
+      "actualizadoTs": "2026-10-20T16:35:33.331Z"
     }
   ]
 }

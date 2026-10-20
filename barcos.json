@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "BOCHEM BRISBANE",
-      "imo": "9973315"
-    },
-    {
       "nombre": "GOLDEN THETIS",
       "imo": "1037701"
     },

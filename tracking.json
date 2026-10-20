@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-20T05:10:26.209763Z",
+  "actualizado": "2026-10-20T05:20:28.541447Z",
   "barcos": {
     "9973315": {
       "estado": "en_puerto",
@@ -27,7 +27,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-20T01:20:28.404107Z"
+      "ultimo_fetch": "2026-10-20T05:20:28.541447Z"
     },
     "9214317": {
       "estado": "en_puerto",

@@ -2774,7 +2774,7 @@
         {
           "solPart": "2048",
           "cto": "OTUS2605CAIN 2001",
-          "mercaderia": "BUTILO",
+          "mercaderia": "BUTYL ACRYLATE",
           "receptor": "DIRANSA",
           "kgDeclarados": 156000,
           "tkDestino": "31-67",
@@ -2840,7 +2840,7 @@
         {
           "solPart": "2139",
           "cto": "otus2605cain 2002",
-          "mercaderia": "butilo",
+          "mercaderia": "BUTYL ACRYLATE",
           "receptor": "crilen",
           "kgDeclarados": 112000,
           "tkDestino": "67-24",
@@ -2851,10 +2851,87 @@
         {
           "solPart": "2140",
           "cto": "otus2605cain3008",
-          "mercaderia": "vinilo",
+          "mercaderia": "VINYL ACETATE",
           "receptor": "crilen",
           "kgDeclarados": 59091,
           "tkDestino": "34",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2147",
+          "cto": "OTUS2605CAIN3610",
+          "mercaderia": "ACIDO FORMICO",
+          "receptor": "PRINCZ",
+          "kgDeclarados": 75000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2129",
+          "cto": "OTUS2605CAIN2101",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 262435,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2126",
+          "cto": "BL40",
+          "mercaderia": "DIPROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 307464,
+          "tkDestino": "17",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2124",
+          "cto": "BL4102",
+          "mercaderia": "PROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 302578,
+          "tkDestino": "88",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2130",
+          "cto": "OTUS2605CAIN2702",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 199998,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2131",
+          "cto": "OTUS2605CAIN2304",
+          "mercaderia": "BUTYL CELOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 146398,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2125",
+          "cto": "BL4101",
+          "mercaderia": "PROPYLENE GLYCOL",
+          "receptor": "PBB",
+          "kgDeclarados": 1200000,
+          "tkDestino": "78-84-88-89",
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
@@ -2862,8 +2939,8 @@
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-19T16:35:29.716Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-20T13:18:49.448Z"
     }
   ]
 }

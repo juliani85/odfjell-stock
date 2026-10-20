@@ -2979,12 +2979,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2146",
+          "cto": "OTUS2605CAIN3602",
+          "mercaderia": "ACIDO FORMICO",
+          "receptor": "LA HISPANO",
+          "kgDeclarados": 25000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2149",
+          "cto": "OTUS2605CAIN3601",
+          "mercaderia": "ACIDO FORMICO",
+          "receptor": "LA HISPANO",
+          "kgDeclarados": 25000,
+          "tkDestino": "11",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-20T16:35:33.331Z"
+      "actualizadoTs": "2026-10-20T16:42:23.963Z"
     }
   ]
 }

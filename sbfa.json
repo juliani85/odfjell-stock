@@ -3012,12 +3012,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2164",
+          "cto": "OTUS2605CAIN3801",
+          "mercaderia": "FENOL",
+          "receptor": "ATANOR",
+          "kgDeclarados": 999899,
+          "tkDestino": "80-85",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-23T12:32:04.651Z"
+      "actualizadoTs": "2026-10-23T18:12:17.482Z"
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-23T20:30:27.889075Z",
+  "actualizado": "2026-10-23T20:40:31.895278Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-23T19:40:31.133575Z"
+      "ultimo_fetch": "2026-10-23T20:40:31.895278Z"
     }
   }
 }

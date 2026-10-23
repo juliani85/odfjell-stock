@@ -3001,12 +3001,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2168",
+          "cto": "OTUS2605CAIN2800",
+          "mercaderia": "PROPYL ACETATE",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 314890,
+          "tkDestino": "93",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-20T16:42:23.963Z"
+      "actualizadoTs": "2026-10-23T12:32:04.651Z"
     }
   ]
 }

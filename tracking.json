@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-25T10:50:28.093541Z",
+  "actualizado": "2026-10-25T11:01:04.273708Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -17,7 +17,7 @@
     "9214317": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 10.7,
+      "velocidad_nudos": 10.6,
       "eta": "2026-10-25T04:00:00Z",
       "calado_m": 8.8,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-25T10:50:28.093541Z"
+      "ultimo_fetch": "2026-10-25T11:01:04.273708Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-25T05:40:27.548792Z",
+  "actualizado": "2026-10-25T05:50:29.748617Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -12,12 +12,12 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-25T01:40:28.132058Z"
+      "ultimo_fetch": "2026-10-25T05:50:29.748617Z"
     },
     "9214317": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 12.0,
+      "velocidad_nudos": 10.7,
       "eta": "2026-10-25T04:00:00Z",
       "calado_m": 8.8,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-25T05:40:27.548792Z"
+      "ultimo_fetch": "2026-10-25T05:50:29.748617Z"
     }
   }
 }

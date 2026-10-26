@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-10-26T14:20:38.352973Z",
+  "actualizado": "2026-10-26T14:30:31.634381Z",
   "barcos": {
     "1037701": {
-      "estado": "en_puerto",
-      "puerto_actual": "Rio de Janeiro, Brazil",
-      "arribo": "2026-10-23T14:31:00Z",
-      "calado_m": 8.5,
+      "estado": "en_route",
+      "destino": "Santos, Brazil",
+      "eta": "2026-10-27T06:00:00Z",
+      "calado_m": 7.6,
       "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-10-26T10:25:36.792552Z"
+      "ultimo_fetch": "2026-10-26T14:30:31.634381Z"
     },
     "9214317": {
       "estado": "en_puerto",

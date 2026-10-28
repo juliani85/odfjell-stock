@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-28T09:00:31.998635Z",
+  "actualizado": "2026-10-28T09:10:29.148013Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -17,7 +17,7 @@
     "9214317": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 9.8,
+      "velocidad_nudos": 3.9,
       "eta": "2026-10-29T12:00:00Z",
       "calado_m": 7.5,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-28T05:10:28.948177Z"
+      "ultimo_fetch": "2026-10-28T09:10:29.148013Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-29T01:40:29.059781Z",
+  "actualizado": "2026-10-29T01:50:29.672741Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -20,13 +20,12 @@
       "velocidad_nudos": 14.0,
       "eta": "2026-10-29T23:00:00Z",
       "calado_m": 7.5,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9214317",
       "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-28T21:40:30.147343Z"
+      "ultimo_fetch": "2026-10-29T01:50:29.672741Z"
     }
   }
 }

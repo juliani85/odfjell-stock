@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-10-29T18:00:28.372253Z",
+  "actualizado": "2026-10-29T18:10:30.411525Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -13,19 +13,6 @@
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
       "ultimo_fetch": "2026-10-29T15:20:30.177422Z"
-    },
-    "9214317": {
-      "estado": "en_route",
-      "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 14.0,
-      "eta": "2026-10-29T23:00:00Z",
-      "calado_m": 7.1,
-      "zona": "South America East Coast",
-      "fuente": "vesselfinder",
-      "error": null,
-      "imo": "9214317",
-      "nombre": "BOW CHAIN",
-      "ultimo_fetch": "2026-10-29T18:00:28.372253Z"
     }
   }
 }

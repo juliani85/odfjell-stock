@@ -2765,10 +2765,10 @@
     {
       "id": 1791553932718,
       "buque": "BOW CHAIN",
-      "manifiesto": "",
+      "manifiesto": "27943L",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-10-09",
+      "fecha": "2026-10-26",
       "notaNumero": "",
       "filas": [
         {
@@ -2777,10 +2777,10 @@
           "mercaderia": "BUTYL ACRYLATE",
           "receptor": "DIRANSA-crilen-inquiba-dalgar",
           "kgDeclarados": 471956,
-          "tkDestino": "31-67",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "24-67",
+          "sbfa": "1885W-1886A-1887B-1888C",
+          "medic": "227",
+          "kgResultantes": 473128
         },
         {
           "solPart": "2085-2140",
@@ -2789,9 +2789,9 @@
           "receptor": "DALGAR-crilen",
           "kgDeclarados": 313636,
           "tkDestino": "34",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1889D-1890S-1891T-1892U-1893V-1894W-1895A",
+          "medic": "233",
+          "kgResultantes": 316877
         },
         {
           "solPart": "2129",
@@ -2800,9 +2800,9 @@
           "receptor": "PBB",
           "kgDeclarados": 262435,
           "tkDestino": "75-76",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1872S",
+          "medic": "229",
+          "kgResultantes": 262296
         },
         {
           "solPart": "2126",
@@ -2811,9 +2811,9 @@
           "receptor": "PBB",
           "kgDeclarados": 307464,
           "tkDestino": "17",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1867W",
+          "medic": "232",
+          "kgResultantes": 305303
         },
         {
           "solPart": "2124",
@@ -2822,9 +2822,9 @@
           "receptor": "PBB",
           "kgDeclarados": 302578,
           "tkDestino": "88",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1869B",
+          "medic": "231",
+          "kgResultantes": 302063
         },
         {
           "solPart": "2130",
@@ -2833,9 +2833,9 @@
           "receptor": "PBB",
           "kgDeclarados": 199998,
           "tkDestino": "41",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1870Z",
+          "medic": "230",
+          "kgResultantes": 199943
         },
         {
           "solPart": "2131",
@@ -2844,9 +2844,9 @@
           "receptor": "PBB",
           "kgDeclarados": 146398,
           "tkDestino": "96",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1871R",
+          "medic": "226",
+          "kgResultantes": 146834
         },
         {
           "solPart": "2125",
@@ -2854,10 +2854,10 @@
           "mercaderia": "PROPYLENE GLYCOL",
           "receptor": "PBB",
           "kgDeclarados": 1200000,
-          "tkDestino": "78-84-88-89",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "84-88",
+          "sbfa": "1868A",
+          "medic": "231",
+          "kgResultantes": 1197957
         },
         {
           "solPart": "2108",
@@ -2865,10 +2865,10 @@
           "mercaderia": "SOLVESSO 100",
           "receptor": "BRENNTAG",
           "kgDeclarados": 149522,
-          "tkDestino": "33",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "23",
+          "sbfa": "1845S",
+          "medic": "224",
+          "kgResultantes": 154060
         },
         {
           "solPart": "2109",
@@ -2876,10 +2876,10 @@
           "mercaderia": "SOLVESSO 200",
           "receptor": "BRENNTAG",
           "kgDeclarados": 214823,
-          "tkDestino": "23",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "tkDestino": "21",
+          "sbfa": "1848V",
+          "medic": "221",
+          "kgResultantes": 213181
         },
         {
           "solPart": "2110",
@@ -2888,9 +2888,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 345564,
           "tkDestino": "48",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1846T",
+          "medic": "223",
+          "kgResultantes": 345744
         },
         {
           "solPart": "2111",
@@ -2899,9 +2899,9 @@
           "receptor": "BRENNTAG",
           "kgDeclarados": 349612,
           "tkDestino": "81",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1849W",
+          "medic": "220",
+          "kgResultantes": 356661
         },
         {
           "solPart": "2146-2149-2173-2172-2171-2147-2081-2082-2166-2167",
@@ -2910,9 +2910,9 @@
           "receptor": "cmd group-LA HISPANO-sadesa-princz-dalgar-neophos",
           "kgDeclarados": 628997,
           "tkDestino": "11",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1873T-1874U-1875V-1876W-1877A-1877A-1878B-1879C-1880R-1881S-1882T-1883U-1884V",
+          "medic": "228",
+          "kgResultantes": 624919
         },
         {
           "solPart": "2168",
@@ -2921,9 +2921,9 @@
           "receptor": "QUIMICA CALLEGARI",
           "kgDeclarados": 314890,
           "tkDestino": "93",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1847U",
+          "medic": "222",
+          "kgResultantes": 318545
         },
         {
           "solPart": "2164",
@@ -2932,9 +2932,9 @@
           "receptor": "ATANOR",
           "kgDeclarados": 999899,
           "tkDestino": "80-85",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1851P",
+          "medic": "225",
+          "kgResultantes": 999429
         }
       ],
       "dap": [
@@ -2953,7 +2953,9 @@
       ],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-29T17:42:26.008Z"
+      "actualizadoTs": "2026-10-29T18:06:49.838Z",
+      "archivada": true,
+      "archivadaTs": "2026-10-29T18:06:49.839Z"
     }
   ]
 }

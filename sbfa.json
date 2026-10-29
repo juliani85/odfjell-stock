@@ -2937,10 +2937,23 @@
           "kgResultantes": null
         }
       ],
-      "dap": [],
+      "dap": [
+        {
+          "documento": "26008IC65000051P",
+          "cto": "ETYL ACETATE",
+          "cantDoctada": 699816,
+          "cantResult": 701139
+        },
+        {
+          "documento": "26008IC65000052Z",
+          "cto": "ETYL ACETATE",
+          "cantDoctada": 627135,
+          "cantResult": 627225
+        }
+      ],
       "exportaciones": [],
-      "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-10-28T12:37:11.267Z"
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-10-29T17:42:26.008Z"
     }
   ]
 }

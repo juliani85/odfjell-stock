@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-03T16:00:31.334713Z",
+  "actualizado": "2026-11-03T16:03:31.741421Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -13,6 +13,19 @@
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
       "ultimo_fetch": "2026-11-03T14:10:32.924660Z"
+    },
+    "9989223": {
+      "estado": "en_puerto",
+      "puerto_actual": "Santos Anch., Brazil",
+      "arribo": "2026-10-29T14:11:00Z",
+      "calado_m": 10.0,
+      "nav_status": "At anchor",
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9989223",
+      "nombre": "BOW TIGER",
+      "ultimo_fetch": "2026-11-03T16:03:31.741421Z"
     }
   }
 }

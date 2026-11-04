@@ -189,6 +189,13 @@
                         <span class="paso-titulo">Despacho y cantidad</span>
                     </div>
                     <div class="paso-body">
+                        <div class="form-group hidden" id="ingDespachoExistenteGrupo">
+                            <label for="ingSelectDespacho">Sumar a un despacho / particular ya cargado</label>
+                            <select id="ingSelectDespacho">
+                                <option value="">Despacho nuevo (escribirlo abajo)</option>
+                            </select>
+                            <p class="ing-hint" id="ingHintDespacho"></p>
+                        </div>
                         <div class="form-group">
                             <label for="ingDespacho">Número de Despacho</label>
                             <input type="text" id="ingDespacho" placeholder="Ej: DI26IC04002280Y">

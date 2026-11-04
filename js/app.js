@@ -3408,6 +3408,9 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
     const ingProductoOtro = document.getElementById("ingProductoOtro");
     const ingNuevoProducto = document.getElementById("ingNuevoProducto");
     const ingDespacho = document.getElementById("ingDespacho");
+    const ingDespachoExistenteGrupo = document.getElementById("ingDespachoExistenteGrupo");
+    const ingSelectDespacho = document.getElementById("ingSelectDespacho");
+    const ingHintDespacho = document.getElementById("ingHintDespacho");
     const ingKilos = document.getElementById("ingKilos");
     const ingAlerta = document.getElementById("ingAlerta");
     const ingPaso1 = document.getElementById("ingPaso1");
@@ -3433,6 +3436,55 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         ingSelectProducto.appendChild(optNuevo);
     }
 
+    // Lista los despachos/particulares con stock del tanque para que un camión que
+    // sigue a una particular ya cargada se sume a ella en vez de crear otra con el
+    // nombre tipeado distinto ("sp 1751", "sp1751", "particular"...).
+    function poblarDespachosIngreso(tanque) {
+        const conStock = (tanque ? tanque.despachos : [])
+            .filter(d => d.stock > 0)
+            .sort((a, b) => b.stock - a.stock);
+        ingSelectDespacho.innerHTML = '<option value="">Despacho nuevo (escribirlo abajo)</option>';
+        conStock.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.despacho;
+            opt.textContent = `${d.despacho}  —  ${formatKg(d.stock)} kg`;
+            ingSelectDespacho.appendChild(opt);
+        });
+        ingDespachoExistenteGrupo.classList.toggle("hidden", conStock.length === 0);
+        ingDespacho.readOnly = false;
+        actualizarHintIngreso();
+        return conStock.length > 0;
+    }
+
+    function despachoIngresoExistente(nombre) {
+        if (!nombre || !ingTanqueActual) return null;
+        const tk = stock.find(t => t.tanque === ingTanqueActual.tanque);
+        return tk ? (tk.despachos.find(d => d.despacho === nombre) || null) : null;
+    }
+
+    function actualizarHintIngreso() {
+        const d = despachoIngresoExistente(ingDespacho.value.trim());
+        if (!d) { ingHintDespacho.textContent = ""; return; }
+        const kilos = parseInt(ingKilos.value) || 0;
+        ingHintDespacho.textContent = kilos > 0
+            ? `${d.despacho}: ${formatKg(d.stock)} kg + ${formatKg(kilos)} kg = ${formatKg(d.stock + kilos)} kg`
+            : `${d.despacho} ya tiene ${formatKg(d.stock)} kg. Lo que ingreses se suma a ese saldo.`;
+    }
+
+    ingSelectDespacho.addEventListener("change", () => {
+        const nombre = ingSelectDespacho.value;
+        ingDespacho.value = nombre;
+        ingDespacho.readOnly = !!nombre;
+        actualizarHintIngreso();
+        validarIngreso();
+    });
+    ingSelectDespacho.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            if (ingSelectDespacho.value) ingKilos.focus(); else ingDespacho.focus();
+        }
+    });
+
     function ingBuscarTanque() {
         const num = ingInputTanque.value.trim().padStart(3, "0");
         ingInputTanque.value = num;
@@ -3443,6 +3495,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             ingInfoTanque.innerHTML = `<strong>Tanque ${num} desafectado — no operable.</strong>`;
             ingInfoTanque.classList.remove("hidden");
             ingProductoNuevo.classList.add("hidden");
+            poblarDespachosIngreso(null);
             ingPaso2.className = "paso disabled";
             ingKilos.disabled = true;
             return;
@@ -3464,10 +3517,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             `;
             ingInfoTanque.classList.remove("hidden");
             ingProductoNuevo.classList.add("hidden");
+            const hayDespachos = poblarDespachosIngreso(tanque);
             ingPaso1.className = "paso done";
             ingPaso2.className = "paso active";
             ingKilos.disabled = false;
-            ingDespacho.focus();
+            if (hayDespachos) ingSelectDespacho.focus(); else ingDespacho.focus();
         } else {
             ingEsVacio = true;
             ingTanqueActual = tanque || { tanque: num, producto: "", cliente: "", despachos: [] };
@@ -3478,6 +3532,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 : `<strong>Tanque ${num} vacío.</strong> Seleccioná el producto a ingresar.`;
             ingInfoTanque.classList.remove("hidden");
             poblarProductos();
+            poblarDespachosIngreso(null);
             ingProductoNuevo.classList.remove("hidden");
             ingPaso1.className = "paso active";
             ingPaso2.className = "paso disabled";
@@ -3554,6 +3609,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const desp = ingDespacho.value.trim();
         const kilos = parseInt(ingKilos.value) || 0;
         document.getElementById("btnIngRegistrar").disabled = !(desp && kilos > 0);
+        actualizarHintIngreso();
     }
 
     // Registrar ingreso
@@ -3593,6 +3649,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             avisoCambioProducto = `<p style="background:#fef3c7;color:#92400e;padding:0.5rem 0.7rem;border-radius:6px;margin-top:0.5rem;font-size:0.9rem">⚠ El tanque figuraba con producto <strong>${tanqueEnStock.producto}</strong>. Lo vas a cambiar a <strong>${producto}</strong>. Un tanque solo puede tener <strong>un producto</strong> — confirmá solo si el tanque se vació del anterior.</p>`;
         }
 
+        const despYaCargado = tanqueEnStock ? tanqueEnStock.despachos.find(d => d.despacho === desp) : null;
+        const lineaSuma = despYaCargado
+            ? `<p><strong>Se suma al despacho ya cargado:</strong> ${formatKg(despYaCargado.stock)} kg + ${formatKg(kilos)} kg = <strong>${formatKg(despYaCargado.stock + kilos)} kg</strong></p>`
+            : "";
+
         document.getElementById("modalTitulo").textContent = "Confirmar Ingreso";
         modalBody.innerHTML = `
             <p><strong>Tanque:</strong> TK ${ingTanqueActual.tanque}</p>
@@ -3600,6 +3661,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             <p><strong>Cliente:</strong> ${cliente}</p>
             <p><strong>Despacho:</strong> <code>${desp}</code></p>
             <p><strong>Kilos a ingresar:</strong> ${formatKg(kilos)} kg</p>
+            ${lineaSuma}
             <p><strong>Usuario:</strong> ${usuarioActual.toUpperCase()}</p>
             ${avisoCambioProducto}
         `;
@@ -3660,6 +3722,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         ingInfoTanque.classList.add("hidden");
         ingProductoNuevo.classList.add("hidden");
         ingProductoOtro.classList.add("hidden");
+        poblarDespachosIngreso(null);
         ingDespacho.value = "";
         ingKilos.value = "";
         ingKilos.disabled = true;

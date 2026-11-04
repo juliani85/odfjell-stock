@@ -286,6 +286,18 @@ main { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
     border-color: var(--primary);
 }
 
+.ing-hint {
+    margin: 0.4rem 0 0;
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    min-height: 1em;
+}
+
+#ingDespacho:read-only {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
 /* Form elements */
 .form-row {
     display: grid;

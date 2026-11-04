@@ -385,7 +385,7 @@ const capacidadTanques = {
 // dropdowns de movimientos (salida, ingreso, transferencia).
 const tanquesDesafectados = [
     "003", "016", "020", "022", "026", "040", "045", "053", "057",
-    "059", "062", "064", "066", "068", "070", "077", "083", "087", "090",
+    "062", "064", "066", "068", "070", "077", "083", "087", "090",
     "091", "092", "094", "095",
 ];
 
@@ -394,7 +394,9 @@ const tanquesDesafectados = [
 // el "Existencia PM de Tanques" de Odfjell) pero quedan fuera del reporte
 // mensual a ARCA y de toda comparación de tanques fiscales. Detectados en la
 // conciliación del 31/08/2026: el sistema no los llevaba.
-const tanquesNacionales = ["009", "012", "043"];
+// 059: GASOLINA DE AVIACION de YPF (DI26IC05001447T); en el PDF del 31/10/2026 Odfjell
+// la muestra en el 059 y el 043 vacio.
+const tanquesNacionales = ["009", "012", "043", "059"];
 
 // Tanques con condición FISCAL (operables). Lista oficial del depósito —
 // estos tanques deben aparecer en el reporte mensual aunque estén en 0.

@@ -2360,19 +2360,7 @@
       "cuit": "30-68049506-4",
       "fecha": "2026-08-21",
       "notaNumero": "",
-      "filas": [
-        {
-          "solPart": "26008EC01008895C",
-          "cto": "",
-          "mercaderia": "BENZOL",
-          "receptor": "TERNIUM",
-          "kgDeclarados": 1100000,
-          "tkDestino": "",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
-        }
-      ],
+      "filas": [],
       "dap": [],
       "exportaciones": [
         {
@@ -2383,7 +2371,9 @@
         }
       ],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-08-25T20:01:01.720Z"
+      "actualizadoTs": "2026-11-04T13:26:29.745Z",
+      "archivada": true,
+      "archivadaTs": "2026-11-04T13:26:29.745Z"
     },
     {
       "id": 1787577532663,

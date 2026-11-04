@@ -2956,6 +2956,43 @@
       "actualizadoTs": "2026-10-29T18:06:49.838Z",
       "archivada": true,
       "archivadaTs": "2026-10-29T18:06:49.839Z"
+    },
+    {
+      "id": 1793798747849,
+      "buque": "BOW TIGER",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-11-08",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2262",
+          "cto": "07",
+          "mercaderia": "ALKONAT L70",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 699430,
+          "tkDestino": "10-14",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2263",
+          "cto": "06",
+          "mercaderia": "ALKONAT L10",
+          "receptor": "UNILEVER",
+          "kgDeclarados": 599913,
+          "tkDestino": "74-82",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-11-04T13:25:47.849Z"
     }
   ]
 }

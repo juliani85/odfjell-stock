@@ -6874,16 +6874,15 @@ ${fueraTol.length ? `
         if (tabBtn) tabBtn.click();
         const buqueU = (buque || "").toUpperCase();
 
-        // Buscar descargas existentes del buque con cargas pendientes
-        // (filas con kgDeclarados pero sin kgResultantes, o sin filas todavía)
+        // Buscar descargas activas del buque con cargas pendientes: sin nada medido
+        // todavía, o con filas/DAP/exportaciones declaradas sin resultante. Las
+        // archivadas son recaladas anteriores ya cerradas y nunca se reabren desde acá
+        // (el BOW TIGER reabría su descarga de exportación de abril al volver en noviembre).
         const candidatas = (sbfaConfig.descargas || [])
-            .filter(d => !d.anulada && (d.buque || "").toUpperCase() === buqueU)
+            .filter(d => !d.anulada && !d.archivada && (d.buque || "").toUpperCase() === buqueU)
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
-        const pendiente = candidatas.find(d => {
-            if (!d.filas || !d.filas.length) return true;
-            return d.filas.some(f => (Number(f.kgDeclarados) || 0) > 0 && !(Number(f.kgResultantes) > 0));
-        });
+        const pendiente = candidatas.find(d => !sbfaDescargaCompleta(d));
 
         if (pendiente) {
             abrirSbfaEditor(pendiente.id);

@@ -2977,12 +2977,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2284-2285-2286-2287-2288-2289-2290",
+          "cto": "otus2605btig814-815-810-813-819-820-804-811-812-817-818-816",
+          "mercaderia": "monoetilenglicol",
+          "receptor": "total-quimica true",
+          "kgDeclarados": 1499770,
+          "tkDestino": "5-36-1",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-04T13:25:47.849Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-06T13:20:50.222Z"
     },
     {
       "id": 1793971036156,

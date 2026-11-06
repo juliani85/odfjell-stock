@@ -2983,6 +2983,32 @@
       "exportaciones": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-11-04T13:25:47.849Z"
+    },
+    {
+      "id": 1793971036156,
+      "buque": "BOW FORTUNE",
+      "manifiesto": "",
+      "agencia": "",
+      "cuit": "",
+      "fecha": "2026-11-06",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2292",
+          "cto": "otus2605foru030",
+          "mercaderia": "2 etil hexanol",
+          "receptor": "atanor",
+          "kgDeclarados": 400110,
+          "tkDestino": "58",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-06T13:17:16.156Z"
     }
   ]
 }

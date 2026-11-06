@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T13:10:28.326412Z",
+  "actualizado": "2026-11-06T13:15:49.872441Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -27,6 +27,19 @@
       "imo": "9989223",
       "nombre": "BOW TIGER",
       "ultimo_fetch": "2026-11-06T11:10:29.541923Z"
+    },
+    "9168635": {
+      "estado": "en_puerto",
+      "puerto_actual": "Houston Anch., United States (USA)",
+      "arribo": "2026-11-03T09:29:00Z",
+      "calado_m": 10.1,
+      "nav_status": "At anchor",
+      "zona": "Gulf of Mexico",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9168635",
+      "nombre": "BOW FORTUNE",
+      "ultimo_fetch": "2026-11-06T13:15:49.872441Z"
     }
   }
 }

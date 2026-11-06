@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-06T23:10:28.399153Z",
+  "actualizado": "2026-11-06T23:20:28.257237Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -25,7 +25,7 @@
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-06T19:10:38.253864Z"
+      "ultimo_fetch": "2026-11-06T23:20:28.257237Z"
     },
     "9168635": {
       "estado": "en_puerto",

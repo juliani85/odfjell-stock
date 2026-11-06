@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-11-06T15:40:28.021375Z",
+  "actualizado": "2026-11-06T15:50:27.388655Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
       "destino": "Rio Grande, Brazil",
-      "velocidad_nudos": 11.5,
+      "velocidad_nudos": 1.4,
       "eta": "2026-11-06T13:00:00Z",
       "calado_m": 7.3,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-06T11:40:30.022852Z"
+      "ultimo_fetch": "2026-11-06T15:50:27.388655Z"
     },
     "9989223": {
       "estado": "en_puerto",

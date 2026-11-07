@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-07T20:10:29.837447Z",
+  "actualizado": "2026-11-07T20:20:29.404605Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
-      "puerto_actual": "Rio Grande Anch., Brazil",
-      "arribo": "2026-11-06T16:01:00Z",
+      "puerto_actual": "Rio Grande, Brazil",
+      "arribo": "2026-11-07T18:43:00Z",
       "calado_m": 7.5,
-      "nav_status": "Under way using engine",
+      "nav_status": "Moored",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-07T16:20:28.229603Z"
+      "ultimo_fetch": "2026-11-07T20:20:29.404605Z"
     },
     "9989223": {
       "estado": "en_route",

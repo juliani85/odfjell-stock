@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08T20:20:27.638839Z",
+  "actualizado": "2026-11-08T20:30:29.532796Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-08T16:30:28.939142Z"
+      "ultimo_fetch": "2026-11-08T20:30:29.532796Z"
     },
     "9989223": {
       "estado": "en_route",
@@ -20,13 +20,12 @@
       "velocidad_nudos": 12.6,
       "eta": "2026-11-10T02:00:00Z",
       "calado_m": 9.3,
-      "nav_status": "Under way using engine",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-08T16:20:28.709777Z"
+      "ultimo_fetch": "2026-11-08T20:30:29.532796Z"
     },
     "9168635": {
       "estado": "en_puerto",
@@ -39,7 +38,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-08T16:20:28.709777Z"
+      "ultimo_fetch": "2026-11-08T20:30:29.532796Z"
     }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-09T08:40:28.682047Z",
+  "actualizado": "2026-11-09T08:50:32.610599Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -13,20 +13,20 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-09T08:30:28.864714Z"
+      "ultimo_fetch": "2026-11-09T08:50:32.610599Z"
     },
     "9989223": {
       "estado": "en_route",
       "destino": "Zarate, Argentina",
       "velocidad_nudos": 12.6,
-      "eta": "2026-11-10T02:00:00Z",
+      "eta": "2026-11-10T09:00:00Z",
       "calado_m": 9.3,
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-09T04:40:29.309660Z"
+      "ultimo_fetch": "2026-11-09T08:50:32.610599Z"
     },
     "9168635": {
       "estado": "en_route",

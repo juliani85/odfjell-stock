@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-09T00:50:28.878958Z",
+  "actualizado": "2026-11-09T01:00:28.919047Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -30,6 +30,7 @@
     "9168635": {
       "estado": "en_route",
       "destino": "Freeport, United States (USA)",
+      "velocidad_nudos": 0.1,
       "eta": "2026-11-09T12:00:00Z",
       "calado_m": 10.1,
       "nav_status": "Moored",
@@ -38,7 +39,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-09T00:50:28.878958Z"
+      "ultimo_fetch": "2026-11-09T01:00:28.919047Z"
     }
   }
 }

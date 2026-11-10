@@ -1,19 +1,19 @@
 {
-  "actualizado": "2026-11-10T00:30:30.128977Z",
+  "actualizado": "2026-11-10T00:40:27.959019Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
       "destino": "Campana, Argentina",
-      "velocidad_nudos": 1.8,
+      "velocidad_nudos": 0.2,
       "eta": "2026-11-10T03:00:00Z",
       "calado_m": 7.0,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-10T00:30:30.128977Z"
+      "ultimo_fetch": "2026-11-10T00:40:27.959019Z"
     },
     "9989223": {
       "estado": "en_route",

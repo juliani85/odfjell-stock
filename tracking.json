@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-11T04:40:26.984009Z",
+  "actualizado": "2026-11-11T04:50:27.925436Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-11T04:40:26.984009Z"
+      "ultimo_fetch": "2026-11-11T04:50:27.925436Z"
     },
     "9989223": {
       "estado": "en_route",
@@ -29,17 +29,18 @@
       "ultimo_fetch": "2026-11-11T02:10:29.424136Z"
     },
     "9168635": {
-      "estado": "en_puerto",
-      "puerto_actual": "Freeport, United States (USA)",
-      "arribo": "2026-11-10T03:33:00Z",
+      "estado": "en_route",
+      "destino": "Salvador, Brazil",
+      "velocidad_nudos": 0.7,
+      "eta": "2026-11-09T11:00:00Z",
       "calado_m": 10.1,
-      "nav_status": "Moored",
+      "nav_status": "At anchor",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-11T00:40:32.597353Z"
+      "ultimo_fetch": "2026-11-11T04:50:27.925436Z"
     }
   }
 }

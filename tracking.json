@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-11T22:10:29.258698Z",
+  "actualizado": "2026-11-11T22:20:28.313544Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-11T22:10:29.258698Z"
+      "ultimo_fetch": "2026-11-11T22:20:28.313544Z"
     },
     "9989223": {
       "estado": "en_route",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-11T22:10:29.258698Z"
+      "ultimo_fetch": "2026-11-11T22:20:28.313544Z"
     },
     "9168635": {
       "estado": "en_route",
@@ -40,7 +40,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-11T22:10:29.258698Z"
+      "ultimo_fetch": "2026-11-11T22:20:28.313544Z"
     }
   }
 }

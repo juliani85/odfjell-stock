@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-12T18:40:27.884749Z",
+  "actualizado": "2026-11-12T18:50:29.393436Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -17,7 +17,7 @@
     "9989223": {
       "estado": "en_route",
       "destino": "Zarate, Argentina",
-      "velocidad_nudos": 8.6,
+      "velocidad_nudos": 5.3,
       "eta": "2026-11-10T09:00:00Z",
       "calado_m": 9.3,
       "nav_status": "Under way using engine",
@@ -26,7 +26,7 @@
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-12T18:40:27.884749Z"
+      "ultimo_fetch": "2026-11-12T18:50:29.393436Z"
     },
     "9168635": {
       "estado": "en_route",

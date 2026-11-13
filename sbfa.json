@@ -3037,15 +3037,17 @@
           "receptor": "PBB",
           "kgDeclarados": 1036724,
           "tkDestino": "33-35-56",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1981-t",
+          "medic": "236",
+          "kgResultantes": 1030123
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-13T12:21:00.605Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-13T12:30:46.365Z",
+      "archivada": true,
+      "archivadaTs": "2026-11-13T12:30:46.365Z"
     }
   ]
 }

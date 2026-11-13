@@ -1,10 +1,10 @@
 {
-  "actualizado": "2026-11-13T02:30:27.211718Z",
+  "actualizado": "2026-11-13T02:40:30.471801Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 10.9,
+      "velocidad_nudos": 5.2,
       "eta": "2026-11-14T23:00:00Z",
       "calado_m": 6.2,
       "nav_status": "Under way using engine",
@@ -13,7 +13,7 @@
       "error": null,
       "imo": "1037701",
       "nombre": "GOLDEN THETIS",
-      "ultimo_fetch": "2026-11-12T22:40:27.732615Z"
+      "ultimo_fetch": "2026-11-13T02:40:30.471801Z"
     },
     "9989223": {
       "estado": "en_puerto",

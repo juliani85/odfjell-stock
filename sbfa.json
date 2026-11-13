@@ -3020,6 +3020,32 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-11-06T13:17:16.156Z"
+    },
+    {
+      "id": 1794572460605,
+      "buque": "BOW CHAIN",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-11-09",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2302",
+          "cto": "CAIN1900",
+          "mercaderia": "OCTANO",
+          "receptor": "PBB",
+          "kgDeclarados": 1036724,
+          "tkDestino": "33-35-56",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-11-13T12:21:00.605Z"
     }
   ]
 }

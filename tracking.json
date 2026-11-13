@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-13T12:10:29.825428Z",
+  "actualizado": "2026-11-13T12:11:51.809809Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -39,6 +39,19 @@
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
       "ultimo_fetch": "2026-11-13T10:00:29.202206Z"
+    },
+    "9214317": {
+      "estado": "en_route",
+      "destino": "San Lorenzo, Argentina",
+      "eta": "2026-11-12T05:00:00Z",
+      "calado_m": 7.0,
+      "nav_status": "At anchor",
+      "zona": "South America Inland",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9214317",
+      "nombre": "BOW CHAIN",
+      "ultimo_fetch": "2026-11-13T12:11:51.809809Z"
     }
   }
 }

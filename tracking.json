@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-13T09:50:27.703003Z",
+  "actualizado": "2026-11-13T10:00:29.202206Z",
   "barcos": {
     "1037701": {
       "estado": "en_route",
@@ -33,13 +33,12 @@
       "velocidad_nudos": 13.3,
       "eta": "2026-11-27T09:00:00Z",
       "calado_m": 10.1,
-      "nav_status": "Under way using engine",
       "zona": "Gulf of Mexico",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-13T06:00:28.559942Z"
+      "ultimo_fetch": "2026-11-13T10:00:29.202206Z"
     }
   }
 }

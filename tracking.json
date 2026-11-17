@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-17T01:40:27.586333Z",
+  "actualizado": "2026-11-17T01:50:29.339656Z",
   "barcos": {
     "1037701": {
       "estado": "en_puerto",
@@ -17,16 +17,16 @@
     "9989223": {
       "estado": "en_route",
       "destino": "Bahia Blanca, Argentina",
-      "velocidad_nudos": 12.1,
+      "velocidad_nudos": 11.4,
       "eta": "2026-11-19T13:00:00Z",
       "calado_m": 6.3,
       "nav_status": "Under way using engine",
-      "zona": "South America Inland",
+      "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9989223",
       "nombre": "BOW TIGER",
-      "ultimo_fetch": "2026-11-17T01:40:27.586333Z"
+      "ultimo_fetch": "2026-11-17T01:50:29.339656Z"
     },
     "9168635": {
       "estado": "en_route",

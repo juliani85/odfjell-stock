@@ -2730,8 +2730,8 @@
       "id": 1791457921509,
       "buque": "GOLDEN THETIS",
       "manifiesto": "",
-      "agencia": "",
-      "cuit": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
       "fecha": "2026-10-08",
       "notaNumero": "",
       "filas": [
@@ -2742,15 +2742,17 @@
           "receptor": "ATANOR",
           "kgDeclarados": 1019654,
           "tkDestino": "13-14",
-          "sbfa": "",
-          "medic": "",
-          "kgResultantes": null
+          "sbfa": "1983 v",
+          "medic": "237",
+          "kgResultantes": 1014877
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-10-08T11:12:01.509Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-17T12:33:18.155Z",
+      "archivada": true,
+      "archivadaTs": "2026-11-17T12:33:18.155Z"
     },
     {
       "id": 1791553932718,

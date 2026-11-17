@@ -2729,10 +2729,10 @@
     {
       "id": 1791457921509,
       "buque": "GOLDEN THETIS",
-      "manifiesto": "",
+      "manifiesto": "29262-H",
       "agencia": "B&M",
       "cuit": "30-71631314-6",
-      "fecha": "2026-10-08",
+      "fecha": "2026-11-12",
       "notaNumero": "",
       "filas": [
         {
@@ -2750,7 +2750,7 @@
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "claudia",
-      "actualizadoTs": "2026-11-17T12:33:18.155Z",
+      "actualizadoTs": "2026-11-17T12:34:29.703Z",
       "archivada": true,
       "archivadaTs": "2026-11-17T12:33:18.155Z"
     },

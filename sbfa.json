@@ -3050,6 +3050,32 @@
       "actualizadoTs": "2026-11-13T14:46:29.699Z",
       "archivada": true,
       "archivadaTs": "2026-11-13T12:30:46.365Z"
+    },
+    {
+      "id": 1794929845337,
+      "buque": "STOLT NIKE",
+      "manifiesto": "",
+      "agencia": "WAVE",
+      "cuit": "",
+      "fecha": "2026-11-20",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "26008EC01012420E",
+          "cto": "",
+          "mercaderia": "BENZOL",
+          "receptor": "TERNIUM",
+          "kgDeclarados": 800000,
+          "tkDestino": "71-73",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-17T15:37:25.337Z"
     }
   ]
 }

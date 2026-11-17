@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "GOLDEN THETIS",
-      "imo": "1037701"
-    },
-    {
       "nombre": "BOW TIGER",
       "imo": "9989223"
     },

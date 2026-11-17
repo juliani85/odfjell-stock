@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-17T15:20:27.959358Z",
+  "actualizado": "2026-11-17T15:30:12.457738Z",
   "barcos": {
     "9989223": {
       "estado": "en_route",
@@ -28,6 +28,18 @@
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
       "ultimo_fetch": "2026-11-17T11:50:28.872570Z"
+    },
+    "9143207": {
+      "estado": "en_route",
+      "destino": "Salvador, Brazil",
+      "eta": "2026-11-14T16:30:00Z",
+      "calado_m": 9.4,
+      "zona": "South America East Coast",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9143207",
+      "nombre": "BOW FLORA",
+      "ultimo_fetch": "2026-11-17T15:30:12.457738Z"
     }
   }
 }

@@ -1,10 +1,6 @@
 {
   "barcos": [
     {
-      "nombre": "BOW TIGER",
-      "imo": "9989223"
-    },
-    {
       "nombre": "BOW FORTUNE",
       "imo": "9168635"
     },
@@ -14,7 +10,7 @@
     },
     {
       "nombre": "BOW FLORA",
-      "imo": "9143207"
+      "imo": null
     }
   ],
   "notificaciones": {

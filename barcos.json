@@ -10,7 +10,11 @@
     },
     {
       "nombre": "BOW FLORA",
-      "imo": "9143207"
+      "imo": null
+    },
+    {
+      "nombre": "BOW FIRDA",
+      "imo": null
     }
   ],
   "notificaciones": {

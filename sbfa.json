@@ -3076,6 +3076,54 @@
       "exportaciones": [],
       "actualizadoPor": "claudia",
       "actualizadoTs": "2026-11-17T15:37:25.337Z"
+    },
+    {
+      "id": 1795003097875,
+      "buque": "BOW FLORA",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-11-30",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2334",
+          "cto": "OTUS2606FLOR2301",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 367087,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2335",
+          "cto": "OTUS2606FLOR2101",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 119422,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2336",
+          "cto": "OTUS2606FLOR1804",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 99750,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-11-18T11:58:17.875Z"
     }
   ]
 }

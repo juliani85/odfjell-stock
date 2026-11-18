@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-18T12:50:29.424330Z",
+  "actualizado": "2026-11-18T12:59:39.590669Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -32,6 +32,19 @@
       "imo": "9143207",
       "nombre": "BOW FLORA",
       "ultimo_fetch": "2026-11-18T11:56:16.622943Z"
+    },
+    "9250751": {
+      "estado": "en_puerto",
+      "puerto_actual": "Gdansk, Poland",
+      "arribo": "2026-11-05T18:50:00Z",
+      "calado_m": 5.9,
+      "nav_status": "Moored",
+      "zona": "Baltic Sea",
+      "fuente": "vesselfinder",
+      "error": null,
+      "imo": "9250751",
+      "nombre": "BOW FIRDA",
+      "ultimo_fetch": "2026-11-18T12:59:39.590669Z"
     }
   }
 }

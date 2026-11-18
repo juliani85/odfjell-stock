@@ -3159,6 +3159,87 @@
       "exportaciones": [],
       "actualizadoPor": "julian",
       "actualizadoTs": "2026-11-18T16:38:45.930Z"
+    },
+    {
+      "id": 1795019925929,
+      "buque": "BOW FLORA",
+      "manifiesto": "",
+      "agencia": "B&M",
+      "cuit": "30-71631314-6",
+      "fecha": "2026-11-30",
+      "notaNumero": "",
+      "filas": [
+        {
+          "solPart": "2334",
+          "cto": "OTUS2606FLOR2301",
+          "mercaderia": "PAPI",
+          "receptor": "PBB",
+          "kgDeclarados": 367087,
+          "tkDestino": "75-76",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2335",
+          "cto": "OTUS2606FLOR2101",
+          "mercaderia": "PROPIONIC ACID",
+          "receptor": "PBB",
+          "kgDeclarados": 119422,
+          "tkDestino": "41",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2336",
+          "cto": "OTUS2606FLOR1804",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "PBB",
+          "kgDeclarados": 99750,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2347",
+          "cto": "otus2606FLOR0701",
+          "mercaderia": "SOLVESSO 100",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 250829,
+          "tkDestino": "33",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2346",
+          "cto": "OTUS2606FLOR0601",
+          "mercaderia": "EXXOL D60",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 398609,
+          "tkDestino": "23",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2345",
+          "cto": "OTUS2606FLOR0501",
+          "mercaderia": "ISOPAR L",
+          "receptor": "BRENNTAG",
+          "kgDeclarados": 402910,
+          "tkDestino": "81",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        }
+      ],
+      "dap": [],
+      "exportaciones": [],
+      "actualizadoPor": "julian",
+      "actualizadoTs": "2026-11-18T16:38:45.929Z"
     }
   ]
 }

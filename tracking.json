@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-20T21:00:28.239076Z",
+  "actualizado": "2026-11-20T21:10:29.990015Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -12,7 +12,7 @@
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-20T17:10:28.780961Z"
+      "ultimo_fetch": "2026-11-20T21:10:29.990015Z"
     },
     "STOLT NIKE": {
       "imo": null,
@@ -23,16 +23,16 @@
     "9143207": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 13.4,
-      "eta": "2026-11-21T00:00:00Z",
+      "velocidad_nudos": 0.8,
+      "eta": "2026-11-20T22:00:00Z",
       "calado_m": 9.7,
-      "nav_status": "Under way using engine",
+      "nav_status": "At anchor",
       "zona": "South America East Coast",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9143207",
       "nombre": "BOW FLORA",
-      "ultimo_fetch": "2026-11-20T17:10:28.780961Z"
+      "ultimo_fetch": "2026-11-20T21:10:29.990015Z"
     }
   }
 }

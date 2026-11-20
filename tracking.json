@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-20T21:10:29.990015Z",
+  "actualizado": "2026-11-20T21:20:28.164076Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -23,7 +23,7 @@
     "9143207": {
       "estado": "en_route",
       "destino": "Santos, Brazil",
-      "velocidad_nudos": 0.8,
+      "velocidad_nudos": 0.1,
       "eta": "2026-11-20T22:00:00Z",
       "calado_m": 9.7,
       "nav_status": "At anchor",
@@ -32,7 +32,7 @@
       "error": null,
       "imo": "9143207",
       "nombre": "BOW FLORA",
-      "ultimo_fetch": "2026-11-20T21:10:29.990015Z"
+      "ultimo_fetch": "2026-11-20T21:20:28.164076Z"
     }
   }
 }

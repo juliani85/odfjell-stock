@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-21T09:40:29.925534Z",
+  "actualizado": "2026-11-21T09:50:30.371678Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
@@ -31,7 +31,7 @@
       "error": null,
       "imo": "9143207",
       "nombre": "BOW FLORA",
-      "ultimo_fetch": "2026-11-21T05:40:38.811110Z"
+      "ultimo_fetch": "2026-11-21T09:50:30.371678Z"
     }
   }
 }

@@ -1,18 +1,18 @@
 {
-  "actualizado": "2026-11-21T21:50:32.977114Z",
+  "actualizado": "2026-11-21T22:00:28.894561Z",
   "barcos": {
     "9168635": {
       "estado": "en_route",
       "destino": "Salvador, Brazil",
       "velocidad_nudos": 12.5,
-      "eta": "2026-11-28T06:00:00Z",
+      "eta": "2026-11-28T02:00:00Z",
       "calado_m": 10.1,
       "zona": "Caribbean Sea",
       "fuente": "vesselfinder",
       "error": null,
       "imo": "9168635",
       "nombre": "BOW FORTUNE",
-      "ultimo_fetch": "2026-11-21T17:50:36.769593Z"
+      "ultimo_fetch": "2026-11-21T22:00:28.894561Z"
     },
     "STOLT NIKE": {
       "imo": null,

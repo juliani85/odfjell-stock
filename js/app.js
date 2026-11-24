@@ -1684,7 +1684,7 @@ async function initApp() {
                 <input type="number" id="${inputKilosId}" min="1" max="${stockViejo}" step="1" value="${stockViejo}" placeholder="Cantidad en kg">
             </div>
             <div id="${errorId}" class="alerta error hidden" style="margin-top:0.5rem"></div>
-            <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.75rem">Si migrás <strong>todos</strong> los kilos, el despacho viejo desaparece y se renombra en <strong>todos los tanques que lo tengan</strong> (más los movimientos del historial y las filas del plan). Si migrás <strong>una parte</strong>, se crea un despacho nuevo con esos kilos solo en este tanque y el viejo queda con el saldo restante (útil cuando un despacho viejo representa varios despachos chicos).</p>
+            <p style="font-size:0.8rem;color:var(--gray-500);margin-top:0.75rem">Si migrás <strong>todos</strong> los kilos, el despacho viejo desaparece y se renombra en <strong>todos los tanques que lo tengan</strong> (más los movimientos del historial y las filas del plan). Si migrás <strong>una parte</strong>, se crea un despacho nuevo con esos kilos solo en este tanque y el viejo queda con el saldo restante (útil cuando un despacho viejo representa varios despachos chicos). Si el nombre nuevo <strong>ya existe en este tanque</strong>, los kilos se suman a ese despacho.</p>
         `;
         document.getElementById("modalTitulo").textContent = "Renombrar despacho";
         document.getElementById("btnConfirmar").textContent = "Renombrar";
@@ -1698,9 +1698,10 @@ async function initApp() {
             const nuevo = (inpN.value || "").trim().toUpperCase();
             const kilos = parseInt(inpK.value) || 0;
 
-            const mostrarError = (msg) => {
+            const mostrarError = (msg, tipo = "error") => {
                 errBox.textContent = msg;
-                errBox.classList.remove("hidden");
+                errBox.classList.remove("hidden", "error", "warning");
+                errBox.classList.add(tipo);
                 window._confirmarAccion = confirmarRenombrar;
             };
 
@@ -1719,9 +1720,19 @@ async function initApp() {
             // según el alcance que elija el usuario.
             // Los despachos con 0 kg son "fantasmas" (ya despachados, ocultos en la UI): no
             // cuentan como conflicto y se descartan al renombrar.
-            const conflictoEnEste = tanqueActual.despachos.some(d => d.despacho === nuevo && d !== despachoObj && d.stock > 0);
-            if (conflictoEnEste) {
-                mostrarError(`Ya existe un despacho con el nombre "${nuevo}" en este tanque (TK ${tanqueActual.tanque}).`);
+            // Si el nombre nuevo ya existe con stock en este tanque, los kilos se suman a ese
+            // despacho (caso típico: convertir parte de un BL a un despacho ya cargado). Se pide
+            // un segundo click para confirmar la suma.
+            const destinoExistente = tanqueActual.despachos.find(d => d.despacho === nuevo && d !== despachoObj && d.stock > 0);
+            if (destinoExistente) {
+                const claveFusion = `${nuevo}|${kilos}`;
+                if (fusionPendiente !== claveFusion) {
+                    fusionPendiente = claveFusion;
+                    document.getElementById("btnConfirmar").textContent = "Sumar kilos";
+                    mostrarError(`"${nuevo}" ya existe en TK ${tanqueActual.tanque} con ${formatKg(destinoExistente.stock)} kg. Se le van a sumar ${formatKg(kilos)} kg (queda en ${formatKg(destinoExistente.stock + kilos)} kg) y "${viejo}" queda con ${formatKg(stockViejo - kilos)} kg. Tocá "Sumar kilos" para confirmar.`, "warning");
+                    return;
+                }
+                ejecutarFusion(nuevo, kilos);
                 return;
             }
 
@@ -1742,6 +1753,43 @@ async function initApp() {
             }
 
             ejecutarRenombrar(false);
+        };
+
+        let fusionPendiente = null;
+        const resetFusion = () => {
+            if (!fusionPendiente) return;
+            fusionPendiente = null;
+            document.getElementById("btnConfirmar").textContent = "Renombrar";
+            document.getElementById(errorId).classList.add("hidden");
+        };
+
+        const refrescarTrasRenombrar = (nuevo) => {
+            addDespachoConsultado(nuevo);
+            poblarDespachos(tanqueActual);
+            const newIdx = tanqueActual.despachos.findIndex(d => d.despacho === nuevo);
+            if (newIdx >= 0) {
+                selectDespacho.value = newIdx;
+                selectDespacho.dispatchEvent(new Event("change"));
+            }
+            renderStock();
+            renderHistorial();
+        };
+
+        const ejecutarFusion = (nuevo, kilos) => {
+            modal.classList.add("hidden");
+            document.getElementById("btnConfirmar").textContent = "Confirmar";
+            const vivo = resolverDespachoVivo(tanqueActual, despachoObj);
+            const destino = vivo && vivo.tanque.despachos.find(d => d.despacho === nuevo && d !== vivo.desp && d.stock > 0);
+            if (!vivo || !destino || kilos > vivo.desp.stock) {
+                mostrarAlerta(`NO se sumaron los kilos: el stock de "${viejo}" o "${nuevo}" en TK ${tanqueActual.tanque} cambió desde otra sesión. Volvé a intentarlo.`, "error");
+                return;
+            }
+            vivo.desp.stock -= kilos;
+            destino.stock += kilos;
+            despachoObj = vivo.desp;
+            guardarDatos();
+            mostrarAlerta(`${formatKg(kilos)} kg de "${viejo}" sumados a "${nuevo}" en TK ${tanqueActual.tanque}. "${nuevo}": ${formatKg(destino.stock)} kg · Saldo "${viejo}": ${formatKg(vivo.desp.stock)} kg`, "success");
+            refrescarTrasRenombrar(nuevo);
         };
 
         const ejecutarRenombrar = (soloEnEste) => {
@@ -1804,16 +1852,10 @@ async function initApp() {
                 mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"${cliTxt}`, "success");
             }
 
-            addDespachoConsultado(nuevo);
-            poblarDespachos(tanqueActual);
-            const newIdx = tanqueActual.despachos.findIndex(d => d.despacho === nuevo);
-            if (newIdx >= 0) {
-                selectDespacho.value = newIdx;
-                selectDespacho.dispatchEvent(new Event("change"));
-            }
-            renderStock();
-            renderHistorial();
+            refrescarTrasRenombrar(nuevo);
         };
+
+        [inputNombreId, inputKilosId].forEach(id => document.getElementById(id).addEventListener("input", resetFusion));
 
         window._confirmarAccion = confirmarRenombrar;
         modal.classList.remove("hidden");

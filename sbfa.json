@@ -3256,12 +3256,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2411",
+          "cto": "OTUS2606FLOR1801",
+          "mercaderia": "BUTYL CELLOSOLVE",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 149626,
+          "tkDestino": "96",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2410",
+          "cto": "OTUS2606FLOR2700",
+          "mercaderia": "N PROPYL ACETATE",
+          "receptor": "QUIMICA CALLEGARI",
+          "kgDeclarados": 196471,
+          "tkDestino": "93",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-25T11:48:25.224Z"
+      "actualizadoTs": "2026-11-25T14:11:47.269Z"
     }
   ]
 }

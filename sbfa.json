@@ -3234,12 +3234,34 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2382",
+          "cto": "OTUS2606FLOR1605",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "INQUIBA",
+          "kgDeclarados": 50000,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
+        },
+        {
+          "solPart": "2383",
+          "cto": "OTUS2606FLOR1604",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DALGAR",
+          "kgDeclarados": 31325,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-18T16:43:57.305Z"
+      "actualizadoTs": "2026-11-25T11:48:25.224Z"
     }
   ]
 }

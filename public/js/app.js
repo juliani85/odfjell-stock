@@ -1539,20 +1539,6 @@ async function initApp() {
                n.includes("IT14");
     }
 
-    function getDespachosConsultados() {
-        try {
-            return JSON.parse(localStorage.getItem("despachosConsultados")) || [];
-        } catch (_) { return []; }
-    }
-
-    function addDespachoConsultado(nombre) {
-        const lista = getDespachosConsultados();
-        if (!lista.includes(nombre)) {
-            lista.push(nombre);
-            localStorage.setItem("despachosConsultados", JSON.stringify(lista));
-        }
-    }
-
     // Renombra el despacho. Si soloEnTanque está seteado, solo afecta a ese tanque
     // (y sus entradas del historial / plan). Si no, renombra en todos los tanques.
     // Devuelve la lista de tanques afectados.
@@ -1714,7 +1700,6 @@ async function initApp() {
                 mostrarAlerta(`Despacho renombrado${dondeTxt}: "${viejo}" → "${nuevo}"${cliTxt}`, "success");
             }
 
-            addDespachoConsultado(nuevo);
             poblarDespachos(tanqueActual);
             const newIdx = tanqueActual.despachos.findIndex(d => d.despacho === nuevo);
             if (newIdx >= 0) {
@@ -1923,9 +1908,7 @@ async function initApp() {
         const clienteDesp = desp.cliente || tanqueActual.cliente;
         const invalido = !esDespachoValido(desp.despacho);
         const avisoInvalido = invalido
-            ? `<div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:#fef3c7;color:#92400e;border-radius:6px;font-size:0.85rem">
-                    ⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.
-                </div>`
+            ? `<div class="info-aviso">⚠ Formato no estándar — se espera IC04, IC06, TRP, EC01, REMO, TRM6 o IT14.</div>`
             : "";
         infoDespacho.className = "info-box found";
         infoDespacho.innerHTML = `
@@ -1934,7 +1917,7 @@ async function initApp() {
                 <div><span class="info-label">Cliente</span><br><span class="info-value">${clienteDesp}</span></div>
                 <div><span class="info-label">Stock Disponible</span><br><span class="info-value" style="font-size:1.3rem;color:var(--primary)">${formatKg(desp.stock)} kg</span></div>
             </div>
-            <div style="margin-top:0.75rem;display:flex;justify-content:flex-end">
+            <div class="info-acciones">
                 <button class="btn btn-secondary btn-sm" id="btnRenombrarDespacho" type="button">✎ Renombrar despacho</button>
             </div>
             ${avisoInvalido}
@@ -1943,14 +1926,6 @@ async function initApp() {
 
         const btnRen = document.getElementById("btnRenombrarDespacho");
         if (btnRen) btnRen.addEventListener("click", () => lanzarRenombrarDespacho(desp));
-
-        if (invalido) {
-            const yaConsultado = getDespachosConsultados().includes(desp.despacho);
-            if (!yaConsultado) {
-                addDespachoConsultado(desp.despacho);
-                setTimeout(() => lanzarRenombrarDespacho(desp), 150);
-            }
-        }
 
         paso2.className = "paso done";
         activarPaso(3);
@@ -4037,7 +4012,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         const fecha = hoyISO();
         // Auto-match antes de contar para que el badge no muestre pendientes que ya tienen
         // salida hecha (evita el "blink" inicial: badge dice 4, abrís el plan y muestra 3).
-        if (planes[fecha] && autoMatchearPlan(fecha)) {
+        if (autoMatchearPlanReciente()) {
             GH.guardarPlan(planes);
         }
         const plan = planes[fecha];
@@ -4078,6 +4053,7 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             });
         });
         if (autoMatchearPlan(fecha)) persistir = true;
+        if (autoMatchearPlanReciente()) persistir = true;
         if (persistir) GH.guardarPlan(planes);
         const plan = planes[fecha];
         const tbody = document.querySelector("#tablaPlan tbody");
@@ -4104,11 +4080,27 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
             (a.horaCarga || "99:99").localeCompare(b.horaCarga || "99:99")
         );
 
+        // Salidas del día que no quedaron atadas a ninguna fila. Cuando coinciden tanque y
+        // producto con una fila pendiente casi siempre es el mismo camión con el despacho
+        // tipeado distinto (ej: IC06 en el plan e IC04 en la salida). Se avisa en la fila para
+        // corregirlo, en vez de dejarla pendiente para siempre sin que se note.
+        const asignadas = new Set(visibles.map(f => f.salidaId).filter(Boolean));
+        const salidasHuerfanas = historial.filter(h =>
+            (h.tipo || "SALIDA") === "SALIDA" && h.fecha === fecha && !asignadas.has(h.id)
+        );
+
         tbody.innerHTML = filasOrdenadas.map(f => {
             const cls = f.cumplido ? "plan-cumplido" : "";
-            const estadoBadge = f.cumplido
+            const similar = f.cumplido ? null : salidasHuerfanas.find(s =>
+                s.tanque === f.tanque &&
+                (s.producto || "").toUpperCase() === (f.producto || "").toUpperCase()
+            );
+            const avisoSimilar = similar
+                ? `<span class="plan-estado-badge plan-estado-similar" title="Hay una salida de este tanque y producto con despacho ${similar.despacho}. Si es esta carga, corregí el despacho en la salida o en el plan.">≈ ${similar.despacho}</span>`
+                : "";
+            const estadoBadge = (f.cumplido
                 ? '<span class="plan-estado-badge plan-estado-cumplido">✓ OK</span>'
-                : '<span class="plan-estado-badge plan-estado-pendiente">PEND.</span>';
+                : '<span class="plan-estado-badge plan-estado-pendiente">PEND.</span>') + avisoSimilar;
             const buqueViaje = [f.buque, f.viaje].filter(Boolean).join(" / ");
             const tanqueStock = stock.find(t => t.tanque === f.tanque);
             const productoMostrar = (tanqueStock && tanqueStock.producto) || f.producto;
@@ -4143,6 +4135,24 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return s;
     }
 
+    // Los mails informales escriben los TR06 en formato corto ("TR06-4695.X") mientras que
+    // la salida se carga con el despacho completo ("DI26TR06004695X"). El formato corto no
+    // trae el año, así que la clave de comparación lo omite.
+    function claveDespachoCorta(d) {
+        const s = normDespacho(d);
+        let m = s.match(/^\d{2}(TR\d{2})(\d{4,8})([A-Z])$/);
+        if (m) return m[1] + String(parseInt(m[2], 10)).padStart(6, "0") + m[3];
+        m = s.match(/^(TR\d{2})[-\s.]+(\d{2,8})[-\s.]*([A-Z])$/);
+        if (m) return m[1] + String(parseInt(m[2], 10)).padStart(6, "0") + m[3];
+        return null;
+    }
+
+    function despachosCoinciden(a, b) {
+        if (normDespacho(a) === normDespacho(b)) return true;
+        const ca = claveDespachoCorta(a);
+        return !!ca && ca === claveDespachoCorta(b);
+    }
+
     // Helpers de tombstones para sync multi-cliente del plan (ver _enviarPlan).
     // Cualquier modificación a una fila debe marcarse con modificadoTs para que el merge
     // last-write-wins funcione. Las "eliminaciones" son soft: se setea eliminada:true en
@@ -4165,29 +4175,27 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         return /REMO/i.test(String(desp || ""));
     }
 
+    // Solo se matchea contra el plan de la MISMA fecha de la salida. Antes se recorrían todas
+    // las fechas en orden descendente y una salida de ayer (cargada hoy, turno anterior) tachaba
+    // la fila equivalente del plan de hoy; después la limpieza de autoMatchearPlan la desmarcaba
+    // por fecha distinta y la fila de ayer quedaba pendiente para siempre.
     function matchearSalidaConPlan(salida) {
-        const fechas = Object.keys(planes).sort().reverse();
-        const despSalida = normDespacho(salida.despacho);
-        for (const f of fechas) {
-            const plan = planes[f];
-            if (!plan || !plan.filas) continue;
-            const match = plan.filas.find(fi =>
-                !fi.eliminada &&
-                !fi.cumplido &&
-                fi.tanque === salida.tanque &&
-                (fi.producto || "").toUpperCase() === (salida.producto || "").toUpperCase() &&
-                normDespacho(fi.despacho) === despSalida
-            );
-            if (match) {
-                match.cumplido = true;
-                match.salidaId = salida.id;
-                match.cumplidoAt = new Date().toISOString();
-                marcarFilaPlan(match);
-                GH.guardarPlan(planes);
-                return match;
-            }
-        }
-        return null;
+        const plan = planes[salida.fecha];
+        if (!plan || !plan.filas) return null;
+        const match = plan.filas.find(fi =>
+            !fi.eliminada &&
+            !fi.cumplido &&
+            fi.tanque === salida.tanque &&
+            (fi.producto || "").toUpperCase() === (salida.producto || "").toUpperCase() &&
+            despachosCoinciden(fi.despacho, salida.despacho)
+        );
+        if (!match) return null;
+        match.cumplido = true;
+        match.salidaId = salida.id;
+        match.cumplidoAt = new Date().toISOString();
+        marcarFilaPlan(match);
+        GH.guardarPlan(planes);
+        return match;
     }
 
     function desmatchearSalidaEnPlan(salidaId) {
@@ -4248,12 +4256,11 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
         plan.filas.forEach(f => { if (!f.eliminada && f.salidaId) yaMatcheadas.add(f.salidaId); });
         plan.filas.forEach(fila => {
             if (fila.eliminada || fila.cumplido) return;
-            const despFila = normDespacho(fila.despacho);
             const match = salidasDia.find(s =>
                 !yaMatcheadas.has(s.id) &&
                 s.tanque === fila.tanque &&
                 (s.producto || "").toUpperCase() === (fila.producto || "").toUpperCase() &&
-                normDespacho(s.despacho) === despFila
+                despachosCoinciden(s.despacho, fila.despacho)
             );
             if (match) {
                 fila.cumplido = true;
@@ -4263,6 +4270,19 @@ table.detalle td:last-child { text-align: right; font-variant-numeric: tabular-n
                 yaMatcheadas.add(match.id);
                 cambio = true;
             }
+        });
+        return cambio;
+    }
+
+    // Las salidas del turno anterior se cargan al día siguiente, así que el plan de ayer se
+    // sigue completando después de medianoche. Repasamos la última semana para que ninguna
+    // fila quede pendiente por no haber abierto ese día en pantalla.
+    function autoMatchearPlanReciente() {
+        const desde = new Date(Date.now() - 7 * 86400 * 1000).toISOString().slice(0, 10);
+        let cambio = false;
+        Object.keys(planes).forEach(fecha => {
+            if (fecha < desde) return;
+            if (autoMatchearPlan(fecha)) cambio = true;
         });
         return cambio;
     }
@@ -6688,16 +6708,15 @@ ${fueraTol.length ? `
         if (tabBtn) tabBtn.click();
         const buqueU = (buque || "").toUpperCase();
 
-        // Buscar descargas existentes del buque con cargas pendientes
-        // (filas con kgDeclarados pero sin kgResultantes, o sin filas todavía)
+        // Buscar descargas activas del buque con cargas pendientes: sin nada medido
+        // todavía, o con filas/DAP/exportaciones declaradas sin resultante. Las
+        // archivadas son recaladas anteriores ya cerradas y nunca se reabren desde acá
+        // (el BOW TIGER reabría su descarga de exportación de abril al volver en noviembre).
         const candidatas = (sbfaConfig.descargas || [])
-            .filter(d => !d.anulada && (d.buque || "").toUpperCase() === buqueU)
+            .filter(d => !d.anulada && !d.archivada && (d.buque || "").toUpperCase() === buqueU)
             .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id || 0) - (a.id || 0));
 
-        const pendiente = candidatas.find(d => {
-            if (!d.filas || !d.filas.length) return true;
-            return d.filas.some(f => (Number(f.kgDeclarados) || 0) > 0 && !(Number(f.kgResultantes) > 0));
-        });
+        const pendiente = candidatas.find(d => !sbfaDescargaCompleta(d));
 
         if (pendiente) {
             abrirSbfaEditor(pendiente.id);

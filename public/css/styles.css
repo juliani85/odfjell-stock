@@ -909,6 +909,68 @@ tbody tr:hover { background: var(--gray-50); }
     grid-template-columns: 1fr 1fr;
 }
 
+.info-acciones {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.info-aviso {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+/* Salidas: todo en una pantalla en escritorio (pasos en 3 columnas) */
+@media (min-width: 1024px) {
+    main:has(#salida.active) { padding-top: 1rem; }
+    main:has(#salida.active) .tabs { margin-bottom: 1rem; }
+    .salida-card { padding: 1rem 1.5rem; }
+    .salida-top {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 2px solid var(--gray-200);
+    }
+    .salida-top h2 { margin-bottom: 0.4rem; }
+    .salida-top .remito-bar {
+        flex: 0 1 520px;
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+    .salida-card > .alerta { margin: 0 0 0.75rem; }
+    .salida-pasos {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        align-items: start;
+    }
+    .salida-pasos .paso { margin-bottom: 0; }
+    .salida-pasos .paso-header { padding: 0.6rem 1rem; }
+    .salida-pasos .paso-body { padding: 1rem; }
+    .salida-pasos .info-box { margin-top: 0.75rem; padding: 0.75rem; }
+    .salida-pasos .info-acciones,
+    .salida-pasos .info-aviso { margin-top: 0.5rem; }
+    .salida-pasos .info-grid { grid-template-columns: 1fr; gap: 0.4rem; }
+    .salida-pasos .info-grid > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.75rem;
+    }
+    .salida-pasos .info-grid br { display: none; }
+    .salida-pasos .info-grid .info-value { text-align: right; }
+    .salida-pasos .form-actions { flex-wrap: wrap; margin-top: 1rem; }
+    .salida-pasos .btn-lg { padding: 0.75rem 1.5rem; }
+}
+
 /* Reporte total */
 .reporte-total {
     margin-top: 1rem;
@@ -1064,6 +1126,13 @@ tbody tr:hover { background: var(--gray-50); }
 }
 .plan-estado-pendiente { background: #fef3c7; color: #92400e; }
 .plan-estado-cumplido { background: #dcfce7; color: #166534; }
+.plan-estado-similar {
+    background: #ffedd5;
+    color: #9a3412;
+    border: 1px dashed #f97316;
+    margin-left: 0.35rem;
+    cursor: help;
+}
 #planEstado.alerta { font-size: 0.9rem; }
 
 /* Responsive */

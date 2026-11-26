@@ -75,69 +75,73 @@
 
         <!-- REGISTRAR SALIDA -->
         <section id="salida" class="tab-content">
-            <div class="form-card">
-                <h2>Registrar Salida con Remito</h2>
+            <div class="form-card salida-card">
+                <div class="salida-top">
+                    <h2>Registrar Salida con Remito</h2>
 
-                <!-- REMITO Y FECHA (siempre visible arriba) -->
-                <div class="remito-bar remito-bar-2col">
-                    <div class="form-group">
-                        <label for="fechaSalida">Fecha</label>
-                        <input type="date" id="fechaSalida">
-                    </div>
-                    <div class="form-group">
-                        <label for="nroRemito">N° de Remito (últimos 4 dígitos)</label>
-                        <input type="text" id="nroRemito" placeholder="Ej: 0123" maxlength="4">
+                    <!-- REMITO Y FECHA (siempre visible arriba) -->
+                    <div class="remito-bar remito-bar-2col">
+                        <div class="form-group">
+                            <label for="fechaSalida">Fecha</label>
+                            <input type="date" id="fechaSalida">
+                        </div>
+                        <div class="form-group">
+                            <label for="nroRemito">N° de Remito (últimos 4 dígitos)</label>
+                            <input type="text" id="nroRemito" placeholder="Ej: 0123" maxlength="4">
+                        </div>
                     </div>
                 </div>
                 <div id="alertaRemitoDup" class="alerta hidden"></div>
 
-                <!-- PASO 1: TANQUE -->
-                <div class="paso" id="paso1">
-                    <div class="paso-header">
-                        <span class="paso-num">1</span>
-                        <span class="paso-titulo">Ingresá el número de tanque</span>
-                    </div>
-                    <div class="paso-body">
-                        <div class="input-tanque-row">
-                            <span class="prefix">TK</span>
-                            <input type="text" id="inputTanque" placeholder="Ej: 005" maxlength="3" autofocus>
-                            <button class="btn btn-primary" id="btnBuscarTanque">Buscar</button>
+                <div class="salida-pasos">
+                    <!-- PASO 1: TANQUE -->
+                    <div class="paso" id="paso1">
+                        <div class="paso-header">
+                            <span class="paso-num">1</span>
+                            <span class="paso-titulo">Ingresá el número de tanque</span>
                         </div>
-                        <div id="infoTanque" class="info-box hidden"></div>
-                    </div>
-                </div>
-
-                <!-- PASO 2: DESPACHO -->
-                <div class="paso disabled" id="paso2">
-                    <div class="paso-header">
-                        <span class="paso-num">2</span>
-                        <span class="paso-titulo">Seleccioná el despacho</span>
-                    </div>
-                    <div class="paso-body">
-                        <select id="selectDespacho">
-                            <option value="">-- Primero ingresá un tanque --</option>
-                        </select>
-                        <div id="infoDespacho" class="info-box hidden"></div>
-                    </div>
-                </div>
-
-                <!-- PASO 3: KILOS -->
-                <div class="paso disabled" id="paso3">
-                    <div class="paso-header">
-                        <span class="paso-num">3</span>
-                        <span class="paso-titulo">Cantidad de kilos</span>
-                    </div>
-                    <div class="paso-body">
-                        <div class="form-group">
-                            <label for="kilosSalida">Kilos a retirar</label>
-                            <input type="number" id="kilosSalida" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                        <div class="paso-body">
+                            <div class="input-tanque-row">
+                                <span class="prefix">TK</span>
+                                <input type="text" id="inputTanque" placeholder="Ej: 005" maxlength="3" autofocus>
+                                <button class="btn btn-primary" id="btnBuscarTanque">Buscar</button>
+                            </div>
+                            <div id="infoTanque" class="info-box hidden"></div>
                         </div>
+                    </div>
 
-                        <div id="alertaStock" class="alerta hidden"></div>
+                    <!-- PASO 2: DESPACHO -->
+                    <div class="paso disabled" id="paso2">
+                        <div class="paso-header">
+                            <span class="paso-num">2</span>
+                            <span class="paso-titulo">Seleccioná el despacho</span>
+                        </div>
+                        <div class="paso-body">
+                            <select id="selectDespacho">
+                                <option value="">-- Primero ingresá un tanque --</option>
+                            </select>
+                            <div id="infoDespacho" class="info-box hidden"></div>
+                        </div>
+                    </div>
 
-                        <div class="form-actions">
-                            <button class="btn btn-primary btn-lg" id="btnRegistrar" disabled>Registrar Salida</button>
-                            <button class="btn btn-secondary" id="btnLimpiar">Limpiar Todo</button>
+                    <!-- PASO 3: KILOS -->
+                    <div class="paso disabled" id="paso3">
+                        <div class="paso-header">
+                            <span class="paso-num">3</span>
+                            <span class="paso-titulo">Cantidad de kilos</span>
+                        </div>
+                        <div class="paso-body">
+                            <div class="form-group">
+                                <label for="kilosSalida">Kilos a retirar</label>
+                                <input type="number" id="kilosSalida" min="1" step="1" placeholder="Cantidad en kg" disabled>
+                            </div>
+
+                            <div id="alertaStock" class="alerta hidden"></div>
+
+                            <div class="form-actions">
+                                <button class="btn btn-primary btn-lg" id="btnRegistrar" disabled>Registrar Salida</button>
+                                <button class="btn btn-secondary" id="btnLimpiar">Limpiar Todo</button>
+                            </div>
                         </div>
                     </div>
                 </div>

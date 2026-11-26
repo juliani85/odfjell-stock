@@ -3278,12 +3278,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2404",
+          "cto": "otus2606FLOR1600",
+          "mercaderia": "BUTYL ACRYLATE",
+          "receptor": "DIRANSA",
+          "kgDeclarados": 150000,
+          "tkDestino": "67-24",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
       "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-25T14:11:47.269Z"
+      "actualizadoTs": "2026-11-26T12:01:39.234Z"
     }
   ]
 }

@@ -3289,12 +3289,23 @@
           "sbfa": "",
           "medic": "",
           "kgResultantes": null
+        },
+        {
+          "solPart": "2424",
+          "cto": "otus2606 flor 160",
+          "mercaderia": "butilo",
+          "receptor": "disal",
+          "kgDeclarados": 140000,
+          "tkDestino": "24-67",
+          "sbfa": "",
+          "medic": "",
+          "kgResultantes": null
         }
       ],
       "dap": [],
       "exportaciones": [],
-      "actualizadoPor": "julian",
-      "actualizadoTs": "2026-11-26T12:01:39.234Z"
+      "actualizadoPor": "claudia",
+      "actualizadoTs": "2026-11-27T15:16:22.504Z"
     }
   ]
 }
